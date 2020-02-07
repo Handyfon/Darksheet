@@ -17,9 +17,9 @@ Custom CSS<br/>
 ![Alt text](https://i.imgur.com/cRIv5oP.png?raw=true "Custom Item Sheet and Inventory")
 
 -Track Ammodice for every Item<br/>
--Trach Item Slots<br/>
+-Track Item Slots
 
-![Alt text](https://https://i.imgur.com/7n26SLq.png?raw=true "Item Slots")
+![Alt text](https://i.imgur.com/7n26SLq.png?raw=true "Item Slots")
 
 ![Alt text](https://i.imgur.com/HB4CPIu.png?raw=true "Including Customizable Rollable Tables")
 
