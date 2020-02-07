@@ -2,13 +2,15 @@ import {
     ActorSheet5eCharacter
 } from '../../../../modules/darksheet/actor/sheets/character.js';
 
-Hooks.once('init', () => loadTemplates(['modules/darksheet/templates/actors/parts/actor-inventory.html']));
-Hooks.once('init', () => loadTemplates(['modules/darksheet/templates/items/parts/item-description.html']));
-
+Hooks.once('init', () => loadTemplates([
+  'modules/darksheet/templates/actors/parts/actor-inventory.html',
+  'modules/darksheet/templates/items/parts/item-description.html'
+]));
 Hooks.once('init', function() {
     Actors.registerSheet('dnd5e', DarkSheet, {
         types: ['character']
     });
+	Items.registerSheet('dnd5e', DarkItemSheet5e);
 	game.settings.register('darksheet', 'slotbasedinventory', {
       name: 'Slot based inventory',
       hint: 'This option determines on which value the bar at the bottom of the inventory uses, if his is enabled it will use slots instead of weight.',
@@ -18,7 +20,24 @@ Hooks.once('init', function() {
       type: Boolean,
     });
 });
-	
+
+//	Hooks.on('renderItemSheet5e', (sheet, html) => {
+//		html.find('.item-properties').remove();
+//		html.find('.editor').remove();
+
+	////	const template = Handlebars.compile(`<div class="tab flexrow active" data-group="primary" data-tab="description">    <div class="item-properties">        {{#if isPhysical}}        <div class="form-group">            <label>Quantity</label>            <input type="text" name="data.quantity" value="{{data.quantity}}" data-dtype="Number"/>        </div>        <div class="form-group">            <label>Weight</label>            <input type="text" name="data.weight" value="{{data.weight}}" placeholder="0" data-dtype="Number"/>        </div>        <div class="form-group">            <label>Slots</label>            <input type="text" name="data.slots" value="{{data.slots}}" placeholder="1" data-dtype="Number"/>        </div>        <div class="form-group">            <label>Price</label>            <input type="text" name="data.price" value="{{data.price}}" data-dtype="Number"/>        </div>        <div class="form-group">            <label>Notches</label>            <input type="text" name="data.notches" value="{{data.notches}}" data-dtype="Number"/>        </div>		<div class="form-group">            <label>Quality</label>            <select class="saturationbox" name="data.quality" data-dtype="String">				{{#select data.quality}}				<option value="pristine">Pristine 75%</option>				<option value="worn">Worn 50%</option>				<option value="well-worn">Well-Worn 25%</option>				<option value="scarred">Scarred 10%</option>				{{/select}}			</select>        </div>		<div class="form-group">            <label class="rollable ammodice">Ammodie</label>			<select name="data.ammodie" data-dtype="String">				{{#select data.ammodie}}				<option value=""></option>				<option value="d12">d12</option>				<option value="d10">d10</option>				<option value="d8">d8</option>				<option value="d6">d6</option>				<option value="d4">d4</option>				<option value="d2">d2</option>				<option value="1">1</option>				{{/select}}			</select>		</div>        {{/if}}        <ol class="properties-list">            {{#each itemProperties}}            <li>{{this}}</li>            {{/each}}        </ol>    </div>    {{editor content=data.description.value target="data.description.value" button=true owner=owner editable=editable}}</div>`);
+	////	const generated = template(/*your data here as a javascript object*/);
+//	const data = {message: 'Hello, world!<div></div>'};
+//	const template = Handlebars.compile(`<p class="msg">{{message}}</p>`);
+//	const generated = template(data);
+//		html.find('.tab.flexrow.active')
+//			.append($(generated));
+	//		.append($('<div class="tab flexrow active" data-group="primary" data-tab="description">    <div class="item-properties">        {{#if isPhysical}}        <div class="form-group">            <label>Quantity</label>            <input type="text" name="data.quantity" value="{{data.quantity}}" data-dtype="Number"/>        </div>        <div class="form-group">            <label>Weight</label>            <input type="text" name="data.weight" value="{{data.weight}}" placeholder="0" data-dtype="Number"/>        </div>        <div class="form-group">            <label>Slots</label>            <input type="text" name="data.slots" value="{{data.slots}}" placeholder="1" data-dtype="Number"/>        </div>        <div class="form-group">            <label>Price</label>            <input type="text" name="data.price" value="{{data.price}}" data-dtype="Number"/>        </div>        <div class="form-group">            <label>Notches</label>            <input type="text" name="data.notches" value="{{data.notches}}" data-dtype="Number"/>        </div>		<div class="form-group">            <label>Quality</label>            <select class="saturationbox" name="data.quality" data-dtype="String">				{{#select data.quality}}				<option value="pristine">Pristine 75%</option>				<option value="worn">Worn 50%</option>				<option value="well-worn">Well-Worn 25%</option>				<option value="scarred">Scarred 10%</option>				{{/select}}			</select>        </div>		<div class="form-group">            <label class="rollable ammodice">Ammodie</label>			<select name="data.ammodie" data-dtype="String">				{{#select data.ammodie}}				<option value=""></option>				<option value="d12">d12</option>				<option value="d10">d10</option>				<option value="d8">d8</option>				<option value="d6">d6</option>				<option value="d4">d4</option>				<option value="d2">d2</option>				<option value="1">1</option>				{{/select}}			</select>		</div>        {{/if}}        <ol class="properties-list">            {{#each itemProperties}}            <li>{{this}}</li>            {{/each}}        </ol>    </div>    {{editor content=data.description.value target="data.description.value" button=true owner=owner editable=editable}}</div>'));
+			
+//	});
+
+
+
 export const _getInitiativeFormula = function(combatant) {
   const actor = combatant.actor;
   if ( !actor ) return "1d20";
@@ -28,25 +47,10 @@ export const _getInitiativeFormula = function(combatant) {
   if ( CONFIG.initiative.tiebreaker ) parts.push(actor.data.data.abilities.int.value / 100);
   return parts.filter(p => p !== null).join(" + ");
 };
-Hooks.on('renderChatMessage', (app, html, options) => {
-  if (app.getFlag('darksheet', 'outcome') === 'bad') 
-  {
-      html[0].closest('.message').classList.add('badmessage');
-  }
-  else if (app.getFlag('darksheet', 'outcome') === 'good') 
-  {
-      html[0].closest('.message').classList.add('goodmessage');
-  }
-  else if (app.getFlag('darksheet', 'outcome') === 'table') 
-  {
-      html[0].closest('.message').classList.add('table');
-  }
-});
 /**
  * Override and extend the core ItemSheet implementation to handle D&D5E specific item types
  * @type {ItemSheet}
  */
- 
 export class DarkItemSheet5e extends ItemSheet {
   constructor(...args) {
     super(...args);
@@ -261,6 +265,7 @@ export class DarkItemSheet5e extends ItemSheet {
     }
   }
 }
+
 export class DarkSheet extends ActorSheet5eCharacter {
     get template() {
         return 'modules/darksheet/templates/character-sheet.html';
