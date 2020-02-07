@@ -1,1 +1,1 @@
- Manifest: https://raw.githubusercontent.com/Handyfon/FDarksheet/master/module.json
+ Manifest: https://raw.githubusercontent.com/Handyfon/Darksheet/master/module.json
