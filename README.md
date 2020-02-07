@@ -44,5 +44,5 @@ Easily roll for deathsaves or wounds.
 -Keep track of your food and water<br/>
 -Clickable Spell Burnoutdice with automatic consequence<br/>
 -Buttons for: Critical Success, Critical Failure, Success at a Cost, Treat Wound and Heal Wound.<br/>
--Settings for Hitdice and Inventory Slots<br/>(Automatic calcultion of Inventory Slots)
+-Settings for Hitdice and Inventory Slots<br/>(Automatic calcultion of Inventory Slots)<br/>
 -Automatic Exhaustion Calculation (WOP)<br/>
