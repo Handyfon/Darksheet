@@ -1,0 +1,24 @@
+{
+	"name": "darksheet",
+	"title": "darksheet 5e",
+	"description": "Darker Dungeons replacement for the default 5e actor sheet",
+	"version": "0.0.4",
+	"author": "Handyfon#8390",
+	"systems": ["dnd5e"],
+	"esmodules": ["darksheet.js", "/js/character.js", "/js/base.js", "templates.js"],
+	"styles": ["css/darksheet.css", "mce.css"],
+	"packs": [
+		{
+			"name": "darkerdungeons",
+			"label": "RollTable",
+			"system": "dnd5e",
+			"path": "./packs/darkerdungeons.db",
+			"entity": "RollTable"
+		}
+	],
+	 "socket": true,
+    "url": "https://github.com/Handyfon/FDarksheet/tree/master",
+    "manifest": "https://raw.githubusercontent.com/Handyfon/Darksheet/master/module.json",
+    "download": "https://github.com/Handyfon/Darksheet/raw/master/darksheet.zip",
+	"minimumCoreVersion": "0.4.5"
+}
