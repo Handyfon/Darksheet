@@ -1,0 +1,62 @@
+<div class="tab flexrow active" data-group="primary" data-tab="description">
+
+    <div class="item-properties">
+        {{#if isPhysical}}
+        <div class="form-group">
+            <label>Quantity</label>
+            <input type="text" name="data.quantity" value="{{data.quantity}}" data-dtype="Number"/>
+        </div>
+
+        <div class="form-group">
+            <label>Weight</label>
+            <input type="text" name="data.weight" value="{{data.weight}}" placeholder="0" data-dtype="Number"/>
+        </div>
+        <div class="form-group">
+            <label>thots</label>
+            <input type="text" name="data.slots" value="{{data.slots}}" placeholder="1" data-dtype="Number"/>
+        </div>
+        <div class="form-group">
+            <label>Price</label>
+            <input type="text" name="data.price" value="{{data.price}}" data-dtype="Number"/>
+        </div>
+        <div class="form-group">
+            <label>Notches</label>
+            <input type="text" name="data.notches" value="{{data.notches}}" data-dtype="Number"/>
+        </div>
+		<div class="form-group">
+            <label>Quality</label>
+            <select class="saturationbox" name="data.quality" data-dtype="String">
+				{{#select data.quality}}
+				<option value="pristine">Pristine 75%</option>
+				<option value="worn">Worn 50%</option>
+				<option value="well-worn">Well-Worn 25%</option>
+				<option value="scarred">Scarred 10%</option>
+				{{/select}}
+			</select>
+        </div>
+		<div class="form-group">
+            <label class="rollable ammodice">Ammodie</label>
+			<select name="data.ammodie" data-dtype="String">
+				{{#select data.ammodie}}
+				<option value=""></option>
+				<option value="d12">d12</option>
+				<option value="d10">d10</option>
+				<option value="d8">d8</option>
+				<option value="d6">d6</option>
+				<option value="d4">d4</option>
+				<option value="d2">d2</option>
+				<option value="1">1</option>
+				{{/select}}
+			</select>
+		</div>
+        {{/if}}
+
+        <ol class="properties-list">
+            {{#each itemProperties}}
+            <li>{{this}}</li>
+            {{/each}}
+        </ol>
+    </div>
+
+    {{editor content=data.description.value target="data.description.value" button=true owner=owner editable=editable}}
+</div>
