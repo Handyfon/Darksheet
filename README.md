@@ -3,9 +3,9 @@ Manifest: https://raw.githubusercontent.com/Handyfon/Darksheet/master/module.jso
  https://github.com/Handyfon/Darksheet/blob/master/module.json
  
  Upcoming:
- -CSS May be Optional in the furture
- -Character sheet more customizable
- -Automatic Calculation of Exhaustion based on dropdowns.
+ -CSS May be Optional in the furture<br/>
+ -Character sheet more customizable<br/>
+ -Automatic Calculation of Exhaustion based on dropdowns.<br/>
  
 Custom Character Sheet:
 ![Alt text](https://i.imgur.com/yMiq1Uf.png?raw=true "Custom Character Sheet")
