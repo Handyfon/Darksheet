@@ -13,10 +13,12 @@ Custom CSS<br/>
 -Fate Points<br/>
 -Inspiration<br/>
 -Hero Points (not part of darker dungeons)<br/>
+
 ![Alt text](https://i.imgur.com/cRIv5oP.png?raw=true "Custom Item Sheet and Inventory")
 
 -Track Ammodice for every Item<br/>
 -Trach Item Slots<br/>
+
 ![Alt text](https://imgur.com/a/BGTlugW?raw=true "Item Slots")
 
 ![Alt text](https://i.imgur.com/HB4CPIu.png?raw=true "Including Customizable Rollable Tables")
