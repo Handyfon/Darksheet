@@ -1,7 +1,7 @@
-INSTALL INSTRUCTIONS:
+<b>INSTALL INSTRUCTIONS:
 Use the manifest to install the module:<br/>
 Manifest: https://raw.githubusercontent.com/Handyfon/Darksheet/master/module.json<br/>
-and drag the rollable tables out of the compendium.<br/>
+and drag the rollable tables out of the compendium.<br/><b>
 
  https://github.com/Handyfon/Darksheet/blob/master/module.json<br/>
  
