@@ -15,10 +15,10 @@
 			"path": "./packs/darkerdungeons.db",
 			"entity": "RollTable"
 		}
-	]
-	,
+	],
+	 "socket": true,
     "url": "https://github.com/Handyfon/FDarksheet/tree/master",
-    "manifest": "https://gitlab.com/Handyfon/darksheet/raw/master/module.json",
+    "manifest": "https://raw.githubusercontent.com/Handyfon/FDarksheet/master/module.json",
     "download": "https://github.com/Handyfon/FDarksheet/raw/master/darksheet.zip",
 	"minimumCoreVersion": "0.4.5"
 }
