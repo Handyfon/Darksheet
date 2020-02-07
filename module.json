@@ -19,6 +19,6 @@
 	,
     "url": "https://github.com/Handyfon/FDarksheet/tree/master",
     "manifest": "https://gitlab.com/Handyfon/FDarksheet/raw/master/module.json",
-    "download": "https://gitlab.com/Handyfon/FDarksheet/raw/master/darksheet.zip"
+    "download": "https://gitlab.com/Handyfon/FDarksheet/raw/master/darksheet.zip",
 	"minimumCoreVersion": "0.4.5"
 }
