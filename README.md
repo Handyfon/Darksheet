@@ -13,11 +13,18 @@ Custom CSS<br/>
 -Fate Points<br/>
 -Inspiration<br/>
 -Hero Points (not part of darker dungeons)<br/>
+-Track your Wounds
+
+![Alt text](https://i.imgur.com/I3AS1dg.png?raw=true "Custom Item Sheet and Inventory")
+-Klick "Armor Class" to roll for wounds<br/>
+![Alt text](https://i.imgur.com/o3ZgapV.png?raw=true "Custom Item Sheet and Inventory")
+Easily roll for deathsaves or wounds.
+![Alt text](https://i.imgur.com/6nPyHsZ.png?raw=true "Custom Item Sheet and Inventory")
 
 ![Alt text](https://i.imgur.com/cRIv5oP.png?raw=true "Custom Item Sheet and Inventory")
 
 -Track Ammodice for every Item<br/>
--Track Item Slots
+-Track Item Slots.
 
 ![Alt text](https://i.imgur.com/7n26SLq.png?raw=true "Item Slots")
 
@@ -28,5 +35,5 @@ Custom CSS<br/>
 -Keep track of your food and water<br/>
 -Clickable Spell Burnoutdice with automatic consequence<br/>
 -Buttons for: Critical Success, Critical Failure, Success at a Cost, Treat Wound and Heal Wound.<br/>
--Settings for Hitdice and Inventory Slots<br/>
+-Settings for Hitdice and Inventory Slots<br/>(Automatic calcultion of Inventory Slots)
 -Automatic Exhaustion Calculation (WOP)<br/>
