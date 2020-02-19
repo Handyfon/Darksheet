@@ -7,7 +7,7 @@ and drag the rollable tables out of the compendium.<br/><b>
  
  Upcoming:
  -CSS May be Optional in the furture<br/>
- -Character sheet more customizable<br/>
+ -Character sheet even more customizable<br/>
  -Automatic Calculation of Exhaustion based on dropdowns.<br/>
  
 Custom Character Sheet:
@@ -15,6 +15,7 @@ Custom Character Sheet:
 
 Featuring:<br/>
 Custom CSS<br/>
+-Let players select their colour scheme for their own characters
 -Training<br/>
 -Spent trainings points<br/>
 -Death Saves Checkboxes<br/>
@@ -49,3 +50,4 @@ Easily roll for deathsaves or wounds.
 -Buttons for: Critical Success, Critical Failure, Success at a Cost, Treat Wound and Heal Wound.<br/>
 -Settings for Hitdice and Inventory Slots<br/>(Automatic calcultion of Inventory Slots)<br/>
 -Automatic Exhaustion Calculation (WOP)<br/>
+-Track Stress & Afflictions
