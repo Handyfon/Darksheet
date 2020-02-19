@@ -362,14 +362,14 @@ export class DarkSheet extends ActorSheet5eCharacter {
 		
 			let burnoutdie = this.actor.data.data.attributes.burnout.value;
 			let roll = new Roll(`${burnoutdie}`).roll();
-			let table = game.tables.entities.find(t => t.data.name === "Burnout Consequence"); table.draw();
+			let table = game.tables.entities.find(t => t.data.name === "Burnout Consequence");
 			const result = table.roll()
 			
 			let content = `
 				<div class="dnd5e chat-card item-card" data-acor-id="${this.actor._id}">
 					<header class="card-header flexrow">
 						<img src="${this.actor.data.token.img}" title="" width="36" height="36" style="border: none;"/>
-						<h3 style=" color: #fff;">Burnoutdice (${burnoutdie}): </h3>
+						<h3 style=" color: #fff;">Burnoutdice(${burnoutdie}): </h3>
 					<h3>${roll.result}</h3>
 					</header>
 				</div>`;
@@ -377,7 +377,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 				<div class="dnd5e chat-card item-card" data-acor-id="${this.actor._id}">
 					<header class="card-header flexrow">
 						<img src="${this.actor.data.token.img}" title="" width="36" height="36" style="border: none;"/>
-						<h3 style=" color: #fff;">Burnoutdice (${burnoutdie}): </h3>
+						<h3 style=" color: #fff;">Burnoutdice(${burnoutdie}): </h3>
 					<h3 style="color: #ff0000;text-shadow: 0 0 2px;">${roll.result}</h3>
 					</header>
 					</br>
