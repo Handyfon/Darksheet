@@ -1,6 +1,3 @@
-.tox :not(svg) {
-    color: black !important;
-}
 @font-face {
   font-family: 'Signika';
   font-style: normal;
@@ -38,10 +35,7 @@ h3 {
 }
 /* Links */
 .mce-content-body {
-    color: white !important;
-}
-body#tinymce {
-    color: white !important;
+    color: white;
 }
 a {
   cursor: pointer;
@@ -83,9 +77,6 @@ blockquote {
   padding: 0 0 0 20px;
   border-left: 3px solid #AAA;
   font-style: italic;
-}
-.tox.tox-tinymce {
-    height: 880px;
 }
 blockquote em {
   font-style: normal;

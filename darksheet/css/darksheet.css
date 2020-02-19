@@ -2,18 +2,6 @@
 input[type="checkbox"] {
     transform: scale(1);
 }
-.green{
-    background-image: linear-gradient(#245531, #143017) !important;
-    background-size: contain !important;
-}
-.red{
-    background-image: linear-gradient(#552424, #301414) !important;
-    background-size: contain !important;
-}
-.black{
-	background: black !important;
-    background-size: contain !important;
-}
 .window-app {
     display: flex;
     flex-direction: column;
@@ -22,16 +10,6 @@ input[type="checkbox"] {
     box-shadow: 0 0 20px #fff;
     padding: 0;
     z-index: 100;
-}
-.tox :not(svg) {
-    color: black !important;
-}
-.dnd5e.sheet.item {
-    min-height: 420px;
-    min-width: 600px;
-}
-.tox.tox-tinymce {
-    height: 880px;
 }
 .better-npc-sheet input[type=text] {
     border: none;
@@ -42,57 +20,20 @@ input[type="checkbox"] {
     color: #ffffff;
     background: #525252;
 }
-.calendar-form-container {
-    background: 0 !important;
-}
-input#calendar-form-era-input {
-    color: black !important;
-}
-#calendar-form-hour-input {
-    background-color: black !important;
-}
-#calendar-form-minute-input {
-    background-color: black !important;
-}
-#calendar-form-second-input {
-    background-color: black !important;
-}
-i#calendar-btn-day {
-    color: white !important;
-}
-/*#calendar{
-background-image: linear-gradient(#6db2ff73, #4e6ea9) !important;
-}*/
-.fa-moon:before {
-    color: white !important;
-}
-.fa-forward:before {
-    color: white !important;
-}
-.fa-fast-forward:before {
-    color: white !important;
-}
-.fa-step-forward:before {
-    color: white !important;
-}
-.fa-play:before {
-    color: white !important;
-}
-.fa-angle-double-right:before {
-    color: white !important;
-}
-.fa-angle-right:before {
-    color: white !important;
-}
 .dnd5e.sheet.actor.character {
     min-width: 720px !important;
     min-height: 736px;
 }
-.darksheettint{
+.dnd5e.sheet .sheet-header img.profile {
+    flex: 0 0 100px;
+    margin: 5px;
+ 
     filter: drop-shadow(2px 4px 6px black);
     mix-blend-mode: color-dodge;
+    height: 100px;
+    object-fit: cover;
+    border: none;
 }
-/*DND ITEM IMAGES
 .dnd5e.sheet.actor .inventory-list .item .item-name .item-image {
     flex: 0 0 30px;
     background-size: 30px;
@@ -100,18 +41,6 @@ background-image: linear-gradient(#6db2ff73, #4e6ea9) !important;
     image-rendering: pixelated !important;
     filter: drop-shadow(2px 4px 6px black) !important;
     mix-blend-mode: color-dodge !important
-}*/
-.tab.spellbook.flexcol.active {
-    border-color: #ffffffba;
-    border-style: groove;
-    border-right: 0;
-    border-left: 0;
-    border-bottom: 0;
-}
-.dnd5e.sheet.actor .inventory-list .item .item-name .item-image {
-    flex: 0 0 30px;
-    background-size: 30px;
-    margin-right: 5px;
 }
 .window-app .window-header {
     flex: 0 0 30px;
@@ -181,11 +110,11 @@ background-image: linear-gradient(#6db2ff73, #4e6ea9) !important;
     background-image: linear-gradient(#243b55, #141e30) !important;
 }
 #controls .scene-control.active, #controls .control-tool.active, #controls .scene-control:hover, #controls .control-tool:hover {
-    color: #fff;
-    border: 1px solid #ffffff;
-    border-bottom: 1px solid #ffffff;
-    box-shadow: 0 0 3px #ececec;
-    opacity: 80%;
+    color: #FFF;
+    border: 1px solid #0019ff;
+    border-bottom: 1px solid #002eff;
+    box-shadow: 0 0 10px #0003ff;
+	opacity: 80%;
 }
 #navigation .nav-item {
     background-image: linear-gradient(#243b55, #141e30) !important;
@@ -216,125 +145,15 @@ background-image: linear-gradient(#6db2ff73, #4e6ea9) !important;
     color: white;
 }
 #menu {
-	top: 35%;
-    background-image: linear-gradient(#243B55, #141E30) !important;
-    background-size: contain !important;
-    box-shadow: 0 0 0 1000px #00000066;
-    border-style: outset;
-border-width: 5px;
-    border-color: #ffffff;
-}
-#menu #menu-items li:hover {
-    text-shadow: 0 0 4px #ffffff;
+    top: 35%;
+    background: rgb(0, 0, 0);
+    box-shadow: 0 0 30px #001bff;
 }
 .dmgBtn-container-br button i {
     color: black;
 }
 .dnd5e button {
     color: white;
-}
-.lmrtfy select, .lmrtfy input[type=text] {
-    background-color: rgba(0, 0, 0, 0);
-}
-.lmrtfy-actor-avatars input:checked + label img {
-    transform: scale(0.9);
-    box-shadow: 0 0 20px #ffffff;
-}
-.lmrtfy-actor-avatars {
-    justify-content: center;
-    margin-top: 10px !important;
-    margin-bottom: -5px !important;
-}
-/*
-#pause {
-    width: 100%;
-    height: 100px;
-    position: fixed;
-    bottom: 15%;
-    left: 0;
-    pointer-events: none;
-    z-index: 60;
-    background: url(../ui/pausebg.png) no-repeat 50% 50%;
-    display: none;
-    background: #00000094;
-    border-style: double;
-}*/
-#pause {
-    width: 100%;
-    height: 100px;
-    position: fixed;
-    bottom: 15%;
-    left: 0;
-    pointer-events: none;
-    z-index: 60;
-    background: url(../ui/pausebg.png) no-repeat 50% 50%;
-    display: none;
-    background: #00000094;
-    mix-blend-mode: soft-light;
-    border-style: double;
-}
-#pause img {
-    position: absolute;
-    top: -16px;
-    left: calc(50% - 64px);
-    height: 128px;
-    width: 128px;
-    opacity: 1;
-    border: none;
-    -webkit-animation: rotation 30s infinite linear;
-}
-#pause h3 {
-    margin: 0;
-    font-size: 2em;
-    font-weight: normal;
-    line-height: 100px;
-    text-align: center;
-    position: relative;
-    z-index: 61;
-    color: #EEE;
-    text-shadow: 1px 1px 10px #fff;
-}
-/*
-#pause h3 {
-    margin: 0;
-    margin-top: -10px;
-    font-size: 2em;
-    font-weight: normal;
-    line-height: 100px;
-    text-align: center;
-    position: relative;
-    z-index: 61;
-    color: #fff;
-    text-shadow: 1px 1px 1px #ff1cee;
-}
-#pause {
-    width: 100%;
-    height: 100px;
-    position: fixed;
-    bottom: 15%;
-    left: 0;
-    pointer-events: none;
-    z-index: 60;
-    background: url(https://i.giphy.com/media/2dnGHOAQt1tIziib5X/source.gif) center;
-    display: none;
-    border-style: outset;
-    border-width: 10px;
-    border-color: #00000069;
-}
-#pause img {
-    position: absolute;
-    top: -16px;
-    left: calc(50% - 64px);
-    height: 128px;
-    width: 128px;
-    opacity: 1;
-    border: none;
-    -webkit-animation: rotation 30s infinite linear;
-}*/
-.select-all, .deselect-all {
-    background-color: rgba(0, 0, 0, 0);
-    border-radius: 10px;
-    flex: 1;
 }
 
 .dnd5e .form-group.stacked label {
@@ -378,10 +197,6 @@ max-width: 100%;
 #chat-log .message .message-header .message-sender {
     color: whitesmoke;
 }
-#chat-log .message .table-result h4.result-text {
-    line-height: 16px;
-    margin: 0;
-}
 #chat-log .message .message-header .message-metadata {
     flex: 2;
     text-align: right;
@@ -399,7 +214,7 @@ select {
     color: white;
 }
 .dnd5e.sheet.actor .traits .actor-size {
-    background: #243b5500;
+    background: #243B55;
 }
 .dialog .dialog-buttons button {
     color: white;
@@ -408,7 +223,10 @@ select {
     content: "\f6cf";
     color: indianred;
 }
-
+.dnd5e.chat-card .card-header h3 {
+	color: #ffffff;
+    text-shadow: 0 0 1px;
+}
 .dice-roll .dice-total.success {
     color: #9dff00;
     text-shadow: 0 0 3px;
@@ -434,43 +252,12 @@ select {
 .dnd5e.chat-card .card-footer span {
     border-color: #ffffff;
 }
-.dnd5e.chat-card .card-header h3:hover {
-    color: #fff;
-    /text-shadow: 0;
-}
-
-.dnd5e.chat-card .card-header h3 {
-    flex: 1;
-    margin: 0;
-    line-height: 36px;
-    font-family: "Nodesto", "Signika", "Palatino Linotype", serif;
-    font-size: 20px;
-    color: #ffffff;
-}
-.trainpointa { 
+.trainpointa{ 
     width: 80px;
     position: absolute;
     margin-top: 9px;
     margin-left: 55px;
 	background-image: linear-gradient(#233a53, #375779) !important;
-    color: white;
-    text-align: center;
-}
-.trainpointa.green {
-    width: 80px;
-    position: absolute;
-    margin-top: 9px;
-    margin-left: 55px;
-    background-image: linear-gradient(#429050, #37793e) !important;
-    color: white;
-    text-align: center;
-}
-.trainpointa.red {
-    width: 80px;
-    position: absolute;
-    margin-top: 9px;
-    margin-left: 55px;
-    background-image: linear-gradient(#904242, #793737) !important;
     color: white;
     text-align: center;
 }
@@ -554,6 +341,9 @@ margin-left: 10px;
     font-size: 13px;
     color: #fff;
 }
+.dnd5e.chat-card .card-header h3:hover {
+    color: #fff;
+}
 .dnd5e.sheet .sheet-header img.profile {
     flex: 0 0 100px;
     height: 100px;
@@ -572,7 +362,7 @@ margin-left: 10px;
     border: 1px solid #fff;
 }
 .dnd5e.sheet.actor .traits .inactive {
-    color: #88888a;
+    color: #70718a;
 }
 .dnd5e.sheet .sheet-header .summary li {
     color: #9a998e;
@@ -602,9 +392,8 @@ margin-left: 10px;
     font-weight: bold;
 }
 .dnd5e.sheet.actor .ability-scores .ability {
-    background-image: linear-gradient(#3a3a3afc, #243b5500) !impo
+    background-image: linear-gradient(#243B55, #243b5500) !important;
 }
-
 .dnd5e.sheet.actor ul.skills-list {
     flex: 0 0 192px;
     list-style: none;
@@ -613,9 +402,8 @@ margin-left: 10px;
     border: 2px #424856;
     border-radius: 3px;
 }
-
 .dnd5e.sheet.actor ul.skills-list {
-    background-image: linear-gradient(#243b5500, #3a3a3afc) !important;
+    background-image: linear-gradient(#243b5500, #243B55) !important;
 }
 .dnd5e.actor .inventory-list .item .item-quality, .dnd5e.actor .inventory-list .item .item-weight {
     font-size: 12px;
@@ -683,7 +471,6 @@ input[type=number]::-webkit-outer-spin-button {
 .hitdice  select{
     background: #233953;
 }
-
 select.foodstuffed, option[value="foodstuffed"] { background: #6be585 !important; }
 select.foodwellfed, option[value="foodwellfed"] { background: #7ACE7E !important; }
 select.foodok, option[value="foodok"] { background: #7ACE7E !important; }
@@ -763,15 +550,6 @@ margin-top: 6px;
 }
 select.hitdice {
     background: #233a54 !important;
-}
-select.hitdice.green {
-    background: #3f1c1a !important;
-}
-select.hitdice.red {
-    background: #3f1a1a !important;
-}
-select.hitdice.black {
-    background: black !important;
 }
 .settingsoption{
 	margin-left: 10px;
@@ -1172,42 +950,7 @@ li.macro.active {
     border-top-style: dotted;
 	padding: 10px;
 }
-.watercheckbox.green > input {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    -o-appearance: none;
-    appearance: none;
-    outline: none;
-    transition-duration: 0.2s;
-    border-style: solid;
-    border-width: 1px;
-    cursor: pointer;
-    width: 20px;
-    height: 20px;
-    border-color: #00b6ffc2;
-    border-bottom-style: dotted;
-    border-top-style: dotted;
-    padding: 10px;
-	background:#1a4921;
-}
-.watercheckbox.red > input {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    -o-appearance: none;
-    appearance: none;
-    outline: none;
-    transition-duration: 0.2s;
-    border-style: solid;
-    border-width: 1px;
-    cursor: pointer;
-    width: 20px;
-    height: 20px;
-    border-color: #00b6ffc2;
-    border-bottom-style: dotted;
-    border-top-style: dotted;
-    padding: 10px;
-	background:#491a1a;
-}
+
 .watercheckbox > input:checked {
     border: 1px solid #4182b8;
     background-color: #41465c;
@@ -1278,70 +1021,6 @@ li.macro.active {
 
 
 
-
-
-
-
-.stresscheckbox {
-    display: inline-flex;
-    cursor: pointer;
-    position: relative;
-	width: 20px;
-	height: 20px;
-}
-
-.stresscheckbox > span {
-    color: #345e3d;
-}
-
-.stresscheckbox > input {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    -o-appearance: none;
-    appearance: none;
-    outline: none;
-    transition-duration: 0.2s;
-    background-color: #ffffff00;
-    border-style: solid;
-    border-width: 1px;
-    cursor: pointer;
-    width: 10px;
-    height: 10px;
-    border-color: #ffffff;
-    border-bottom-style: dotted;
-    border-top-style: dotted;
-    transform: scale(0.6);
-    padding: 10px;
-}
-
-.stresscheckbox > input:checked {
-    border: 1px solid #f3afaf;
-    background-color: maroon;
-    padding: 10px;
-}
-
-.stresscheckbox > input:checked + span::before {
-    content: '\1f525';
-    display: block;
-    color: #000000;
-    position: absolute;
-    margin-top: -5px;
-    margin-left: -28px;
-    padding-bottom: 5px;
-    color: white;
-    padding: 10px;
-}
-label.afflictiontext {
-    margin-top: 7px;
-    margin-left: 3px;
-}
-select.hitdice.afflictionselection{
-    color: #f3afaf !important;
-    margin-left: 5px;
-    margin-top: 4px;
-    height: 20px;
-    align-items: flex-end;
-}
 .trainingscheckbox {
     display: inline-flex;
     cursor: pointer;
@@ -1424,44 +1103,10 @@ p {
 .biography{
     color: gray;
 }
-body#tinymce {
-    color: white !important;
-}
-.dnd5e.chat-card .card-buttons button:hover {
-    color: #000000;
-    background: white;
-}
-.dialog .dialog-buttons button:hover {
-    color: black !important;
-    background: white;
-}
-li.menu-reload:hover {
-    background: white;
-    color: black;
-}
-li.menu-reload {
-    background: black;
-}
-li.menu-player:hover {
-    background: white;
-    color: black;
-}
-li.menu-player {
-    background: black;
-}
-li.menu-players {
-    background: black;
-}
-li.menu-players:hover {
-    background: white;
-    color: black;
-}
-li.menu-world {
-    background: black;
-}
-li.menu-world:hover {
-    background: white;
-    color: black;
+.mce-content-body {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    color: white;
 }
 /*PROFICIENCY GREEN*/
 .dnd5e.sheet.actor .proficient .proficiency-toggle {
@@ -1558,50 +1203,13 @@ display: inline
   padding-top:0px;
 }
 .part1{
-    background-image: linear-gradient(#553d2400, #1679164d) !important;
-}
-.part1.red {
-    background-image: linear-gradient(#553d2400, #25c5254d) !important;
-}
-.part1.black {
-	background-image: linear-gradient(#553d2400, #34d8344d) !important;
-	border-style: solid;
-    border-width: 1px;
+    background-image: linear-gradient(#243B55, #1679164d) !important;
 }
 .part2{
-    background-image: linear-gradient(#553d2400, #0000ff47) !important;
-}
-.part2.green{
-	background-image: linear-gradient(#553d2400, #00c8ff42) !important;
-}
-.part2.red{
-	background-image: linear-gradient(#553d2400, #00c8ff42) !important;
-}
-.part2.black{
-	border-style: solid;
-    border-width: 1px;
+    background-image: linear-gradient(#243B55, #0000ff47) !important;
 }
 .part3{
-	background-image: linear-gradient(#553d2400, #b374006e) !important;
-}
-.part3.black{
-	border-style: solid;
-    border-width: 1px;#ffd3826e) !important;
-}
-
-.part4{
-	background-image: linear-gradient(#553d2400, #fdfdfd4d) !important;
-	width: 193px;
-    margin-left: 10px;
-    padding: 15px;
-}
-.part4.black{
-	background-image: linear-gradient(#553d2400, #fdfdfd4d) !important;
-	width: 193px;
-    margin-left: 10px;
-    padding: 15px;
-	border-style: solid;
-    border-width: 1px;
+	background-image: linear-gradient(#243B55, #b374006e) !important;
 }
 .burnoutandexhaustion{
 text-align:center;
@@ -1623,8 +1231,8 @@ margin-top:15px;
     text-align: center;
     justify-content: space-evenly;
 }
-.section2 {
-    margin: 10px 30px 0px 24px;
+.section2{
+    margin: 15px 13px 0px 13px;
     height: 120px;
     background-color: #77777780;
     padding: 20px;
@@ -1643,52 +1251,14 @@ margin-top:15px;
 	padding-top: 0;
 }
 .checks {
-    background: #653b60;
+	background: #653b60;
     background-image: linear-gradient(#243B55, #653b6012) !important;
-    padding-bottom: 10px;
+    padding: 10px;
     padding-top: 0px;
-    margin: 0px 13px 0px 28px;
-    width: 650px;
-}
-.checks.green {
-    background: #1d4124;
-    background-image: linear-gradient(#10131000 , #516955) !important;
-    padding-bottom: 10px;
-    padding-top: 0px;
-    margin: 0px 13px 0px 28px;
-    width: 650px;
-}
-.checks.red {
-    background: #1d4124;
-    background-image: linear-gradient(#131010 , #695151) !important;
-    padding-bottom: 10px;
-    padding-top: 0px;
-    margin: 0px 13px 0px 28px;
-    width: 650px;
-}
-.checks.black {
-    background-image: linear-gradient(#4a4a4a , #000000) !important;
-    padding-bottom: 10px;
-    padding-top: 0px;
-    margin: 0px 13px 0px 28px;
-    width: 650px;
-    border-style: solid;
-    border-width: 1px;
+    margin: 15px 13px 0px 13px;
 }
 .check {
     background: #73436d;
-    padding: 2px 4px 2px 4px;
-}
-.check.green {
-    background: #447343;
-    padding: 2px 4px 2px 4px;
-}
-.check.red {
-    background: #734343;
-    padding: 2px 4px 2px 4px;
-}
-.check.black {
-	background: black;
     padding: 2px 4px 2px 4px;
 }
 .inventoryslots{
@@ -1696,14 +1266,7 @@ margin-top:15px;
     height: 20px;
     border: 1px solid #fff;
 }
-.breaks{
-	text-align-last: left;
-    border-width: 1px;
-    border-style: solid;
-    border-top: 0;
-    border-bottom: 0;
-    border-right: 0;
-}
+
 .dice-calculator > button, .dice-calculator .dice-calculator--button {
 	color: white;
 }
