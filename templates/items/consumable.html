@@ -38,7 +38,7 @@
     <section class="sheet-body">
 
         {{!-- Description Tab --}}
-        {{> "systems/dnd5e/templates/items/parts/item-description.html"}}
+        {{> "modules/darksheet/templates/items/parts/item-description.html"}}
 
         {{!-- Details Tab --}}
         <div class="tab details" data-group="primary" data-tab="details">
@@ -59,7 +59,7 @@
             <h3 class="form-header">Consumable Usage</h3>
 
             {{!-- Item Activation Template --}}
-			{{> "modules/darksheet/templates/items/parts/item-description.html"}}
+            {{> "systems/dnd5e/templates/items/parts/item-activation.html"}}
 
             {{!-- Consumable Usage --}}
             {{#if data.activation.type}}

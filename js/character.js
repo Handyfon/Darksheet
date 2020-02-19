@@ -1,6 +1,4 @@
-import { ActorSheet5e } from "./base.js";
-
-
+gimport { ActorSheet5e } from "./base.js";
 /**
  * An Actor sheet for player character type actors in the D&D5E system.
  * Extends the base ActorSheet5e class.
@@ -41,7 +39,6 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
   getData() {
     const sheetData = super.getData();
 
-	
     // Temporary HP
     let hp = sheetData.data.attributes.hp;
     if (hp.temp === 0) delete hp.temp;
@@ -59,7 +56,6 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
 
     // Experience Tracking
     sheetData["disableExperience"] = game.settings.get("dnd5e", "disableExperienceTracking");
-	
 	sheetData["slotSetting"] = game.settings.get("darksheet", "slotbasedinventory");
 
     // Return data for rendering
@@ -286,3 +282,4 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
     return this.actor.update({"data.currency": curr});
   }
 }
+

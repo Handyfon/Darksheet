@@ -92,6 +92,8 @@ export class DarkItemSheet5e extends ItemSheet {
 
   /* -------------------------------------------- */
 
+  /* -------------------------------------------- */
+  
   /**
    * Prepare item sheet data
    * Start with the base item data and extending with additional properties for rendering.
@@ -316,7 +318,38 @@ export class DarkSheet extends ActorSheet5eCharacter {
 		}
 	});
 
-	
+/*LOOK FOR Stresscheckbox*/
+	html.find('.stressroll').click(event => {
+      event.preventDefault();
+	  
+			// Rolling table, from best to worst
+			let table = game.tables.entities.find(t => t.data.name === "Afflictions"); table.draw();
+			const result = table.roll()
+			
+			let content = `
+				<div class="dnd5e chat-card item-card" data-acor-id="${this.actor._id}">
+					<header class="card-header flexrow">
+						<img src="${this.actor.data.token.img}" title="" width="36" height="36" style="border: none;"/>
+						<h3 style=" color: #fff;">Affliction</h3>
+					<h3>${roll.result}</h3>
+					</header>
+				</div>`;
+			// Send content to chat
+			let rollWhisper = null;
+			let rollBlind = false;			
+			let	rollMode = game.settings.get("core", "rollMode");
+			if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperIDs("GM");
+			if (rollMode === "blindroll") rollBlind = true;
+			ChatMessage.create({
+				user: game.user._id,
+				content: content,
+				speaker: { actor: this.actor._id, token: this.actor.token, alias: this.actor.name },
+				whisper: ChatMessage.getWhisperIDs("GM"),
+				sound: CONFIG.sounds.dice,
+				flags: {darksheet: {outcome: 'bad'}}
+			});
+
+    });	
 	
 	
 	
@@ -363,7 +396,6 @@ export class DarkSheet extends ActorSheet5eCharacter {
 					content: content2,
 					speaker: { actor: this.actor._id, token: this.actor.token, alias: this.actor.name },
 					whisper: ChatMessage.getWhisperIDs("GM"),
-					blind: rollBlind,
 					sound: CONFIG.sounds.dice,
 					flags: {darksheet: {outcome: 'bad'}}
 				});
@@ -382,9 +414,81 @@ export class DarkSheet extends ActorSheet5eCharacter {
 				content: content,
 				speaker: { actor: this.actor._id, token: this.actor.token, alias: this.actor.name },
 				whisper: ChatMessage.getWhisperIDs("GM"),
-				blind: rollBlind,
 				sound: CONFIG.sounds.dice
 			});
+			}
+    });	
+	
+	html.find('.staminacheck').click(event => {
+      event.preventDefault();
+	  
+			// Rolling table, from best to worst
+			let roll = new Roll(`1d6`).roll();
+			let content= `
+				<div class="dnd5e chat-card item-card" data-acor-id="${this.actor._id}">
+					<header class="card-header flexrow">
+						<img src="${this.actor.data.token.img}" title="" width="36" height="36" style="border: none;"/>
+						<h3 style=" color: Orange; margin-top: 7px;">Stamina Check</h3>
+					<h3 style= "color: #fff; margin-top: 7px;"> +1 Hunger</h3>
+					</header>
+				</div>`;
+			let content2 = `
+				<div class="dnd5e chat-card item-card" data-acor-id="${this.actor._id}">
+					<header class="card-header flexrow">
+						<img src="${this.actor.data.token.img}" title="" width="36" height="36" style="border: none;"/>
+						<h3 style=" color: Orange; margin-top: 7px;">Stamina Check</h3>
+					<h3 style= "color: #fff; margin-top: 7px;">+1 Thirst</h3>
+					</header>
+				</div>`;
+			let content3 = `
+				<div class="dnd5e chat-card item-card" data-acor-id="${this.actor._id}">
+					<header class="card-header flexrow">
+						<img src="${this.actor.data.token.img}" title="" width="36" height="36" style="border: none;"/>
+						<h3 style=" color: Orange; margin-top: 7px;">Stamina Check</h3>
+					<h3 style= "color: #fff; margin-top: 7px;">+1 Fatigue</h3>
+					</header>
+				</div>`;
+			// Send content to chat
+			let rollWhisper = false;
+			let rollBlind = false;			
+			let	rollMode = game.settings.get("core", "rollMode");
+			if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperIDs("GM");
+			if (rollMode === "blindroll") rollBlind = false;
+			if(roll.result <= 2)
+			{
+				ChatMessage.create({
+					user: game.user._id,
+					content: content,
+					speaker: { actor: this.actor._id, token: this.actor.token, alias: this.actor.name },
+					whisper: ChatMessage.getWhisperIDs("GM"),
+					blind: rollBlind,
+					sound: CONFIG.sounds.dice,
+					flags: {darksheet: {outcome: 'bad'}}
+				});
+			}
+			else if(roll.result <= 4)
+			{
+				ChatMessage.create({
+					user: game.user._id,
+					content: content2,
+					speaker: { actor: this.actor._id, token: this.actor.token, alias: this.actor.name },
+					whisper: ChatMessage.getWhisperIDs("GM"),
+					blind: rollBlind,
+					sound: CONFIG.sounds.dice,
+					flags: {darksheet: {outcome: 'bad'}}
+				});
+			}
+			else
+			{
+				ChatMessage.create({
+					user: game.user._id,
+					content: content3,
+					speaker: { actor: this.actor._id, token: this.actor.token, alias: this.actor.name },
+					whisper: ChatMessage.getWhisperIDs("GM"),
+					blind: rollBlind,
+					sound: CONFIG.sounds.dice,
+					flags: {darksheet: {outcome: 'bad'}}
+				});
 			}
     });	
 	
@@ -903,7 +1007,7 @@ let content2 = `
         </div>
     </header>
 	</br>
-	<h4 class="rollable woundroll" style="text-align: center;">You need to <b>roll</br> for ${wounds} wound(s)</h4>
+	<h4 class="woundroll" style="text-align: center;">You need to <b>roll</br> for ${wounds} wound(s)</h4>
 	<h4 style="text-align: center;">One of your items gains a notch<h4>
 </div>`;
 let content3 = `
@@ -957,7 +1061,7 @@ let content3 = `
         </div>
     </header>
 	</br>
-	<h4 class="rollable woundroll" style="text-align: center;">You need to <b>roll</br> for ${wounds} wound(s)</h4>
+	<h4 class="woundroll" style="text-align: center;">You need to <b>roll</br> for ${wounds} wound(s)</h4>
 	<h4 style="text-align: center;">One of your items gains a notch<h4>
 </div>`;	
             // Send content to chat
@@ -965,9 +1069,9 @@ let content3 = `
             let rollBlind = false;
             let rollMode = game.settings.get("core", "rollMode");
             if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperIDs("GM");
-            if (rollMode === "blindroll") rollBlind = true;
+            if (rollMode === "blindroll") rollBlind = false;
 			// If Epic fail
-			if(roll1 == 1)
+			if(roll1 === 1)
 			{
 			ChatMessage.create({
                 user: game.user._id,
@@ -983,7 +1087,7 @@ let content3 = `
 				flags: {darksheet: {outcome: 'bad'}}
             });
 			}
-			else if(roll2 == 1){
+			else if(roll2 === 1){
 			ChatMessage.create({
                 user: game.user._id,
                 content: content3,

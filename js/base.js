@@ -24,9 +24,21 @@ export class ActorSheet5e extends ActorSheet {
 
   /* -------------------------------------------- */
 
-  /**
-   * Add some extra data when rendering the sheet to reduce the amount of logic required within the template.
-   */
+  /** @override */
+  static get defaultOptions() {
+    return mergeObject(super.defaultOptions, {
+      scrollY: [
+        ".inventory .inventory-list",
+        ".features .inventory-list",
+        ".spellbook .inventory-list"
+      ]
+    });
+  }
+
+
+  /* -------------------------------------------- */
+
+  /** @override */
   getData() {
 
     // Basic data
@@ -38,6 +50,7 @@ export class ActorSheet5e extends ActorSheet {
       editable: this.isEditable,
       cssClass: isOwner ? "editable" : "locked",
       isCharacter: this.entity.data.type === "character",
+      isNPC: this.entity.data.type === "npc",
       config: CONFIG.DND5E,
     };
 
@@ -233,7 +246,6 @@ export class ActorSheet5e extends ActorSheet {
    * @param html {HTML}   The prepared HTML object ready to be rendered into the DOM
    */
   activateListeners(html) {
-    super.activateListeners(html);
 
     // Activate tabs
     new Tabs(html.find(".tabs"), {
@@ -253,6 +265,9 @@ export class ActorSheet5e extends ActorSheet {
 
     // Everything below here is only needed if the sheet is editable
     if (!this.options.editable) return;
+
+    // Relative updates for numeric fields
+    html.find('input[data-dtype="Number"]').change(this._onChangeInputDelta.bind(this));
 
     /* -------------------------------------------- */
     /*  Abilities, Skills, and Traits
@@ -299,16 +314,12 @@ export class ActorSheet5e extends ActorSheet {
     // Item Rolling
     html.find('.item .item-image').click(event => this._onItemRoll(event));
     html.find('.item .item-recharge').click(event => this._onItemRecharge(event));
+
+    // Handle default listeners last so system listeners are triggered first
+    super.activateListeners(html);
   }
 
   /* -------------------------------------------- */
-
-  /**
-   * @private
-   */
-  _findActiveList () {
-    return this.element.find('.tab.active .inventory-list');
-  }
 
   /**
    * Iinitialize Item list filters by activating the set of filters which are currently applied
@@ -324,6 +335,24 @@ export class ActorSheet5e extends ActorSheet {
 
   /* -------------------------------------------- */
   /*  Event Listeners and Handlers                */
+  /* -------------------------------------------- */
+
+  /**
+   * Handle input changes to numeric form fields, allowing them to accept delta-typed inputs
+   * @param event
+   * @private
+   */
+  _onChangeInputDelta(event) {
+    const input = event.target;
+    const value = input.value;
+    if ( ["+", "-"].includes(value[0]) ) {
+      let delta = parseFloat(value);
+      input.value = getProperty(this.actor.data, input.name) + delta;
+    } else if ( value[0] === "=" ) {
+      input.value = value.slice(1);
+    }
+  }
+
   /* -------------------------------------------- */
 
   /**
@@ -558,40 +587,5 @@ export class ActorSheet5e extends ActorSheet {
       choices: CONFIG.DND5E[a.dataset.options]
     };
     new ActorTraitSelector(this.actor, options).render(true)
-  }
-
-  /* -------------------------------------------- */
-
-  /** @extends {ActorSheet._render} */
-  async _render (force = false, options = {}) {
-    this._saveScrollPositions();
-    await super._render(force, options);
-    this._restoreScrollPositions();
-  }
-
-  /* -------------------------------------------- */
-
-  /**
-   * Reset item list scroll positions after re-rendering the sheet
-   * @private
-   */
-  _restoreScrollPositions () {
-    const activeList = this._findActiveList();
-    if (activeList.length && this._scroll != null) {
-      activeList.prop('scrollTop', this._scroll);
-    }
-  }
-
-  /* -------------------------------------------- */
-
-  /**
-   * Record item list scroll positions before re-rendering the sheet
-   * @private
-   */
-  _saveScrollPositions () {
-    const activeList = this._findActiveList();
-    if (activeList.length) {
-      this._scroll = activeList.prop('scrollTop');
-    }
   }
 }

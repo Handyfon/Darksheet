@@ -10,15 +10,22 @@
 	"packs": [
 		{
 			"name": "darkerdungeons",
-			"label": "RollTable",
+			"label": "Darkrolltables",
 			"system": "dnd5e",
 			"path": "./packs/darkerdungeons.db",
 			"entity": "RollTable"
+		},
+		{
+			"name": "darkitems",
+			"label": "Darkitems",
+			"system": "dnd5e",
+			"path": "./packs/darkitems.db",
+			"entity": "Item"
 		}
 	],
 	 "socket": true,
-    "url": "https://github.com/Handyfon/Darksheet/tree/master",
+    "url": "https://github.com/Handyfon/FDarksheet/tree/master",
     "manifest": "https://raw.githubusercontent.com/Handyfon/Darksheet/master/module.json",
     "download": "https://github.com/Handyfon/Darksheet/raw/master/darksheet.zip",
-	"minimumCoreVersion": "0.4.5"
+	"minimumCoreVersion": "0.4.7"
 }
