@@ -15,7 +15,7 @@ Custom Character Sheet:
 
 Featuring:<br/>
 Custom CSS<br/>
--Let players select their colour scheme for their own characters
+-Let players select their colour scheme for their own characters<br/>
 -Training<br/>
 -Spent trainings points<br/>
 -Death Saves Checkboxes<br/>
@@ -50,4 +50,4 @@ Easily roll for deathsaves or wounds.
 -Buttons for: Critical Success, Critical Failure, Success at a Cost, Treat Wound and Heal Wound.<br/>
 -Settings for Hitdice and Inventory Slots<br/>(Automatic calcultion of Inventory Slots)<br/>
 -Automatic Exhaustion Calculation (WOP)<br/>
--Track Stress & Afflictions 
+-Track Stress & Afflictions <br/>
