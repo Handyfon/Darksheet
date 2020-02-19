@@ -42,7 +42,7 @@ Easily roll for deathsaves or wounds.
 
 ![Alt text](https://i.imgur.com/HB4CPIu.png?raw=true "Including Customizable Rollable Tables")
 
-![Alt text](https://i.imgur.com/yNFCVMQ.png?raw=true "Track Resources")
+![Alt text](https://i.imgur.com/aIvl5Yz.png?raw=true "Track Resources")
 
 -Keep track of your food and water<br/>
 -Clickable Spell Burnoutdice with automatic consequence<br/>
