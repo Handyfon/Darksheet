@@ -10,6 +10,10 @@ and drag the rollable tables out of the compendium.<br/><b>
  -Character sheet even more customizable<br/>
  -Automatic Calculation of Exhaustion based on dropdowns.<br/>
  
+ Known Issues:
+ -Items lose slots after any drag and drop
+ 
+ 
 Custom Character Sheet:
 ![Alt text](https://i.imgur.com/yMiq1Uf.png?raw=true "Custom Character Sheet")
 
