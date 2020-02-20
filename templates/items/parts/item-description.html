@@ -13,8 +13,8 @@
         </div>
         <div class="form-group">
             <label>Slots</label>
-			<select class="hitdice" name="data.flags.darksheet.item.slots" placeholder="1" data-type="Number" style="color: white !important;">
-				{{#select data.flags.darksheet.item.slots}}
+			<select name="flags.darksheet.item.slots" placeholder="1" data-dtype="Number" style="color: white !important;">
+				{{#select item.flags.darksheet.item.slots}}
 				<option value=""></option>
 				<option value="0.2">Tiny, 0.2</option>
 				<option value="1">Small, 1</option>
@@ -32,12 +32,12 @@
         </div>
         <div class="form-group">
             <label>Notches</label>
-            <input type="text" name="data.flags.darksheet.item.data.notches" value="{{data.flags.darksheet.item.data.notches}}" placeholder="0" data-dtype="Number"/>
+            <input type="text" name="flags.darksheet.item.notches" value="{{item.flags.darksheet.item.notches}}" placeholder="0" data-dtype="Number"/>
         </div>
 		<div class="form-group">
             <label>Quality</label>
-            <select class="hitdice" name="data.quality" data-dtype="String">
-				{{#select data.flags.darksheet.item.quality}}
+            <select class="hitdice" name="flags.darksheet.item.quality" data-dtype="String">
+				{{#select item.flags.darksheet.item.quality}}
 				<option value="pristine">Pristine 75%</option>
 				<option value="worn">Worn 50%</option>
 				<option value="well-worn">Well-Worn 25%</option>
@@ -47,8 +47,8 @@
         </div>
 		<div class="form-group">
             <label class="rollable ammodice">Ammodie</label>
-			<select class="hitdice" name="data.ammodie" placeholder="d12" data-dtype="String">
-				{{#select data.flags.darksheet.item.ammodie}}
+			<select class="hitdice" name="flags.darksheet.item.ammodie" placeholder="d12" data-dtype="String">
+				{{#select item.flags.darksheet.item.ammodie}}
 				<option value=""></option>
 				<option value="d12">d12</option>
 				<option value="d10">d10</option>

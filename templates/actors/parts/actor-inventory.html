@@ -64,13 +64,13 @@
 			{{#if ../../isCharacter}}
 			<div class="item-detail item-weight">
                 <div class="item-detail">
-                    <label id ="rollableammodice" class="rollable ammodice">{{ data.ammodie}}</label>
+                    <label id ="rollableammodice" class="rollable ammodice">{{flags.darksheet.item.ammodie}}</label>
                 </div>
             </div>
             <div class="item-detail item-weight">
-                {{#if data.notches}}
+                {{#if flags.darksheet.item.notches}}
                 <div class="item-detail">
-                    {{ data.notches}}
+                    {{ flags.darksheet.item.notches}}
                 </div>
                 {{/if}}
             </div>
@@ -82,9 +82,9 @@
             {{/if}}
 			
 			<div class="item-detail item-weight">
-                {{#if data.flags.darksheet.item.slots}}
+                {{#if flags.darksheet.item.slots}}
                 <div class="item-detail">
-                    {{ data.flags.darksheet.item.slots}} Slots
+                    {{ flags.darksheet.item.slots}} Slots
                 </div>
 				{{else}}
                 <div class="item-detail">
