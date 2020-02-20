@@ -20,24 +20,6 @@ Hooks.once('init', function() {
       type: Boolean,
     });
 });
-
-//	Hooks.on('renderItemSheet5e', (sheet, html) => {
-//		html.find('.item-properties').remove();
-//		html.find('.editor').remove();
-
-	////	const template = Handlebars.compile(`<div class="tab flexrow active" data-group="primary" data-tab="description">    <div class="item-properties">        {{#if isPhysical}}        <div class="form-group">            <label>Quantity</label>            <input type="text" name="data.quantity" value="{{data.quantity}}" data-dtype="Number"/>        </div>        <div class="form-group">            <label>Weight</label>            <input type="text" name="data.weight" value="{{data.weight}}" placeholder="0" data-dtype="Number"/>        </div>        <div class="form-group">            <label>Slots</label>            <input type="text" name="data.slots" value="{{data.slots}}" placeholder="1" data-dtype="Number"/>        </div>        <div class="form-group">            <label>Price</label>            <input type="text" name="data.price" value="{{data.price}}" data-dtype="Number"/>        </div>        <div class="form-group">            <label>Notches</label>            <input type="text" name="data.notches" value="{{data.notches}}" data-dtype="Number"/>        </div>		<div class="form-group">            <label>Quality</label>            <select class="saturationbox" name="data.quality" data-dtype="String">				{{#select data.quality}}				<option value="pristine">Pristine 75%</option>				<option value="worn">Worn 50%</option>				<option value="well-worn">Well-Worn 25%</option>				<option value="scarred">Scarred 10%</option>				{{/select}}			</select>        </div>		<div class="form-group">            <label class="rollable ammodice">Ammodie</label>			<select name="data.ammodie" data-dtype="String">				{{#select data.ammodie}}				<option value=""></option>				<option value="d12">d12</option>				<option value="d10">d10</option>				<option value="d8">d8</option>				<option value="d6">d6</option>				<option value="d4">d4</option>				<option value="d2">d2</option>				<option value="1">1</option>				{{/select}}			</select>		</div>        {{/if}}        <ol class="properties-list">            {{#each itemProperties}}            <li>{{this}}</li>            {{/each}}        </ol>    </div>    {{editor content=data.description.value target="data.description.value" button=true owner=owner editable=editable}}</div>`);
-	////	const generated = template(/*your data here as a javascript object*/);
-//	const data = {message: 'Hello, world!<div></div>'};
-//	const template = Handlebars.compile(`<p class="msg">{{message}}</p>`);
-//	const generated = template(data);
-//		html.find('.tab.flexrow.active')
-//			.append($(generated));
-	//		.append($('<div class="tab flexrow active" data-group="primary" data-tab="description">    <div class="item-properties">        {{#if isPhysical}}        <div class="form-group">            <label>Quantity</label>            <input type="text" name="data.quantity" value="{{data.quantity}}" data-dtype="Number"/>        </div>        <div class="form-group">            <label>Weight</label>            <input type="text" name="data.weight" value="{{data.weight}}" placeholder="0" data-dtype="Number"/>        </div>        <div class="form-group">            <label>Slots</label>            <input type="text" name="data.slots" value="{{data.slots}}" placeholder="1" data-dtype="Number"/>        </div>        <div class="form-group">            <label>Price</label>            <input type="text" name="data.price" value="{{data.price}}" data-dtype="Number"/>        </div>        <div class="form-group">            <label>Notches</label>            <input type="text" name="data.notches" value="{{data.notches}}" data-dtype="Number"/>        </div>		<div class="form-group">            <label>Quality</label>            <select class="saturationbox" name="data.quality" data-dtype="String">				{{#select data.quality}}				<option value="pristine">Pristine 75%</option>				<option value="worn">Worn 50%</option>				<option value="well-worn">Well-Worn 25%</option>				<option value="scarred">Scarred 10%</option>				{{/select}}			</select>        </div>		<div class="form-group">            <label class="rollable ammodice">Ammodie</label>			<select name="data.ammodie" data-dtype="String">				{{#select data.ammodie}}				<option value=""></option>				<option value="d12">d12</option>				<option value="d10">d10</option>				<option value="d8">d8</option>				<option value="d6">d6</option>				<option value="d4">d4</option>				<option value="d2">d2</option>				<option value="1">1</option>				{{/select}}			</select>		</div>        {{/if}}        <ol class="properties-list">            {{#each itemProperties}}            <li>{{this}}</li>            {{/each}}        </ol>    </div>    {{editor content=data.description.value target="data.description.value" button=true owner=owner editable=editable}}</div>'));
-			
-//	});
-
-
-
 export const _getInitiativeFormula = function(combatant) {
   const actor = combatant.actor;
   if ( !actor ) return "1d20";
@@ -351,8 +333,6 @@ export class DarkSheet extends ActorSheet5eCharacter {
 
     });	
 	
-	
-	
 	/*LOOK FOR BURNOUTDIE*/
 	html.find('.burnoutdie').click(event => {
       event.preventDefault();
@@ -405,6 +385,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 				{
 					this.actor.data.data.attributes.burnout.value = rollings[new_burnoutdie];
 				}
+				this.render();
 
 			}
 			else
@@ -416,8 +397,65 @@ export class DarkSheet extends ActorSheet5eCharacter {
 				whisper: ChatMessage.getWhisperIDs("GM"),
 				sound: CONFIG.sounds.dice
 			});
-			}
+			} 
     });	
+	html.find('.foodcheckbox').change(event => {
+	console.log("(DarkSheet): Food Value Changed");
+
+	});	
+	//AUTOMATIC EXHAUSTION CALCULATION
+	html.find('.exhaustioncalc').click(event => {
+      event.preventDefault();
+		  let newexhaustion = 0;
+		  let temp = this.actor.data.data.attributes.temp;
+		  let food = this.actor.data.data.attributes.saturation.value;
+		  let water = this.actor.data.data.attributes.thirst.value;
+		  let fatigue = this.actor.data.data.attributes.fatigue.value;
+		  let manualexhaustion = this.actor.data.data.attributes.exhaustionpoints.value;
+		  //Temperature Exhaustion
+		  if(temp === "exenegised"){
+		  newexhaustion += -1;
+		  }
+		  else if(temp === "exvsleepy" || temp === "exbarely"){
+		  newexhaustion += 1;
+		  }
+		  //Food Exhaustion
+		  if(food === "foodstuffed"){
+		  newexhaustion += -1;
+		  }
+		  else if(food === "foodravenous" || food === "foodstarving"){
+		  newexhaustion += 1;
+		  }
+		  //Water Exhaustion
+		  if(water === "wquenched"){
+		  newexhaustion += -1;
+		  }
+		  else if(water === "wdry" || water === "wdehydrated"){
+		  newexhaustion += 1;
+		  }
+		  //Fatigue Exhaustion
+		  if(fatigue === "exenegised"){
+		  newexhaustion += -1;
+		  }
+		  else if(fatigue === "exvsleepy" || fatigue === "exbarely"){
+		  newexhaustion += 1;
+		  }
+		  //exhaustion over 3?
+		  if(newexhaustion >= 4){
+		  console.log("(DarkSheet): Maximum exhaustion achieved through needs. Total exhaustion from fron needs cannot exceed 3");
+		  newexhaustion = 3;
+		  }
+		  //adding manual exhaustion
+		  newexhaustion = (newexhaustion * 1 + manualexhaustion * 1);
+		  //exhaustion <0?
+		  if(newexhaustion <= 0){
+		  newexhaustion = 0;
+		  }
+		  this.actor.data.data.attributes.exhaustioncalc = newexhaustion;
+		  console.log("(DarkSheet): New Exhaustion: "+this.actor.data.data.attributes.exhaustioncalc);
+		  this.render();
+    });	
+
 	
 	html.find('.staminacheck').click(event => {
       event.preventDefault();

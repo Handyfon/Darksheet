@@ -205,21 +205,12 @@
                                 <input class="ressourcecheckbox" type="checkbox" type="Boolean" name="data.attributes.deathsave3.value" title="@{deathsave_fail3}" data-dtype="Boolean" {{checked data.attributes.deathsave3.value}}/><span></span></label>
                         </div>
                     </div>
-					{{#if data.attributes.exhaustioncalc}}
-								<div class="counter flexrow">
-									<h4 class="exhaustionstatus rollable" style="margin-right: -2px;">Automatic Exhaustion</h4>
-									<div class="status-value">
-										<input type="text" min="0" max="6" class="exhaustionpoints" name="data.attributes.exhaustioncalc.result" value="{{data.attributes.exhaustioncalc.result}}" disabled  style="background: #65656500;border-style: solid; border-bottom: inset; border-color: #fdffa7;color: white !important;"/>
-									</div>
-								</div>
-					{{else}}
                     <div class="counter flexrow">
                         <h4 class="exhaustionstatus rollable">Exhaustion</h4>
                         <div class="status-value">
                             <input type="number" min="0" max="6" class="exhaustionpoints" name="data.attributes.exhaustionpoints.value" value="{{data.attributes.exhaustionpoints.value}}" />
                         </div>
                     </div>
-					{{/if}}
                     <div class="counter flexrow">
                         <h4>Fate Points</h4>
                         <div class="status-value">
@@ -278,17 +269,17 @@
     <h4 class="darksheetheader">Food</h4>
     <div class="status-value">
         <label class="foodcheckbox">
-            <input class="ressourcecheckbox foodcheckbox" type="checkbox" name="data.attributes.food.value" title="@{food}" data-dtype="Boolean" {{checked data.attributes.food.value}}/><span></span></label>
+            <input class="ressourcecheckbox foodcheckbox" type="checkbox" name="data.attributes.food.value" data-dtype="Boolean" {{checked data.attributes.food.value}}/><span></span></label>
         <label class="foodcheckbox">
-            <input class="ressourcecheckbox" type="checkbox" name="data.attributes.food2.value" title="@{food2}" data-dtype="Boolean" {{checked data.attributes.food2.value}}/><span></span></label>
+            <input class="ressourcecheckbox" type="checkbox" name="data.attributes.food2.value" data-dtype="Boolean" {{checked data.attributes.food2.value}}/><span></span></label>
         <label class="foodcheckbox">
-            <input class="ressourcecheckbox" type="checkbox" name="data.attributes.food3.value" title="@{food3}" data-dtype="Boolean" {{checked data.attributes.food3.value}}/><span></span></label>
+            <input class="ressourcecheckbox" type="checkbox" name="data.attributes.food3.value" data-dtype="Boolean" {{checked data.attributes.food3.value}}/><span></span></label>
         <label class="foodcheckbox">
-            <input class="ressourcecheckbox" type="checkbox" name="data.attributes.food4.value" title="@{food4}" data-dtype="Boolean" {{checked data.attributes.food4.value}}/><span></span></label>
+            <input class="ressourcecheckbox" type="checkbox" name="data.attributes.food4.value" data-dtype="Boolean" {{checked data.attributes.food4.value}}/><span></span></label>
         <label class="foodcheckbox">
-            <input class="ressourcecheckbox" type="checkbox" type="radio" name="data.attributes.food5.value" title="@{food5}" data-dtype="Boolean" {{checked data.attributes.food5.value}}/><span></span></label>
+            <input class="ressourcecheckbox" type="checkbox" type="radio" name="data.attributes.food5.value" data-dtype="Boolean" {{checked data.attributes.food5.value}}/><span></span></label>
     </div>
-    <select class="saturationbox" name="data.attributes.saturation.value" data-type="String" style="color: white !important;">
+    <select class="saturationbox" name="data.attributes.saturation.value" data-type="String" style="color: white !important;" >
         {{#select data.attributes.saturation.value}}
         <option value="foodstuffed">Stuffed -1 exhaustion</option>
         <option value="foodwellfed">Well-fed</option>
@@ -314,7 +305,7 @@
 			<label class="watercheckbox {{data.attributes.color.value}}">
 				<input class="ressourcecheckbox" type="checkbox" type="radio" name="data.attributes.waterskin5.value" title="@{waterskin5}" data-dtype="Boolean" {{checked data.attributes.waterskin5.value}}/><span></span></label>
 		</div>
-		<select class="saturationbox" name="data.attributes.thirst.value" data-type="String" style="color: white !important;">
+		<select class="saturationbox" name="data.attributes.thirst.value" data-type="String" style="color: white !important;" >
 			{{#select data.attributes.thirst.value}}
 			<option value="wquenched">Quenched -1 exhaustion</option>
 			<option value="wrefreshed">Refreshed</option>
@@ -353,7 +344,7 @@
 			<option value="exbarely">Barely awake +1 exhaustion</option>
 			{{/select}}
 		</select>
-			{{#if data.attributes.exhaustioncalc}}
+			<!--{{#if data.attributes.exhaustioncalc}}
             <div class="counter flexrow">
             <h4 style="margin-top: 4px;" class="exhaustionstatus">Manual Exhaustion</h4>
             <div class="status-value">
@@ -363,35 +354,30 @@
 			{{else}}
             <div class="counter flexrow">
             </div>
-			{{/if}}
+			{{/if}}-->
 		<div><label class="dicelabel2 staminacheck rollable">Stamina Check</label></div>
 	</div>
 	</div>
 	<div class="section1 allparts">
 		<div class="part4 {{data.attributes.color.value}}">
-		<h4 class="darksheetheader">Temperature</h4>
-		<select class="exhaustionbox" name="data.attributes.temp" data-type="String" style="color: white !important; width: 163px;">
-			{{#select data.attributes.temp}}
-			<option value="exenegised">Perfect -1 Exhaustion</option>
-			<option value="exwell">Comfortable</option>
-			<option value="exok">Ok</option>
-			<option value="extired">Noticeable</option>
-			<option value="exsleepy">Uncomfortable</option>
-			<option value="exvsleepy">Overwhelming +1 exhaustion</option>
-			<option value="exbarely">Unbearable +1 exhaustion</option>
-			{{/select}}
-		</select>
-			{{#if data.attributes.exhaustioncalc}}
-            <div class="counter flexrow">
-            <h4 style="margin-top: 4px;" class="exhaustionstatus">Manual Exhaustion</h4>
-            <div class="status-value">
-            <input type="number" min="0" max="6" style="height: 25px; margin-top: 6px;width: auto;" class="exhaustionpoints" name="data.attributes.exhaustionpoints.value" value="{{data.attributes.exhaustionpoints.value}}" />
-            </div>
-            </div>
-			{{else}}
-            <div class="counter flexrow">
-            </div>
-			{{/if}}
+			<h4 class="darksheetheader">Temperature</h4>
+			<select class="exhaustionbox" name="data.attributes.temp" data-type="String" style="color: white !important; width: 163px;" >
+				{{#select data.attributes.temp}}
+				<option value="exenegised">Perfect -1 Exhaustion</option>
+				<option value="exwell">Comfortable</option>
+				<option value="exok">Ok</option>
+				<option value="extired">Noticeable</option>
+				<option value="exsleepy">Uncomfortable</option>
+				<option value="exvsleepy">Overwhelming +1 exhaustion</option>
+				<option value="exbarely">Unbearable +1 exhaustion</option>
+				{{/select}}
+			</select>
+			<div style="margin-top: 15px;">
+				<span class="settingsoption exhaustioncalc">
+					<label class="rollable exhaustioncalc">Calculate Exhaustion:</label>
+						<input type="text" disabled class="exhaustionpoints" name="{{data.attributes.exhaustioncalc}}" value="{{data.attributes.exhaustioncalc}}" placeholder="0" style="height: 30px;background: #65656500;border-style: solid; border-bottom: inset; border-color: #fdffa7;color: white !important;width: 30px;"/>
+				</span>
+			</div>
 		</div>
 		<div class="checks {{data.attributes.color.value}}">
 			<h3 class="stressroll rollable" style="text-align: center;padding: 0;width: 120px;margin-left: 145px;margin-top: 10px;">Stress & Afflictions</h3>
@@ -560,11 +546,11 @@
 						<label class="trainingscheckbox">
 		</span>
 		<div>-->
-		<span class="settingsoption">
+		<!--<span class="settingsoption">
 			<label class="exhaustionstatus rollable" style="margin-top: 8px;">Automatic Exhaustion:</label>
-				<input type="text" min="0" max="6" class="exhaustionpoints" name="data.attributes.exhaustioncalc.result" value="{{data.attributes.exhaustioncalc.result}}" disabled  style="height: 30px;background: #65656500;border-style: solid; border-bottom: inset; border-color: #fdffa7;color: white !important;width: 30px;margin-right: 10px;"/>
-		</span>--> Work in Progress
-		</br><label class="hitdiceroll rollable">Hitdice:</label>
+				<input type="text" min="0" max="6" class="exhaustionpoints" name="data.attributes.exhaustioncalc.result" value="{{data.attributes.exhaustioncalc.result}}" placeholder="0" style="height: 30px;background: #65656500;border-style: solid; border-bottom: inset; border-color: #fdffa7;color: white !important;width: 30px;margin-right: 10px;"/>
+		</span>-->
+		</br><label class="hitdiceroll rollable">Character Sheet Color:</label>
 			<select class="hitdice {{data.attributes.color.value}}" name="data.attributes.color.value" data-type="String" style="color: white !important;">
 				{{#select data.attributes.color.value}}
 				<option value="blue">blue</option>
