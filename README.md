@@ -55,3 +55,10 @@ Easily roll for deathsaves or wounds.
 -Settings for Hitdice and Inventory Slots<br/>(Automatic calcultion of Inventory Slots)<br/>
 -Automatic Exhaustion Calculation (WOP)<br/>
 -Track Stress & Afflictions <br/>
+
+
+This is only possible thanks to these really patient and helpful guys:
+- @Madeira - @Sky - @Atropos 
+- @Moo Man - @NickEast - @Red Reign
+Special thanks to
+- @DM Me Your Waifu and @Moerill for spending too much time pointing me in the right direction, I really cannot thank you enough!
