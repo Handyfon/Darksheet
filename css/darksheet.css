@@ -22,7 +22,7 @@ input[type="text"]::placeholder {
     flex-direction: column;
     flex-wrap: nowrap;
     position: absolute;
-    box-shadow: 0 0 20px #fff;
+    box-shadow: 0 0 20px #b5b1d4;
     padding: 0;
     z-index: 100;
 }
@@ -42,8 +42,14 @@ input[type="text"]::placeholder {
     text-shadow: 0 0 1px;
 }
 .dnd5e input:disabled, .dnd5e select:disabled, .dnd5e textarea:disabled {
-    color: #ffffff;
+    color: #b5b1d4;
     background: #525252;
+}
+#calendar-date {
+    color: #000;
+}
+#calendar-date-num {
+    color: #000 !important;
 }
 .calendar-form-container {
     background: 0 !important;
@@ -61,31 +67,35 @@ input#calendar-form-era-input {
     background-color: black !important;
 }
 i#calendar-btn-day {
-    color: white !important;
+    color: #b5b1d4 !important;
+}
+#calendar {
+    z-index: 99 !important;
+    background: rgba(255, 255, 255, 0.5);
 }
 /*#calendar{
 background-image: linear-gradient(#6db2ff73, #4e6ea9) !important;
 }*/
 .fa-moon:before {
-    color: white !important;
+    color: #b5b1d4 !important;
 }
 .fa-forward:before {
-    color: white !important;
+    color: #b5b1d4 !important;
 }
 .fa-fast-forward:before {
-    color: white !important;
+    color: #b5b1d4 !important;
 }
 .fa-step-forward:before {
-    color: white !important;
+    color: #b5b1d4 !important;
 }
 .fa-play:before {
-    color: white !important;
+    color: #b5b1d4 !important;
 }
 .fa-angle-double-right:before {
-    color: white !important;
+    color: #b5b1d4 !important;
 }
 .fa-angle-right:before {
-    color: white !important;
+    color: #b5b1d4 !important;
 }
 .dnd5e.sheet.actor.character {
     min-width: 720px !important;
@@ -105,7 +115,7 @@ background-image: linear-gradient(#6db2ff73, #4e6ea9) !important;
     mix-blend-mode: color-dodge !important
 }*/
 .tab.spellbook.flexcol.active {
-    border-color: #ffffffba;
+    border-color: #b5b1d4ba;
     border-style: groove;
     border-right: 0;
     border-left: 0;
@@ -121,7 +131,7 @@ background-image: linear-gradient(#6db2ff73, #4e6ea9) !important;
     overflow: hidden;
     padding: 0 8px;
     line-height: 30px;
-    border-bottom: 1px solid #ffffff;
+    border-bottom: 1px solid #b5b1d4;
     background: #0088ff85;
 }
 #chat-form textarea {
@@ -132,7 +142,7 @@ background-image: linear-gradient(#6db2ff73, #4e6ea9) !important;
     background: rgba(255, 255, 245, 0.8);
 }
 #chat-log .message.whisper {
-    background: #ffffff4a;
+    background: #b5b1d44a;
     border: 5px solid #000000f2;
     filter: drop-shadow(2px 4px 6px black);
     border: 4px solid #00000000;
@@ -146,7 +156,7 @@ background-image: linear-gradient(#6db2ff73, #4e6ea9) !important;
     list-style: none;
     margin: 0;
     padding: 0;
-    color: white;
+    color: #b5b1d4;
 }
 #sidebar-tabs {
     border-bottom: 1px solid #008aff;
@@ -154,7 +164,7 @@ background-image: linear-gradient(#6db2ff73, #4e6ea9) !important;
     box-shadow: 0 0 10px #0003ff;
 }
 #sidebar-tabs > .item.active {
-    color: #FFF;
+    color: #b5b1d4;
     border: 1px solid #06d6ffa3;
     box-shadow: 0 0 6px inset #1400ff;
 }
@@ -165,10 +175,28 @@ background-image: linear-gradient(#6db2ff73, #4e6ea9) !important;
     border: 1px solid #000;
     background: url(http://i.imgur.com/5Hoxo0s.png) 80%;
     background-repeat: no-repeat;
+    z-index: 99;
     background-size: cover;
+	  /* width: 20%; */
+}
+div#sidebar:hover {
+    transition: 0.2s;
+    filter: brightness(1.1);
+    /* width: 25%; */
+}
+nav#navigation:hover {
+    filter: brightness(1.1);
+	transition: 0.2s;
+}
+#navigation #scene-list .scene.gm:hover {
+    filter: brightness(1.2);
+	transition: 0.2s;
 }
 .item-price.item-slots {
-    color: white !important;
+    color: #b5b1d4 !important;
+}
+#client-settings section.content .settings-list {
+    padding: 20px;
 }
 .dnd5e.sheet.actor .inventory-list .item-price {
     flex: 0 0 100px;
@@ -177,46 +205,146 @@ background-image: linear-gradient(#6db2ff73, #4e6ea9) !important;
 }
 #settings button {
     margin: 0.5em 0;
-    color: white;
+    color: #e6e6d9;
     background: rgba(10, 10, 4, 0.8);
+}
+#settings button:hover {
+    color: #000000;
+    background: rgb(181, 177, 212);
 }
 #controls .scene-control, #controls .control-tool {
     background-image: linear-gradient(#243b55, #141e30) !important;
+    opacity: 80%;
+}
+button:hover {
+    color: #000000;
+    background: rgb(181, 177, 212);
 }
 #controls .scene-control.active, #controls .control-tool.active, #controls .scene-control:hover, #controls .control-tool:hover {
-    color: #fff;
+    color: #ffffff;
     border: 1px solid #ffffff;
-    border-bottom: 1px solid #ffffff;
+    border-bottom: 1px solid #b5b1d4;
     box-shadow: 0 0 3px #ececec;
-    opacity: 80%;
+    opacity: 100%;
+}
+a[href] {
+    color: #d6d6d6;
+}
+#package-configuration .package-list .package .package-title, #module-management .package-list .package .package-title {
+    text-decoration: underline;
+    font-size: 16px;
+    margin: 0 0 0.25em;
+    color: #ff6400;
 }
 #navigation .nav-item {
     background-image: linear-gradient(#243b55, #141e30) !important;
 }
 #navigation #scene-list .scene.gm {
     background: #130027;
-    border: 1px solid #ffffff8f;
+    border: 1px solid #b5b1d48f;
+    opacity: 80%;
 }
 #navigation #scene-list .scene.view, #navigation #scene-list .scene.context {
     cursor: default;
-    color: #FFF;
-    border: 1px solid #ffffffe6;
+    color: #ffffff;
+    text-shadow: 0px 0px 2px;
+    border: 1px solid #b5b1d4e6;
     background: rgba(255, 255, 255, 0.95);
-    border-bottom: 1px solid #ffffff;
-    box-shadow: 0 0 10px #ffffff;
+    border-bottom: 1px solid #b5b1d4;
+    box-shadow: 0 0 10px #b5b1d4;
+    opacity: 100%;
 }
 #compendium h3 {
     background: #0088ff85;
-    /* background: rgba(255, 255, 255, 0.1); */
 }
-#hotbar .macro:hover {
-    box-shadow: 0 0 10px #00e3ff inset;
+#compendium li.compendium-pack {
+    position: relative;
+    margin: 5px;
+    padding: 5px 0;
+    border-bottom: 1px solid #fff;
+}
+li.compendium-entity {
+    background-image: linear-gradient(#243b5563, #474a5db5) !important;
+}
+
+.dmgBtn-container-br button {
+	border-radius: 0;
+    background-color: #b5b1d4;
+}
+.dnd5e.chat-card .card-header h3 {
+    color: #f1f1f2;
+}
+.red-dual {
+    color: #f1f1f2;
+}
+.dnd5e.sheet.actor .inventory-list .inventory-header h3 {
+    margin: 0 -5px 0 0;
+    padding-left: 5px;
+    color: #c1c0b6;
+    font-size: 13px;
+    font-weight: bold;
+}
+.dnd5e.sheet.actor .inventory-list .item .item-name h4 {
+    margin: 0;
+    color: #f1f1f2;
 }
 
 .sidebar-tab .directory-footer button {
     margin: 0 3px;
     background: black;
+    color: #e6e6d9;
+}
+
+section#settings {
+    background-image: linear-gradient(#243b5591, #474a5dfc) !important;
+}
+#combat #combat-round {
+    flex: 0 0 64px;
+    line-height: 32px;
+    font-size: 20px;
+    text-align: center;
+    border-bottom: 2px groove #444;
+    background-image: linear-gradient(#243b5563, #474a5db5) !important;
+    /* background-image: linear-gradient(#141E30, #243B55) !important; */
+}
+#combat #combat-controls:hover {
     color: white;
+    background: #454562;
+    background: black;
+    background-image: linear-gradient(#243b5563, #474a5db5) !important;
+    /* text-shadow: none; */
+}
+#combat #combat-controls {
+    margin: 0;
+    border-top: 2px groove #444;
+    background: black;
+    background-image: linear-gradient(#474a5db5, #243b5563) !important;
+    padding-top: 4px;
+}
+.window-app .window-resizable-handle:hover {
+    background-image: linear-gradient(#243b5563, #474a5db5) !important;
+    color: #b5b1d4;
+}
+
+.window-app .window-resizable-handle {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    bottom: -1px;
+    right: 0;
+    background: #444;
+    padding: 2px;
+    border: 1px solid #111;
+    background-image: linear-gradient(#474a5db5, #243b5563) !important;
+    border-radius: 4px 0 0 0;
+}
+li.folder.collapsed > .folder-header:hover {
+    background-image: linear-gradient( #474a5db5, #243b5563) !important;
+}
+li.folder.collapsed > .folder-header {
+    background: rgba(0, 0, 0, 0.5);
+    background-image: linear-gradient(#243b5563, #474a5db5) !important;
+	
 }
 #menu {
 	top: 35%;
@@ -225,23 +353,24 @@ background-image: linear-gradient(#6db2ff73, #4e6ea9) !important;
     box-shadow: 0 0 0 1000px #00000066;
     border-style: outset;
 border-width: 5px;
-    border-color: #ffffff;
+    border-color: #b5b1d4;
 }
 #menu #menu-items li:hover {
-    text-shadow: 0 0 4px #ffffff;
+    box-shadow: 0px 0px 4px;
+    text-shadow: 0 0 4px #b5b1d4;
 }
 .dmgBtn-container-br button i {
     color: black;
 }
 .dnd5e button {
-    color: white;
+    color: #b5b1d4;
 }
 .lmrtfy select, .lmrtfy input[type=text] {
     background-color: rgba(0, 0, 0, 0);
 }
 .lmrtfy-actor-avatars input:checked + label img {
     transform: scale(0.9);
-    box-shadow: 0 0 20px #ffffff;
+    box-shadow: 0 0 20px #b5b1d4;
 }
 .lmrtfy-actor-avatars {
     justify-content: center;
@@ -270,7 +399,7 @@ border-width: 5px;
     left: 0;
     pointer-events: none;
     z-index: 60;
-    background: url(../ui/pausebg.png) no-repeat 50% 50%;
+    background: rgba(146, 146, 146, 0.5);
     display: none;
     background: #00000094;
     /* mix-blend-mode: soft-light; */
@@ -295,7 +424,10 @@ border-width: 5px;
     position: relative;
     z-index: 61;
     color: #EEE;
-    text-shadow: 1px 1px 10px #fff;
+    text-shadow: 1px 1px 20px #b5b1d4;
+}
+#pause.paused {
+    z-index: 1;
 }
 /*
 #pause h3 {
@@ -307,7 +439,7 @@ border-width: 5px;
     text-align: center;
     position: relative;
     z-index: 61;
-    color: #fff;
+    color: #b5b1d4;
     text-shadow: 1px 1px 1px #ff1cee;
 }
 #pause {
@@ -341,13 +473,27 @@ border-width: 5px;
 }
 
 .dnd5e .form-group.stacked label {
-    color:white;
+    color:#b5b1d4;
 }
-.dnd5e.sheet.actor.character .encumbrance .encumbrance-bar { 
-	background: #3f6693; 
-	background: 
-	linear-gradient(to right, #3f6693,#3f6693,#3f6693, #ff0083); 
-	border: 1px solid #000000;
+.dnd5e.sheet.actor.character .encumbrance .encumbrance-bar:hover {
+    filter: contrast(2.5);
+}
+
+.dnd5e.sheet.actor .inventory-list .item:hover {
+    filter: brightness(1.5) drop-shadow(0px 0px 6px black);
+    background: #ffffff24;
+    text-shadow: 0px 0px 6px black;
+}
+
+.dnd5e.sheet.actor .inventory-list .item {
+    line-height: 30px;
+    padding: 0 2px;
+    border-bottom: 1px solid #c9c7b8;
+}
+.dnd5e.sheet.actor.character .encumbrance .encumbrance-bar {
+    background: #3f6693;
+    background: linear-gradient(to right, #3f6693,#3f6693,#3f6693, #ff0083);
+    border: 1px solid #000000;
 }
 .encumbrance-bar{ 
 max-width: 100%;
@@ -389,23 +535,58 @@ max-width: 100%;
     flex: 2;
     text-align: right;
     font-size: 12px;
-    color: white;
-    text-shadow: 0 0 2px #fff;
+    color: #b5b1d4;
+    text-shadow: 0 0 2px #b5b1d4;
 }
 #chat-log .message .message-header .flavor-text, #chat-log .message .message-header .whisper-to {
-    color: white;
+    color: #b5b1d4;
 }
 #chat-controls div.roll-type-select select {
     background: #243B55;
 }
 select {
+    color: #b5b1d4;
+}
+form .form-group label {
+    line-height: 24px;
     color: white;
 }
-.dnd5e.sheet.actor .traits .actor-size {
-    background: #243b5500;
+#client-settings section.content h2.module-header {
+    margin: 0.25em 0;
+    color: #ff6400;
+}
+form .form-group, form .form-group-stacked {
+    clear: both;
+    display: flex;
+    flex-direction: row;
+    background: #0000002b;
+    padding: 10px;
+    flex-wrap: wrap;
+    margin: 3px 0;
+}
+form .form-header {
+    margin: 0;
+    font-weight: bold;
+    color: #aba8cb;
+}
+option {
+    background: #b5b1d4;
+    color: black;
+}
+.traits:hover {
+    filter: brightness(1.5) drop-shadow(0px 0px 6px black);
+    background: #ffffff24;
+}
+.dnd5e.sheet.actor .traits .inactive {
+    /* color: #171717; */
+    opacity: 42%;
+}
+.dnd5e.sheet.actor .traits {
+    margin: 0 0px;
+    padding: 15px;
 }
 .dialog .dialog-buttons button {
-    color: white;
+    color: #b5b1d4;
 }
 .fa-dice-d20:before {
     content: "\f6cf";
@@ -416,30 +597,48 @@ select {
     color: #9dff00;
     text-shadow: 0 0 3px;
 }
+li.skill.flexrow:hover {
+    filter: brightness(1.5) drop-shadow(0px 0px 6px black);
+    background: #ffffff24;
+}
 .red-dual .dice-row .success {
-    color: #9dff00;
-    text-shadow: 0 0 3px;
+    color: #9dff00 !important;
+    text-shadow: 0 0 3px black;
 }
 .red-dual .dice-row .failure {
-    color: #ff0300;
-    text-shadow: 0 0 3px;
+    color: #b54848;
+    text-shadow: 0 0 3px black;
+}
+.red-full .damage-type {
+    text-align: center;
+    color: #b5b1d4;
+    font-size: 12px;
 }
 .dice-roll .dice-total.failure {
     color: #ff0300;
     text-shadow: 0 0 3px;
 }
+.dice-roll .dice-total:hover {
+    background-image: linear-gradient(#243b5563, #474a5db5) !important;
+}
+.dice-roll .dice-total {
+    flex: 0;
+    font-size: 20px;
+    font-weight: bold;
+    background-image: linear-gradient(#474a5db5, #243b5563) !important;
+}
 #chat-log .message .message-content {
-    color: white;
+    color: #b5b1d4;
 }
 .dnd5e.chat-card .card-footer {
-    color: #ffffff;
+    color: #b5b1d4;
 }
 .dnd5e.chat-card .card-footer span {
-    border-color: #ffffff;
+    border-color: #b5b1d4;
 }
 .dnd5e.chat-card .card-header h3:hover {
-    color: #fff;
-    /text-shadow: 0;
+    color: #b5b1d4;
+    text-shadow: 0;
 }
 
 .dnd5e.chat-card .card-header h3 {
@@ -448,15 +647,24 @@ select {
     line-height: 36px;
     font-family: "Nodesto", "Signika", "Palatino Linotype", serif;
     font-size: 20px;
-    color: #ffffff;
+    color: #b5b1d4;
 }
-.trainpointa { 
+.dnd5e.sheet .filter-list .filter-item:hover {
+    background-image: linear-gradient(#243b5563, #474a5db5) !important;
+    border-radius: 2px;
+}
+
+.dnd5e.sheet .filter-list .filter-item {
+    background-image: linear-gradient(#474a5db5, #243b5563) !important;
+    border-radius: 2px;
+}
+.trainpointa {
     width: 80px;
     position: absolute;
     margin-top: 9px;
     margin-left: 55px;
-	background-image: linear-gradient(#233a53, #375779) !important;
-    color: white;
+    background-image: linear-gradient(#233a53, #375779) !important;
+    color: #c3e1fc;
     text-align: center;
 }
 .trainpointa.green {
@@ -465,7 +673,7 @@ select {
     margin-top: 9px;
     margin-left: 55px;
     background-image: linear-gradient(#429050, #37793e) !important;
-    color: white;
+    color: #b5b1d4;
     text-align: center;
 }
 .trainpointa.red {
@@ -474,7 +682,7 @@ select {
     margin-top: 9px;
     margin-left: 55px;
     background-image: linear-gradient(#904242, #793737) !important;
-    color: white;
+    color: #b5b1d4;
     text-align: center;
 }
 .trainingcheckbox {
@@ -493,14 +701,25 @@ select {
 .statuses .status .status-value {
 	text-align: center;
 }
-.trainingslabel{
-margin-right: 0px;
+
+.trainingslabel {
+    margin-right: 0px;
     font-family: "Nodesto", "Signika", "Palatino Linotype", serif;
     text-align: right;
     margin-top: 5px;
     font-size: 25px;
-	color:white !important;
-	position:absolute;
+    color: #b5b1d4;
+    position: absolute;
+}
+.spentlable {
+    margin-right: 0px;
+    margin-left: 10px;
+    font-family: "Nodesto", "Signika", "Palatino Linotype", serif;
+    text-align: right;
+    margin-top: 5px;
+    font-size: 25px;
+    color: #b5b1d4;
+    position: absolute;
 }
 .spentlable{
 margin-right: 0px;
@@ -509,7 +728,7 @@ margin-left: 10px;
     text-align: right;
     margin-top: 5px;
     font-size: 25px;
-	color:white !important;
+	color:#b5b1d4 !important;
 	position:absolute;
 }
 .trainingssummary{
@@ -544,18 +763,26 @@ margin-left: 10px;
     background-size: contain !important;
 }
 .dnd5e.sheet .editable .rollable:hover {
-    color: #fff;
+    color: #b5b1d4;
     text-shadow: 0 0 10px red;
     cursor: pointer;
 }
 .dnd5e.sheet.actor .inventory-filters h3, .dnd5e.sheet.actor .inventory-filters .filter-title {
     color: #e1e4d9;;
 }
+.dnd5e.sheet.actor ul.attributes li.attribute {
+    background-color: rgba(255, 20, 20, 0.03);
+	border: 2px groove #b5b1d4;
+}
+.dnd5e.sheet.actor.character .sheet-header .attributes .attribute {
+    background-color: rgba(255, 20, 20, 0.03);
+}
+
 .dnd5e.sheet .window-content {
     overflow-y: hidden;
     padding: 5px;
     font-size: 13px;
-    color: #fff;
+    color: #b5b1d4;
 }
 .dnd5e.sheet .sheet-header img.profile {
     flex: 0 0 100px;
@@ -569,10 +796,10 @@ margin-left: 10px;
     color: #cfd2da !important;
 }
 .dnd5e input[type="text"]:hover, .dnd5e input[type="text"]:focus {
-    box-shadow: 0 0 20px #ffffff;
+    box-shadow: 0 0 20px #b5b1d4;
 }
 .dnd5e.sheet input[type="text"]:hover, .dnd5e.sheet input[type="text"]:focus {
-    border: 1px solid #fff;
+    border: 1px solid #b5b1d4;
 }
 .dnd5e.sheet.actor .traits .inactive {
     color: #88888a;
@@ -581,16 +808,16 @@ margin-left: 10px;
     color: #9a998e;
 }
 .dnd5e.sheet.item .sheet-header .item-subtitle {
-    color: #ffffff;
+    color: #b5b1d4;
     text-shadow: 0 0 23px;
 }
 .dnd5e.sheet .sheet-header h1 input {
-    color: white !important;
+    color: #b5b1d4 !important;
 }
 
 .form .notes {
     font-size: 12px;
-    color: #fff;
+    color: #b5b1d4;
     margin: 4px 0;
 }
 .red-dual .mixed {
@@ -604,10 +831,28 @@ margin-left: 10px;
     color: inherit;
     font-weight: bold;
 }
+.dnd5e.sheet.actor .ability-scores .ability:hover {
+    filter: brightness(1.5) drop-shadow(0px 0px 6px black);
+    background: #ffffff24;
+    text-shadow: 0px 0px 6px black;
+}
 .dnd5e.sheet.actor .ability-scores .ability {
-    background-image: linear-gradient(#3a3a3afc, #243b5500) !impo
+    background-image: linear-gradient(#3a3a3a73, #59595900) !important;
+    border: 2px groove #afabce;
+}
+.dnd5e.sheet.actor ul.attributes li.attribute:hover {
+    filter: brightness(1.5) drop-shadow(0px 0px 6px black);
+    background: #ffffff24;
+    text-shadow: 0px 0px 6px black;
 }
 
+.dnd5e.sheet.actor ul.attributes li.attribute {
+    background-color: rgba(255, 20, 20, 0.03);
+    border: 2px groove #b5b1d4;
+}
+.dnd5e.sheet .sheet-header {
+    border-bottom: 2px groove #b5b1d4;
+}
 .dnd5e.sheet.actor ul.skills-list {
     flex: 0 0 192px;
     list-style: none;
@@ -616,9 +861,21 @@ margin-left: 10px;
     border: 2px #424856;
     border-radius: 3px;
 }
-
+section.center-pane {
+    background-image: linear-gradient(#243b5500, #474a5dfc) !important;
+}
+.dnd5e.sheet.actor .inventory-list {
+    background-image: linear-gradient(#243b5500, #474a5dfc) !important;
+}
 .dnd5e.sheet.actor ul.skills-list {
-    background-image: linear-gradient(#243b5500, #3a3a3afc) !important;
+    background-image: linear-gradient(#243b5500, #474a5dfc) !important;
+}
+.app.sheet .editor-content {
+    background-image: linear-gradient(#243b5500, #474a5dfc) !important;
+    padding: 10px;
+}
+.tab.dd.ddfulltab.flexcol.active {
+    background-image: linear-gradient(#243b5500, #474a5dfc) !important;
 }
 .dnd5e.actor .inventory-list .item .item-quality, .dnd5e.actor .inventory-list .item .item-weight {
     font-size: 12px;
@@ -646,7 +903,6 @@ background-color: #fff0;
 .dicelabel2{
     margin-top: -12px;
 }
-} 
 .dicebox1{
 	margin-top: -7px;
 	width:40px;
@@ -677,7 +933,7 @@ input[type=number]::-webkit-outer-spin-button {
 .saturationbox{
 	margin-top: 7px;
     background-color: #4e865e;
-	color: white !important;
+	color: #b5b1d4 !important;
 }
 .trainingpoints{
 	margin-top: 8px;
@@ -738,7 +994,7 @@ margin-top: 6px;
     appearance: none;
     outline: none;
     transition-duration: 0.2s;
-    background-color: #ffffff00;
+    background-color: #b5b1d400;
     border-style: solid;
     border-width: 1px;
     cursor: pointer;
@@ -762,7 +1018,7 @@ margin-top: 6px;
     margin-top: -1px;
 	margin-left: 4.5px;
     padding-bottom: 5px;
-    color: white;
+    color: #b5b1d4;
 }
 select.hitdice {
     background: #233a54 !important;
@@ -780,25 +1036,25 @@ select.hitdice.black {
 	margin-left: 10px;
 }
 .filepicker .file-directory > li.dir {
-    color: white;
+    color: #b5b1d4;
 }
 .tabs .item {
     color: #c7e5ff;
 }
 .filepicker .filter-dir label {
-    color: white;
+    color: #b5b1d4;
 }
 :root .fa-flip-both, :root .fa-flip-horizontal, :root .fa-flip-vertical, :root .fa-rotate-90, :root .fa-rotate-180, :root .fa-rotate-270 {
-    color: white;
+    color: #b5b1d4;
 }
 .filepicker .file-directory > li {
-    color: white;
+    color: #b5b1d4;
 }
 .window-app .window-content {
-    color: white;
+    color: #b5b1d4;
 }
 #module-management .module-description {
-    color: white;
+    color: #b5b1d4;
 }
 .fatecheckbox {
     display: inline-flex;
@@ -820,9 +1076,9 @@ margin-bottom: 3px !important;
     position: relative;
     background-color: #013c6b;
     margin-left: -20px;
-    color: white;
+    color: #b5b1d4;
     text-align: center;
-    text-shadow: 0px 0px 5px white;
+    text-shadow: 0px 0px 5px #b5b1d4;
 	
 }
 .exhaustionpoints{
@@ -831,7 +1087,7 @@ margin-bottom: 3px !important;
     position: relative;
     background-color: #6b5c01;
     margin-left: -20px;
-    color: white;
+    color: #b5b1d4;
     text-align: center;
     text-shadow: 0px 0px 5px red;
 }
@@ -841,7 +1097,7 @@ margin-bottom: 3px !important;
     position: relative;
     background-color: green;
     margin-left: -25px;
-    color: white;
+    color: #b5b1d4;
     text-align: center;
     text-shadow: 0px 0px 5px red;
 }
@@ -851,7 +1107,7 @@ margin-bottom: 3px !important;
     position: relative;
     background-color: green;
     margin-left: -20px;
-    color: white;
+    color: #b5b1d4;
     text-align: center;
     text-shadow: 0px 0px 5px red;
 }
@@ -862,7 +1118,7 @@ margin-bottom: 3px !important;
     appearance: none;
     outline: none;
     transition-duration: 0.2s;
-    background-color: #ffffff00;
+    background-color: #b5b1d400;
     border-style: solid;
     border-width: 1px;
     cursor: pointer;
@@ -891,7 +1147,7 @@ margin-bottom: 3px !important;
     margin-top: -1px;
 	margin-left: 4.5px;
     padding-bottom: 5px;
-    color: white;
+    color: #b5b1d4;
 }
 
 .herocheckbox {
@@ -916,7 +1172,7 @@ margin-bottom: 3px !important;
     appearance: none;
     outline: none;
     transition-duration: 0.2s;
-    background-color: #ffffff00;
+    background-color: #b5b1d400;
     border-style: solid;
     border-width: 1px;
     cursor: pointer;
@@ -941,7 +1197,7 @@ margin-bottom: 3px !important;
     margin-top: -1px;
 	margin-left: 4.5px;
     padding-bottom: 5px;
-    color: white;
+    color: #b5b1d4;
 }
 
 
@@ -969,7 +1225,7 @@ margin-bottom: 3px !important;
     appearance: none;
     outline: none;
     transition-duration: 0.2s;
-    background-color: #ffffff00;
+    background-color: #b5b1d400;
     border-style: solid;
     border-width: 1px;
     cursor: pointer;
@@ -994,7 +1250,7 @@ margin-bottom: 3px !important;
     margin-top: -1px;
 	margin-left: 4.5px;
     padding-bottom: 5px;
-    color: white;
+    color: #b5b1d4;
 }
 
 
@@ -1033,7 +1289,7 @@ margin-bottom: 3px !important;
     appearance: none;
     outline: none;
     transition-duration: 0.2s;
-    background-color: #ffffff00;
+    background-color: #b5b1d400;
     border-style: solid;
     border-width: 1px;
     cursor: pointer;
@@ -1044,12 +1300,18 @@ margin-bottom: 3px !important;
     border-top-style: dotted;
     padding: 10px;
 }
-
+.dnd5e.sheet.actor .counters {
+    flex: 0 0 100%;
+    border-bottom: 2px groove #eeede0;
+    margin-top: px;
+    border-top: 2px solid #233953;
+}
 .deathcheckbox > input:checked {
     border: 1px solid #b84141;
     background-color: #5c4141;
     padding: 10px;
 }
+
 .deathcheckbox > input:checked + span::before {
     content: '\1F480';
     display: block;
@@ -1057,15 +1319,15 @@ margin-bottom: 3px !important;
     position: absolute;
     margin-top: 4px;
     margin-left: -20px;
-    color: white;
+    color: #b5b1d4;
 }
 
-.deathsavelabel{
-margin-top: 8px;
-font-family: "Signika", "Palatino Linotype", serif !important;
+.deathsavelabel {
+    margin-top: 8px;
+    font-family: "Signika", "Palatino Linotype", serif !important;
+    margin-left: 3px;
+    margin-right: -3px;
 }
-
-
 
 .bloodiedcheckbox {
     display: inline-flex;
@@ -1084,8 +1346,8 @@ margin-bottom: 3px !important;
 .dnd5e.sheet.item .sheet-header img.profile {
     border: 0px solid #000;
 }
-.dnd5e.sheet.actor .inventory-list .item .item-name:hover .item-image {
-    background-image: url(/icons/svg/d20-grey.svg) !important;
+.dnd5e.sheet.actor .inventory-list .item .item-name .item-image:hover {
+    border: 1px transparent groove;
 }
 .bloodiedcheckbox > input {
     -webkit-appearance: none;
@@ -1094,7 +1356,7 @@ margin-bottom: 3px !important;
     appearance: none;
     outline: none;
     transition-duration: 0.2s;
-    background-color: #ffffff00;
+    background-color: #b5b1d400;
     border-style: solid;
     border-width: 1px;
     cursor: pointer;
@@ -1110,15 +1372,47 @@ margin-bottom: 3px !important;
     background-image: linear-gradient(#243b55d6, #141e30cf) !important;
 }
 li.macro.active {
-    border: 1px solid #ffffff7d !important;
+    border: 0;
+    background: #4c447b;
     background: rgba(4, 60, 255, 0.5) !important;
     background-image: linear-gradient(#243b5596, #141e30c9) !important;
 }
 #hotbar .macro {
     background-image: linear-gradient(#243b5596, #141e30c9) !important;
 }
+#hotbar .macro .macro-icon:hover {
+    filter: drop-shadow(0px 0px 6px black) brightness(1.3);
+    text-shadow: 0px 0px 5px black;
+    background: #00000099;
+    background: black;
+    background-image: linear-gradient(#243b5563, #474a5db5) !important;
+    background: black;
+}
+#hotbar .macro .macro-icon {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    object-position: 50% 50%;
+    background-image: linear-gradient(#243b5563, #474a5db5) !important;
+    background-image: linear-gradient(#474a5db5, #243b5563) !important;
+}
+img.macro-icon:hover {
+    filter: drop-shadow(0px 0px 6px black);
+    text-shadow: 0px 0px 5px black;
+}
 #hotbar .bar-controls {
     background-image: linear-gradient(#315073ab, #141e30c9) !important;
+}
+#hotbar .macro .macro-key {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    padding: 1px 3px;
+    background: #000000;
+    border: 1px #b5b1d4;
+    border-radius: 3px;
+    color: #b5b1d4;
+    font-weight: bold;
 }
 .bloodiedcheckbox > input:checked {
     border: 1px solid #b84141;
@@ -1132,7 +1426,7 @@ li.macro.active {
     position: absolute;
     margin-top: 4px;
     margin-left: -17.5px;
-    color: white;
+    color: #b5b1d4;
 }
 
 .dnd5e .form-header {
@@ -1143,7 +1437,7 @@ li.macro.active {
     font-size: 24px;
     border-top: 2px groove #eeede0;
     border-bottom: 2px groove #eeede0;
-    color: white;
+    color: #b5b1d4;
 }
 .watercheckbox {
     display: inline-flex;
@@ -1164,7 +1458,7 @@ li.macro.active {
     appearance: none;
     outline: none;
     transition-duration: 0.2s;
-    background-color: #ffffff00;
+    background-color: #b5b1d400;
     border-style: solid;
     border-width: 1px;
     cursor: pointer;
@@ -1225,7 +1519,7 @@ li.macro.active {
     margin-top: -5px;
     margin-left: -26px;
     padding-bottom: 5px;
-    color: white;
+    color: #b5b1d4;
     padding: 10px;
 }
 .foodcheckbox {
@@ -1248,7 +1542,7 @@ li.macro.active {
     appearance: none;
     outline: none;
     transition-duration: 0.2s;
-    background-color: #ffffff00;
+    background-color: #b5b1d400;
     border-style: solid;
     border-width: 1px;
     cursor: pointer;
@@ -1274,7 +1568,7 @@ li.macro.active {
     margin-top: -5px;
     margin-left: -26px;
     padding-bottom: 5px;
-    color: white;
+    color: #b5b1d4;
     padding: 10px;
 }
 
@@ -1304,13 +1598,13 @@ li.macro.active {
     appearance: none;
     outline: none;
     transition-duration: 0.2s;
-    background-color: #ffffff00;
+    background-color: #b5b1d400;
     border-style: solid;
     border-width: 1px;
     cursor: pointer;
     width: 10px;
     height: 10px;
-    border-color: #ffffff;
+    border-color: #b5b1d4;
     border-bottom-style: dotted;
     border-top-style: dotted;
     transform: scale(0.6);
@@ -1331,7 +1625,7 @@ li.macro.active {
     margin-top: -5px;
     margin-left: -28px;
     padding-bottom: 5px;
-    color: white;
+    color: #b5b1d4;
     padding: 10px;
 }
 label.afflictiontext {
@@ -1366,7 +1660,7 @@ select.hitdice.afflictionselection{
     appearance: none;
     outline: none;
     transition-duration: 0.2s;
-    background-color: #ffffff00;
+    background-color: #b5b1d400;
     border-style: solid;
     border-width: 1px;
     cursor: pointer;
@@ -1393,7 +1687,7 @@ select.hitdice.afflictionselection{
     margin-left: -29px;
     font-size: 20px;
     padding-bottom: 5px;
-    color: white;
+    color: #b5b1d4;
     padding: 10px;
 }
 
@@ -1402,14 +1696,13 @@ select.hitdice.afflictionselection{
 }
 a.entity-link {
     background: #000;
-    color: white;
+    color: #b5b1d4;
 }
 .editor-content * {
-    color: white !important;
+    color: #b5b1d4 !important;
 }
 .tox .tox-toolbar, .tox .tox-toolbar__overflow, .tox .tox-toolbar__primary {
-    background: url(data:image/svg+xml;charset=utf8,%3Csvg height='39px' viewBox='0 0 40 39px' …Crect x='0' y='38px' width='100' height='1' fill='%23cccccc'/%3E%3C/svg%3E) left 0 top 0 #fff;
-    background-color: #fff !important;
+    background-color: #b5b1d4!important;
     display: flex;
     flex: 0 0 auto;
     flex-shrink: 0;
@@ -1418,35 +1711,35 @@ a.entity-link {
 }
 p {
     margin: 0.5em 0;
-    color: white !important;
+    color: #b5b1d4 !important;
 }
 .p {
     margin: 0.5em 0;
-    color: white !important;
+    color: #b5b1d4 !important;
 }
 .biography{
     color: gray;
 }
 body#tinymce {
-    color: white !important;
+    color: #b5b1d4 !important;
 }
 .dnd5e.chat-card .card-buttons button:hover {
     color: #000000;
-    background: white;
+    background: #b5b1d4;
 }
 .dialog .dialog-buttons button:hover {
     color: black !important;
-    background: white;
+    background: #b5b1d4;
 }
 li.menu-reload:hover {
-    background: white;
+    background: #b5b1d4;
     color: black;
 }
 li.menu-reload {
     background: black;
 }
 li.menu-player:hover {
-    background: white;
+    background: #b5b1d4;
     color: black;
 }
 li.menu-player {
@@ -1456,14 +1749,14 @@ li.menu-players {
     background: black;
 }
 li.menu-players:hover {
-    background: white;
+    background: #b5b1d4;
     color: black;
 }
 li.menu-world {
     background: black;
 }
 li.menu-world:hover {
-    background: white;
+    background: #b5b1d4;
     color: black;
 }
 /*PROFICIENCY GREEN*/
@@ -1477,7 +1770,7 @@ li.menu-world:hover {
 ::-webkit-scrollbar-thumb {
     outline: none;
     border-radius: 3px;
-    background: #ffffff;
+    background: #b5b1d4;
     border: 1px solid #aeb5c0;
 }
 .spellbook-empty{
@@ -1498,11 +1791,11 @@ input#search-anywhere-autocomplete {
 .better-npc-sheet {
     background-image: linear-gradient(#243B55, #141E30) !important;
     background-size: contain !important;
-    color: white;
+    color: #b5b1d4;
 }
 .better-npc-sheet input[type=text] {
     border: none;
-    color: white;
+    color: #b5b1d4;
 }
 .better-npc-sheet .npc-textinput, .better-npc-sheet .size-selector {
     font-family: "Nodesto", "Signika", "Palatino Linotype", serif !important;
@@ -1512,10 +1805,10 @@ input#search-anywhere-autocomplete {
 }
 .macro-sheet textarea[name="command"] {
     height: 200px;
-    color: white;
+    color: #b5b1d4;
 }
 input[type="text"]{
-color:#fff;
+color:#b5b1d4;
 }
 .journal-sheet form select {
     background: #243B55;
@@ -1526,13 +1819,13 @@ background:#243B55;
 }
 
 .dice-calculator__input-wrapper > textarea {
-color: white;
+color: #b5b1d4;
 }
 
 form button {
     background: rgba(0, 0, 0, 0.1);
     border: 2px groove #f0f0e0;
-    color: white;
+    color: #b5b1d4;
 }
 .polyglot-lang-select select {
     height: 24px;
@@ -1545,22 +1838,27 @@ form button {
 	 background: rgba(0, 0, 0, 0.9) !important;
 }
 .mce-content-body {
-    color: white;
+    color: #b5b1d4;
 }
 .journal-sheet form button[type="submit"] {
-    color: white;
+    color: #b5b1d4;
 }
 /*DD TAB*/
 .ddfulltab{
 display: inline
 }
-.allparts{
-  display: inline-block;
-  padding:15px;
-  padding-top:0px;
+.allparts {
+    display: inline-block;
+    padding: 13px;
+    padding-top: 0px;
 }
-.part1{
+.part1 {
     background-image: linear-gradient(#553d2400, #1679164d) !important;
+    border: groove 2px #22473b;
+    border-image-repeat: initial;
+}
+.part1:hover {
+    filter: brightness(1.3);
 }
 .part1.red {
     background-image: linear-gradient(#553d2400, #25c5254d) !important;
@@ -1572,6 +1870,10 @@ display: inline
 }
 .part2{
     background-image: linear-gradient(#553d2400, #0000ff47) !important;
+	border: groove 2px #1e2777;
+}
+.part2:hover {
+    filter: brightness(1.3);
 }
 .part2.green{
 	background-image: linear-gradient(#553d2400, #00c8ff42) !important;
@@ -1585,20 +1887,32 @@ display: inline
 }
 .part3{
 	background-image: linear-gradient(#553d2400, #b374006e) !important;
+	border: groove 2px #614e2a;
+}
+.part3:hover {
+    filter: brightness(1.3);
 }
 .part3.black{
 	border-style: solid;
-    border-width: 1px;#ffd3826e) !important;
+    border-width: 1px
+}
+.dnd5e .tag:hover {
+    background: #b5b1d4;
+    color: black;
+}
+.part4 {
+    background-image: linear-gradient(#553d2400, #fdfdfd4d) !important;
+    width: 193px;
+    margin-left: 10px;
+    border: groove 2px #727584;
+    padding: 15px;
+    margin-left: 8px;
+}
+.part4:hover {
+    filter: brightness(1.3);
 }
 
-.part4{
-	background-image: linear-gradient(#553d2400, #fdfdfd4d) !important;
-	width: 193px;
-    margin-left: 10px;
-    padding: 15px;
-}
 .part4.black{
-	background-image: linear-gradient(#553d2400, #fdfdfd4d) !important;
 	width: 193px;
     margin-left: 10px;
     padding: 15px;
@@ -1610,7 +1924,7 @@ text-align:center;
 margin-top:15px;
 }
 .darksheetheader{
-  color:white;
+  color:#b5b1d4;
   font-size:20px;
   text-align:center;
 }
@@ -1631,7 +1945,10 @@ margin-top:15px;
     background-color: #77777780;
     padding: 20px;
     text-align: center;
+    border: groove 2px #5e6069;
 }
+
+
 .section3 {
 	margin-top: 20px;
     display: flex;
@@ -1651,6 +1968,10 @@ margin-top:15px;
     padding-top: 0px;
     margin: 0px 13px 0px 28px;
     width: 650px;
+    border: groove 2px #603b60;
+}
+.checks:hover{
+	    filter: brightness(1.3);
 }
 .checks.green {
     background: #1d4124;
@@ -1696,7 +2017,7 @@ margin-top:15px;
 .inventoryslots{
     width: 30px;
     height: 20px;
-    border: 1px solid #fff;
+    border: 1px solid #b5b1d4;
 }
 .breaks{
 	text-align-last: left;
@@ -1705,12 +2026,12 @@ margin-top:15px;
     border-top: 0;
     border-bottom: 0;
     border-right: 0;
-}
+} 
 .dice-calculator > button, .dice-calculator .dice-calculator--button {
-	color: white;
+	color: #b5b1d4;
 }
 .dialog .dialog-buttons button:last-child {
-	color: white;
+	color: #b5b1d4;
 }
 
 .settingsbutton{
@@ -1731,13 +2052,12 @@ margin-top:15px;
 .textarea:focus {
     outline: 2px solid #782e22;
     border-style: ridge;
-    border-color: white;
+    border-color: #b5b1d4;
     border-width: 5px;
     box-shadow: 0 0 10px #ff6400;
     background: #5c4141 !important;
 }
 
 textarea {
-    border: 1px solid #ffffff;
-}
+    border: 1px solid #b5b1d4;
 }
