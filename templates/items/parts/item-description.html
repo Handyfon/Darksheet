@@ -47,9 +47,10 @@
         </div>
 		<div class="form-group">
             <label class="rollable ammodice">Ammodie</label>
-			<select class="hitdice" name="flags.darksheet.item.ammodie" placeholder="d12" data-dtype="String">
+			<select class="hitdice" name="flags.darksheet.item.ammodie" placeholder="d20" data-dtype="String">
 				{{#select item.flags.darksheet.item.ammodie}}
 				<option value=""></option>
+				<option value="d20">d20</option>
 				<option value="d12">d12</option>
 				<option value="d10">d10</option>
 				<option value="d8">d8</option>
