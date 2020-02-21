@@ -118,7 +118,7 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
 	if ( game.settings.get("darksheet", "slotbasedinventory") ) {
     for ( let i of items ) {
       i.data.quantity = i.data.quantity || 0;
-	  i.flags.darksheet.item.slots = getProperty(i, 'flags.darksheet.item.slots');  
+	  i.flags.darksheet.item.slots = getProperty(i, 'flags.darksheet.item.slots') || 0; 
 	  console.log(i.data.slots);
       i.totalWeight = Math.round(i.data.quantity * i.flags.darksheet.item.slots *10)/10;
       inventory[i.type].items.push(i);
