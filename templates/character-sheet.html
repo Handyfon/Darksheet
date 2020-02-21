@@ -279,7 +279,7 @@
         <label class="foodcheckbox">
             <input class="ressourcecheckbox" type="checkbox" type="radio" name="data.attributes.food5.value" data-dtype="Boolean" {{checked data.attributes.food5.value}}/><span></span></label>
     </div>
-    <select class="saturationbox" name="data.attributes.saturation.value" data-type="String" style="color: white !important;" >
+    <select class="saturationbox" name="data.attributes.saturation.value" data-type="String" >
         {{#select data.attributes.saturation.value}}
         <option value="foodstuffed">Stuffed -1 exhaustion</option>
         <option value="foodwellfed">Well-fed</option>
@@ -305,7 +305,7 @@
 			<label class="watercheckbox {{data.attributes.color.value}}">
 				<input class="ressourcecheckbox" type="checkbox" type="radio" name="data.attributes.waterskin5.value" title="@{waterskin5}" data-dtype="Boolean" {{checked data.attributes.waterskin5.value}}/><span></span></label>
 		</div>
-		<select class="saturationbox" name="data.attributes.thirst.value" data-type="String" style="color: white !important;" >
+		<select class="saturationbox" name="data.attributes.thirst.value" data-type="String">
 			{{#select data.attributes.thirst.value}}
 			<option value="wquenched">Quenched -1 exhaustion</option>
 			<option value="wrefreshed">Refreshed</option>
@@ -333,7 +333,7 @@
 				{{/select}}
 		</select>	
 		</div>
-		<select class="exhaustionbox" name="data.attributes.fatigue.value" data-type="String" style="color: white !important;">
+		<select class="exhaustionbox" name="data.attributes.fatigue.value" data-type="String">
 			{{#select data.attributes.fatigue.value}}
 			<option value="exenegised">Energised -1 exhaustion</option>
 			<option value="exwell">Well-rested</option>
@@ -361,7 +361,7 @@
 	<div class="section1 allparts">
 		<div class="part4 {{data.attributes.color.value}}">
 			<h4 class="darksheetheader">Temperature</h4>
-			<select class="exhaustionbox" name="data.attributes.temp" data-type="String" style="color: white !important; width: 163px;" >
+			<select class="exhaustionbox" name="data.attributes.temp" data-type="String" style="width: 163px;" >
 				{{#select data.attributes.temp}}
 				<option value="exenegised">Perfect -1 Exhaustion</option>
 				<option value="exwell">Comfortable</option>
@@ -375,7 +375,7 @@
 			<div style="margin-top: 15px;">
 				<span class="settingsoption exhaustioncalc">
 					<label class="rollable exhaustioncalc">Calculate Exhaustion:</label>
-						<input type="text" disabled class="exhaustionpoints" name="{{data.attributes.exhaustioncalc}}" value="{{data.attributes.exhaustioncalc}}" placeholder="0" style="height: 30px;background: #65656500;border-style: solid; border-bottom: inset; border-color: #fdffa7;color: white !important;width: 30px;"/>
+						<input type="text" disabled class="exhaustionpoints" name="{{data.attributes.exhaustioncalc}}" value="{{data.attributes.exhaustioncalc}}" placeholder="0" style="height: 30px;background: #65656500;border-style: solid; border-bottom: inset; border-color: #fdffa7;width: 30px;"/>
 				</span>
 			</div>
 		</div>
@@ -505,7 +505,7 @@
 			</div>
 		</div>
 		<div class="section2" id="hideable">
-		<h4 style="margin-top: -10px;margin-left: 100px;margin-right: 100px;border: solid silver; onclick="showhide();"">Settings</h4>
+		<h4 style="element.style="margin-left: 100px;onclick=: ;margin: 0;border-radius: 2px;margin-top: -10px;margin-bottom: 10px;" onclick="showhide();"">Settings</h4>
 		<script>
 			function showhide() {
 			  var x = document.getElementById("hideable");
@@ -518,7 +518,7 @@
 		</script>
 		<span class="settingsoption">
 		<label class="hitdiceroll rollable">Hitdice:</label>
-			<select class="hitdice {{data.attributes.color.value}}" name="data.attributes.hitdice.value" data-type="String" style="color: white !important;">
+			<select class="hitdice {{data.attributes.color.value}}" name="data.attributes.hitdice.value" data-type="String">
 				{{#select data.attributes.hitdice.value}}
 				<option value="d12">d12</option>
 				<option value="d10">d10</option>
@@ -551,7 +551,7 @@
 				<input type="text" min="0" max="6" class="exhaustionpoints" name="data.attributes.exhaustioncalc.result" value="{{data.attributes.exhaustioncalc.result}}" placeholder="0" style="height: 30px;background: #65656500;border-style: solid; border-bottom: inset; border-color: #fdffa7;color: white !important;width: 30px;margin-right: 10px;"/>
 		</span>-->
 		</br><label class="hitdiceroll rollable">Character Sheet Color:</label>
-			<select class="hitdice {{data.attributes.color.value}}" name="data.attributes.color.value" data-type="String" style="color: white !important;">
+			<select class="hitdice {{data.attributes.color.value}}" name="data.attributes.color.value" data-type="String">
 				{{#select data.attributes.color.value}}
 				<option value="blue">blue</option>
 				<option value="green">green</option>
