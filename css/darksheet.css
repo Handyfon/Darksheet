@@ -29,6 +29,9 @@ input[type="text"]::placeholder {
 .tox :not(svg) {
     color: black !important;
 }
+.dnd5e.sheet.actor .inventory-list .item .item-name .item-image {
+    height: 30px;
+}
 .dnd5e.sheet.item {
     min-height: 420px;
     min-width: 600px;
@@ -70,12 +73,26 @@ i#calendar-btn-day {
     color: #b5b1d4 !important;
 }
 #calendar {
-    z-index: 99 !important;
+    z-index: 0 !important;
     background: rgba(255, 255, 255, 0.5);
+}
+.calendar-events-container {
+    background: 0 !important;
+}
+#calendar-weather-climate {
+    color: white;
 }
 /*#calendar{
 background-image: linear-gradient(#6db2ff73, #4e6ea9) !important;
 }*/
+.fa-book-open:before {
+    content: "\f518";
+    color: #b5b1d4;
+}
+.fa-cloud-sun:before {
+    content: "\f6c4";
+    color: white;
+}
 .fa-moon:before {
     color: #b5b1d4 !important;
 }
@@ -263,6 +280,9 @@ a[href] {
     padding: 5px 0;
     border-bottom: 1px solid #fff;
 }
+li.menu-logout {
+    background: black;
+}
 li.compendium-entity {
     background-image: linear-gradient(#243b5563, #474a5db5) !important;
 }
@@ -286,7 +306,9 @@ li.compendium-entity {
 }
 .dnd5e.sheet.actor .inventory-list .item .item-name h4 {
     margin: 0;
+    line-height: 15px;
     color: #f1f1f2;
+    margin: auto;
 }
 
 .sidebar-tab .directory-footer button {
@@ -555,6 +577,10 @@ form .form-group label {
     margin: 0.25em 0;
     color: #ff6400;
 }
+h2 {
+    font-size: 1.5em;
+    border-bottom: 1px solid #ffffff66;
+}
 form .form-group, form .form-group-stacked {
     clear: both;
     display: flex;
@@ -574,8 +600,7 @@ option {
     color: black;
 }
 .traits:hover {
-    filter: brightness(1.5) drop-shadow(0px 0px 6px black);
-    background: #ffffff24;
+    filter: brightness(1.5) drop-shadow(0px 0px 3px #0000004f);
 }
 .dnd5e.sheet.actor .traits .inactive {
     /* color: #171717; */
@@ -622,10 +647,23 @@ li.skill.flexrow:hover {
     background-image: linear-gradient(#243b5563, #474a5db5) !important;
 }
 .dice-roll .dice-total {
-    flex: 0;
+    flex: 1;
     font-size: 20px;
     font-weight: bold;
     background-image: linear-gradient(#474a5db5, #243b5563) !important;
+}
+.red-dual .dice-row .dual-left {
+    float: left;
+    width: 50%;
+    display: inline;
+}
+.red-dual .dice-row .dual-right {
+    float: right;
+    width: 50%;
+    display: inline;
+}
+.red-dual .dice-row {
+    clear: both;
 }
 #chat-log .message .message-content {
     color: #b5b1d4;
@@ -652,6 +690,10 @@ li.skill.flexrow:hover {
 .dnd5e.sheet .filter-list .filter-item:hover {
     background-image: linear-gradient(#243b5563, #474a5db5) !important;
     border-radius: 2px;
+    text-shadow: 0 0 4px white;
+    color: white;
+    border-bottom: 3px solid #7a7971;
+}
 }
 
 .dnd5e.sheet .filter-list .filter-item {
@@ -899,9 +941,6 @@ background-color: #fff0;
 }
 .dicelabel{
 	margin-top: -7px;
-}
-.dicelabel2{
-    margin-top: -12px;
 }
 .dicebox1{
 	margin-top: -7px;
@@ -1388,6 +1427,12 @@ li.macro.active {
     background-image: linear-gradient(#243b5563, #474a5db5) !important;
     background: black;
 }
+#hotbar .macro .tooltip {
+    height: fit-content;
+	margin: auto;
+	width: 300;
+	font-size: small;
+}
 #hotbar .macro .macro-icon {
     width: 48px;
     height: 48px;
@@ -1420,12 +1465,13 @@ img.macro-icon:hover {
     padding: 10px;
 }
 .bloodiedcheckbox > input:checked + span::before {
-    content: '\1F4A7';
+    content: '\2713';
     display: block;
     color: #000000;
     position: absolute;
-    margin-top: 4px;
-    margin-left: -17.5px;
+    margin-top: -4px;
+    margin-left: -17px;
+    font-size: 15px;
     color: #b5b1d4;
 }
 
@@ -1695,8 +1741,12 @@ select.hitdice.afflictionselection{
 	text-shadow: 0 0 5px rgba(255, 100, 0, 1), 0 0 10px rgba(255, 100, 0, 1), 0 0 15px rgba(255, 100, 0, 1) !important;
 }
 a.entity-link {
-    background: #000;
-    color: #b5b1d4;
+	background: #141F31 !important;
+}
+a.entity-link:hover {
+    color: black !important;
+    background: #b5b1d4 !important;
+    text-shadow: 0px 0px 0px!important;
 }
 .editor-content * {
     color: #b5b1d4 !important;
@@ -1771,7 +1821,7 @@ li.menu-world:hover {
     outline: none;
     border-radius: 3px;
     background: #b5b1d4;
-    border: 1px solid #aeb5c0;
+    border: 1px solid #b5b1d4;
 }
 .spellbook-empty{
 border-bottom: solid 2px !important;
@@ -1919,6 +1969,19 @@ display: inline
 	border-style: solid;
     border-width: 1px;
 }
+.burnoutclick {
+    margin: 0px 50px 0px 50px;
+    text-align: center;
+    border: 1px solid black;
+    border-radius: 3px;
+}
+h3.burnoutclick:hover {
+    color: #243b55 !important;
+	text-shadow: 0px 0px 0px !important;
+}
+label.burnoutclick:hover {
+    background: #243b55;
+}
 .burnoutandexhaustion{
 text-align:center;
 margin-top:15px;
@@ -1990,7 +2053,7 @@ margin-top:15px;
     width: 650px;
 }
 .checks.black {
-    background-image: linear-gradient(#4a4a4a , #000000) !important;
+    background-image: linear-gradient(#000000 , #45485a) !important;
     padding-bottom: 10px;
     padding-top: 0px;
     margin: 0px 13px 0px 28px;

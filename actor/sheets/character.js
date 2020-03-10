@@ -130,7 +130,7 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
 	    data.data.attributes.inventorys.percent = totalWeight / maxpct *100;
 	}
 	else{
-    for ( let i of items ) {
+    for ( let i of items ) { 
       i.data.quantity = i.data.quantity || 0;
       i.data.weight = i.data.weight || 0;
       i.totalWeight = Math.round(i.data.quantity * i.data.weight * 10) / 10;
@@ -190,9 +190,22 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
 
     // Add Currency Weight
     if ( game.settings.get("dnd5e", "currencyWeight") ) {
-      const currency = actorData.data.currency;
-      const numCoins = Object.values(currency).reduce((val, denom) => val += denom, 0);
-      totalWeight += numCoins / 50;
+		if ( game.settings.get("darksheet", "slotbasedinventory") ) {
+			const currency = actorData.data.currency;
+			const numCoins = Object.values(currency).reduce((val, denom) => val += denom, 0);
+			totalWeight += Math.round(numCoins / 100);
+			if (numCoins <= 100){
+				totalWeight -= Math.round(numCoins / 100);
+			}
+			else if (numCoins >= 100){
+				totalWeight -= 1;
+			}
+		}
+		else{
+			const currency = actorData.data.currency;
+			const numCoins = Object.values(currency).reduce((val, denom) => val += denom, 0);
+			totalWeight += numCoins / 50;
+		}
     }
 
     // Compute Encumbrance percentage

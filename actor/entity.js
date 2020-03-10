@@ -1,6 +1,8 @@
 import { Dice5e } from "../dice.js";
 import { ShortRestDialog } from "../apps/short-rest.js";
 import { SpellCastDialog } from "../apps/spell-cast-dialog.js";
+import { AbilityTemplate } from "../pixi/ability-template.js";
+
 
 /**
  * Extend the base Actor class to implement additional logic specialized for D&D5e.
@@ -19,21 +21,21 @@ export class Actor5e extends Actor {
     const flags = actorData.flags;
 
     // Prepare Character data
-    if ( actorData.type === "character" ) this._prepareCharacterData(data);
-    else if ( actorData.type === "npc" ) this._prepareNPCData(data);
+    if ( actorData.type === "character" ) this._prepareCharacterData(actorData);
+    else if ( actorData.type === "npc" ) this._prepareNPCData(actorData);
 
     // Ranged Weapon/Melee Weapon/Ranged Spell/Melee Spell attack bonuses are added when rolled since they are not a fixed value.
     // Damage bonus added when rolled since not a fixed value.
 
     // Ability modifiers and saves
     // Character All Ability Check" and All Ability Save bonuses added when rolled since not a fixed value.
+    const saveBonus = this.getFlag("dnd5e", "saveBonus") || 0;
     for (let abl of Object.values(data.abilities)) {
       abl.mod = Math.floor((abl.value - 10) / 2);
-      abl.save = abl.mod + ((abl.proficient || 0) * data.attributes.prof);
+      abl.save = abl.mod + ((abl.proficient || 0) * data.attributes.prof) + saveBonus;
     }
 
     // Skill modifiers
-    // Characteer All Skill Bonus added when rolled since not a fixed value.
     for (let skl of Object.values(data.skills)) {
       skl.value = parseFloat(skl.value || 0);
       skl.bonus = parseInt(skl.bonus || 0);
@@ -57,15 +59,31 @@ export class Actor5e extends Actor {
   /**
    * Prepare Character type specific data
    */
-  _prepareCharacterData(data) {
+  _prepareCharacterData(actorData) {
+    const data = actorData.data;
 
-    // Level, experience, and proficiency
-    data.details.level.value = parseInt(data.details.level.value);
-    data.details.xp.max = this.getLevelExp(data.details.level.value || 1);
-    let prior = this.getLevelExp(data.details.level.value - 1 || 0),
-          req = data.details.xp.max - prior;
-    data.details.xp.pct = Math.clamped(0, Math.round((data.details.xp.value -prior) * 100 / req), 99.5);
-    data.attributes.prof = Math.floor((data.details.level.value + 7) / 4);
+    // Determine character level and available hit dice based on owned Class items
+    const [level, hd] = actorData.items.reduce((arr, item) => {
+      if ( item.type === "class" ) {
+        const classLevels = parseInt(item.data.levels) || 1;
+        arr[0] += classLevels;
+        arr[1] += classLevels - (parseInt(item.data.hitDiceUsed) || 0);
+      }
+      return arr;
+    }, [0, 0]);
+    data.details.level = level;
+    data.attributes.hd = hd;
+
+    // Character proficiency bonus
+    data.attributes.prof = Math.floor((level + 7) / 4);
+
+    // Experience required for next level
+    const xp = data.details.xp;
+    xp.max = this.getLevelExp(level || 1);
+    const prior = this.getLevelExp(level - 1 || 0);
+    const required = xp.max - prior;
+    const pct = Math.round((xp.value - prior) * 100 / required);
+    xp.pct = Math.clamped(pct, 0, 100);
   }
 
   /* -------------------------------------------- */
@@ -73,13 +91,19 @@ export class Actor5e extends Actor {
   /**
    * Prepare NPC type specific data
    */
-  _prepareNPCData(data) {
+  _prepareNPCData(actorData) {
+    const data = actorData.data;
 
     // Kill Experience
     data.details.xp.value = this.getCRExp(data.details.cr);
 
     // Proficiency
     data.attributes.prof = Math.floor((Math.max(data.details.cr, 1) + 7) / 4);
+
+    // Spellcaster Level
+    if ( data.attributes.spellcasting && !data.details.spellLevel ) {
+      data.details.spellLevel = Math.max(data.details.cr, 1);
+    }
   }
 
   /* -------------------------------------------- */
@@ -145,10 +169,11 @@ export class Actor5e extends Actor {
   async update(data, options={}) {
 
     // Apply changes in Actor size to Token width/height
-    if ( data["data.traits.size"] !== getProperty(this.data, "data.traits.size") ) {
-      let size = CONFIG.DND5E.tokenSizes[data["data.traits.size"]];
+    const newSize = data["data.traits.size"];
+    if ( newSize !== getProperty(this.data, "data.traits.size") ) {
+      let size = CONFIG.DND5E.tokenSizes[newSize];
       if ( this.isToken ) this.token.update({height: size, width: size});
-      else {
+      else if ( !data["token.width"] && !hasProperty(data, "token.width") ) {
         data["token.height"] = size;
         data["token.width"] = size;
       }
@@ -158,10 +183,7 @@ export class Actor5e extends Actor {
 
   /* -------------------------------------------- */
 
-  /**
-   * Extend OwnedItem creation logic for the 5e system to make weapons proficient by default when dropped on a NPC sheet
-   * See the base Actor class for API documentation of this method
-   */
+  /** @override */
   async createOwnedItem(itemData, options) {
 
     // Assume NPCs are always proficient with weapons and always have spells prepared
@@ -174,6 +196,28 @@ export class Actor5e extends Actor {
       mergeObject(itemData, initial);
     }
     return super.createOwnedItem(itemData, options);
+  }
+
+  /* -------------------------------------------- */
+
+  /** @override */
+  async modifyTokenAttribute(attribute, value, isDelta, isBar) {
+    if ( attribute !== "attributes.hp" ) return super.modifyTokenAttribute(attribute, value, isDelta, isBar);
+
+    // Get current and delta HP
+    const hp = getProperty(this.data.data, attribute);
+    const tmp = parseInt(hp.temp) || 0;
+    const current = hp.value + tmp;
+    const max = hp.max + (parseInt(hp.tempmax) || 0);
+    const delta = isDelta ? value : value - current;
+
+    // For negative changes, deduct from temp HP
+    let dtmp = delta < 0 ? Math.max(-1*tmp, delta) : 0;
+    let dhp = delta - dtmp;
+    return this.update({
+      "data.attributes.hp.temp": tmp + dtmp,
+      "data.attributes.hp.value": Math.clamped(hp.value + dhp, 0, max)
+    });
   }
 
   /* -------------------------------------------- */
@@ -195,10 +239,13 @@ export class Actor5e extends Actor {
 
     // Configure the casting level and whether to consume a spell slot
     let consume = true;
+    let placeTemplate = false;
+        
     if ( configureDialog ) {
       const spellFormData = await SpellCastDialog.create(this, item);
       lvl = parseInt(spellFormData.get("level"));
       consume = Boolean(spellFormData.get("consume"));
+      placeTemplate = Boolean(spellFormData.get("placeTemplate"));
       if ( lvl !== item.data.data.level ) {
         item = item.constructor.createOwned(mergeObject(item.data, {"data.level": lvl}, {inplace: false}), this);
       } 
@@ -209,7 +256,14 @@ export class Actor5e extends Actor {
       await this.update({
         [`data.spells.spell${lvl}.value`]: Math.max(parseInt(this.data.data.spells["spell"+lvl].value) - 1, 0)
       });
-    } 
+    }
+
+    // Initiate ability template placement workflow if selected
+    if (item.hasAreaTarget && placeTemplate) {
+      const template = AbilityTemplate.fromItem(item);
+      if ( template ) template.drawPreview(event);
+      if ( this.sheet.rendered ) this.sheet.minimize();
+    }
 
     // Invoke the Item roll
     return item.roll();
@@ -222,18 +276,21 @@ export class Actor5e extends Actor {
    * Prompt the user for input regarding Advantage/Disadvantage and any Situational Bonus
    * @param {string} skillId      The skill id (e.g. "ins")
    * @param {Object} options      Options which configure how the skill check is rolled
+   * @return {Promise.<Roll>}   A Promise which resolves to the created Roll instance
    */
   rollSkill(skillId, options={}) {
     const skl = this.data.data.skills[skillId];
     const parts = ["@mod"];
-    var data = {mod: skl.mod};
+    const data = {mod: skl.mod};
 
-    const sklBonus = getProperty(this.data.data, "bonuses.skillCheck");
-    if (![undefined, "", "0"].includes(sklBonus)) {
+    // Include a global actor skill bonus
+    const actorBonus = getProperty(this.data.data.bonuses, "skills.check");
+    if ( !!actorBonus ) {
       parts.push("@skillBonus");
-      data.skillBonus = sklBonus;
+      data.skillBonus = parseInt(actorBonus);
     }
 
+    // Roll and return
     return Dice5e.d20Roll({
       event: options.event,
       parts: parts,
@@ -276,19 +333,22 @@ export class Actor5e extends Actor {
    * Prompt the user for input regarding Advantage/Disadvantage and any Situational Bonus
    * @param {String} abilityId    The ability ID (e.g. "str")
    * @param {Object} options      Options which configure how ability tests are rolled
+   * @return {Promise.<Roll>}   A Promise which resolves to the created Roll instance
    */
   rollAbilityTest(abilityId, options={}) {
     const label = CONFIG.DND5E.abilities[abilityId];
     const abl = this.data.data.abilities[abilityId];
     const parts = ["@mod"];
     const data = {mod: abl.mod};
-    const checkBonus = getProperty(this.data.data, "bonuses.abilityCheck");
 
-    if (![undefined, "", "0"].includes(checkBonus)) {
+    // Include a global actor ability check bonus
+    const actorBonus = getProperty(this.data.data.bonuses, "abilities.check");
+    if ( !!actorBonus ) {
       parts.push("@checkBonus");
-      data.checkBonus = checkBonus;
+      data.checkBonus = parseInt(actorBonus);
     }
 
+    // Roll and return
     return Dice5e.d20Roll({
       event: options.event,
       parts: parts,
@@ -305,19 +365,22 @@ export class Actor5e extends Actor {
    * Prompt the user for input regarding Advantage/Disadvantage and any Situational Bonus
    * @param {String} abilityId    The ability ID (e.g. "str")
    * @param {Object} options      Options which configure how ability tests are rolled
+   * @return {Promise.<Roll>}   A Promise which resolves to the created Roll instance
    */
   rollAbilitySave(abilityId, options={}) {
     const label = CONFIG.DND5E.abilities[abilityId];
     const abl = this.data.data.abilities[abilityId];
     const parts = ["@mod"];
     const data = {mod: abl.save};
-    const saveBonus = getProperty(this.data.data, "bonuses.abilitySave");
 
-    if (![undefined, "", "0"].includes(saveBonus)) {
-      parts.push("@saveBonus")
-      data.saveBonus = saveBonus;
+    // Include a global actor ability save bonus
+    const actorBonus = getProperty(this.data.data.bonuses, "abilities.save");
+    if ( !!actorBonus ) {
+      parts.push("@saveBonus");
+      data.saveBonus = parseInt(actorBonus);
     }
-    
+
+    // Roll and return
     return Dice5e.d20Roll({
       event: options.event,
       parts: parts,
@@ -330,21 +393,79 @@ export class Actor5e extends Actor {
   /* -------------------------------------------- */
 
   /**
-   * Roll a hit die of the appropriate type, gaining hit points equal to the die roll plus your CON modifier
-   * @param {String} formula    The hit die type to roll
+   * Perform a death saving throw, rolling a d20 plus any global save bonuses
+   * @param {Object} options      Additional options which modify the roll
+   * @return {Promise<Roll>}      A Promise which resolves to the Roll instance
    */
-  rollHitDie(formula) {
+  async rollDeathSave(options={}) {
+    const bonus = getProperty(this.data.data.bonuses, "abilities.save");
+    const parts = !!bonus ? ["@saveBonus"] : [];
+    const speaker = ChatMessage.getSpeaker({actor: this});
+    const roll = await Dice5e.d20Roll({
+      event: options.event,
+      parts: parts,
+      data: {saveBonus: parseInt(bonus)},
+      title: `Death Saving Throw`,
+      speaker: speaker
+    });
+
+    // Take action depending on the result
+    const success = roll.total >= 10;
+    const death = this.data.data.attributes.death;
+    
+    // Save success
+    if ( success ) {
+      let successes = (death.success || 0) + (roll.total === 20 ? 2 : 1);
+      if ( successes === 3 ) {      // Survival
+        await this.update({
+          "data.attributes.death.success": 0,
+          "data.attributes.death.failure": 0,
+          "data.attributes.hp.value": 1
+        });
+        await ChatMessage.create({content: `${this.name} has survived with 3 death save successes!`, speaker});
+      }
+      else await this.update({"data.attributes.death.success": Math.clamped(successes, 0, 3)});
+    } 
+    
+    // Save failure
+    else {
+      let failures = (death.failure || 0) + (roll.total === 1 ? 2 : 1);
+      await this.update({"data.attributes.death.failure": Math.clamped(failures, 0, 3)});
+      if ( failures === 3 ) {       // Death
+        await ChatMessage.create({content: `${this.name} has died with 3 death save failures!`, speaker});
+      }
+    }
+
+    // Return the rolled result
+    return roll;
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Roll a hit die of the appropriate type, gaining hit points equal to the die roll plus your CON modifier
+   * @param {string} formula    The hit die type to roll. Example "d8"
+   */
+  async rollHitDie(formula) {
+
+    // Find a class (if any) which has an available hit die of the requested denomination
+    const cls = this.items.find(i => {
+      const d = i.data.data;
+      return (d.hitDice === formula) && ((d.levels || 1) - (d.hitDiceUsed || 0) > 0);
+    });
+
+    // If no class is available, display an error notification
+    if ( !cls ) {
+      return ui.notifications.error(`${this.name} has no available ${formula} Hit Dice remaining!`);
+    }
 
     // Prepare roll data
-    let parts = [formula, "@abilities.con.mod"],
-        title = `Roll Hit Die`,
-        rollData = duplicate(this.data.data);
-
-    // Confirm the actor has HD available
-    if ( rollData.attributes.hd.value === 0 ) throw new Error(`${this.name} has no Hit Dice remaining!`);
+    const parts = [formula, "@abilities.con.mod"];
+    const title = `Roll Hit Die`;
+    const rollData = duplicate(this.data.data);
 
     // Call the roll helper utility
-    return Dice5e.damageRoll({
+    const roll = await Dice5e.damageRoll({
       event: new Event("hitDie"),
       parts: parts,
       data: rollData,
@@ -352,12 +473,14 @@ export class Actor5e extends Actor {
       speaker: ChatMessage.getSpeaker({actor: this}),
       critical: false,
       dialogOptions: {width: 350}
-    }).then(roll => {
-      let hp = this.data.data.attributes.hp,
-          dhp = Math.min(hp.max - hp.value, roll.total),
-          hd = Math.max(this.data.data.attributes.hd.value - 1, 0);
-      this.update({"data.attributes.hp.value": hp.value + dhp, "data.attributes.hd.value": hd});
-    })
+    });
+    if ( !roll ) return;
+
+    // Adjust actor data
+    await cls.update({"data.hitDiceUsed": cls.data.data.hitDiceUsed + 1});
+    const hp = this.data.data.attributes.hp;
+    const dhp = Math.min(hp.max - hp.value, roll.total);
+    return this.update({"data.attributes.hp.value": hp.value + dhp});
   }
 
   /* -------------------------------------------- */
@@ -372,8 +495,8 @@ export class Actor5e extends Actor {
   async shortRest({dialog=true, chat=true}={}) {
     const data = this.data.data;
 
-    // Take note of the initial hit points and hit dice the Actor has
-    const hd0 = data.attributes.hd.value;
+    // Take note of the initial hit points and number of hit dice the Actor has
+    const hd0 = data.attributes.hd;
     const hp0 = data.attributes.hp.value;
 
     // Display a Dialog for rolling hit dice
@@ -383,7 +506,7 @@ export class Actor5e extends Actor {
     }
 
     // Note the change in HP and HD which occurred
-    const dhd = data.attributes.hd.value - hd0;
+    const dhd = data.attributes.hd - hd0;
     const dhp = data.attributes.hp.value - hp0;
 
     // Recover character resources
@@ -397,7 +520,12 @@ export class Actor5e extends Actor {
 
     // Recover item uses
     const items = this.items.filter(item => item.data.data.uses && (item.data.data.uses.per === "sr"));
-    const updateItems = items.map(item => {return { _id: item._id, "data.uses.value": item.data.data.uses.max}});
+    const updateItems = items.map(item => {
+      return {
+        _id: item._id,
+        "data.uses.value": item.data.data.uses.max
+      };
+    });
     await this.updateManyEmbeddedEntities("OwnedItem", updateItems);
 
     // Display a Chat Message summarizing the rest effects
@@ -430,7 +558,6 @@ export class Actor5e extends Actor {
    */
   async longRest({dialog=true, chat=true}={}) {
     const data = this.data.data;
-    const updateData = {};
 
     // Maybe present a confirmation dialog
     if ( dialog ) {
@@ -441,12 +568,13 @@ export class Actor5e extends Actor {
       }
     }
 
-    // Recover HP and one-half HD
-    let dhp = data.attributes.hp.max - data.attributes.hp.value;
-    let recover_hd = Math.max(Math.floor(data.details.level.value/2), 1);
-    let dhd = Math.min(recover_hd, data.details.level.value - data.attributes.hd.value);
-    updateData["data.attributes.hp.value"] = data.attributes.hp.max;
-    updateData["data.attributes.hd.value"] = data.attributes.hd.value + dhd;
+    // Recover hit points to full, and eliminate any existing temporary HP
+    const dhp = data.attributes.hp.max - data.attributes.hp.value;
+    const updateData = {
+      "data.attributes.hp.value": data.attributes.hp.max,
+      "data.attributes.hp.temp": 0,
+      "data.attributes.hp.tempmax": 0
+    };
 
     // Recover character resources
     for ( let [k, r] of Object.entries(data.resources) ) {
@@ -461,13 +589,41 @@ export class Actor5e extends Actor {
       updateData[`data.spells.${k}.value`] = v.max;
     }
 
-    // Recover limited item uses
-    const items = this.items.filter(i => i.data.data.uses && ["sr", "lr"].includes(i.data.data.uses.per));
-    const updateItems = items.map(item => { return {_id: item._id, "data.uses.value": item.data.data.uses.max} });
+
+    // Determine the number of hit dice which may be recovered
+    let recoverHD = Math.max(Math.floor(data.details.level / 2), 1);
+    let dhd = 0;
+
+    // Sort classes which can recover HD, assuming players prefer recovering larger HD first.
+    const updateItems = this.items.filter(item => item.data.type === "class").sort((a, b) => {
+      let da = parseInt(a.data.data.hitDice.slice(1)) || 0;
+      let db = parseInt(b.data.data.hitDice.slice(1)) || 0;
+      return db - da;
+    }).reduce((updates, item) => {
+      const d = item.data.data;
+      if ( (recoverHD > 0) && (d.hitDiceUsed > 0) ) {
+        let delta = Math.min(d.hitDiceUsed || 0, recoverHD);
+        recoverHD -= delta;
+        dhd += delta;
+        updates.push({_id: item.id, "data.hitDiceUsed": d.hitDiceUsed - delta});
+      }
+      return updates;
+    }, []);
+
+    // Iterate over owned items, restoring uses per day and recovering Hit Dice
+    for ( let item of this.items ) {
+      const d = item.data.data;
+      if ( d.uses && ["sr", "lr"].includes(d.uses.per) ) {
+        updateItems.push({_id: item.id, "data.uses.value": d.uses.max});
+      }
+      else if ( d.recharge && d.recharge.value ) {
+        updateItems.push({_id: item.id, "data.recharge.charged": true});
+      }
+    }
 
     // Perform the updates
     await this.update(updateData);
-    await this.updateManyEmbeddedEntities("OwnedItem", updateItems);
+    if ( updateItems.length ) await this.updateManyEmbeddedEntities("OwnedItem", updateItems);
 
     // Display a Chat Message summarizing the rest effects
     if ( chat ) {
