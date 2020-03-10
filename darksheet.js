@@ -4,6 +4,7 @@ import {
 
 Hooks.once('init', () => loadTemplates([
   'modules/darksheet/templates/actors/parts/actor-inventory.html',
+  'modules/darksheet/templates/actors/parts/actor-spellbook.html',
   'modules/darksheet/templates/items/parts/item-description.html'
 ]));
 Hooks.once('init', function() {
@@ -219,7 +220,7 @@ export class DarkItemSheet5e extends ItemSheet {
     // Modify damage formula
     html.find(".damage-control").click(this._onDamageControl.bind(this));
   }
-
+	
   /* -------------------------------------------- */
 
   /**
@@ -231,7 +232,7 @@ export class DarkItemSheet5e extends ItemSheet {
   async _onDamageControl(event) {
     event.preventDefault();
     const a = event.currentTarget;
-
+	
     // Add new damage component
     if ( a.classList.contains("add-damage") ) {
       await this._onSubmit(event);  // Submit any unsaved changes
@@ -256,6 +257,58 @@ export class DarkSheet extends ActorSheet5eCharacter {
     }
     activateListeners(html) {
         super.activateListeners(html);
+		
+	html.find('.exhaustioncalc').click(event => {
+      event.preventDefault();
+		  let newexhaustion = 0;
+		  let temp = this.actor.data.data.attributes.temp;
+		  let food = this.actor.data.data.attributes.saturation.value;
+		  let water = this.actor.data.data.attributes.thirst.value;
+		  let fatigue = this.actor.data.data.attributes.fatigue.value;
+		  let manualexhaustion = this.actor.data.data.attributes.exhaustionpoints.value;
+		  //Temperature Exhaustion
+		  if(temp === "exenegised"){
+		  newexhaustion += -1;
+		  }
+		  else if(temp === "exvsleepy" || temp === "exbarely"){
+		  newexhaustion += 1;
+		  }
+		  //Food Exhaustion
+		  if(food === "foodstuffed"){
+		  newexhaustion += -1;
+		  }
+		  else if(food === "foodravenous" || food === "foodstarving"){
+		  newexhaustion += 1;
+		  }
+		  //Water Exhaustion
+		  if(water === "wquenched"){
+		  newexhaustion += -1;
+		  }
+		  else if(water === "wdry" || water === "wdehydrated"){
+		  newexhaustion += 1;
+		  }
+		  //Fatigue Exhaustion
+		  if(fatigue === "exenegised"){
+		  newexhaustion += -1;
+		  }
+		  else if(fatigue === "exvsleepy" || fatigue === "exbarely"){
+		  newexhaustion += 1;
+		  }
+		  //exhaustion over 3?
+		  if(newexhaustion >= 4){
+		  console.log("(DarkSheet): Maximum exhaustion achieved through needs. Total exhaustion from fron needs cannot exceed 3");
+		  newexhaustion = 3;
+		  }
+		  //adding manual exhaustion
+		  newexhaustion = (newexhaustion * 1 + manualexhaustion * 1);
+		  //exhaustion <0?
+		  if(newexhaustion <= 0){
+		  newexhaustion = 0;
+		  }
+		  this.actor.data.data.attributes.newexhaustion = newexhaustion;
+		  console.log("(DarkSheet): New Exhaustion: "+this.actor.data.data.attributes.newexhaustion);
+		  this.render();
+		});	
 		
 		/*RICH TEXT EDITOR CUSTOM CSS*/
 		window.createEditor = (function () {
@@ -338,18 +391,46 @@ export class DarkSheet extends ActorSheet5eCharacter {
       event.preventDefault();
 	  
 			// Rolling table, from best to worst
-			const rollings = ['d12','d10','d8','d6','d4'];
-		
+			const rollings = ['12','10','8','6','4'];
+			// Value of the burnoutdice
 			let burnoutdie = this.actor.data.data.attributes.burnout.value;
-			let roll = new Roll(`${burnoutdie}`).roll();
+			// find the table
 			let table = game.tables.entities.find(t => t.data.name === "Burnout Consequence");
+			// burnoutsettings
+			let bsettings = this.actor.data.data.attributes.burnoutc.value
+			// magic region
+			var regionmod = parseInt(this.actor.data.data.attributes.regionmod.value, 10);
+			//console.log("Regionmod: "+regionmod);
+			// burnoutdice changed through region
+			if (regionmod < 0){
+				var regionmodz = rollings.indexOf(this.actor.data.data.attributes.burnout.value) - parseInt(regionmod);
+				//console.log("Regionmodz step2 kleiner: "+regionmodz);
+				if (regionmodz >= 5){
+					regionmodz = 4;
+				}
+			}
+			else{
+				var regionmodz = rollings.indexOf(this.actor.data.data.attributes.burnout.value) - parseInt(regionmod);
+				//console.log("Regionmodz step3 größer: "+regionmodz);
+				if (regionmodz <= 0){
+					regionmodz = 0;
+				}
+			}
+			var burnoutARegion = rollings[regionmodz];
+			let rollcon = burnoutARegion;
+			let rollcona = "d" + rollcon
+			let roll = new Roll(`${rollcona}`).roll();
 			const result = table.roll()
 			
+			
+			
+			if (burnoutdie === 0){}
+			else{
 			let content = `
 				<div class="dnd5e chat-card item-card" data-acor-id="${this.actor._id}">
 					<header class="card-header flexrow">
 						<img src="${this.actor.data.token.img}" title="" width="36" height="36" style="border: none;"/>
-						<h3 style=" color: #fff;">Burnoutdice(${burnoutdie}): </h3>
+						<h3>Burnoutdice(${rollcona}): </h3>
 					<h3>${roll.result}</h3>
 					</header>
 				</div>`;
@@ -357,11 +438,19 @@ export class DarkSheet extends ActorSheet5eCharacter {
 				<div class="dnd5e chat-card item-card" data-acor-id="${this.actor._id}">
 					<header class="card-header flexrow">
 						<img src="${this.actor.data.token.img}" title="" width="36" height="36" style="border: none;"/>
-						<h3 style=" color: #fff;">Burnoutdice(${burnoutdie}): </h3>
+						<h3>Burnoutdice(${rollcona}): </h3>
 					<h3 style="color: #ff0000;text-shadow: 0 0 2px;">${roll.result}</h3>
 					</header>
 					</br>
 					<h3 style="color: #ff0000;text-shadow: 0 0 2px; text-align: center;">${result[1].text}</h3>
+				</div>`;
+			let content3 = `
+				<div class="dnd5e chat-card item-card" data-acor-id="${this.actor._id}">
+					<header class="card-header flexrow">
+						<img src="${this.actor.data.token.img}" title="" width="36" height="36" style="border: none;"/>
+						<h3>Burnoutdice(${rollcona}): </h3>
+					<h3 style="color: #ff0000;text-shadow: 0 0 2px;">${roll.result}</h3>
+					</header>
 				</div>`;
 			// Send content to chat
 			let rollWhisper = null;
@@ -371,14 +460,26 @@ export class DarkSheet extends ActorSheet5eCharacter {
 			if (rollMode === "blindroll") rollBlind = true;
 			if(roll.result <= 2)
 			{
-				ChatMessage.create({
-					user: game.user._id,
-					content: content2,
-					speaker: { actor: this.actor._id, token: this.actor.token, alias: this.actor.name },
-					whisper: ChatMessage.getWhisperIDs("GM"),
-					sound: CONFIG.sounds.dice,
-					flags: {darksheet: {outcome: 'bad'}}
-				});
+			    if(bsettings){
+					ChatMessage.create({
+						user: game.user._id,
+						content: content2,
+						speaker: { actor: this.actor._id, token: this.actor.token, alias: this.actor.name },
+						whisper: ChatMessage.getWhisperIDs("GM"),
+						sound: CONFIG.sounds.dice,
+						flags: {darksheet: {outcome: 'bad'}}
+					});
+				}
+				else{
+					ChatMessage.create({
+						user: game.user._id,
+						content: content3,
+						speaker: { actor: this.actor._id, token: this.actor.token, alias: this.actor.name },
+						whisper: ChatMessage.getWhisperIDs("GM"),
+						sound: CONFIG.sounds.dice,
+						flags: {darksheet: {outcome: 'bad'}}
+					});
+				}
 				// Lower burnoutdie rank
 				const new_burnoutdie = rollings.indexOf(this.actor.data.data.attributes.burnout.value) + 1;
 				if(new_burnoutdie < rollings.length)
@@ -398,6 +499,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 				sound: CONFIG.sounds.dice
 			});
 			} 
+			}
     });	
 	html.find('.foodcheckbox').change(event => {
 	console.log("(DarkSheet): Food Value Changed");
@@ -451,8 +553,8 @@ export class DarkSheet extends ActorSheet5eCharacter {
 		  if(newexhaustion <= 0){
 		  newexhaustion = 0;
 		  }
-		  this.actor.data.data.attributes.exhaustioncalc = newexhaustion;
-		  console.log("(DarkSheet): New Exhaustion: "+this.actor.data.data.attributes.exhaustioncalc);
+		  this.actor.data.data.attributes.newexhaustion = newexhaustion;
+		  console.log("(DarkSheet): New Exhaustion: "+this.actor.data.data.attributes.newexhaustion);
 		  this.render();
     });	
 
@@ -491,7 +593,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 			let rollBlind = false;			
 			let	rollMode = game.settings.get("core", "rollMode");
 			if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperIDs("GM");
-			if (rollMode === "blindroll") rollBlind = false;
+			if (rollMode === "blindroll") rollBlind = true;
 			if(roll.result <= 2)
 			{
 				ChatMessage.create({
@@ -532,7 +634,8 @@ export class DarkSheet extends ActorSheet5eCharacter {
 	
 	html.find('.exhaustionstatus').click(event => {
       event.preventDefault();
-		let exhaustion = this.actor.data.data.attributes.exhaustionpoints.value;
+		let exhaustion = this.actor.data.data.attributes.newexhaustion;
+		let newexhaustion = this.actor.data.data.attributes.newexhaustion;
 			let content = `
 				<div class="dnd5e chat-card item-card" data-acor-id="${this.actor._id}">
 					<header class="card-header flexrow">
@@ -604,7 +707,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 			if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperIDs("GM");
 			if (rollMode === "blindroll") rollBlind = true;
 			
-			if(exhaustion == "1"){
+			if(newexhaustion === 1){
 			ChatMessage.create({
 				user: game.user._id,
 				content: content,
@@ -615,7 +718,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 				flags: {darksheet: {outcome: 'table'}}
 			});
 			}
-			else if(exhaustion == "2"){
+			else if(newexhaustion === 2){
 			ChatMessage.create({
 				user: game.user._id,
 				content: content2,
@@ -626,7 +729,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 				flags: {darksheet: {outcome: 'table'}}
 			});
 			}
-			else if(exhaustion == 3){
+			else if(newexhaustion === 3){
 			ChatMessage.create({
 				user: game.user._id,
 				content: content3,
@@ -637,7 +740,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 				flags: {darksheet: {outcome: 'bad'}}
 			});
 			}
-			else if(exhaustion == 4){
+			else if(newexhaustion === 4){
 			ChatMessage.create({
 				user: game.user._id,
 				content: content4,
@@ -648,7 +751,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 				flags: {darksheet: {outcome: 'bad'}}
 			});
 			}
-			else if(exhaustion == 5){
+			else if(newexhaustion === 5){
 			ChatMessage.create({
 				user: game.user._id,
 				content: content5,
@@ -659,7 +762,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 				flags: {darksheet: {outcome: 'bad'}}
 			});
 			}
-			else if(exhaustion == 6){
+			else if(newexhaustion === 6){
 			ChatMessage.create({
 				user: game.user._id,
 				content: content6,
@@ -674,7 +777,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 	
 	html.find('.deathsaveroll').click(event => {
       event.preventDefault();
-	  let table = game.tables.entities.find(t => t.data.name === "Death Saving Throw"); table.draw();
+	  let table = game.tables.entities.find(t => t.data.name === "Death Saving Throw");
 	  const result = table.roll()
 			let content = `
 				<div class="dnd5e chat-card item-card" data-acor-id="${this.actor._id}">
@@ -708,7 +811,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 	// LOOK FOR WOUNDROLL
 	html.find('.woundroll').click(event => {
       event.preventDefault();
-	  let table = game.tables.entities.find(t => t.data.name === "Reopening Wounds"); table.draw();
+	  let table = game.tables.entities.find(t => t.data.name === "Reopening Wounds");
 	  const result = table.roll()
 			let content = `
 				<div class="dnd5e chat-card item-card" data-acor-id="${this.actor._id}">

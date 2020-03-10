@@ -208,7 +208,7 @@
                     <div class="counter flexrow">
                         <h4 class="exhaustionstatus rollable">Exhaustion</h4>
                         <div class="status-value">
-                            <input type="number" min="0" max="6" class="exhaustionpoints" name="data.attributes.exhaustionpoints.value" value="{{data.attributes.exhaustionpoints.value}}" />
+                            <input type="number" min="0" max="6" class="exhaustionpoints" name="data.attributes.exhaustionpoints.value" value="{{data.attributes.exhaustionpoints.value}}"/>
                         </div>
                     </div>
                     <div class="counter flexrow">
@@ -255,7 +255,7 @@
 
         {{!-- Spellbook Tab --}}
         <div class="tab spellbook flexcol" data-group="primary" data-tab="spellbook">
-            {{> "systems/dnd5e/templates/actors/parts/actor-spellbook.html"}}
+            {{> "modules/darksheet/templates/actors/parts/actor-spellbook.html"}}
         </div>
 
         {{!-- Biography Tab --}}
@@ -279,7 +279,7 @@
         <label class="foodcheckbox">
             <input class="ressourcecheckbox" type="checkbox" type="radio" name="data.attributes.food5.value" data-dtype="Boolean" {{checked data.attributes.food5.value}}/><span></span></label>
     </div>
-    <select class="saturationbox" name="data.attributes.saturation.value" data-type="String" >
+    <select class="saturationbox" id="sel" name="data.attributes.saturation.value" data-type="String" >
         {{#select data.attributes.saturation.value}}
         <option value="foodstuffed">Stuffed -1 exhaustion</option>
         <option value="foodwellfed">Well-fed</option>
@@ -321,17 +321,6 @@
 
 		<h4 class="darksheetheader">Fatigue</h4>
 		<div class="burnoutandexhaustion">
-		<label class="dicelabel2 burnoutdie rollable">Spell-Burnoutdice</label>
-		<select class="dicebox2" name="data.attributes.burnout.value" data-type="String" value="D12">
-			{{#select data.attributes.burnout.value}}
-			<option value=""></option>
-			<option value="d12">d12</option>
-			<option value="d10">d10</option>
-			<option value="d8">d8</option>
-			<option value="d6">d6</options>
-				<option value="d4">d4</option>
-				{{/select}}
-		</select>	
 		</div>
 		<select class="exhaustionbox" name="data.attributes.fatigue.value" data-type="String">
 			{{#select data.attributes.fatigue.value}}
@@ -344,18 +333,7 @@
 			<option value="exbarely">Barely awake +1 exhaustion</option>
 			{{/select}}
 		</select>
-			<!--{{#if data.attributes.exhaustioncalc}}
-            <div class="counter flexrow">
-            <h4 style="margin-top: 4px;" class="exhaustionstatus">Manual Exhaustion</h4>
-            <div class="status-value">
-            <input type="number" min="0" max="6" style="height: 25px; margin-top: 6px;width: auto;" class="exhaustionpoints" name="data.attributes.exhaustionpoints.value" value="{{data.attributes.exhaustionpoints.value}}" />
-            </div>
-            </div>
-			{{else}}
-            <div class="counter flexrow">
-            </div>
-			{{/if}}-->
-		<div><label class="dicelabel2 staminacheck rollable">Stamina Check</label></div>
+		<div style="margin-top: 9px;"><label class="dicelabel2 staminacheck rollable">Stamina Check</label></div>
 	</div>
 	</div>
 	<div class="section1 allparts">
@@ -375,7 +353,8 @@
 			<div style="margin-top: 15px;">
 				<span class="settingsoption exhaustioncalc">
 					<label class="rollable exhaustioncalc">Calculate Exhaustion:</label>
-						<input type="text" disabled class="exhaustionpoints" name="{{data.attributes.exhaustioncalc}}" value="{{data.attributes.exhaustioncalc}}" placeholder="0" style="height: 30px;background: #65656500;border-style: solid; border-bottom: inset; border-color: #fdffa7;width: 30px;"/>
+						<input type="text" class="exhaustionpoints" name="data.attributes.newexhaustion" value="{{data.attributes.newexhaustion}}" placeholder="click" style="height: 30px;background: #65656500;border-style: solid; border-bottom: inset; border-color: #fdffa7;width: 30px;"/>
+					</br><label class="rollable exhaustionstatus">Exhaustion Information</label>
 				</span>
 			</div>
 		</div>
@@ -502,6 +481,7 @@
 			<div class="section3" style="margin-left: 113px;margin-right: 113px; margin-top: 0;">
 				<label class="treatwound rollable check {{data.attributes.color.value}}">Treat Wound (SR)</label>
 				<label class="healwound rollable check {{data.attributes.color.value}}">Heal Wound (LR)</label>
+				<label class="check dicelabel2 staminacheck rollable">Stamina Check</label>
 			</div>
 		</div>
 		<div class="section2" id="hideable">
@@ -516,7 +496,7 @@
 			  }
 			}
 		</script>
-		<span class="settingsoption">
+		<span style="display: inline-flex;"class="settingsoption">
 		<label class="hitdiceroll rollable">Hitdice:</label>
 			<select class="hitdice {{data.attributes.color.value}}" name="data.attributes.hitdice.value" data-type="String">
 				{{#select data.attributes.hitdice.value}}
@@ -527,18 +507,14 @@
 				<option value="d4">d4</option>
 				{{/select}}
 			</select>
-		</span>
-		<span class="settingsoption">
-			<label>Inventory Slots </label>
+			<label style="margin-left: 5px;">Inventory Slots </label>
             <input class="inventoryslots" style="width: 30px; height: 20px; border: 1px solid #fff;" name="data.attributes.inventoryslots" type="text" value="{{data.attributes.inventoryslots}}" data-dtype="{{data.attributes.inventoryslots}}" placeholder="18" />
             <div class="counter-value">
 			</div>
-		</span>
-<!--		<span class="settingsoption">
-					<label style="margin-top: 8px;margin-left: -55px;position: absolute;">Bloodied:</label>
+					<label style="margin-left: 5px;">Automatic Burnout Consequence:</label>
 						<label class="bloodiedcheckbox">
-							<input class="ressourcecheckbox" type="checkbox" type="Boolean" name="data.attributes.bloodied.value" data-dtype="Boolean" {{checked data.attributes.bloodied.value}}/><span></span></label>
-		</span> -->
+							<input style="margin-top: -4px;" class="ressourcecheckbox" type="checkbox" type="Boolean" name="data.attributes.burnoutc.value" data-dtype="Boolean" {{checked data.attributes.burnoutc.value}}/><span></span></label>
+		</span>
 <!--		<span class="settingsoption">
 					<label style="margin-top: 8px;margin-left: -130px;position: absolute;">Automatic Exhaustion:</label>
 						<label class="trainingscheckbox">
@@ -550,7 +526,7 @@
 			<label class="exhaustionstatus rollable" style="margin-top: 8px;">Automatic Exhaustion:</label>
 				<input type="text" min="0" max="6" class="exhaustionpoints" name="data.attributes.exhaustioncalc.result" value="{{data.attributes.exhaustioncalc.result}}" placeholder="0" style="height: 30px;background: #65656500;border-style: solid; border-bottom: inset; border-color: #fdffa7;color: white !important;width: 30px;margin-right: 10px;"/>
 		</span>-->
-		</br><label class="hitdiceroll rollable">Character Sheet Color:</label>
+		</br><label>Character Sheet Color:</label>
 			<select class="hitdice {{data.attributes.color.value}}" name="data.attributes.color.value" data-type="String">
 				{{#select data.attributes.color.value}}
 				<option value="blue">blue</option>
