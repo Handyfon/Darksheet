@@ -1,6 +1,5 @@
-import {
-    ActorSheet5eCharacter
-} from '../../../../modules/darksheet/actor/sheets/character.js';
+import { ActorSheet5eCharacter } from '../../../../modules/darksheet/actor/sheets/character.js';
+import { Actor5e } from '../../../../modules/darksheet/actor/entity.js';
 
 Hooks.once('init', () => loadTemplates([
   'modules/darksheet/templates/actors/parts/actor-inventory.html',

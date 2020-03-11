@@ -869,7 +869,7 @@ margin-left: 10px;
     color: #9dff00;
 }
 .dnd5e .form-group label {
-    flex: 2;
+    flex: auto;
     color: inherit;
     font-weight: bold;
 }
@@ -959,9 +959,24 @@ input[type=number]::-webkit-outer-spin-button {
    opacity: 1;
 
 }
-.xpbar{visibility: hidden;}
-.experience{visibility: hidden;}
-
+/*.xpbar{visibility: hidden;}
+.experience{visibility: hidden;}*/
+.dnd5e.sheet.actor.character .sheet-header .charlevel .xpbar .bar {
+    height: 4px;
+    margin: 1px;
+    display: block;
+    background: #9eff0c;
+    border: 1px solid #000;
+    border-radius: 2px;
+}
+.dnd5e.sheet.actor.character .sheet-header .charlevel {
+    flex: 0 0 180px;
+    padding: 0 5px 2px;
+    margin-top: -15px;
+}
+span.max {
+    color: #b5b1d4;
+}
 .stressbox {
     margin-right: 0px !important;
     border-color: red;

@@ -16,7 +16,9 @@
             {{/each}}
             {{/select}}
         </select>
-		<label style="margin-right: 10px;"class="dicelabel2 burnoutclick burnoutdie rollable"><h3>Spell-Burnoutdice</h3></label>
+        <label style="margin-left: 15px;"><h3>Spell-DC</h3></label>
+		<input style="margin-right: 5px;text-align: center;margin-top: 2px;background: #182739;color: #a8a7c9 !important;border: 1px dotted #b5b1d4;" readonly type="text" name="data.attributes.spelldc" value="{{data.attributes.spelldc}}" placeholder="0" data-dtype="Number"/>
+		<label style="margin-right: 10px; margin-left: 0;"class="dicelabel2 burnoutclick burnoutdie rollable"><h3>Spell-Burnoutdice</h3></label>
 		<select name="data.attributes.burnout.value" data-type="String" value="D12">
 			{{#select data.attributes.burnout.value}}
 			<option value="0"></option>
@@ -27,7 +29,7 @@
 				<option value="4">d4</option>
 				{{/select}}
 		</select>
-		<label><h3 style="text-align: center;">Regional Magic</h3></label>
+		<label style="margin-left: 5px;margin-right: 5px;"><h3 style="text-align: center;">Regional Magic</h3></label>
 		<select name="data.attributes.regionmod.value" data-type="String" value="0">
 			{{#select data.attributes.regionmod.value}}
 			<option value="3">Serene +3</option>

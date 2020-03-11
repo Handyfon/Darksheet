@@ -1,7 +1,7 @@
-import { Dice5e } from "../dice.js";
-import { ShortRestDialog } from "../apps/short-rest.js";
-import { SpellCastDialog } from "../apps/spell-cast-dialog.js";
-import { AbilityTemplate } from "../pixi/ability-template.js";
+import { Dice5e } from "../../../../systems/dnd5e/module/dice.js";
+import { ShortRestDialog } from "../../../../systems/dnd5e/module/apps/short-rest.js";
+import { SpellCastDialog } from "../../../../systems/dnd5e/module/apps/spell-cast-dialog.js";
+import { AbilityTemplate } from "../../../../systems/dnd5e/module/pixi/ability-template.js";
 
 
 /**
@@ -114,7 +114,9 @@ export class Actor5e extends Actor {
    * @return {Number}       The XP required
    */
   getLevelExp(level) {
-    const levels = CONFIG.DND5E.CHARACTER_EXP_LEVELS;
+    const levels = [
+  0, 300, 420, 590, 820, 1150, 1610, 2260, 3160, 4430, 6200, 8680,
+  12150, 17010, 23810, 33330, 46660, 64330, 91460, 128050];
     return levels[Math.min(level, levels.length - 1)];
   }
 
