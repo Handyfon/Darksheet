@@ -48,11 +48,11 @@ input[type="text"]::placeholder {
     color: #b5b1d4;
     background: #525252;
 }
-#calendar-date {
-    color: #000;
+i#calendar-btn-sec {
+    color: whitesmoke !important;
 }
-#calendar-date-num {
-    color: #000 !important;
+i#calendar-btn-halfMin {
+    color: whitesmoke !important;
 }
 .calendar-form-container {
     background: 0 !important;
@@ -69,22 +69,16 @@ input#calendar-form-era-input {
 #calendar-form-second-input {
     background-color: black !important;
 }
-i#calendar-btn-day {
-    color: #b5b1d4 !important;
-}
 #calendar {
     z-index: 0 !important;
-    background: rgba(255, 255, 255, 0.5);
 }
 .calendar-events-container {
     background: 0 !important;
 }
-#calendar-weather-climate {
-    color: white;
-}
 /*#calendar{
 background-image: linear-gradient(#6db2ff73, #4e6ea9) !important;
 }*/
+/*
 .fa-book-open:before {
     content: "\f518";
     color: #b5b1d4;
@@ -113,6 +107,12 @@ background-image: linear-gradient(#6db2ff73, #4e6ea9) !important;
 }
 .fa-angle-right:before {
     color: #b5b1d4 !important;
+}*/
+#calendar-weekday {
+    color: black;
+}
+p#calendar-time {
+    color: black;
 }
 .dnd5e.sheet.actor.character {
     min-width: 720px !important;
