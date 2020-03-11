@@ -6,7 +6,7 @@
 	"author": "Handyfon#8390",
 	"systems": ["dnd5e"],
 	"esmodules": ["darksheet.js", "/js/character.js", "/js/base.js", "templates.js"],
-	"styles": ["css/darksheet.css", "css/mce.css"],
+	"styles": ["css/darksheet-clear.css", "css/mce.css"],
 	"packs": [
 		{
 			"name": "darkerdungeons",
@@ -25,7 +25,7 @@
 	],
 	 "socket": true,
     "url": "https://github.com/Handyfon/Darksheet/tree/master",
-    "manifest": "https://raw.githubusercontent.com/Handyfon/Darksheet/master/module.json",
-    "download": "https://github.com/Handyfon/Darksheet/raw/master/darksheet.zip",
+    "manifest": "https://raw.githubusercontent.com/Handyfon/Darksheet-clear/master/module.json",
+    "download": "https://github.com/Handyfon/Darksheet-clear/raw/master/darksheet.zip",
 	"minimumCoreVersion": "0.5.1"
 }
