@@ -6,7 +6,7 @@
 	"author": "Handyfon#8390",
 	"systems": ["dnd5e"],
 	"esmodules": ["darksheet.js", "/js/character.js", "/js/base.js", "templates.js"],
-	"styles": ["css/darksheet.css", "css/mce.css"],
+	"styles": ["css/darksheet.css"],
 	"packs": [
 		{
 			"name": "darkerdungeons",
