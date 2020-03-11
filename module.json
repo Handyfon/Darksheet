@@ -24,7 +24,7 @@
 		}
 	],
 	 "socket": true,
-    "url": "https://github.com/Handyfon/FDarksheet/tree/master",
+    "url": "https://github.com/Handyfon/Darksheet/tree/master",
     "manifest": "https://raw.githubusercontent.com/Handyfon/Darksheet/master/module.json",
     "download": "https://github.com/Handyfon/Darksheet/raw/master/darksheet.zip",
 	"minimumCoreVersion": "0.5.1"
