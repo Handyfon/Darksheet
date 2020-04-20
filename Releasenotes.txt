@@ -1,1 +1,11 @@
-Releasenotes
+2.0 Ipdate Containing 
+* Compatibility with 0.5.5
++ Automated Stamina Rolls
++ Clickable Inspiration
++ Clickable Hero Points
++ Manual Conditions (big thanks  to rad)
++ Extended Biography
++ CLICKABLE AMMODICE (big thanks to fyorl
++ Added a lots of tooltips 
+(for awesome styling check out the module for darksheet styling)
+* Hideable Settings and Conditions
