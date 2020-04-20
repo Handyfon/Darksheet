@@ -6,7 +6,7 @@
 
         <div class="header-details flexrow">
             <h1 class="charname">
-                <input name="name" type="text" value="{{item.name}}" placeholder="Item Name"/>
+                <input name="name" type="text" value="{{item.name}}" placeholder="{{ localize 'DND5E.ItemName' }}"/>
             </h1>
 
             <div class="item-subtitle">
@@ -16,10 +16,10 @@
 
             <ul class="summary">
                 <li>
-                    <input type="text" name="data.rarity" value="{{data.rarity}}" placeholder="Rarity"/>
+                    <input type="text" name="data.rarity" value="{{data.rarity}}" placeholder="{{ localize 'DND5E.Rarity' }}"/>
                 </li>
                 <li>
-                    <input type="text" name="data.source" value="{{data.source}}" placeholder="Source"/>
+                    <input type="text" name="data.source" value="{{data.source}}" placeholder="{{ localize 'DND5E.Source' }}"/>
                 </li>
             </ul>
         </div>
@@ -35,14 +35,14 @@
     <section class="sheet-body">
 
         {{!-- Description Tab --}}
-        {{> "modules/darksheet/templates/items/parts/item-description.html"}}
+		{{> "modules/darksheet/templates/items/parts/item-description.html"}}
 
         {{!-- Details Tab --}}
         <div class="tab details" data-group="primary" data-tab="details">
 
             {{!-- Tool Proficiency --}}
             <div class="form-group">
-                <label>Tool Proficiency</label>
+                <label>{{ localize "DND5E.ItemToolProficiency" }}</label>
                  <select name="data.proficient" data-dtype="Number">
                      {{#select data.proficient}}
                      {{#each config.proficiencyLevels as |label p|}}
@@ -54,7 +54,7 @@
 
             {{!-- Ability Check --}}
             <div class="form-group">
-                <label>Default Ability Check</label>
+                <label>{{ localize "DND5E.DefaultAbilityCheck" }}</label>
                 <select name="data.ability">
                     {{#select data.ability}}
                     {{#each config.abilities as |name a|}}
@@ -66,7 +66,7 @@
 
             {{!-- Chat Message Flavor --}}
             <div class="form-group stacked">
-                <label>Chat Message Flavor</label>
+                <label>{{ localize "DND5E.ChatFlavor" }}</label>
                 <input type="text" name="data.chatFlavor" value="{{data.chatFlavor}}"/>
             </div>
         </div>

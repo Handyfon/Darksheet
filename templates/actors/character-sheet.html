@@ -6,37 +6,35 @@
 
         <div class="header-details flexrow">
             <h1 class="charname">
-                <input name="name" type="text" value="{{actor.name}}" placeholder="Character Name"/>
+                <input name="name" type="text" value="{{actor.name}}" placeholder="{{ localize 'DND5E.Name' }}"/>
             </h1>
 
             <div class="charlevel">
                 <div class="level {{#if disableExperience}}noxp{{/if}}">
-                    <label>Level </label>
-                    <input name="data.details.level.value" type="text" value="{{data.details.level.value}}"
-                           data-dtype="Number" placeholder="1"/>
+                    <label>{{ localize "DND5E.Level" }} {{data.details.level}}</label>
                 </div>
                 {{#unless disableExperience}}
-                    <div class="experience">
-                        <input name="data.details.xp.value" type="text" value="{{data.details.xp.value}}"
-                               data-dtype="Number" placeholder="0"/>
-                        <span class="max"> / {{data.details.xp.max}}</span>
-                    </div>
-                    <div class="xpbar">
-                        <span class="bar" style="width: {{data.details.xp.pct}}%"></span>
-                    </div>
+                <div class="experience">
+                    <input name="data.details.xp.value" type="text" value="{{data.details.xp.value}}"
+                           data-dtype="Number" placeholder="0"/>
+                    <span class="max"> / {{data.details.xp.max}}</span>
+                </div>
+                <div class="xpbar">
+                    <span class="bar" style="width: {{data.details.xp.pct}}%"></span>
+                </div>
                 {{/unless}}
             </div>
 
             {{!-- Character Summary --}}
             <ul class="summary">
                 <li>
-                    <input type="text" name="data.details.race" value="{{data.details.race}}" placeholder="Race"/>
+                    <input type="text" name="data.details.race" value="{{data.details.race}}" placeholder="{{ localize 'DND5E.Race' }}"/>
                 </li>
                 <li>
-                    <input type="text" name="data.details.background" value="{{data.details.background}}" placeholder="Background"/>
+                    <input type="text" name="data.details.background" value="{{data.details.background}}" placeholder="{{ localize 'DND5E.Background' }}"/>
                 </li>
                 <li>
-                    <input type="text" name="data.details.alignment" value="{{data.details.alignment}}" placeholder="Alignment"/>
+                    <input type="text" name="data.details.alignment" value="{{data.details.alignment}}" placeholder="{{ localize 'DND5E.Alignment' }}"/>
                 </li>
             </ul>
 
@@ -86,10 +84,7 @@
                 <li class="attribute">
                     <h4 class="attribute-name box-title">{{ localize "DND5E.HitDice" }}</h4>
                     <div class="attribute-value multiple">
-                        <input name="data.attributes.hd.value" type="text" value="{{data.attributes.hd.value}}"
-                               placeholder="1" data-dtype="Number"/>
-                        <span class="sep"> / </span>
-                        <input type="text" value="{{data.details.level.value}}" disabled/>
+                        <label class="hit-dice">{{data.attributes.hd}} / {{data.details.level}}</label>
                     </div>
                     <footer class="attribute-footer">
                         <a class="rest short-rest">{{ localize "DND5E.RestS" }}</a>
@@ -163,22 +158,22 @@
                         </div>
                         <footer class="attribute-footer">
                             <label class="checkbox">
-                                SR <input name="data.resources.{{res.name}}.sr" type="checkbox" {{checked res.sr}}/>
+                                {{ localize "DND5E.AbbreviationSR" }} <input name="data.resources.{{res.name}}.sr" type="checkbox" {{checked res.sr}}/>
                             </label>
                             <label class="checkbox">
-                                LR <input name="data.resources.{{res.name}}.lr" type="checkbox" {{checked res.lr}}/>
+                                {{ localize "DND5E.AbbreviationLR" }} <input name="data.resources.{{res.name}}.lr" type="checkbox" {{checked res.lr}}/>
                             </label>
                         </footer>
                     </li>
                     {{/each}}
 
                     <li class="attribute initiative">
-                        <h4 class="attribute-name box-title">Initiative</h4>
+                        <h4 class="attribute-name box-title">{{ localize "DND5E.Initiative" }}</h4>
                         <div class="attribute-value">
                             <span>{{numberFormat data.attributes.init.total decimals=0 sign=true}}</span>
                         </div>
                         <footer class="attribute-footer">
-                            <span>Modifier</span>
+                            <span>{{ localize "DND5E.Modifier" }}</span>
                             <input name="data.attributes.init.value" type="text" placeholder="0" data-dtype="Number"
                                    value="{{numberFormat data.attributes.init.value decimals=0 sign=true}}"/>
                         </footer>
@@ -188,7 +183,7 @@
                 {{!-- Counters --}}
                 <div class="counters flexrow">
                     <div class="counter flexrow death-saves">
-                        <h4>{{ localize "DND5E.DeathSave" }}</h4>
+                        <h4 class="death-save rollable">{{ localize "DND5E.DeathSave" }}</h4>
                         <div class="counter-value">
                             <i class="fas fa-check"></i>
                             <input type="text" name="data.attributes.death.success" data-dtype="Number" placeholder="0"

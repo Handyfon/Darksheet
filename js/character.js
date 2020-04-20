@@ -1,4 +1,4 @@
-import { ActorSheet5e } from "./base.js";
+import { ActorSheet5e } from "./base.js";´
 /**
  * An Actor sheet for player character type actors in the D&D5E system.
  * Extends the base ActorSheet5e class.
@@ -82,13 +82,19 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
 
     // Partition items by category
     let [items, spells, feats, classes] = data.items.reduce((arr, item) => {
+      // Item details
       item.img = item.img || DEFAULT_TOKEN;
       item.isStack = item.data.quantity ? item.data.quantity > 1 : false;
+      // Item usage
       item.hasUses = item.data.uses && (item.data.uses.max > 0);
       item.isOnCooldown = item.data.recharge && !!item.data.recharge.value && (item.data.recharge.charged === false);
-      const unusable = item.isOnCooldown && (item.data.uses.per && (item.data.uses.value > 0));
-      item.isCharged = !unusable;
+      item.isDepleted = item.isOnCooldown && (item.data.uses.per && (item.data.uses.value > 0));
       item.hasTarget = !!item.data.target && !(["none",""].includes(item.data.target.type));
+
+      // Item toggle state
+      this._prepareItemToggleState(item);
+
+      // Classify items into types
       if ( item.type === "spell" ) arr[1].push(item);
       else if ( item.type === "feat" ) arr[2].push(item);
       else if ( item.type === "class" ) arr[3].push(item);
@@ -124,14 +130,14 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
 	    data.data.attributes.inventorys.percent = totalWeight / maxpct *100;
 	}
 	else{
-    for ( let i of items ) {
-      i.data.quantity = i.data.quantity || 0;
-      i.data.weight = i.data.weight || 0;
-      i.totalWeight = Math.round(i.data.quantity * i.data.weight * 10) / 10;
-      inventory[i.type].items.push(i);
-      totalWeight += i.totalWeight;
-    }
-    data.data.attributes.encumbrance = this._computeEncumbrance(totalWeight, data);
+		for ( let i of items ) {
+		  i.data.quantity = i.data.quantity || 0;
+		  i.data.weight = i.data.weight || 0;
+		  i.totalWeight = Math.round(i.data.quantity * i.data.weight * 10) / 10;
+		  inventory[i.type].items.push(i);
+		  totalWeight += i.totalWeight;
+		}
+		data.data.attributes.encumbrance = this._computeEncumbrance(totalWeight, data);
 	}
 
     // Organize Features
@@ -152,6 +158,24 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
     data.spellbook = spellbook;
     data.preparedSpells = nPrepared;
     data.features = Object.values(features);
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+   * A helper method to establish the displayed preparation state for an item
+   * @param {Item} item
+   * @private
+   */
+  _prepareItemToggleState(item) {
+    const attr = item.type === "spell" ? "preparation.prepared" : "equipped";
+    const isActive = getProperty(item.data, attr);
+    item.toggleClass = isActive ? "active" : "";
+    if ( item.type === "spell" ) {
+      item.toggleTitle = game.i18n.localize(isActive ? "DND5E.SpellPrepared" : "DND5E.SpellUnprepared");
+    } else {
+      item.toggleTitle = game.i18n.localize(isActive ? "DND5E.Equipped" : "DND5E.Unequipped");
+    }
   }
 
   /* -------------------------------------------- */
@@ -214,8 +238,8 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
     // Inventory Functions
     html.find(".currency-convert").click(this._onConvertCurrency.bind(this));
 
-    // Spell Preparation
-    html.find('.toggle-prepared').click(this._onPrepareItem.bind(this));
+    // Item State Toggling
+    html.find('.item-toggle').click(this._onToggleItem.bind(this));
 
     // Short and Long Rest
     html.find('.short-rest').click(this._onShortRest.bind(this));
@@ -225,15 +249,17 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
   /* -------------------------------------------- */
 
   /**
-   * Handle toggling the prepared status of an Owned Item within the Actor
+   * Handle toggling the state of an Owned Item within the Actor
    * @param {Event} event   The triggering click event
    * @private
    */
-  _onPrepareItem(event) {
+  _onToggleItem(event) {
     event.preventDefault();
     const itemId = event.currentTarget.closest(".item").dataset.itemId;
     const item = this.actor.getOwnedItem(itemId);
-    return item.update({"data.preparation.prepared": !item.data.data.preparation.prepared});
+    const attr = item.data.type === "spell" ? "data.preparation.prepared" : "data.equipped";
+    return item.update({[attr]: !getProperty(item.data, attr)});
+
   }
 
   /* -------------------------------------------- */
@@ -264,22 +290,18 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
 
   /* -------------------------------------------- */
 
+ /**
+   * Handle mouse click events to convert currency to the highest possible denomination
+   * @param {MouseEvent} event    The originating click event
+   * @private
+   */
   async _onConvertCurrency(event) {
     event.preventDefault();
-    const curr = duplicate(this.actor.data.data.currency);
-    console.log(curr);
-    const convert = {
-      cp: {into: "sp", each: 10},
-      sp: {into: "ep", each: 5 },
-      ep: {into: "gp", each: 2 },
-      gp: {into: "pp", each: 10}
-    };
-    for ( let [c, t] of Object.entries(convert) ) {
-      let change = Math.floor(curr[c] / t.each);
-      curr[c] -= (change * t.each);
-      curr[t.into] += change;
-    }
-    return this.actor.update({"data.currency": curr});
+    return Dialog.confirm({
+      title: `${game.i18n.localize("DND5E.CurrencyConvert")}`,
+      content: `<p>${game.i18n.localize("DND5E.CurrencyConvertHint")}</p>`,
+      yes: () => this.actor.convertCurrency()
+    });
   }
 }
 

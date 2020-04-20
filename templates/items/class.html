@@ -1,3 +1,4 @@
+
 <form class="{{cssClass}} flexcol" autocomplete="off">
 
     {{!-- Item Sheet Header --}}
@@ -6,7 +7,7 @@
 
         <div class="header-details flexrow">
             <h1 class="charname">
-                <input name="name" type="text" value="{{item.name}}" placeholder="Item Name"/>
+                <input name="name" type="text" value="{{item.name}}" placeholder="{{ localize 'DND5E.ClassName' }}"/>
             </h1>
 
             <div class="item-subtitle">
@@ -16,7 +17,7 @@
 
             <ul class="summary">
                 <li>
-                    <input type="text" name="data.source" value="{{data.source}}" placeholder="Source"/>
+                    <input type="text" name="data.source" value="{{data.source}}" placeholder="{{ localize 'DND5E.Source' }}"/>
                 </li>
             </ul>
         </div>
@@ -41,7 +42,7 @@
 
             {{!-- Class Levels --}}
             <div class="form-group">
-                <label>Class Levels</label>
+                <label>{{ localize "DND5E.ClassLevels" }}</label>
                 <div class="form-fields">
                     <input type="text" name="data.levels" value="{{data.levels}}" data-dtype="Number"/>
                 </div>
@@ -49,13 +50,60 @@
 
             {{!-- Subclass Name --}}
             <div class="form-group">
-                <label>Subclass Name</label>
+                <label>{{ localize "DND5E.SubclassName" }}</label>
                 <div class="form-fields">
                     <input type="text" name="data.subclass" value="{{data.subclass}}"/>
                 </div>
             </div>
 
-            <h3 class="form-header">Granted Abilities</h3>
+            {{!-- Class Hit Dice --}}
+            <div class="form-group">
+                <label>{{localize "DND5E.HitDice"}}</label>
+                <div class="form-fields">
+                    <select name="data.hitDice">
+                        {{#select data.hitDice}}
+                        {{#each config.hitDieTypes}}
+                        <option value="{{this}}">{{this}}</option>
+                        {{/each}}
+                        {{/select}}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>{{localize "DND5E.HitDiceUsed"}}</label>
+                <div class="form-fields">
+                    <input type="text" placeholder="0" name="data.hitDiceUsed" value="{{data.hitDiceUsed}}" data-dtype="Number"/>
+                </div>
+            </div>
+
+            {{!-- Level 1 skills --}}
+            <div class="form-group">
+                <label>{{localize "DND5E.ClassSkillsNumber"}}</label>
+                <div class="form-fields">
+                    <input type="text" placeholder="0" name="data.skills.number" value="{{data.skills.number}}" data-dtype="Number"/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    {{localize "DND5E.ClassSkillsChosen"}}
+                    {{#if editable }}
+                    <a class="trait-selector class-skills" data-edit="data.skills" data-options="skills">
+                        <i class="fas fa-edit"></i></a>
+                    {{/if}}
+                </label>
+                <div class="form-fields">
+                    <ul class="traits-list">
+                        {{#each data.skills.value}}
+                            <li class="tag {{this}}">{{lookup ../config.skills this}}</li>
+                        {{/each}}
+                    </ul>
+                </div>
+            </div>
+
+            {{!-- Granted Abilities (TODO) --}}
+            <h3 class="form-header">{{ localize "DND5E.GrantedAbilities" }}</h3>
             <p class="notification warning">This is still to-do</p>
         </div>
     </section>

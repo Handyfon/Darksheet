@@ -1,5 +1,6 @@
-import { ActorTraitSelector } from "../../apps/trait-selector.js";
-import { ActorSheetFlags } from "../../apps/actor-flags.js";
+import {TraitSelector} from "../../apps/trait-selector.js";
+import {ActorSheetFlags} from "../../apps/actor-flags.js";
+import {DND5E} from '../../config.js';
 
 /**
  * Extend the basic ActorSheet class to do all the D&D5e things!
@@ -31,7 +32,8 @@ export class ActorSheet5e extends ActorSheet {
         ".inventory .inventory-list",
         ".features .inventory-list",
         ".spellbook .inventory-list"
-      ]
+      ],
+      tabs: [{navSelector: ".tabs", contentSelector: ".sheet-body", initial: "description"}]
     });
   }
 
@@ -247,14 +249,6 @@ export class ActorSheet5e extends ActorSheet {
    */
   activateListeners(html) {
 
-    // Activate tabs
-    new Tabs(html.find(".tabs"), {
-      initial: this["_sheetTab"],
-      callback: clicked => {
-        this["_sheetTab"] = clicked.data("tab");
-      }
-    });
-
     // Activate Item Filters
     const filterLists = html.find(".filter-list");
     filterLists.each(this._initializeFilterItemList.bind(this));
@@ -263,57 +257,57 @@ export class ActorSheet5e extends ActorSheet {
     // Item summaries
     html.find('.item .item-name h4').click(event => this._onItemSummary(event));
 
-    // Everything below here is only needed if the sheet is editable
-    if (!this.options.editable) return;
+    // Editable Only Listeners
+    if ( this.isEditable ) {
 
-    // Relative updates for numeric fields
-    html.find('input[data-dtype="Number"]').change(this._onChangeInputDelta.bind(this));
+      // Relative updates for numeric fields
+      html.find('input[data-dtype="Number"]').change(this._onChangeInputDelta.bind(this));
 
-    /* -------------------------------------------- */
-    /*  Abilities, Skills, and Traits
-     /* -------------------------------------------- */
+      // Ability Proficiency
+      html.find('.ability-proficiency').click(this._onToggleAbilityProficiency.bind(this));
 
-    // Ability Proficiency
-    html.find('.ability-proficiency').click(this._onToggleAbilityProficiency.bind(this));
+      // Toggle Skill Proficiency
+      html.find('.skill-proficiency').on("click contextmenu", this._onCycleSkillProficiency.bind(this));
+      // Trait Selector
+      html.find('.trait-selector').click(this._onTraitSelector.bind(this));
 
-    // Ability Checks
-    html.find('.ability-name').click(this._onRollAbilityTest.bind(this));
+      // Configure Special Flags
+      html.find('.configure-flags').click(this._onConfigureFlags.bind(this));
 
-    // Toggle Skill Proficiency
-    html.find('.skill-proficiency').on("click contextmenu", this._onCycleSkillProficiency.bind(this));
+      // Owned Item management
+      html.find('.item-create').click(this._onItemCreate.bind(this));
+      html.find('.item-edit').click(this._onItemEdit.bind(this));
+      html.find('.item-delete').click(this._onItemDelete.bind(this));
+      html.find('.item-uses input').click(ev => ev.target.select()).change(this._onUsesChange.bind(this));
+    }
 
-    // Roll Skill Checks
-    html.find('.skill-name').click(this._onRollSkillCheck.bind(this));
+    // Owner Only Listeners
+    if ( this.actor.owner ) {
 
-    // Trait Selector
-    html.find('.trait-selector').click(this._onTraitSelector.bind(this));
+      // Ability Checks
+      html.find('.ability-name').click(this._onRollAbilityTest.bind(this));
 
-    // Configure Special Flags
-    html.find('.configure-flags').click(this._onConfigureFlags.bind(this));
 
-    /* -------------------------------------------- */
-    /*  Inventory
-    /* -------------------------------------------- */
+      // Roll Skill Checks
+      html.find('.skill-name').click(this._onRollSkillCheck.bind(this));
 
-    // Owned Item management
-    html.find('.item-create').click(this._onItemCreate.bind(this));
-    html.find('.item-edit').click(this._onItemEdit.bind(this));
-    html.find('.item-delete').click(this._onItemDelete.bind(this));
-    
-    // Item Uses
-    html.find('.item-uses input').click(ev => ev.target.select()).change(this._onUsesChange.bind(this));
+      // Item Dragging
+      let handler = ev => this._onDragItemStart(ev);
+      html.find('li.item').each((i, li) => {
+        if ( li.classList.contains("inventory-header") ) return;
+        li.setAttribute("draggable", true);
+        li.addEventListener("dragstart", handler, false);
+      });
 
-    // Item Dragging
-    let handler = ev => this._onDragItemStart(ev);
-    html.find('li.item').each((i, li) => {
-      if ( li.classList.contains("inventory-header") ) return;
-      li.setAttribute("draggable", true);
-      li.addEventListener("dragstart", handler, false);
-    });
+      // Item Rolling
+      html.find('.item .item-image').click(event => this._onItemRoll(event));
+      html.find('.item .item-recharge').click(event => this._onItemRecharge(event));
+    }
 
-    // Item Rolling
-    html.find('.item .item-image').click(event => this._onItemRoll(event));
-    html.find('.item .item-recharge').click(event => this._onItemRecharge(event));
+    // Otherwise remove rollable classes
+    else {
+      html.find(".rollable").each((i, el) => el.classList.remove("rollable"));
+    }
 
     // Handle default listeners last so system listeners are triggered first
     super.activateListeners(html);
@@ -392,20 +386,119 @@ export class ActorSheet5e extends ActorSheet {
 
   /* -------------------------------------------- */
 
-    /**
-     * Change the uses amount of an Owned Item within the Actor
-     * @param {Event} event   The triggering click event
-     * @private
-     */
-    async _onUsesChange(event) {
-        event.preventDefault();
-        const itemId = event.currentTarget.closest(".item").dataset.itemId;
-        const item = this.actor.getOwnedItem(itemId);
-        const uses = Math.clamped(0, parseInt(event.target.value), item.data.data.uses.max);
-        event.target.value = uses;
-        return item.update({ 'data.uses.value': uses });
+  /** @override */
+  async _onDrop (event) {
+    event.preventDefault();
+
+    // Get dropped data
+    let data;
+    try {
+      data = JSON.parse(event.dataTransfer.getData('text/plain'));
+    } catch (err) {
+      return false;
     }
-    
+
+    // Handle a polymorph
+    if (data && (data.type === "Actor")) {
+      if (game.user.isGM || (game.settings.get('dnd5e', 'allowPolymorphing') && this.actor.owner)) {
+        return this._onDropPolymorph(event, data);
+      }
+    }
+
+    // Call parent on drop logic
+    return super._onDrop(event);
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Handle dropping an Actor on the sheet to trigger a Polymorph workflow
+   * @param {DragEvent} event   The drop event
+   * @param {Object} data       The data transfer
+   * @private
+   */
+  async _onDropPolymorph(event, data) {
+
+    // Get the target actor
+    let sourceActor = null;
+    if (data.pack) {
+      const pack = game.packs.find(p => p.collection === data.pack);
+      sourceActor = await pack.getEntity(data.id);
+    } else {
+      sourceActor = game.actors.get(data.id);
+    }
+    if ( !sourceActor ) return;
+
+    // Define a function to record polymorph settings for future use
+    const rememberOptions = html => {
+      const options = {};
+      html.find('input').each((i, el) => {
+        options[el.name] = el.checked;
+      });
+      const settings = mergeObject(game.settings.get('dnd5e', 'polymorphSettings') || {}, options);
+      game.settings.set('dnd5e', 'polymorphSettings', settings);
+      return settings;
+    };
+
+    // Create and render the Dialog
+    return new Dialog({
+      title: game.i18n.localize('DND5E.PolymorphPromptTitle'),
+      content: {
+        options: game.settings.get('dnd5e', 'polymorphSettings'),
+        i18n: DND5E.polymorphSettings,
+        isToken: this.actor.isToken
+      },
+      default: 'accept',
+      buttons: {
+        accept: {
+          icon: '<i class="fas fa-check"></i>',
+          label: game.i18n.localize('DND5E.PolymorphAcceptSettings'),
+          callback: html => this.actor.transformInto(sourceActor, rememberOptions(html))
+        },
+        wildshape: {
+          icon: '<i class="fas fa-paw"></i>',
+          label: game.i18n.localize('DND5E.PolymorphWildShape'),
+          callback: html => this.actor.transformInto(sourceActor, {
+            keepMental: true,
+            mergeSaves: true,
+            mergeSkills: true,
+            transformTokens: rememberOptions(html).transformTokens
+          })
+        },
+        polymorph: {
+          icon: '<i class="fas fa-pastafarianism"></i>',
+          label: game.i18n.localize('DND5E.Polymorph'),
+          callback: html => this.actor.transformInto(sourceActor, {
+            transformTokens: rememberOptions(html).transformTokens
+          })
+        },
+        cancel: {
+          icon: '<i class="fas fa-times"></i>',
+          label: game.i18n.localize('Cancel')
+        }
+      }
+    }, {
+      classes: ['dialog', 'dnd5e'],
+      width: 600,
+      template: 'systems/dnd5e/templates/apps/polymorph-prompt.html'
+    }).render(true);
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Change the uses amount of an Owned Item within the Actor
+   * @param {Event} event   The triggering click event
+   * @private
+   */
+  async _onUsesChange(event) {
+      event.preventDefault();
+      const itemId = event.currentTarget.closest(".item").dataset.itemId;
+      const item = this.actor.getOwnedItem(itemId);
+      const uses = Math.clamped(0, parseInt(event.target.value), item.data.data.uses.max);
+      event.target.value = uses;
+      return item.update({ 'data.uses.value': uses });
+  }
   /* -------------------------------------------- */
 
   /**
@@ -573,7 +666,7 @@ export class ActorSheet5e extends ActorSheet {
   /* -------------------------------------------- */
 
   /**
-   * Handle spawning the ActorTraitSelector application which allows a checkbox of multiple trait options
+   * Handle spawning the TraitSelector application which allows a checkbox of multiple trait options
    * @param {Event} event   The click event which originated the selection
    * @private
    */
@@ -586,6 +679,23 @@ export class ActorSheet5e extends ActorSheet {
       title: label.innerText,
       choices: CONFIG.DND5E[a.dataset.options]
     };
-    new ActorTraitSelector(this.actor, options).render(true)
+    new TraitSelector(this.actor, options).render(true)
+  }
+
+  /* -------------------------------------------- */
+
+  /** @override */
+  _getHeaderButtons() {
+    let buttons = super._getHeaderButtons();
+
+    // Add button to revert polymorph
+    if ( !this.actor.isPolymorphed || this.actor.isToken ) return buttons;
+    buttons.unshift({
+      label: 'DND5E.PolymorphRestoreTransformation',
+      class: "restore-transformation",
+      icon: "fas fa-backward",
+      onclick: ev => this.actor.revertOriginalForm()
+    });
+    return buttons;
   }
 }
