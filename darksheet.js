@@ -467,7 +467,6 @@ export class DarkSheet extends ActorSheet5eCharacter {
 		//settings
 		data.noheropoints = game.settings.get('darksheet', 'noheropoints');//
 		data.slotbasedinventory = game.settings.get('darksheet', 'slotbasedinventory');//
-		data.notchcalculations = game.settings.get('darksheet', 'notchcalculations');//
 		data.hidesettings = game.settings.get('darksheet', 'hidesettings');//
 		data.hidechecks = game.settings.get('darksheet', 'hidechecks');//
 

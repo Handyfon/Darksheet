@@ -84,7 +84,7 @@
                 </li>
 
                 <li class="attribute">
-                    <h4 class="attribute-name box-title">{{ localize "DND5E.ArmorClass" }}</h4>
+                    <h4 class="attribute-name box-title rollable handy-ac">{{ localize "DND5E.ArmorClass" }}</h4>
                     <div class="attribute-value">
                         <input name="data.attributes.ac.value" type="text" value="{{data.attributes.ac.value}}"
                                data-dtype="Number" placeholder="10"/>
@@ -685,7 +685,22 @@
 			</div>
 		</div>
 	</div>	
-		{{#unless hidechecks}}
+		{{#if hidechecks}}
+		<div style="visibility:hidden;margin: 0px 28px 8px 28px; width: auto;"class="checks {{data.attributes.color.value}} ">
+			<h3 style="text-align: center;margin-bottom: -15px;padding: 0; margin-top: 10px;">Checks</h3>
+			<div class="section3" style="margin-left: 113px;margin-right: 113px;">
+				<label class="criticalS rollable check {{data.attributes.color.value}}">Critical Success</label>
+				<label class="criticalF rollable check {{data.attributes.color.value}}">Critical Failure</label>
+				<label class="successatcost rollable check {{data.attributes.color.value}}">Success at a Cost</label>
+			</label></label></label></label>
+			</div></br>
+			<div class="section3" style="margin-left: 113px;margin-right: 113px; margin-top: 0;">
+				<label class="treatwound rollable check {{data.attributes.color.value}}">Treat Wound (SR)</label>
+				<label class="healwound rollable check {{data.attributes.color.value}}">Heal Wounds (LR)</label>
+				<label class="check dicelabel2 staminacheck rollable check {{data.attributes.color.value}}">Stamina Check</label>
+			</div>
+		</div>
+		{{else}}
 		<div style="margin: 0px 28px 8px 28px;; width: auto;"class="checks {{data.attributes.color.value}} ">
 			<h3 style="text-align: center;margin-bottom: -15px;padding: 0; margin-top: 10px;">Checks</h3>
 			<div class="section3" style="margin-left: 113px;margin-right: 113px;">
@@ -700,6 +715,6 @@
 				<label class="check dicelabel2 staminacheck rollable check {{data.attributes.color.value}}">Stamina Check</label>
 			</div>
 		</div>
-		{{/unless}}
+		{{/if}}
     </section>
 </form>
