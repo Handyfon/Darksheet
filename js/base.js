@@ -55,7 +55,7 @@ export class ActorSheet5e extends ActorSheet {
       isNPC: this.entity.data.type === "npc",
       config: CONFIG.DND5E,
     };
-	
+
     // The Actor and its Items
     data.actor = duplicate(this.actor.data);
     data.items = this.actor.items.map(i => {
@@ -81,6 +81,7 @@ export class ActorSheet5e extends ActorSheet {
       skl.hover = CONFIG.DND5E.proficiencyLevels[skl.value];
       skl.label = CONFIG.DND5E.skills[s];
     }
+
     // Update traits
     this._prepareTraits(data.actor.data.traits);
 
