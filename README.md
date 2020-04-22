@@ -15,7 +15,7 @@ and drag the rollable tables out of the compendium.<br/><b>
  
  
 Custom Character Sheet:
-![Alt text](https://i.imgur.com/yMiq1Uf.png?raw=true "Custom Character Sheet")
+![Alt text](https://i.imgur.com/l09OQuN.png?raw=true "Custom Character Sheet")
 
 Featuring:<br/>
 Custom CSS<br/>
