@@ -23,38 +23,6 @@ Hooks.once('init', function() {
         default: true,
         type: Boolean,
     });
-    game.settings.register('darksheet', 'notchcalculations', {
-        name: 'Notch-Calculations',
-        hint: 'If this is enabled, the damagedice of weapons with a notch will be automatically calculated (alpha)',
-        scope: 'world',
-        config: true,
-        default: true,
-        type: Boolean,
-    });
-    game.settings.register('darksheet', 'spellburnout', {
-        name: 'Spellburnout',
-        hint: 'Enables the use of burnoutdie',
-        scope: 'world',
-        config: true,
-        default: true,
-        type: Boolean,
-    }); 
-	game.settings.register('darksheet', 'regionalmagic', {
-        name: 'Regional magic',
-        hint: 'Enables the use of regional magic',
-        scope: 'world',
-        config: true,
-        default: true,
-        type: Boolean,
-    });
-    game.settings.register('darksheet', 'ammodie', {
-        name: 'Ammodie',
-        hint: 'This option determines the usage of ammodie',
-        scope: 'world',
-        config: true,
-        default: true,
-        type: Boolean,
-    });
     game.settings.register('darksheet', 'hidesettings', {
         name: 'Hide Settings from player character sheet',
         hint: 'This option hides the settings section from all character sheets',
