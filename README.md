@@ -14,8 +14,9 @@ and drag the rollable tables out of the compendium.<br/><b>
  -Items lose slots after any drag and drop
  
  
-Custom Character Sheet:
+
 ![Alt text](https://i.imgur.com/l09OQuN.png?raw=true "Custom Character Sheet")
+Custom Character Sheet:
 
 Featuring:<br/>
 Custom CSS<br/>
