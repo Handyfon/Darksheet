@@ -13,11 +13,13 @@ and drag the rollable tables out of the compendium.<br/><b>
  Known Issues:
  -Items lose slots after any drag and drop
  
+ Custom Character Sheet:
  
 
 ![Alt text](https://i.imgur.com/l09OQuN.png?raw=true "Custom Character Sheet")
 
-Custom Character Sheet:
+<b>2.1 Update Featuring changes to the Inventory</b></br>
+![Alt text](https://i.imgur.com/awl2yyU.png?raw=true "Custom Character Sheet")
 
 Featuring:<br/>
 Custom CSS<br/>
@@ -28,7 +30,11 @@ Custom CSS<br/>
 -Fate Points<br/>
 -Inspiration<br/>
 -Hero Points (not part of darker dungeons)<br/>
--Track your Wounds
+-Track your Wounds<br/>
+-Track Notches<br/>
+![Alt text](https://i.imgur.com/C1t03GX.mp4?raw=true "Track Notches")
+
+Custom Character Sheet:
 
 ![Alt text](https://i.imgur.com/I3AS1dg.png?raw=true "Custom Item Sheet and Inventory")
 
