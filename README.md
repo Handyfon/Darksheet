@@ -31,8 +31,7 @@ Custom CSS<br/>
 -Inspiration<br/>
 -Hero Points (not part of darker dungeons)<br/>
 -Track your Wounds<br/>
--Track Notches<br/>
-![Alt text](https://i.imgur.com/C1t03GX.mp4?raw=true "Track Notches")
+
 
 Custom Character Sheet:
 
@@ -49,6 +48,7 @@ Easily roll for deathsaves or wounds.
 ![Alt text](https://i.imgur.com/tLtFjJP.png?raw=true "Custom Item Sheet and Inventory")
 
 -Track Ammodice for every Item<br/>
+-Track Notches and <b>automatic tracking of damage and quality of the weapons and armor</b>
 -Track Item Slots.
 
 ![Alt text](https://i.imgur.com/7n26SLq.png?raw=true "Item Slots")
