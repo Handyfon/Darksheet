@@ -38,7 +38,7 @@ Easily roll for deathsaves or wounds.
 
 ![Alt text](https://i.imgur.com/6nPyHsZ.png?raw=true "Custom Item Sheet and Inventory")
 
-![Alt text](https://i.imgur.com/cRIv5oP.png?raw=true "Custom Item Sheet and Inventory")
+![Alt text](https://i.imgur.com/tLtFjJP.png?raw=true "Custom Item Sheet and Inventory")
 
 -Track Ammodice for every Item<br/>
 -Track Item Slots.
