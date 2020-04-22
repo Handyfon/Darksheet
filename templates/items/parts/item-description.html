@@ -37,12 +37,8 @@
 			{{/select}}
 			</select>
         </div>
-        <div class="form-group">
-            <label>Notches</label>
-            <input type="text" name="flags.darksheet.item.notches" value="{{item.flags.darksheet.item.notches}}" placeholder="0" data-dtype="Number"/>
-        </div>
 		<div class="form-group">
-            <label>Quality</label>
+            <label>Quality/Value</label>
             <select class="hitdice white" name="flags.darksheet.item.quality" data-dtype="String">
 				{{#select item.flags.darksheet.item.quality}}
 				<option value="pristine">Pristine 75%</option>
@@ -53,20 +49,24 @@
 			</select>
         </div>
 		<div class="form-group">
-            <label class="rollable ammodice">Ammodie</label>
-			<select class="hitdice white" name="flags.darksheet.item.ammodie" placeholder="d20" data-dtype="String">
-				{{#select item.flags.darksheet.item.ammodie}}
-				<option value=""></option>
-				<option value="d20">d20</option>
-				<option value="d12">d12</option>
-				<option value="d10">d10</option>
-				<option value="d8">d8</option>
-				<option value="d6">d6</option>
-				<option value="d4">d4</option>
-				<option value="1">1</option>
-				{{/select}}
-			</select>
-		</div>
+					<label class="rollable ammodice">Ammodie</label>
+					<select class="hitdice white" name="flags.darksheet.item.ammodie" placeholder="d20" data-dtype="String">
+						{{#select item.flags.darksheet.item.ammodie}}
+						<option value=""></option>
+						<option value="d20">d20</option>
+						<option value="d12">d12</option>
+						<option value="d10">d10</option>
+						<option value="d8">d8</option>
+						<option value="d6">d6</option>
+						<option value="d4">d4</option>
+						<option value="1">1</option>
+						{{/select}}
+					</select>
+		</div>	
+        <div class="form-group">
+            <label>Notches</label>
+            <input type="text" readonly name="flags.darksheet.item.notches" value="{{item.flags.darksheet.item.notches}}" placeholder="0" data-dtype="Number"/>
+        </div>
         {{/if}}
 
         <ol class="properties-list">
@@ -74,6 +74,8 @@
             <li>{{this}}</li>
             {{/each}}
         </ol>
+		({{item.data.damage.currentweapondamage}})
+		({{item.data.damage.basenotchdamage}})
     </div>
 
     {{editor content=data.description.value target="data.description.value" button=true owner=owner editable=editable}}

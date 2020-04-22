@@ -1,5 +1,5 @@
 <div class="inventory-filters spellbook-filters">
-    <div class="form-group spellcasting-ability">
+    <div style="display: inline-flex !important;" class="form-group spellcasting-ability">
         {{#if isNPC}}
 		
         <div class="spellcasting-level flexrow">
@@ -19,29 +19,33 @@
         </select>
         <label style="margin-left: 15px;"><h3>Spell-DC</h3></label>
 		<input class="spelldc" readonly type="text" name="data.attributes.spelldc" value="{{data.attributes.spelldc}}" placeholder="0" data-dtype="Number"/>
-		<label style="margin-right: 10px; margin-left: 0;"class="dicelabel2 burnoutclick burnoutdie rollable"><h3>Spell-Burnoutdice</h3></label>
-		<select name="data.attributes.burnout.value" data-type="String" value="D12">
-			{{#select data.attributes.burnout.value}}
-			<option value="0"></option>
-			<option value="12">d12</option>
-			<option value="10">d10</option>
-			<option value="8">d8</option>
-			<option value="6">d6</options>
-				<option value="4">d4</option>
-				{{/select}}
-		</select>
-		<label style="margin-left: 5px;margin-right: 5px;"><h3 style="text-align: center;">Regional Magic</h3></label>
-		<select name="data.attributes.regionmod.value" data-type="String" value="0">
-			{{#select data.attributes.regionmod.value}}
-			<option value="3">Serene +3</option>
-			<option value="2">Calm +2</option>
-			<option value="1">Stable +1</option>
-			<option value="0">Normal</option>
-			<option value="-1">Unstable -1</options>
-			<option value="-2">Wild -2</option>
-			<option value="-3">Chaotic -3</option>
-				{{/select}}
-		</select>
+		{{#if ../../spellburnout}}
+			<label style="margin-right: 10px; margin-left: 0;"class="dicelabel2 burnoutclick burnoutdie rollable"><h3>Spell-Burnoutdice</h3></label>
+			<select name="data.attributes.burnout.value" data-type="String" value="D12">
+				{{#select data.attributes.burnout.value}}
+				<option value="0"></option>
+				<option value="12">d12</option>
+				<option value="10">d10</option>
+				<option value="8">d8</option>
+				<option value="6">d6</options>
+					<option value="4">d4</option>
+					{{/select}}
+			</select>
+			{{#if ../../regionalmagic}}
+			<label style="margin-left: 5px;margin-right: 5px;"><h3 style="text-align: center;">Regional Magic</h3></label>
+			<select name="data.attributes.regionmod.value" data-type="String" value="0">
+				{{#select data.attributes.regionmod.value}}
+				<option value="3">Serene +3</option>
+				<option value="2">Calm +2</option>
+				<option value="1">Stable +1</option>
+				<option selected="selected" value="0">Normal</option>
+				<option value="-1">Unstable -1</options>
+				<option value="-2">Wild -2</option>
+				<option value="-3">Chaotic -3</option>
+					{{/select}}
+			</select>
+			{{/if}}
+		{{/if}}
     </div>
 
     <ul class="filter-list flexrow" data-filter="spellbook">
@@ -77,6 +81,7 @@
         <div class="spell-school">{{localize "DND5E.SpellSchool"}}</div>
         <div class="spell-action">{{localize "DND5E.SpellUsage"}}</div>
         <div class="spell-target">{{localize "DND5E.SpellTarget"}}</div>
+        <div class="spell-mathead">Materials</div>
 
         <div class="item-controls">
             {{#if section.canCreate}}
@@ -111,7 +116,12 @@
                 {{else}}None
                 {{/if}}
             </div>
-
+			<div class="spell-mats" title="Materials: {{item.data.materials.value}}">
+                {{#if item.data.components.material}}
+                {{item.data.materials.value}}
+                {{else}}None
+                {{/if}}
+            </div>
 
             {{#if ../../owner}}
             <div class="item-controls">

@@ -1,4 +1,64 @@
 /*TRAINING*/
+h4.pristine {
+    color: white !important;
+}
+h4.worn {
+    color: yellow !important;
+}
+h4.well-worn {
+    color: orange !important;
+}
+h4.scarred {
+    color: red !important;
+    text-shadow: 0 0 2px;
+}
+label.notchlabel:hover + button#minus{
+	visibility: visible !important;
+}
+label.notchlabel:hover + button#minus + button#plus{
+	visibility: visible !important;
+}
+button#minus:hover {
+    visibility: visible !important;
+    background-color: #243b55 !important;
+    color: #5e9ed4 !important;
+    background-image: linear-gradient(#243b5500, #474a5dfc) !important;
+}
+button#plus:hover {
+    visibility: visible !important;
+    background-color: #243b55 !important;
+    color: #d45e6f !important;
+    background-image: linear-gradient(#243b5500, #474a5dfc) !important;
+}
+button#plus {
+    width: 5px;
+    visibility: hidden;
+    position: absolute;
+    margin-left: 39px;
+	height: 20px;
+    align-self: center;
+    background-image: linear-gradient(#474a5dfc, #243b5500) !important;
+}
+button#plus:after {
+    content: "+";
+    margin-left: -3.2px;
+    margin-top: -14px;
+    position: absolute;
+}
+button#minus:after {
+    content: "-";
+    margin-left: -2px;
+    margin-top: -14px;
+    position: absolute;
+}
+button#minus {
+    width: 5px;
+    visibility: hidden;
+    position: absolute;
+    height: 20px;
+    align-self: center;
+    background-image: linear-gradient(#474a5dfc, #243b5500) !important;
+}
 .ammostyle {
     padding: 7px 15px;
     padding-top: 4px;
@@ -9,6 +69,25 @@
 }
 input[type="checkbox"] {
     transform: scale(1);
+}
+.item-detail.item-weight.notches {
+    display: inline-flex;
+}
+.spell-mats {
+    line-height: 15px;
+    align-self: center;
+    flex: 0 0 152px;
+    font-size: 12px;
+    color: #7a7971;
+    text-align: center;
+    border-right: 1px solid #c9c7b8;
+}
+.spell-mathead {
+    flex: 0 0 150px;
+    font-size: 12px;
+    color: #7a7971;
+    text-align: center;
+    border-right: 1px solid #c9c7b8;
 }
 .titlecheckbox{
     display: inline-flex;

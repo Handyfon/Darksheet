@@ -57,7 +57,6 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
     // Experience Tracking
     sheetData["disableExperience"] = game.settings.get("dnd5e", "disableExperienceTracking");
 	sheetData["slotSetting"] = game.settings.get("darksheet", "slotbasedinventory");
-
     // Return data for rendering
     return sheetData;
   }

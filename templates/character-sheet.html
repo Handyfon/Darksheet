@@ -33,7 +33,7 @@
                 </div>
                 {{/unless}}
             </div>
-
+			{{#if disableExperience}}
             <ul class="summary trainingssummary">
                 <label class="trainingslabel">Training</label>
                 <input class="trainingcheckbox1" type="checkbox" name="data.attributes.trainpoint1.value" data-dtype="Boolean" {{checked data.attributes.trainpoint1.value}}/>
@@ -49,6 +49,8 @@
                 <label class="spentlable">Spent</label>
                 <input type="number" class="trainpointa {{data.attributes.color.value}}" name="data.attributes.trainpointa.value" value="{{data.attributes.trainpointa.value}}" />
             </ul>
+			{{else}}
+			{{/if}}
             {{!-- Character Summary --}}
             <ul class="summary">
                 <li>
@@ -255,8 +257,13 @@
                             <input type="text" name="data.attributes.maxwounds.value" value="{{data.attributes.maxwounds.value}}">
                         </div>
                     </div>
-
                     <div class="counter flexrow">
+						{{#if noheropoints}}
+                        <h4 style="flex: 0;" title="Use 1 Inspiration" class="rollable useInspiration">Inspiration</h4>
+                        <div class="status-value">
+                            <input style="margin-left: 10px;" type="number" min="0" max="3" class="inspirationpoints" name="data.attributes.inspirations.value" value="{{data.attributes.inspirations.value}}" />
+                        </div>
+						{{else}}
                         <h4 title="Use 1 Hero Point" class="rollable useHeroPoint" style="margin-left: -6px;">Hero Points</h4>
                         <div class="status-value">
                             <input type="number" min="0" max="3" class="heropoints" name="data.attributes.heropoints.value" value="{{data.attributes.heropoints.value}}" />
@@ -265,6 +272,8 @@
                         <div class="status-value">
                             <input type="number" min="0" max="3" class="inspirationpoints" name="data.attributes.inspirations.value" value="{{data.attributes.inspirations.value}}" />
                         </div>
+						{{/if}}
+
                     </div>
                 </div>
                 {{!-- Traits --}} {{> "systems/dnd5e/templates/actors/parts/actor-traits.html"}}
@@ -364,55 +373,58 @@
         <div class="tab dd ddfulltab flexcol" data-group="primary" data-tab="dd">
 		<div class="">
 			<label class="conditionbutton" title="Conditions" style="margin-top: 40px; padding: 2px 6px;">&#9877;<input type="checkbox"class="ressourcecheckbox" style="display:none;" id="hidecheck" name="data.attributes.conditions.value" data-dtype="Boolean" {{checked data.attributes.conditions.value}}><span></span></input></label>
+			{{#unless hidesettings}}
 			<label class="conditionbutton" title="Settings" style="padding: 2px 3px;">&#9881;<input type="checkbox"class="ressourcecheckbox" style="display:none;" id="hidecheck" name="data.attributes.settingsdisplay.value" data-dtype="Boolean" {{checked data.attributes.settingsdisplay.value}}><span></span></input></label>
+			{{/unless}}
 		</div>
-		
-		{{#if data.attributes.settingsdisplay.value}}
-		<div class="settings">
-		<h4  class="settingsheader">Settings</h4>
-		<span style="display: inline-flex;"class="settingsoption">
-		<label class="hitdiceroll rollable">Hitdice:</label>
-			<select class="hitdice {{data.attributes.color.value}}" name="data.attributes.hitdice.value" data-type="String">
-				{{#select data.attributes.hitdice.value}}
-				<option value="d12">d12</option>
-				<option value="d10">d10</option>
-				<option value="d8">d8</option>
-				<option value="d6">d6</option>
-				<option value="d4">d4</option>
-				{{/select}}
-			</select>
-			<label style="margin-left: 5px;">Inventory Slots </label>
-            <input class="inventoryslots" style="width: 30px;height: 15px;border: 1px solid #233a54;margin-left: 5px;" name="data.attributes.inventoryslots" type="text" value="{{data.attributes.inventoryslots}}" data-dtype="{{data.attributes.inventoryslots}}" placeholder="18" />
-            <div class="counter-value">
-			</div>
-					<label style="margin-left: 5px;">Automatic Burnout Consequence:</label>
-						<label class="bloodiedcheckbox">
-							<input style="margin-top: -4px;" class="ressourcecheckbox" type="checkbox" type="Boolean" name="data.attributes.burnoutc.value" data-dtype="Boolean" {{checked data.attributes.burnoutc.value}}/><span></span></label>
-		</span>
-		</br><label>Character Sheet Color:</label>
-			<select class="hitdice {{data.attributes.color.value}}" name="data.attributes.color.value" data-type="String">
-				{{#select data.attributes.color.value}}
-				<option value="blue">blue</option>
-				<option value="green">green</option>
-				<option value="red">red</option>
-				<option value="black">black</option>
-				{{/select}}
-			</select>
-			<label style="margin-left: 5px;">Show Title</label>
-						<label class="titlecheckbox">
-							<input style="position: absolute; margin-top: -5px;" class="ressourcecheckbox" type="checkbox" type="Boolean" name="data.attributes.titlesetting" data-dtype="Boolean" {{checked data.attributes.titlesetting}}/><span></span></label>
+		{{#unless hidesettings}}
+			{{#if data.attributes.settingsdisplay.value}}
+				<div class="settings">
+				<h4  class="settingsheader">Settings</h4>
+				<span style="display: inline-flex;"class="settingsoption">
+				<label class="hitdiceroll rollable">Hitdice:</label>
+					<select class="hitdice {{data.attributes.color.value}}" name="data.attributes.hitdice.value" data-type="String">
+						{{#select data.attributes.hitdice.value}}
+						<option value="d12">d12</option>
+						<option value="d10">d10</option>
+						<option value="d8">d8</option>
+						<option value="d6">d6</option>
+						<option value="d4">d4</option>
+						{{/select}}
+					</select>
+					<label style="margin-left: 5px;">Inventory Slots </label>
+					<input class="inventoryslots" style="width: 30px;height: 15px;border: 1px solid #233a54;margin-left: 5px;" name="data.attributes.inventoryslots" type="text" value="{{data.attributes.inventoryslots}}" data-dtype="{{data.attributes.inventoryslots}}" placeholder="18" />
+					<div class="counter-value">
+					</div>
+							<label style="margin-left: 5px;">Automatic Burnout Consequence:</label>
+								<label class="bloodiedcheckbox">
+									<input style="margin-top: -4px;" class="ressourcecheckbox" type="checkbox" type="Boolean" name="data.attributes.burnoutc.value" data-dtype="Boolean" {{checked data.attributes.burnoutc.value}}/><span></span></label>
+				</span>
+				</br><label>Character Sheet Color:</label>
+					<select class="hitdice {{data.attributes.color.value}}" name="data.attributes.color.value" data-type="String">
+						{{#select data.attributes.color.value}}
+						<option value="blue">blue</option>
+						<option value="green">green</option>
+						<option value="red">red</option>
+						<option value="black">black</option>
+						{{/select}}
+					</select>
+					<label style="margin-left: 5px;">Show Title</label>
+								<label class="titlecheckbox">
+									<input style="position: absolute; margin-top: -5px;" class="ressourcecheckbox" type="checkbox" type="Boolean" name="data.attributes.titlesetting" data-dtype="Boolean" {{checked data.attributes.titlesetting}}/><span></span></label>
 
-			<label style="margin-left: 10px;">Address:</label>
-			<select class="hitdice {{data.attributes.adress}}" name="data.attributes.adress" data-type="String">
-				{{#select data.attributes.adress}}
-				<option selected="selected" value="its"></option>
-				<option value="his">his</option>
-				<option value="her">her</option>
-				{{/select}}
-			</select>
-		</div>
-		{{else}}
-		{{/if}}
+					<label style="margin-left: 10px;">Address:</label>
+					<select class="hitdice {{data.attributes.adress}}" name="data.attributes.adress" data-type="String">
+						{{#select data.attributes.adress}}
+						<option selected="selected" value="its"></option>
+						<option value="his">his</option>
+						<option value="her">her</option>
+						{{/select}}
+					</select>
+				</div>
+			{{else}}
+			{{/if}}
+		{{/unless}}
 		
 		{{#if data.attributes.conditions.value}}
 		<div id="hideable" class="section0">
@@ -673,6 +685,7 @@
 			</div>
 		</div>
 	</div>	
+		{{#unless hidechecks}}
 		<div style="margin: 0px 28px 8px 28px;; width: auto;"class="checks {{data.attributes.color.value}} ">
 			<h3 style="text-align: center;margin-bottom: -15px;padding: 0; margin-top: 10px;">Checks</h3>
 			<div class="section3" style="margin-left: 113px;margin-right: 113px;">
@@ -687,5 +700,6 @@
 				<label class="check dicelabel2 staminacheck rollable check {{data.attributes.color.value}}">Stamina Check</label>
 			</div>
 		</div>
+		{{/unless}}
     </section>
 </form>

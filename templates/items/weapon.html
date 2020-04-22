@@ -54,6 +54,19 @@
                     {{/each}}
                     {{/select}}
                 </select>
+                <select name="data.damage.baseweapondamage" title="Base Weapon Damage">
+                    {{#select data.damage.baseweapondamage}}
+                    <option value=""></option>
+                    <option value="1d4 ">1d4</option>
+                    <option value="2d4 ">2d4</option>
+                    <option value="1d6 ">1d6</option>
+                    <option value="2d6 ">2d6</option>
+                    <option value="1d8 ">1d8</option>
+                    <option value="2d8 ">2d8</option>
+                    <option value="1d10 ">1d10</option>
+                    <option value="2d10 ">2d10</option>
+                    {{/select}}
+                </select>
             </div>
 
             {{!-- Weapon Status --}}
