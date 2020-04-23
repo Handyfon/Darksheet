@@ -1,10 +1,10 @@
 <form class="{{cssClass}} flexcol {{data.attributes.color.value}}" autocomplete="off">
 
     {{!-- Sheet Header --}}
-    <header class="sheet-header flexrow">
+    <header class="sheet-header flexrow {{data.attributes.color.value}}">
 	<img class="profile" src="{{actor.img}}" title="{{actor.name}}" data-edit="img" />
 
-        <div class="header-details flexrow">
+        <div class="header-details flexrow {{data.attributes.color.value}}">
 			<h1 class="charname">
 			{{#if data.attributes.titlesetting}}
 				{{#if data.attributes.title}}
@@ -122,7 +122,7 @@
     </header>
 
     {{!-- NPC Sheet Navigation --}}
-    <nav class="sheet-navigation tabs" data-group="primary">
+    <nav class="sheet-navigation tabs {{data.attributes.color.value}}" data-group="primary">
         <a class="item active" data-tab="attributes">{{ localize "DND5E.Attributes" }}</a>
         <a class="item" data-tab="inventory">{{ localize "DND5E.Inventory" }}</a>
         <a class="item" data-tab="features">{{ localize "DND5E.Features" }}</a>
@@ -132,12 +132,12 @@
     </nav>
 
     {{!-- NPC Sheet Body --}}
-    <section class="sheet-body">
+    <section class="sheet-body {{data.attributes.color.value}}">
 
         <div class="tab attributes flexrow" data-group="primary" data-tab="attributes">
 
             {{!-- Ability Scores --}}
-            <ul class="ability-scores flexrow">
+            <ul class="ability-scores flexrow {{data.attributes.color.value}}">
             {{#each data.abilities as |ability id|}}
                 <li class="ability {{#if ability.proficient}}proficient{{/if}}" data-ability="{{id}}">
                     <h4 class="ability-name box-title rollable">{{ability.label}}</h4>
@@ -153,7 +153,7 @@
             </ul>
 
             {{!-- Skills --}}
-            <ul class="skills-list">
+            <ul class="skills-list {{data.attributes.color.value}}">
             {{#each data.skills as |skill s|}}
                 <li class="skill flexrow {{#if skill.value}}proficient{{/if}}" data-skill="{{s}}">
                     <input type="hidden" name="data.skills.{{s}}.value" value="{{skill.value}}" data-dtype="Number"/>
@@ -166,7 +166,7 @@
             {{/each}}
             </ul>
 
-            <section class="center-pane">
+            <section class="center-pane {{data.attributes.color.value}}">
 
                 {{!-- Body Attributes --}}
                 <ul class="attributes flexrow">
@@ -287,17 +287,17 @@
         </div>
 
         {{!-- Features Tab --}}
-        <div class="tab features flexcol" data-group="primary" data-tab="features">
+        <div class="tab features flexcol {{data.attributes.color.value}}" data-group="primary" data-tab="features">
             {{> "systems/dnd5e/templates/actors/parts/actor-features.html" sections=features}}
         </div>
 
         {{!-- Spellbook Tab --}}
-        <div class="tab spellbook flexcol" data-group="primary" data-tab="spellbook">
+        <div class="tab spellbook flexcol {{data.attributes.color.value}}" data-group="primary" data-tab="spellbook">
             {{> "modules/darksheet/templates/actors/parts/actor-spellbook.html"}}
         </div>
 
         {{!-- Biography Tab --}}
-        <div class="tab biography flexcol" data-group="primary" data-tab="biography">
+        <div class="tab biography flexcol {{data.attributes.color.value}}" data-group="primary" data-tab="biography">
 		<div class="biosections" style="display: flex;">
 			<div class="biosection"  style="text-align: left; margin-right: 2.5%;">
 				<h2 class="bioh2" style="margin-top:0; text-align: center;">Details</h2>
@@ -379,7 +379,7 @@
 		</div>
 		{{#unless hidesettings}}
 			{{#if data.attributes.settingsdisplay.value}}
-				<div class="settings">
+				<div class="settings {{data.attributes.color.value}}">
 				<h4  class="settingsheader">Settings</h4>
 				<span style="display: inline-flex;"class="settingsoption">
 				<label class="hitdiceroll rollable">Hitdice:</label>
@@ -407,6 +407,7 @@
 						<option value="green">green</option>
 						<option value="red">red</option>
 						<option value="black">black</option>
+						<option value="discord-black">discord-black</option>
 						{{/select}}
 					</select>
 					<label style="margin-left: 5px;">Show Title</label>
@@ -427,7 +428,7 @@
 		{{/unless}}
 		
 		{{#if data.attributes.conditions.value}}
-		<div id="hideable" class="section0">
+		<div id="hideable" class="section0 {{data.attributes.color.value}}">
 		{{#if data.status.isBlinded}}<label class="conditiontext activecondition">Blinded{{else}}<label class="conditiontext">Blinded{{/if}}
 		<input style="display: none;" type="checkbox" type="Boolean" name="data.status.isBlinded" data-dtype="Boolean" {{checked data.status.isBlinded}}/><span></span></label>
 		
