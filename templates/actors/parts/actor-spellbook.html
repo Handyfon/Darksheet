@@ -62,18 +62,18 @@
 
 <ol class="inventory-list {{data.attributes.color.value}}">
 {{#each spellbook as |section|}}
-    <li class="item flexrow inventory-header spellbook-header">
-        <div class="item-name flexrow">
+    <li class="item flexrow inventory-header spellbook-header {{data.attributes.color.value}}">
+        <div class="item-name flexrow {{data.attributes.color.value}}">
             <h3>{{section.label}}</h3>
         </div>
 
-       <div class="spell-slots">
+       <div class="spell-slots {{data.attributes.color.value}}">
             {{#if section.usesSlots}}
             <input type="text" name="data.spells.{{section.prop}}.value" value="{{section.uses}}" placeholder="0"
                    data-dtype="Number"/>
             <span class="sep"> / </span>
 
-            <span class="spell-max" data-level="{{section.prop}}" data-slots="{{section.slots}}">
+            <span class="spell-max {{data.attributes.color.value}}" data-level="{{section.prop}}" data-slots="{{section.slots}}">
                 {{{section.slots}}}
                 {{#if ../editable}}
                 <a class="slot-max-override" title="{{localize 'DND5E.SpellProgOverride'}}">
@@ -81,16 +81,16 @@
                 </a>
                 {{/if}}
             {{ else }}
-            <span class="spell-slots">{{{section.uses}}}</span>
+            <span class="spell-slots {{data.attributes.color.value}}">{{{section.uses}}}</span>
             <span class="sep"> / </span>
             <span class="spell-max">{{{section.slots}}}</span>
             {{/if}}
         </div>
 
-        <div class="spell-school">{{localize "DND5E.SpellSchool"}}</div>
-        <div class="spell-action">{{localize "DND5E.SpellUsage"}}</div>
-        <div class="spell-target">{{localize "DND5E.SpellTarget"}}</div>
-        <div class="spell-mathead">Materials</div>
+        <div class="spell-school {{data.attributes.color.value}}">{{localize "DND5E.SpellSchool"}}</div>
+        <div class="spell-action {{data.attributes.color.value}}">{{localize "DND5E.SpellUsage"}}</div>
+        <div class="spell-target {{data.attributes.color.value}}">{{localize "DND5E.SpellTarget"}}</div>
+        <div class="spell-mathead {{data.attributes.color.value}}">Materials</div>
 
         <div class="item-controls">
             {{#if section.canCreate}}
@@ -117,15 +117,15 @@
                 <span class="spell-component {{this}}">{{this}}</span>
                 {{/each}}
             </div>
-            <div class="spell-school">{{labels.school}}</div>
-            <div class="spell-action">{{labels.activation}}</div>
-            <div class="spell-target" title="{{localize 'DND5E.Range'}}: {{labels.range}}">
+            <div class="spell-school{{data.attributes.color.value}}">{{labels.school}}</div>
+            <div class="spell-action{{data.attributes.color.value}}">{{labels.activation}}</div>
+            <div class="spell-target{{data.attributes.color.value}}" title="{{localize 'DND5E.Range'}}: {{labels.range}}">
                 {{#if labels.target}}
                 {{labels.target}}
                 {{else}}None
                 {{/if}}
             </div>
-			<div class="spell-mats" title="Materials: {{item.data.materials.value}}">
+			<div class="spell-mats{{data.attributes.color.value}}" title="Materials: {{item.data.materials.value}}">
                 {{#if item.data.components.material}}
                 {{item.data.materials.value}}
                 {{else}}None
