@@ -71,12 +71,12 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
 
     // Categorize items as inventory, spellbook, features, and classes
     const inventory = {
-      weapon: { label: "Weapons", items: [], dataset: {type: "weapon"} },
-      equipment: { label: "Equipment", items: [], dataset: {type: "equipment"} },
-      consumable: { label: "Consumables", items: [], dataset: {type: "consumable"} },
-      tool: { label: "Tools", items: [], dataset: {type: "tool"} },
-      backpack: { label: game.i18n.localize("DND5E.ItemContainerHeader"), items: [], dataset: {type: "backpack"} },
-      loot: { label: "Loot", items: [], dataset: {type: "loot"} }
+      weapon: { label: "DND5E.ItemTypeWeaponPl", items: [], dataset: {type: "weapon"} },
+      equipment: { label: "DND5E.ItemTypeEquipmentPl", items: [], dataset: {type: "equipment"} },
+      consumable: { label: "DND5E.ItemTypeConsumablePl", items: [], dataset: {type: "consumable"} },
+      tool: { label: "DND5E.ItemTypeToolPl", items: [], dataset: {type: "tool"} },
+      backpack: { label: "DND5E.ItemTypeContainerPl", items: [], dataset: {type: "backpack"} },
+      loot: { label: "DND5E.ItemTypeLootPl", items: [], dataset: {type: "loot"} }
     };
 
     // Partition items by category
@@ -106,7 +106,7 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
     spells = this._filterItems(spells, this._filters.spellbook);
     feats = this._filterItems(feats, this._filters.features);
 
-    // Organize Spellbook
+    // Organize Spellbook and count the number of prepared spells (excluding always, at will, etc...)
     const spellbook = this._prepareSpellbook(data, spells);
     const nPrepared = spells.filter(s => {
       return (s.data.level > 0) && (s.data.preparation.mode === "prepared") && s.data.preparation.prepared;
@@ -141,9 +141,9 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
 
     // Organize Features
     const features = {
-      classes: { label: "Class Levels", items: [], hasActions: false, dataset: {type: "class"}, isClass: true },
-      active: { label: "Active", items: [], hasActions: true, dataset: {type: "feat", "activation.type": "action"} },
-      passive: { label: "Passive", items: [], hasActions: false, dataset: {type: "feat"} }
+      classes: { label: "DND5E.ItemTypeClassPl", items: [], hasActions: false, dataset: {type: "class"}, isClass: true },
+      active: { label: "DND5E.FeatureActive", items: [], hasActions: true, dataset: {type: "feat", "activation.type": "action"} },
+      passive: { label: "DND5E.FeaturePassive", items: [], hasActions: false, dataset: {type: "feat"} }
     };
     for ( let f of feats ) {
       if ( f.data.activation.type ) features.active.items.push(f);
@@ -167,12 +167,21 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
    * @private
    */
   _prepareItemToggleState(item) {
-    const attr = item.type === "spell" ? "preparation.prepared" : "equipped";
-    const isActive = getProperty(item.data, attr);
-    item.toggleClass = isActive ? "active" : "";
-    if ( item.type === "spell" ) {
-      item.toggleTitle = game.i18n.localize(isActive ? "DND5E.SpellPrepared" : "DND5E.SpellUnprepared");
-    } else {
+
+    if (item.type === "spell") {
+      const isAlways = getProperty(item.data, "preparation.mode") === "always";
+      const isPrepared =  getProperty(item.data, "preparation.prepared");
+      item.toggleClass = isPrepared ? "active" : "";
+
+
+      if ( isAlways ) item.toggleClass = "fixed";
+      if ( isAlways ) item.toggleTitle = CONFIG.DND5E.spellPreparationModes.always;
+      else if ( isPrepared ) item.toggleTitle = CONFIG.DND5E.spellPreparationModes.prepared;
+      else item.toggleTitle = game.i18n.localize("DND5E.SpellUnprepared");
+    }
+    else {
+      const isActive = getProperty(item.data, "equipped");
+      item.toggleClass = isActive ? "active" : "";
       item.toggleTitle = game.i18n.localize(isActive ? "DND5E.Equipped" : "DND5E.Unequipped");
     }
   }
@@ -243,7 +252,21 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
     // Short and Long Rest
     html.find('.short-rest').click(this._onShortRest.bind(this));
     html.find('.long-rest').click(this._onLongRest.bind(this));
+    // Death saving throws
+    html.find('.death-save').click(this._onDeathSave.bind(this));
   }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Handle rolling a death saving throw for the Character
+   * @param {MouseEvent} event    The originating click event
+   * @private
+   */
+  /*_onDeathSave(event) {
+    event.preventDefault();
+    return this.actor.rollDeathSave({event: event});
+  }*/
 
   /* -------------------------------------------- */
 

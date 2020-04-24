@@ -1,8 +1,8 @@
-import { Dice5e } from "../../../../systems/dnd5e/module/dice.js";
-import { ShortRestDialog } from "../../../../systems/dnd5e/module/apps/short-rest.js";
-import { SpellCastDialog } from "../../../../systems/dnd5e/module/apps/spell-cast-dialog.js";
-import { AbilityTemplate } from "../../../../systems/dnd5e/module/pixi/ability-template.js";
-import {DND5E} from "../../../../systems/systems/dnd5e/module/config.js";
+import { Dice5e } from "../dice.js";
+import { ShortRestDialog } from "../apps/short-rest.js";
+import { SpellCastDialog } from "../apps/spell-cast-dialog.js";
+import { AbilityTemplate } from "../pixi/ability-template.js";
+import {DND5E} from '../config.js';
 
 
 /**
@@ -29,14 +29,11 @@ export class Actor5e extends Actor {
     // Get the Actor's data object
     const actorData = this.data;
     const data = actorData.data;
-    const flags = actorData.flags;
+    const flags = actorData.flags.dnd5e || {};
 
     // Prepare Character data
     if ( actorData.type === "character" ) this._prepareCharacterData(actorData);
     else if ( actorData.type === "npc" ) this._prepareNPCData(actorData);
-
-    // Ranged Weapon/Melee Weapon/Ranged Spell/Melee Spell attack bonuses are added when rolled since they are not a fixed value.
-    // Damage bonus added when rolled since not a fixed value.
 
     // Ability modifiers and saves
     // Character All Ability Check" and All Ability Save bonuses added when rolled since not a fixed value.
@@ -48,22 +45,48 @@ export class Actor5e extends Actor {
     }
 
     // Skill modifiers
-    for (let skl of Object.values(data.skills)) {
+    const feats = DND5E.characterFlags;
+    const athlete = flags.remarkableAthlete;
+    const joat = flags.jackOfAllTrades;
+    const observant = flags.observantFeat;
+    let round = Math.floor;
+    for (let [id, skl] of Object.entries(data.skills)) {
       skl.value = parseFloat(skl.value || 0);
       skl.bonus = parseInt(skl.bonus || 0);
-      skl.mod = data.abilities[skl.ability].mod + skl.bonus + Math.floor(skl.value * data.attributes.prof);
-      skl.passive = 10 + skl.mod;
+
+      // Apply Remarkable Athlete or Jack of all Trades
+      let multi = skl.value;
+      if ( athlete && (skl.value === 0) && feats.remarkableAthlete.abilities.includes(skl.ability) ) {
+        multi = 0.5;
+        round = Math.ceil;
+      }
+      if ( joat && (skl.value === 0 ) ) multi = 0.5;
+
+      // Compute modifier
+      skl.mod = data.abilities[skl.ability].mod + skl.bonus + round(multi * data.attributes.prof);
+
+      // Compute passive bonus
+      const passive = observant && (feats.observantFeat.skills.includes(id)) ? 5 : 0;
+      skl.passive = 10 + skl.mod + passive;
     }
 
-    // Initiative
+    // Determine Initiative Modifier
     const init = data.attributes.init;
     init.mod = data.abilities.dex.mod;
-    init.prof = getProperty(flags, "dnd5e.initiativeHalfProf") ? Math.floor(0.5 * data.attributes.prof) : 0;
-    init.bonus = init.value + (getProperty(flags, "dnd5e.initiativeAlert") ? 5 : 0);
+
+    if ( joat ) init.prof = Math.floor(0.5 * data.attributes.prof);
+    else if ( athlete ) init.prof = Math.ceil(0.5 * data.attributes.prof);
+    else init.prof = 0;
+    init.bonus = init.value + (flags.initiativeAlert ? 5 : 0);
     init.total = init.mod + init.prof + init.bonus;
 
-    // Spell DC
+
+    // Prepare spell-casting data
     data.attributes.spelldc = this.getSpellDC(data.attributes.spellcasting);
+    // TODO: Only do this IF we have already processed item types (see Entity#initialize)
+    if ( this.items ) {
+      this._computeSpellcastingProgression(actorData);
+    }
   }
 
   /* -------------------------------------------- */
@@ -121,17 +144,93 @@ export class Actor5e extends Actor {
   /* -------------------------------------------- */
 
   /**
+   * Prepare data related to the spell-casting capabilities of the Actor
+   * @private
+   */
+  _computeSpellcastingProgression (actorData) {
+    const spells = actorData.data.spells;
+    const isNPC = actorData.type === 'npc';
+
+    // Translate the list of classes into spell-casting progression
+    const progression = {
+      total: 0,
+      slot: 0,
+      pact: 0
+    };
+
+    // Keep track of the last seen caster in case we're in a single-caster situation.
+    let caster = null;
+
+    // Tabulate the total spell-casting progression
+    const classes = this.data.items.filter(i => i.type === "class");
+    for ( let cls of classes ) {
+      const d = cls.data;
+      if ( d.spellcasting === "none" ) continue;
+      const levels = d.levels;
+      const prog = d.spellcasting;
+
+      // Accumulate levels
+      if ( prog !== "pact" ) {
+        caster = cls;
+        progression.total++;
+      }
+      switch (prog) {
+        case 'third': progression.slot += Math.floor(levels / 3); break;
+        case 'half': progression.slot += Math.floor(levels / 2); break;
+        case 'full': progression.slot += levels; break;
+        case 'artificer': progression.slot += Math.ceil(levels / 2); break;
+        case 'pact': progression.pact += levels; break;
+      }
+    }
+
+    // EXCEPTION: single-classed non-full progression rounds up, rather than down
+    const isSingleClass = (progression.total === 1) && (progression.slot > 0);
+    if (!isNPC && isSingleClass && ['half', 'third'].includes(caster.data.spellcasting) ) {
+      const denom = caster.data.spellcasting === 'third' ? 3 : 2;
+      progression.slot = Math.ceil(caster.data.levels / denom);
+    }
+
+    // EXCEPTION: NPC with an explicit spellcaster level
+    if (isNPC && actorData.data.details.spellLevel) {
+      progression.slot = actorData.data.details.spellLevel;
+    }
+
+    // Look up the number of slots per level from the progression table
+    const levels = Math.clamped(progression.slot, 0, 20);
+    const slots = DND5E.SPELL_SLOT_TABLE[levels - 1] || [];
+    for ( let [n, lvl] of Object.entries(spells) ) {
+      let i = parseInt(n.slice(-1));
+      if ( Number.isNaN(i) ) continue;
+      if ( lvl.override ) lvl.max = parseInt(lvl.override) || 0;
+      else lvl.max = slots[i-1] || 0;
+      lvl.value = Math.min(parseInt(lvl.value), lvl.max);
+    }
+
+    // Determine the number of Warlock pact slots per level
+    const pactLevel = Math.clamped(progression.pact, 0, 20);
+    if ( pactLevel > 0) {
+      spells.pact = spells.pact || {};
+      spells.pact.level = Math.ceil(Math.min(10, pactLevel) / 2);
+      spells.pact.max = Math.max(1, Math.min(pactLevel, 2), Math.min(pactLevel-8, 3), Math.min(pactLevel-13, 4));
+      spells.pact.value = Math.min(spells.pact.value, spells.pact.max);
+    }
+  }
+
+  /* -------------------------------------------- */
+
+  /**
    * Return the amount of experience required to gain a certain character level.
    * @param level {Number}  The desired level
    * @return {Number}       The XP required
    */
   getLevelExp(level) {
     const levels = CONFIG.DND5E.CHARACTER_EXP_LEVELS;
-/*    const levels = [
-  0, 300, 420, 590, 820, 1150, 1610, 2260, 3160, 4430, 6200, 8680,
-  12150, 17010, 23810, 33330, 46660, 64330, 91460, 128050];
+
+
+
     return levels[Math.min(level, levels.length - 1)];
-  }*/
+
+  }
 
   /* -------------------------------------------- */
 
@@ -265,18 +364,26 @@ export class Actor5e extends Actor {
 
     // Determine if the spell uses slots
     let lvl = item.data.data.level;
-    const usesSlots = (lvl > 0) && item.data.data.preparation.mode === "prepared";
+    const usesSlots = (lvl > 0) && CONFIG.DND5E.spellUpcastModes.includes(item.data.data.preparation.mode);
     if ( !usesSlots ) return item.roll();
 
     // Configure the casting level and whether to consume a spell slot
-    let consume = true;
+    let consume = `spell${lvl}`;
     let placeTemplate = false;
 
+    // Configure spell slot consumption and measured template placement from the form
     if ( configureDialog ) {
       const spellFormData = await SpellCastDialog.create(this, item);
-      lvl = parseInt(spellFormData.get("level"));
-      consume = Boolean(spellFormData.get("consume"));
+      const isPact = spellFormData.get('level') === 'pact';
+      const lvl = isPact ? this.data.data.spells.pact.level : parseInt(spellFormData.get("level"));
+      if (Boolean(spellFormData.get("consume"))) {
+        consume = isPact ? 'pact' : `spell${lvl}`;
+      } else {
+        consume = false;
+      }
       placeTemplate = Boolean(spellFormData.get("placeTemplate"));
+
+      // Create a temporary owned item to approximate the spell at a higher level
       if ( lvl !== item.data.data.level ) {
         item = item.constructor.createOwned(mergeObject(item.data, {"data.level": lvl}, {inplace: false}), this);
       }
@@ -285,7 +392,7 @@ export class Actor5e extends Actor {
     // Update Actor data
     if ( consume && (lvl > 0) ) {
       await this.update({
-        [`data.spells.spell${lvl}.value`]: Math.max(parseInt(this.data.data.spells["spell"+lvl].value) - 1, 0)
+        [`data.spells.${consume}.value`]: Math.max(parseInt(this.data.data.spells[consume].value) - 1, 0)
       });
     }
 
@@ -322,14 +429,15 @@ export class Actor5e extends Actor {
     }
 
     // Roll and return
-    return Dice5e.d20Roll({
-      event: options.event,
+    return Dice5e.d20Roll(mergeObject(options, {
+
       parts: parts,
       data: data,
       title: `${CONFIG.DND5E.skills[skillId]} Skill Check`,
       speaker: ChatMessage.getSpeaker({actor: this}),
       halflingLucky: this.getFlag("dnd5e", "halflingLucky")
-    });
+
+    }));
   }
 
   /* -------------------------------------------- */
@@ -372,23 +480,35 @@ export class Actor5e extends Actor {
     const abl = this.data.data.abilities[abilityId];
     const parts = ["@mod"];
     const data = {mod: abl.mod};
+    const flags = this.data.flags || {};
 
-    // Include a global actor ability check bonus
-    const actorBonus = getProperty(this.data.data.bonuses, "abilities.check");
+    // Add feat-related proficiency bonuses
+    if ( flags.dnd5e.remarkableAthlete && DND5E.characterFlags.remarkableAthlete.abilities.includes(abilityId) ) {
+      parts.push("@proficiency");
+      data.proficiency = Math.ceil(0.5 * this.data.data.attributes.prof);
+    }
+    else if ( flags.dnd5e.jackOfAllTrades ) {
+      parts.push("@proficiency");
+      data.proficiency = Math.floor(0.5 * this.data.data.attributes.prof);
+    }
+
+    // Add global actor bonus
+    let actorBonus = getProperty(this.data.data.bonuses, "abilities.check");
     if ( !!actorBonus ) {
       parts.push("@checkBonus");
       data.checkBonus = actorBonus;
     }
 
     // Roll and return
-    return Dice5e.d20Roll({
-      event: options.event,
+    return Dice5e.d20Roll(mergeObject(options, {
+
       parts: parts,
       data: data,
       title: `${label} Ability Test`,
       speaker: ChatMessage.getSpeaker({actor: this}),
       halflingLucky: this.getFlag("dnd5e", "halflingLucky")
-    });
+
+    }));
   }
 
   /* -------------------------------------------- */
@@ -411,7 +531,8 @@ export class Actor5e extends Actor {
       parts.push("@prof");
       data.prof = abl.prof;
     }
-	
+
+
     // Include a global actor ability save bonus
     const actorBonus = getProperty(this.data.data.bonuses, "abilities.save");
     if ( !!actorBonus ) {
@@ -420,14 +541,15 @@ export class Actor5e extends Actor {
     }
 
     // Roll and return
-    return Dice5e.d20Roll({
+    return Dice5e.d20Roll(mergeObject(options, {
       event: options.event,
       parts: parts,
       data: data,
       title: `${label} Saving Throw`,
       speaker: ChatMessage.getSpeaker({actor: this}),
       halflingLucky: this.getFlag("dnd5e", "halflingLucky")
-    });
+
+    }));
   }
 
   /* -------------------------------------------- */
@@ -438,23 +560,38 @@ export class Actor5e extends Actor {
    * @return {Promise<Roll|null>}   A Promise which resolves to the Roll instance
    */
   async rollDeathSave(options={}) {
-    // Execute the d20 roll dialog
-    const bonus = getProperty(this.data.data.bonuses, "abilities.save");
-    const parts = !!bonus ? ["@saveBonus"] : [];
+
+
+
+
+    // Evaluate a global saving throw bonus
     const speaker = ChatMessage.getSpeaker({actor: this});
-    const roll = await Dice5e.d20Roll({
-      event: options.event,
+    const parts = [];
+    const data = {};
+    const bonus = getProperty(this.data.data.bonuses, "abilities.save");
+    if ( bonus ) {
+      parts.push("@saveBonus");
+      data["saveBonus"] = bonus;
+    }
+
+    // Evaluate the roll
+    const roll = await Dice5e.d20Roll(mergeObject(options, {
+
       parts: parts,
-      data: {saveBonus: parseInt(bonus)},
+
+      data: data,
       title: `Death Saving Throw`,
       speaker: speaker,
-      halflingLucky: this.getFlag("dnd5e", "halflingLucky")
-    });
+      halflingLucky: this.getFlag("dnd5e", "halflingLucky"),
+
+      targetValue: 10
+    }));
     if ( !roll ) return null;
 
     // Take action depending on the result
     const success = roll.total >= 10;
     const death = this.data.data.attributes.death;
+
     // Save success
     if ( success ) {
       let successes = (death.success || 0) + (roll.total === 20 ? 2 : 1);
@@ -468,6 +605,7 @@ export class Actor5e extends Actor {
       }
       else await this.update({"data.attributes.death.success": Math.clamped(successes, 0, 3)});
     }
+
     // Save failure
     else {
       let failures = (death.failure || 0) + (roll.total === 1 ? 2 : 1);
@@ -512,7 +650,8 @@ export class Actor5e extends Actor {
       data: rollData,
       title: title,
       speaker: ChatMessage.getSpeaker({actor: this}),
-      critical: false,
+
+      allowcritical: false,
       dialogOptions: {width: 350}
     });
     if ( !roll ) return;
@@ -557,6 +696,10 @@ export class Actor5e extends Actor {
         updateData[`data.resources.${k}.value`] = r.max;
       }
     }
+
+    // Recover pact slots.
+    const pact = data.spells.pact;
+    updateData['data.spells.pact.value'] = pact.override || pact.max;
     await this.update(updateData);
 
     // Recover item uses
@@ -626,10 +769,13 @@ export class Actor5e extends Actor {
 
     // Recover spell slots
     for ( let [k, v] of Object.entries(data.spells) ) {
-      if ( !v.max ) continue;
-      updateData[`data.spells.${k}.value`] = v.max;
+      if ( !v.max && !v.override ) continue;
+      updateData[`data.spells.${k}.value`] = v.override || v.max;
     }
 
+    // Recover pact slots.
+    const pact = data.spells.pact;
+    updateData['data.spells.pact.value'] = pact.override || pact.max;
 
     // Determine the number of hit dice which may be recovered
     let recoverHD = Math.max(Math.floor(data.details.level / 2), 1);
@@ -683,6 +829,7 @@ export class Actor5e extends Actor {
       updateItems: updateItems
     }
   }
+
 
   /* -------------------------------------------- */
 
@@ -765,6 +912,12 @@ export class Actor5e extends Actor {
     d.data.details.alignment = o.data.details.alignment; // Don't change alignment
     d.data.attributes.exhaustion = o.data.attributes.exhaustion; // Keep your prior exhaustion level
     d.data.attributes.inspiration = o.data.attributes.inspiration; // Keep inspiration
+
+    // Handle wildcard
+    if ( source.token.randomImg ) {
+      const images = await target.getTokenImages();
+      d.token.img = images[0];
+    }
 
     // Keep Token configurations
     const tokenConfig = ["displayName", "vision", "actorLink", "disposition", "displayBars", "bar1", "bar2"];

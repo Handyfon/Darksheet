@@ -32,6 +32,11 @@
 			</select>
 			<label style="margin-left: 5px;margin-right: 5px;"><h3 style="text-align: center;">Regional Magic</h3></label>
 			<select name="data.attributes.regionmod.value" data-type="String" value="0">
+		{{#if isNPC}}
+        <h3>{{localize "DND5E.SpellcasterLevel"}}</h3>
+        <input class="spellcasting-level" type="text" name="data.details.spellLevel"
+               value="{{data.details.spellLevel}}" data-dtype="Number" placeholder="0"/>
+        {{/if}}
 				{{#select data.attributes.regionmod.value}}
 				<option value="3">Serene +3</option>
 				<option value="2">Calm +2</option>
@@ -62,11 +67,19 @@
             <h3>{{section.label}}</h3>
         </div>
 
-        <div class="spell-slots">
+       <div class="spell-slots">
             {{#if section.usesSlots}}
-            <input type="text" name="data.spells.spell{{section.level}}.value" value="{{section.uses}}" placeholder="0" data-dtype="Number"/>
+            <input type="text" name="data.spells.{{section.prop}}.value" value="{{section.uses}}" placeholder="0"
+                   data-dtype="Number"/>
             <span class="sep"> / </span>
-            <input type="text" name="data.spells.spell{{section.level}}.max" value="{{section.slots}}" placeholder="0" data-dtype="Number"/>
+
+            <span class="spell-max" data-level="{{section.prop}}" data-slots="{{section.slots}}">
+                {{{section.slots}}}
+                {{#if ../editable}}
+                <a class="slot-max-override" title="{{localize 'DND5E.SpellProgOverride'}}">
+                    <i class="fas fa-edit"></i>
+                </a>
+                {{/if}}
             {{ else }}
             <span class="spell-slots">{{{section.uses}}}</span>
             <span class="sep"> / </span>
@@ -141,8 +154,9 @@
             <a class="item-control item-create" title="{{localize 'DND5E.SpellCreate'}}" data-type="spell"
                data-level="{{lvl}}"><i class="fas fa-plus"></i> {{localize "DND5E.SpellAdd"}}</a>
         </div>
-    {{/if}}
-    {{/if}}
     </li>
+    <li class="item flexrow"><p class="notes">{{localize "DND5E.NoSpellLevels"}}</p></li>
+    {{/if}}
+    {{/if}}
 {{/each}}
 </ol>
