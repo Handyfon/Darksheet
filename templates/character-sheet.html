@@ -1,4 +1,4 @@
-<form class="{{cssClass}} flexcol {{data.attributes.color.value}}" autocomplete="off">
+<form class="{{cssClass}} flexcol {{data.attributes.color.value}}" style="{{#if data.attributes.color.saturation}}filter: saturate(1.5);{{/if}}{{#if data.attributes.color.saturation}}filter: saturate(1.5);{{/if}}{{#if data.attributes.color.highcontrast}}filter: contrast(1.5);{{/if}}{{#if data.attributes.color.brighter}}filter: brightness(1.2);{{/if}}{{#if data.attributes.color.grayscale}}filter: grayscale(1);{{/if}}" autocomplete="off">
 
     {{!-- Sheet Header --}}
     <header class="sheet-header flexrow {{data.attributes.color.value}}">
@@ -415,9 +415,8 @@
 						{{/select}}
 					</select>
 					<label style="margin-left: 5px;">Show Title</label>
-								<label class="titlecheckbox">
-									<input style="position: absolute; margin-top: -5px;" class="ressourcecheckbox" type="checkbox" type="Boolean" name="data.attributes.titlesetting" data-dtype="Boolean" {{checked data.attributes.titlesetting}}/><span></span></label>
-
+						<label class="titlecheckbox" style="margin-right: 20px;">
+						<input style="position: absolute; margin-top: -5px;" type="checkbox" type="Boolean" name="data.attributes.titlesetting" data-dtype="Boolean" {{checked data.attributes.titlesetting}}/><span></span></label>
 					<label style="margin-left: 10px;">Address:</label>
 					<select class="hitdice {{data.attributes.adress}}" name="data.attributes.adress" data-type="String">
 						{{#select data.attributes.adress}}
@@ -426,6 +425,20 @@
 						<option value="her">her</option>
 						{{/select}}
 					</select>
+					<span style="display: inline-flex;margin-top: 10px;"class="settingsoption">
+					<label style="margin-left: 5px;">High Contrast</label>
+						<label class="titlecheckbox" style="margin-right: 20px;">
+						<input style="position: absolute; margin-top: -5px;" type="checkbox" type="Boolean" name="data.attributes.color.highcontrast" data-dtype="Boolean" {{checked data.attributes.color.highcontrast}}/><span></span></label>
+					<label style="margin-left: 5px;">Grayscale</label>
+						<label class="titlecheckbox" style="margin-right: 20px;">
+						<input style="position: absolute; margin-top: -5px;" type="checkbox" type="Boolean" name="data.attributes.color.grayscale" data-dtype="Boolean" {{checked data.attributes.color.grayscale}}/><span></span></label>
+					<label style="margin-left: 5px;">Brighter Sheet</label>
+						<label class="titlecheckbox" style="margin-right: 20px;">
+						<input style="position: absolute; margin-top: -5px;" type="checkbox" type="Boolean" name="data.attributes.color.brighter" data-dtype="Boolean" {{checked data.attributes.color.brighter}}/><span></span></label>
+					<label style="margin-left: 5px;">Greater Saturation</label>
+						<label class="titlecheckbox" style="margin-right: 20px;">
+						<input style="position: absolute; margin-top: -5px;"type="checkbox" type="Boolean" name="data.attributes.color.saturation" data-dtype="Boolean" {{checked data.attributes.color.saturation}}/><span></span></label>
+					</span>
 				</div>
 			{{else}}
 			{{/if}}
