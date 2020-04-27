@@ -8,7 +8,7 @@
 			<h1 class="charname">
 			{{#if data.attributes.titlesetting}}
 				{{#if data.attributes.title}}
-				<div><label title="{{data.details.title}}" style="font-size: 20px;color: #c7e5ff;text-transform: capitalize;font-style: italic;">({{data.attributes.title}})</label><label style="font-size:30px"> {{actor.name}}</label>
+				<div class="{{data.attributes.color.value}}"label title="{{data.details.title}}" style="font-size: 20px;color: #c7e5ff;text-transform: capitalize;font-style: italic;">({{data.attributes.title}})</label><label style="font-size:30px"> {{actor.name}}</label>
 				{{else}}
 				   <input style="display: inline-flex;" name="name" type="text" value="{{actor.name}}" placeholder="Character Name"/>
 				{{/if}}
@@ -34,8 +34,8 @@
                 {{/unless}}
             </div>
 			{{#if disableExperience}}
-            <ul class="summary trainingssummary">
-                <label class="trainingslabel">Training</label>
+            <ul class="summary trainingssummary {{data.attributes.color.value}}">
+                <label class="trainingslabel {{data.attributes.color.value}}">Training</label>
                 <input class="trainingcheckbox1" type="checkbox" name="data.attributes.trainpoint1.value" data-dtype="Boolean" {{checked data.attributes.trainpoint1.value}}/>
                 <input class="trainingcheckbox" type="checkbox" name="data.attributes.trainpoint2.value" data-dtype="Boolean" {{checked data.attributes.trainpoint2.value}}/>
                 <input class="trainingcheckbox" type="checkbox" name="data.attributes.trainpoint3.value" data-dtype="Boolean" {{checked data.attributes.trainpoint3.value}}/>
@@ -52,7 +52,7 @@
 			{{else}}
 			{{/if}}
             {{!-- Character Summary --}}
-            <ul class="summary">
+            <ul class="summary {{data.attributes.color.value}}">
                 <li>
                     <input type="text" name="data.details.race" value="{{data.details.race}}" placeholder="{{ localize 'DND5E.Race' }}"/>
                 </li>
@@ -139,11 +139,11 @@
             {{!-- Ability Scores --}}
             <ul class="ability-scores flexrow {{data.attributes.color.value}}">
             {{#each data.abilities as |ability id|}}
-                <li class="ability {{#if ability.proficient}}proficient{{/if}}" data-ability="{{id}}">
-                    <h4 class="ability-name box-title rollable">{{ability.label}}</h4>
-                    <input class="ability-score" name="data.abilities.{{id}}.value" type="text" value="{{ability.value}}" data-dtype="Number" placeholder="10"/>
-                    <div class="ability-modifiers flexrow">
-                        <span class="ability-mod" title="Modifier">{{numberFormat ability.mod decimals=0 sign=true}}</span>
+                <li class="{{data.attributes.color.value}} ability {{#if ability.proficient}}proficient{{/if}}" data-ability="{{id}}">
+                    <h4 class="ability-name box-title rollable {{data.attributes.color.value}}">{{ability.label}}</h4>
+                    <input class="ability-score {{data.attributes.color.value}}" name="data.abilities.{{id}}.value" type="text" value="{{ability.value}}" data-dtype="Number" placeholder="10"/>
+                    <div class="ability-modifiers flexrow {{data.attributes.color.value}}">
+                        <span class="ability-mod {{data.attributes.color.value}}" title="Modifier">{{numberFormat ability.mod decimals=0 sign=true}}</span>
                         <input type="hidden" name="data.abilities.{{id}}.proficient" value="{{ability.proficient}}" data-dtype="Number"/>
                         <a class="proficiency-toggle ability-proficiency" title="Proficiency">{{{ability.icon}}}</a>
                         <span class="ability-save" title="Saving Throw">{{numberFormat ability.save decimals=0 sign=true}}</span>
@@ -408,6 +408,10 @@
 						<option value="red">red</option>
 						<option value="black">black</option>
 						<option value="discord-black">discord-black</option>
+						<option value="plane-of-fire">plane-of-fire</option>
+						<option value="plane-of-water">plane-of-water</option>
+						<option value="plane-of-earth">plane-of-earth</option>
+						<option value="plane-of-air">plane-of-air</option>
 						{{/select}}
 					</select>
 					<label style="margin-left: 5px;">Show Title</label>
@@ -482,7 +486,7 @@
 		{{/if}}
 		<div class="section1" style="margin-top:0;">
 		<div class="part1 {{data.attributes.color.value}} allparts">
-    <h4 class="darksheetheader">Food</h4>
+    <h4 class="darksheetheader {{data.attributes.color.value}}">Food</h4>
     <div class="status-value">
         <label class="foodcheckbox">
             <input class="ressourcecheckbox foodcheckbox" type="checkbox" name="data.attributes.food.value" data-dtype="Boolean" {{checked data.attributes.food.value}}/><span></span></label>
@@ -508,7 +512,7 @@
     </select>
 	</div>
 	<div class="part2 {{data.attributes.color.value}} allparts">
-		<h4 class="darksheetheader">Waterskin</h4>
+		<h4 class="darksheetheader {{data.attributes.color.value}}">Waterskin</h4>
 		<div class="status-value">
 			<label class="watercheckbox {{data.attributes.color.value}}">
 				<input class="ressourcecheckbox" type="checkbox" name="data.attributes.waterskin.value" title="@{waterskin1}" data-dtype="Boolean" {{checked data.attributes.waterskin.value}}/><span></span></label>
@@ -535,7 +539,7 @@
 	</div>
 	<div class="part3 {{data.attributes.color.value}} allparts">
 
-		<h4 class="darksheetheader">Fatigue</h4>
+		<h4 class="darksheetheader {{data.attributes.color.value}}">Fatigue</h4>
 		<div class="burnoutandexhaustion">
 		</div>
 		<select class="exhaustionbox" name="data.attributes.fatigue.value" data-type="String">
@@ -554,7 +558,7 @@
 	</div>
 	<div class="section1 allparts">
 		<div class="part4 {{data.attributes.color.value}}">
-			<h4 class="darksheetheader">Temperature</h4>
+			<h4 class="darksheetheader {{data.attributes.color.value}}">Temperature</h4>
 			<select class="exhaustionbox" name="data.attributes.temp" data-type="String" style="width: 163px;" >
 				{{#select data.attributes.temp}}
 				<option value="exenegised">Perfect -1 Exhaustion</option>
