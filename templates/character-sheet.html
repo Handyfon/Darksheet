@@ -468,7 +468,7 @@
 		<style>
 			form.editable.flexcol.custom {
 			background-color: {{data.color.custom.color}};
-			color: ;
+			color: {{data.color.custom.textcolor}};
 			background: linear-gradient( rgba(132, 132, 132, 0.11), rgb(0, 0, 0) ), url({{data.color.custom.url}});
 			background-size: cover;
 			background-position-x: center;
@@ -497,18 +497,28 @@
 			}
 			.part1.custom.allparts {
 			background-image: linear-gradient(transparent, #167916) !important;
+			color: {{data.color.custom.textcolor}};
 			}
 			.part2.custom.allparts {
 			background-image: linear-gradient(transparent, #5252b7) !important;
+			color: {{data.color.custom.textcolor}};
+			}
+			.part3.custom.allparts{
+			color: {{data.color.custom.textcolor}};
+			}
+			.checks.custom {
+			color: {{data.color.custom.textcolor}};
 			}
 			.part4.custom {
 			background: #3c3a59;
 			background-image: linear-gradient(#553d2400, #fdfdfd4d) !important;
+			color: {{data.color.custom.textcolor}};
 			}
 			.settings.custom {
 			background: #514d66;
 			color: {{data.color.custom.textcolor}} ! important;
 			}
+			
 		</style>
 		{{#if data.attributes.conditions.value}}
 		<div id="hideable" class="section0 {{data.attributes.color.value}}">
