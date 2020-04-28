@@ -1,4 +1,4 @@
-<form class="{{cssClass}} flexcol {{data.attributes.color.value}}" style="{{#if data.attributes.color.saturation}}filter: saturate(1.5);{{/if}}{{#if data.attributes.color.saturation}}filter: saturate(1.5);{{/if}}{{#if data.attributes.color.highcontrast}}filter: contrast(1.5);{{/if}}{{#if data.attributes.color.brighter}}filter: brightness(1.2);{{/if}}{{#if data.attributes.color.grayscale}}filter: grayscale(1);{{/if}}" autocomplete="off">
+<form class="{{cssClass}} flexcol {{data.attributes.color.value}}" autocomplete="true" style="{{#if data.attributes.color.saturation}}filter: saturate(1.5);{{/if}}{{#if data.attributes.color.saturation}}filter: saturate(1.5);{{/if}}{{#if data.attributes.color.highcontrast}}filter: contrast(1.5);{{/if}}{{#if data.attributes.color.brighter}}filter: brightness(1.2);{{/if}}{{#if data.attributes.color.grayscale}}filter: grayscale(1);{{/if}}" autocomplete="off">
 
     {{!-- Sheet Header --}}
     <header class="sheet-header flexrow {{data.attributes.color.value}}">
@@ -252,7 +252,7 @@
                     <div class="counter flexrow">
                         <h4 title="Click to roll for reopened wounds" class="deathsavelabel woundroll rollable" style="margin-right: -56px;">Closed Wounds</h4>
                         <div class="attribute-value multiple">
-                            <input name="data.attributes.wounds.value" type="text" value="{{data.attributes.wounds.value}}">
+                            <input style="margin-left: -40px; "name="data.attributes.wounds.value" type="text" value="{{data.attributes.wounds.value}}">
                             <span class="sep"> / </span>
                             <input type="text" name="data.attributes.maxwounds.value" value="{{data.attributes.maxwounds.value}}">
                         </div>
@@ -264,7 +264,7 @@
                             <input style="margin-left: 10px;" type="number" min="0" max="3" class="inspirationpoints" name="data.attributes.inspirations.value" value="{{data.attributes.inspirations.value}}" />
                         </div>
 						{{else}}
-                        <h4 title="Use 1 Hero Point" class="rollable useHeroPoint" style="margin-left: -6px;">Hero Points</h4>
+                        <h4 title="Use 1 Hero Point" class="rollable useHeroPoint" style="margin-left: -65px;">Hero Points</h4>
                         <div class="status-value">
                             <input type="number" min="0" max="3" class="heropoints" name="data.attributes.heropoints.value" value="{{data.attributes.heropoints.value}}" />
                         </div>
@@ -298,7 +298,7 @@
 
         {{!-- Biography Tab --}}
         <div class="tab biography flexcol {{data.attributes.color.value}}" data-group="primary" data-tab="biography">
-		<div class="biosections" style="display: flex;">
+		<div class="biosections {{data.attributes.color.value}}" style="display: flex;">
 			<div class="biosection"  style="text-align: left; margin-right: 2.5%;">
 				<h2 class="bioh2" style="margin-top:0; text-align: center;">Details</h2>
 				<div class="details"><label style="margin-right:16px;">Race</label><input style="width: 85% !important; text-align:center" type="text" class="bio" name="data.details.racedetails" value="{{data.details.racedetails}}" placeholder="Race" required></div>
@@ -399,7 +399,20 @@
 							<label style="margin-left: 5px;">Automatic Burnout Consequence:</label>
 								<label class="bloodiedcheckbox">
 									<input style="margin-top: -4px;" class="ressourcecheckbox" type="checkbox" type="Boolean" name="data.attributes.burnoutc.value" data-dtype="Boolean" {{checked data.attributes.burnoutc.value}}/><span></span></label>
+				<label style="margin-left: 5px;">Show Title</label>
+						<label class="titlecheckbox" style="margin-right: 20px;">
+						<input style="position: absolute; margin-top: -5px;" type="checkbox" type="Boolean" name="data.attributes.titlesetting" data-dtype="Boolean" {{checked data.attributes.titlesetting}}/><span></span></label>
+					<label style="margin-left: 10px;">Address:</label>
+					<select class="hitdice {{data.attributes.adress}}" name="data.attributes.adress" data-type="String">
+						{{#select data.attributes.adress}}
+						<option selected="selected" value="its"></option>
+						<option value="his">his</option>
+						<option value="her">her</option>
+						{{/select}}
+					</select>
 				</span>
+				<h4  class="settingsheader" style="margin-top: 10px;">Character Customization</h4>
+				<span style="display: inline-flex;"class="settingsoption">
 				</br><label>Character Sheet Color:</label>
 					<select class="hitdice {{data.attributes.color.value}}" name="data.attributes.color.value" data-type="String">
 						{{#select data.attributes.color.value}}
@@ -412,20 +425,29 @@
 						<option value="plane-of-water">plane-of-water</option>
 						<option value="plane-of-earth">plane-of-earth</option>
 						<option value="plane-of-air">plane-of-air</option>
+						<option value="ice">ice</option>
+						<option value="forest">forest</option>
+						<option value="custom">custom</option>
 						{{/select}}
 					</select>
-					<label style="margin-left: 5px;">Show Title</label>
-						<label class="titlecheckbox" style="margin-right: 20px;">
-						<input style="position: absolute; margin-top: -5px;" type="checkbox" type="Boolean" name="data.attributes.titlesetting" data-dtype="Boolean" {{checked data.attributes.titlesetting}}/><span></span></label>
-					<label style="margin-left: 10px;">Address:</label>
-					<select class="hitdice {{data.attributes.adress}}" name="data.attributes.adress" data-type="String">
-						{{#select data.attributes.adress}}
-						<option selected="selected" value="its"></option>
-						<option value="his">his</option>
-						<option value="her">her</option>
-						{{/select}}
-					</select>
-					<span style="display: inline-flex;margin-top: 10px;"class="settingsoption">
+					<input style="display:none" type="checkbox" type="Boolean" name="data.attributes.color.custom" data-dtype="Boolean" {{checked data.attributes.color.custom}}/>
+					{{#if data.attributes.color.custom}}
+					<span style="display: inline-flex;"class="settingsoption">
+					<label>Background-Url:</label>
+					<input type="text" title="Put in a url for your background picture" class="biotextflex" name="data.color.custom.url" value="{{data.color.custom.url}}" placeholder="url-to-picture" required>
+					</span>
+				</span>
+				<span style="display: inline-flex;"class="settingsoption">
+					<label>Color</label>
+					<input style="width: fit-content;" type="text" title="Put in a color (hex)" class="biotextflex" name="data.color.custom.color" value="{{data.color.custom.color}}" placeholder="#474a5dfc" required>
+					<label>Text-Color</label>
+					<input style="width: fit-content;" type="text" title="Put in a color (hex)" class="biotextflex" name="data.color.custom.textcolor" value="{{data.color.custom.textcolor}}" placeholder="#fffff" required>
+				</span>
+					{{/if}}
+				</span>
+				</span>
+				<h4  class="settingsheader" style="margin-top: 10px;">Additional Customization:</h4>
+				<span style="display: inline-flex;"class="settingsoption">
 					<label style="margin-left: 5px;">High Contrast</label>
 						<label class="titlecheckbox" style="margin-right: 20px;">
 						<input style="position: absolute; margin-top: -5px;" type="checkbox" type="Boolean" name="data.attributes.color.highcontrast" data-dtype="Boolean" {{checked data.attributes.color.highcontrast}}/><span></span></label>
@@ -443,7 +465,51 @@
 			{{else}}
 			{{/if}}
 		{{/unless}}
-		
+		<style>
+			form.editable.flexcol.custom {
+			background-color: {{data.color.custom.color}};
+			color: ;
+			background: linear-gradient( rgba(132, 132, 132, 0.11), rgb(0, 0, 0) ), url({{data.color.custom.url}});
+			background-size: cover;
+			background-position-x: center;
+			/* filter: saturate(2.5); */
+			padding: 2px;
+			margin: -7px;
+			/* border: 1px solid #2a3d56; */
+			}
+			.header-details.flexrow.custom {
+			color: {{data.color.custom.textcolor}};
+			}
+			section.sheet-body.custom {
+			background-image: linear-gradient(#243b5500, {{data.color.custom.color}}) !important;
+			}
+			ol.inventory-list.custom {
+			background-image: linear-gradient(#243b5500, {{data.color.custom.color}}) !important;
+			font-family: auto;
+			font-size: 14px;
+			}
+			.tab.biography.flexcol.custom.active {
+			color: {{data.color.custom.textcolor}};
+			}
+			nav.sheet-navigation.tabs.custom {
+			padding-bottom: 5px;
+			font-size: 23px;
+			}
+			.part1.custom.allparts {
+			background-image: linear-gradient(transparent, #167916) !important;
+			}
+			.part2.custom.allparts {
+			background-image: linear-gradient(transparent, #5252b7) !important;
+			}
+			.part4.custom {
+			background: #3c3a59;
+			background-image: linear-gradient(#553d2400, #fdfdfd4d) !important;
+			}
+			.settings.custom {
+			background: #514d66;
+			color: {{data.color.custom.textcolor}} ! important;
+			}
+		</style>
 		{{#if data.attributes.conditions.value}}
 		<div id="hideable" class="section0 {{data.attributes.color.value}}">
 		{{#if data.status.isBlinded}}<label class="conditiontext activecondition">Blinded{{else}}<label class="conditiontext">Blinded{{/if}}

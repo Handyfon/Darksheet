@@ -53,7 +53,15 @@ Hooks.once('init', function() {
 Hooks.on('updateActor', (actor, updates, options, userId) => {
     const test = "Actor Updated";
     console.log(test);
-	
+	let customsheet;
+	if(actor.data.data.attributes.color.value === "custom"){
+		customsheet = true;
+		actor.update({'data.attributes.color.custom': customsheet});
+	}
+	else{
+		customsheet = false;
+		actor.update({'data.attributes.color.custom': customsheet});
+	}
     if (updates.data && updates.data.status) {
 
         const blinded = "modules/combat-utility-belt/icons/blinded.svg";
