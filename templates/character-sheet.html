@@ -439,10 +439,13 @@
 				</span>
 				<span style="display: inline-flex;"class="settingsoption">
 					<label>Color</label>
-					<input style="width: fit-content;" type="text" title="Put in a color (hex)" class="biotextflex" name="data.color.custom.color" value="{{data.color.custom.color}}" placeholder="#474a5dfc" required>
+					<input class="colorpicker" style="width: fit-content;border-bottom: 1px dashed white;background: #00000026;" type="text" title="Put in a color (hex)" name="data.color.custom.color" value="{{data.color.custom.color}}" placeholder="#474a5dfc" data-dtype="String"/>
+					<input class="colorinput" type="color" value="{{data.color.custom.color}}" data-edit="data.color.custom.color"/>
 					<label>Text-Color</label>
-					<input style="width: fit-content;" type="text" title="Put in a color (hex)" class="biotextflex" name="data.color.custom.textcolor" value="{{data.color.custom.textcolor}}" placeholder="#fffff" required>
-				</span>
+					<input class="colorpicker" style="width: fit-content;border-bottom: 1px dashed white;background: #00000026;" type="text" title="Put in a color (hex)" name="data.color.custom.textcolor" value="{{data.color.custom.textcolor}}" placeholder="#474a5dfc" data-dtype="String"/>
+					<input class="colorinput" type="color" value="{{data.color.custom.textcolor}}" data-edit="data.color.custom.textcolor"/>
+					<label class="applybutton" style="border:solid 1px white; margin-left: 5px;" class="colorpicker">Apply</label>
+			</span>
 					{{/if}}
 				</span>
 				</span>

@@ -540,6 +540,14 @@ export class DarkSheet extends ActorSheet5eCharacter {
         })();
         /*END RICH TEXT EDITOR CUSTOM CSS END*/
         /*LOOK FOR AMMODIE*/
+        html.find('.applybutton').click(event => {
+        event.preventDefault();
+			this.actor.update({
+				'data.color.custom.color': $('input[name="data.color.custom.color"]').val(),
+				'data.color.custom.textcolor': $('input[name="data.color.custom.textcolor"]').val(),
+			});
+			this.render();
+		});
         html.find('.darksheetbuttonplus').click(event => {
 		    event.preventDefault();
 				const itemID = event.currentTarget.closest('.item').dataset.itemId;
