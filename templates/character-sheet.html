@@ -1,14 +1,14 @@
-<form class="{{cssClass}} flexcol {{data.attributes.color.value}}" autocomplete="true" style="{{#if data.attributes.color.saturation}}filter: saturate(1.5);{{/if}}{{#if data.attributes.color.saturation}}filter: saturate(1.5);{{/if}}{{#if data.attributes.color.highcontrast}}filter: contrast(1.5);{{/if}}{{#if data.attributes.color.brighter}}filter: brightness(1.2);{{/if}}{{#if data.attributes.color.grayscale}}filter: grayscale(1);{{/if}}" autocomplete="off">
+<form class="{{cssClass}} flexcol {{data.attributes.color.value}} {{actor.name}}" style="{{#if data.attributes.color.saturation}}filter: saturate(1.5);{{/if}}{{#if data.attributes.color.saturation}}filter: saturate(1.5);{{/if}}{{#if data.attributes.color.highcontrast}}filter: contrast(1.5);{{/if}}{{#if data.attributes.color.brighter}}filter: brightness(1.2);{{/if}}{{#if data.attributes.color.grayscale}}filter: grayscale(1);{{/if}}" autocomplete="off">
 
     {{!-- Sheet Header --}}
-    <header class="sheet-header flexrow {{data.attributes.color.value}}">
+    <header class="sheet-header flexrow {{data.attributes.color.value}} {{actor.name}}">
 	<img class="profile" src="{{actor.img}}" title="{{actor.name}}" data-edit="img" />
 
-        <div class="header-details flexrow {{data.attributes.color.value}}">
+        <div class="header-details flexrow {{data.attributes.color.value}} {{actor.name}}">
 			<h1 class="charname">
 			{{#if data.attributes.titlesetting}}
 				{{#if data.attributes.title}}
-				<div class="{{data.attributes.color.value}}"label title="{{data.details.title}}" style="font-size: 20px;color: #c7e5ff;text-transform: capitalize;font-style: italic;">({{data.attributes.title}})</label><label style="font-size:30px"> {{actor.name}}</label>
+				<div class="{{data.attributes.color.value}} {{actor.name}}"label title="{{data.details.title}}" style="font-size: 20px;color: #c7e5ff;text-transform: capitalize;font-style: italic;">({{data.attributes.title}})</label><label style="font-size:30px"> {{actor.name}}</label>
 				{{else}}
 				   <input style="display: inline-flex;" name="name" type="text" value="{{actor.name}}" placeholder="Character Name"/>
 				{{/if}}
@@ -34,8 +34,8 @@
                 {{/unless}}
             </div>
 			{{#if disableExperience}}
-            <ul class="summary trainingssummary {{data.attributes.color.value}}">
-                <label class="trainingslabel {{data.attributes.color.value}}">Training</label>
+            <ul class="summary trainingssummary {{data.attributes.color.value}} {{actor.name}}">
+                <label class="trainingslabel {{data.attributes.color.value}} {{actor.name}}">Training</label>
                 <input class="trainingcheckbox1" type="checkbox" name="data.attributes.trainpoint1.value" data-dtype="Boolean" {{checked data.attributes.trainpoint1.value}}/>
                 <input class="trainingcheckbox" type="checkbox" name="data.attributes.trainpoint2.value" data-dtype="Boolean" {{checked data.attributes.trainpoint2.value}}/>
                 <input class="trainingcheckbox" type="checkbox" name="data.attributes.trainpoint3.value" data-dtype="Boolean" {{checked data.attributes.trainpoint3.value}}/>
@@ -47,12 +47,12 @@
                 <input class="trainingcheckbox" type="checkbox" name="data.attributes.trainpoint9.value" data-dtype="Boolean" {{checked data.attributes.trainpoint9.value}}/>
                 <input class="trainingcheckbox" type="checkbox" name="data.attributes.trainpoint10.value" data-dtype="Boolean" {{checked data.attributes.trainpoint10.value}}/>
                 <label class="spentlable">Spent</label>
-                <input type="number" class="trainpointa {{data.attributes.color.value}}" name="data.attributes.trainpointa.value" value="{{data.attributes.trainpointa.value}}" />
+                <input type="number" class="trainpointa {{data.attributes.color.value}} {{actor.name}}" name="data.attributes.trainpointa.value" value="{{data.attributes.trainpointa.value}}" />
             </ul>
 			{{else}}
 			{{/if}}
             {{!-- Character Summary --}}
-            <ul class="summary {{data.attributes.color.value}}">
+            <ul class="summary {{data.attributes.color.value}} {{actor.name}}">
                 <li>
                     <input type="text" name="data.details.race" value="{{data.details.race}}" placeholder="{{ localize 'DND5E.Race' }}"/>
                 </li>
@@ -122,7 +122,7 @@
     </header>
 
     {{!-- NPC Sheet Navigation --}}
-    <nav class="sheet-navigation tabs {{data.attributes.color.value}}" data-group="primary">
+    <nav class="sheet-navigation tabs {{data.attributes.color.value}} {{actor.name}}" data-group="primary">
         <a class="item active" data-tab="attributes">{{ localize "DND5E.Attributes" }}</a>
         <a class="item" data-tab="inventory">{{ localize "DND5E.Inventory" }}</a>
         <a class="item" data-tab="features">{{ localize "DND5E.Features" }}</a>
@@ -132,18 +132,18 @@
     </nav>
 
     {{!-- NPC Sheet Body --}}
-    <section class="sheet-body {{data.attributes.color.value}}">
+    <section class="sheet-body {{data.attributes.color.value}} {{actor.name}}">
 
         <div class="tab attributes flexrow" data-group="primary" data-tab="attributes">
 
             {{!-- Ability Scores --}}
-            <ul class="ability-scores flexrow {{data.attributes.color.value}}">
+            <ul class="ability-scores flexrow {{data.attributes.color.value}} {{actor.name}}">
             {{#each data.abilities as |ability id|}}
-                <li class="{{data.attributes.color.value}} ability {{#if ability.proficient}}proficient{{/if}}" data-ability="{{id}}">
-                    <h4 class="ability-name box-title rollable {{data.attributes.color.value}}">{{ability.label}}</h4>
-                    <input class="ability-score {{data.attributes.color.value}}" name="data.abilities.{{id}}.value" type="text" value="{{ability.value}}" data-dtype="Number" placeholder="10"/>
-                    <div class="ability-modifiers flexrow {{data.attributes.color.value}}">
-                        <span class="ability-mod {{data.attributes.color.value}}" title="Modifier">{{numberFormat ability.mod decimals=0 sign=true}}</span>
+                <li class="{{data.attributes.color.value}} {{actor.name}} ability {{#if ability.proficient}}proficient{{/if}}" data-ability="{{id}}">
+                    <h4 class="ability-name box-title rollable {{data.attributes.color.value}} {{actor.name}}">{{ability.label}}</h4>
+                    <input class="ability-score {{data.attributes.color.value}} {{actor.name}}" name="data.abilities.{{id}}.value" type="text" value="{{ability.value}}" data-dtype="Number" placeholder="10"/>
+                    <div class="ability-modifiers flexrow {{data.attributes.color.value}} {{actor.name}}">
+                        <span class="ability-mod {{data.attributes.color.value}} {{actor.name}}" title="Modifier">{{numberFormat ability.mod decimals=0 sign=true}}</span>
                         <input type="hidden" name="data.abilities.{{id}}.proficient" value="{{ability.proficient}}" data-dtype="Number"/>
                         <a class="proficiency-toggle ability-proficiency" title="Proficiency">{{{ability.icon}}}</a>
                         <span class="ability-save" title="Saving Throw">{{numberFormat ability.save decimals=0 sign=true}}</span>
@@ -153,7 +153,7 @@
             </ul>
 
             {{!-- Skills --}}
-            <ul class="skills-list {{data.attributes.color.value}}">
+            <ul class="skills-list {{data.attributes.color.value}} {{actor.name}}">
             {{#each data.skills as |skill s|}}
                 <li class="skill flexrow {{#if skill.value}}proficient{{/if}}" data-skill="{{s}}">
                     <input type="hidden" name="data.skills.{{s}}.value" value="{{skill.value}}" data-dtype="Number"/>
@@ -166,7 +166,7 @@
             {{/each}}
             </ul>
 
-            <section class="center-pane {{data.attributes.color.value}}">
+            <section class="center-pane {{data.attributes.color.value}} {{actor.name}}">
 
                 {{!-- Body Attributes --}}
                 <ul class="attributes flexrow">
@@ -287,18 +287,18 @@
         </div>
 
         {{!-- Features Tab --}}
-        <div class="tab features flexcol {{data.attributes.color.value}}" data-group="primary" data-tab="features">
+        <div class="tab features flexcol {{data.attributes.color.value}} {{actor.name}}" data-group="primary" data-tab="features">
             {{> "systems/dnd5e/templates/actors/parts/actor-features.html" sections=features}}
         </div>
 
         {{!-- Spellbook Tab --}}
-        <div class="tab spellbook flexcol {{data.attributes.color.value}}" data-group="primary" data-tab="spellbook">
+        <div class="tab spellbook flexcol {{data.attributes.color.value}} {{actor.name}}" data-group="primary" data-tab="spellbook">
             {{> "modules/darksheet/templates/actors/parts/actor-spellbook.html"}}
         </div>
 
         {{!-- Biography Tab --}}
-        <div class="tab biography flexcol {{data.attributes.color.value}}" data-group="primary" data-tab="biography">
-		<div class="biosections {{data.attributes.color.value}}" style="display: flex;">
+        <div class="tab biography flexcol {{data.attributes.color.value}} {{actor.name}}" data-group="primary" data-tab="biography">
+		<div class="biosections {{data.attributes.color.value}} {{actor.name}}" style="display: flex;">
 			<div class="biosection"  style="text-align: left; margin-right: 2.5%;">
 				<h2 class="bioh2" style="margin-top:0; text-align: center;">Details</h2>
 				<div class="details"><label style="margin-right:16px;">Race</label><input style="width: 85% !important; text-align:center" type="text" class="bio" name="data.details.racedetails" value="{{data.details.racedetails}}" placeholder="Race" required></div>
@@ -379,11 +379,11 @@
 		</div>
 		{{#unless hidesettings}}
 			{{#if data.attributes.settingsdisplay.value}}
-				<div class="settings {{data.attributes.color.value}}">
+				<div class="settings {{data.attributes.color.value}} {{actor.name}}">
 				<h4  class="settingsheader">Settings</h4>
 				<span style="display: inline-flex;"class="settingsoption">
 				<label class="hitdiceroll rollable">Hitdice:</label>
-					<select class="hitdice {{data.attributes.color.value}}" name="data.attributes.hitdice.value" data-type="String">
+					<select class="hitdice {{data.attributes.color.value}} {{actor.name}}" name="data.attributes.hitdice.value" data-type="String">
 						{{#select data.attributes.hitdice.value}}
 						<option value="d12">d12</option>
 						<option value="d10">d10</option>
@@ -414,7 +414,7 @@
 				<h4  class="settingsheader" style="margin-top: 10px;">Character Customization</h4>
 				<span style="display: inline-flex;"class="settingsoption">
 				</br><label>Character Sheet Color:</label>
-					<select class="hitdice {{data.attributes.color.value}}" name="data.attributes.color.value" data-type="String">
+					<select class="hitdice {{data.attributes.color.value}} {{actor.name}}" name="data.attributes.color.value" data-type="String">
 						{{#select data.attributes.color.value}}
 						<option value="blue">blue</option>
 						<option value="green">green</option>
@@ -465,8 +465,9 @@
 			{{else}}
 			{{/if}}
 		{{/unless}}
+		{{#if data.attributes.settingsdisplay.value}}
 		<style>
-			form.editable.flexcol.custom {
+			form.editable.flexcol.custom.{{actor.name}}{
 			background-color: {{data.color.custom.color}};
 			color: {{data.color.custom.textcolor}};
 			background: linear-gradient( rgba(132, 132, 132, 0.11), rgb(0, 0, 0) ), url({{data.color.custom.url}});
@@ -477,51 +478,52 @@
 			margin: -7px;
 			/* border: 1px solid #2a3d56; */
 			}
-			.header-details.flexrow.custom {
+			.header-details.flexrow.custom.{{actor.name}}{
 			color: {{data.color.custom.textcolor}};
 			}
-			section.sheet-body.custom {
+			section.sheet-body.custom.{{actor.name}}{
 			background-image: linear-gradient(#243b5500, {{data.color.custom.color}}) !important;
 			}
-			ol.inventory-list.custom {
+			ol.inventory-list.custom.{{actor.name}}{
 			background-image: linear-gradient(#243b5500, {{data.color.custom.color}}) !important;
 			font-family: auto;
 			font-size: 14px;
 			}
-			.tab.biography.flexcol.custom.active {
+			.tab.biography.flexcol.custom.{{actor.name}}.active {
 			color: {{data.color.custom.textcolor}};
 			}
-			nav.sheet-navigation.tabs.custom {
+			nav.sheet-navigation.tabs.custom.{{actor.name}}{
 			padding-bottom: 5px;
 			font-size: 23px;
 			}
-			.part1.custom.allparts {
+			.part1.custom.{{actor.name}}.allparts {
 			background-image: linear-gradient(transparent, #167916) !important;
 			color: {{data.color.custom.textcolor}};
 			}
-			.part2.custom.allparts {
+			.part2.custom.{{actor.name}}.allparts {
 			background-image: linear-gradient(transparent, #5252b7) !important;
 			color: {{data.color.custom.textcolor}};
 			}
-			.part3.custom.allparts{
+			.part3.custom.{{actor.name}}.allparts{
 			color: {{data.color.custom.textcolor}};
 			}
-			.checks.custom {
+			.checks.custom.{{actor.name}}{
 			color: {{data.color.custom.textcolor}};
 			}
-			.part4.custom {
+			.part4.custom.{{actor.name}}{
 			background: #3c3a59;
 			background-image: linear-gradient(#553d2400, #fdfdfd4d) !important;
 			color: {{data.color.custom.textcolor}};
 			}
-			.settings.custom {
+			.settings.custom.{{actor.name}}{
 			background: #514d66;
 			color: {{data.color.custom.textcolor}} ! important;
 			}
 			
 		</style>
+		{{/if}}
 		{{#if data.attributes.conditions.value}}
-		<div id="hideable" class="section0 {{data.attributes.color.value}}">
+		<div id="hideable" class="section0 {{data.attributes.color.value}} {{actor.name}}">
 		{{#if data.status.isBlinded}}<label class="conditiontext activecondition">Blinded{{else}}<label class="conditiontext">Blinded{{/if}}
 		<input style="display: none;" type="checkbox" type="Boolean" name="data.status.isBlinded" data-dtype="Boolean" {{checked data.status.isBlinded}}/><span></span></label>
 		
@@ -574,8 +576,8 @@
 		{{else}}
 		{{/if}}
 		<div class="section1" style="margin-top:0;">
-		<div class="part1 {{data.attributes.color.value}} allparts">
-    <h4 class="darksheetheader {{data.attributes.color.value}}">Food</h4>
+		<div class="part1 {{data.attributes.color.value}} {{actor.name}} allparts">
+    <h4 class="darksheetheader {{data.attributes.color.value}} {{actor.name}}">Food</h4>
     <div class="status-value">
         <label class="foodcheckbox">
             <input class="ressourcecheckbox foodcheckbox" type="checkbox" name="data.attributes.food.value" data-dtype="Boolean" {{checked data.attributes.food.value}}/><span></span></label>
@@ -600,18 +602,18 @@
         {{/select}}
     </select>
 	</div>
-	<div class="part2 {{data.attributes.color.value}} allparts">
-		<h4 class="darksheetheader {{data.attributes.color.value}}">Waterskin</h4>
+	<div class="part2 {{data.attributes.color.value}} {{actor.name}} allparts">
+		<h4 class="darksheetheader {{data.attributes.color.value}} {{actor.name}}">Waterskin</h4>
 		<div class="status-value">
-			<label class="watercheckbox {{data.attributes.color.value}}">
+			<label class="watercheckbox {{data.attributes.color.value}} {{actor.name}}">
 				<input class="ressourcecheckbox" type="checkbox" name="data.attributes.waterskin.value" title="@{waterskin1}" data-dtype="Boolean" {{checked data.attributes.waterskin.value}}/><span></span></label>
-			<label class="watercheckbox {{data.attributes.color.value}}">
+			<label class="watercheckbox {{data.attributes.color.value}} {{actor.name}}">
 				<input class="ressourcecheckbox" type="checkbox" name="data.attributes.waterskin2.value" title="@{waterskin2}" data-dtype="Boolean" {{checked data.attributes.waterskin2.value}}/><span></span></label>
-			<label class="watercheckbox {{data.attributes.color.value}}">
+			<label class="watercheckbox {{data.attributes.color.value}} {{actor.name}}">
 				<input class="ressourcecheckbox" type="checkbox" name="data.attributes.waterskin3.value" title="@{waterskin3}" data-dtype="Boolean" {{checked data.attributes.waterskin3.value}}/><span></span></label>
-			<label class="watercheckbox {{data.attributes.color.value}}">
+			<label class="watercheckbox {{data.attributes.color.value}} {{actor.name}}">
 				<input class="ressourcecheckbox" type="checkbox" name="data.attributes.waterskin4.value" title="@{waterskin4}" data-dtype="Boolean" {{checked data.attributes.waterskin4.value}}/><span></span></label>
-			<label class="watercheckbox {{data.attributes.color.value}}">
+			<label class="watercheckbox {{data.attributes.color.value}} {{actor.name}}">
 				<input class="ressourcecheckbox" type="checkbox" type="radio" name="data.attributes.waterskin5.value" title="@{waterskin5}" data-dtype="Boolean" {{checked data.attributes.waterskin5.value}}/><span></span></label>
 		</div>
 		<select class="saturationbox" name="data.attributes.thirst.value" data-type="String">
@@ -626,9 +628,9 @@
 			{{/select}}
 		</select>
 	</div>
-	<div class="part3 {{data.attributes.color.value}} allparts">
+	<div class="part3 {{data.attributes.color.value}} {{actor.name}} allparts">
 
-		<h4 class="darksheetheader {{data.attributes.color.value}}">Fatigue</h4>
+		<h4 class="darksheetheader {{data.attributes.color.value}} {{actor.name}}">Fatigue</h4>
 		<div class="burnoutandexhaustion">
 		</div>
 		<select class="exhaustionbox" name="data.attributes.fatigue.value" data-type="String">
@@ -646,8 +648,8 @@
 	</div>
 	</div>
 	<div class="section1 allparts">
-		<div class="part4 {{data.attributes.color.value}}">
-			<h4 class="darksheetheader {{data.attributes.color.value}}">Temperature</h4>
+		<div class="part4 {{data.attributes.color.value}} {{actor.name}}">
+			<h4 class="darksheetheader {{data.attributes.color.value}} {{actor.name}}">Temperature</h4>
 			<select class="exhaustionbox" name="data.attributes.temp" data-type="String" style="width: 163px;" >
 				{{#select data.attributes.temp}}
 				<option value="exenegised">Perfect -1 Exhaustion</option>
@@ -667,7 +669,7 @@
 				</span>
 			</div>
 		</div>
-		<div class="checks {{data.attributes.color.value}}">
+		<div class="checks {{data.attributes.color.value}} {{actor.name}}">
 			<h3 class="stressroll rollable" style="text-align: center;padding: 0;width: 120px;margin-left: 145px;margin-top: 10px;">Stress & Afflictions</h3>
 			<div style="display: inline-flex;">
 				<div class="stress" style="width: 155px;padding-top: 15px;padding-right: 40px;">
@@ -681,7 +683,7 @@
 						<div style="display: inline-flex;"><label class="stresscheckbox">
 							<input class="ressourcecheckbox stresscheckbox" type="checkbox" name="data.attributes.break1" title="@{break}" data-dtype="Boolean" {{checked data.attributes.break1}}/><span></span></label> 
 							{{#if data.attributes.break1}}<label class="afflictiontext" style="color:#f3afaf;"><b>20</b></label>
-								<select class="hitdice {{data.attributes.color.value}} afflictionselection" name="data.attributes.affliction1.value" data-type="String">
+								<select class="hitdice {{data.attributes.color.value}} {{actor.name}} afflictionselection" name="data.attributes.affliction1.value" data-type="String">
 								{{#select data.attributes.affliction1.value}}
 								<option value="Fearful">Fearful</option>
 								<option value="Lethargic">Lethargic</option>
@@ -710,7 +712,7 @@
 						</br><div style="display: inline-flex;"><label class="stresscheckbox">
 							<input class="ressourcecheckbox stresscheckbox" type="checkbox" name="data.attributes.break2" title="@{break}" data-dtype="Boolean" {{checked data.attributes.break2}}/><span></span></label> 
 							{{#if data.attributes.break2}}<label class="afflictiontext" style="color:#f3afaf;"><b>30</b></label>
-								<select class="hitdice {{data.attributes.color.value}} afflictionselection" name="data.attributes.affliction2.value" data-type="String">
+								<select class="hitdice {{data.attributes.color.value}} {{actor.name}} afflictionselection" name="data.attributes.affliction2.value" data-type="String">
 								{{#select data.attributes.affliction2.value}}
 								<option value="Fearful">Fearful</option>
 								<option value="Lethargic">Lethargic</option>
@@ -739,7 +741,7 @@
 						</br><div style="display: inline-flex;"><label class="stresscheckbox">
 							<input class="ressourcecheckbox stresscheckbox" type="checkbox" name="data.attributes.break3" title="@{break}" data-dtype="Boolean" {{checked data.attributes.break3}}/><span></span></label> 
 							{{#if data.attributes.break3}}<label class="afflictiontext" style="color:#f3afaf;"><b>35</b></label>
-								<select class="hitdice {{data.attributes.color.value}} afflictionselection" name="data.attributes.affliction3.value" data-type="String">
+								<select class="hitdice {{data.attributes.color.value}} {{actor.name}} afflictionselection" name="data.attributes.affliction3.value" data-type="String">
 								{{#select data.attributes.affliction3.value}}
 								<option value="Fearful">Fearful</option>
 								<option value="Lethargic">Lethargic</option>
@@ -780,33 +782,33 @@
 		</div>
 	</div>	
 		{{#if hidechecks}}
-		<div style="visibility:hidden;margin: 0px 28px 8px 28px; width: auto;"class="checks {{data.attributes.color.value}} ">
+		<div style="visibility:hidden;margin: 0px 28px 8px 28px; width: auto;"class="checks {{data.attributes.color.value}} {{actor.name}} ">
 			<h3 style="text-align: center;margin-bottom: -15px;padding: 0; margin-top: 10px;">Checks</h3>
 			<div class="section3" style="margin-left: 113px;margin-right: 113px;">
-				<label class="criticalS rollable check {{data.attributes.color.value}}">Critical Success</label>
-				<label class="criticalF rollable check {{data.attributes.color.value}}">Critical Failure</label>
-				<label class="successatcost rollable check {{data.attributes.color.value}}">Success at a Cost</label>
+				<label class="criticalS rollable check {{data.attributes.color.value}} {{actor.name}}">Critical Success</label>
+				<label class="criticalF rollable check {{data.attributes.color.value}} {{actor.name}}">Critical Failure</label>
+				<label class="successatcost rollable check {{data.attributes.color.value}} {{actor.name}}">Success at a Cost</label>
 			</label></label></label></label>
 			</div></br>
 			<div class="section3" style="margin-left: 113px;margin-right: 113px; margin-top: 0;">
-				<label class="treatwound rollable check {{data.attributes.color.value}}">Treat Wound (SR)</label>
-				<label class="healwound rollable check {{data.attributes.color.value}}">Heal Wounds (LR)</label>
-				<label class="check dicelabel2 staminacheck rollable check {{data.attributes.color.value}}">Stamina Check</label>
+				<label class="treatwound rollable check {{data.attributes.color.value}} {{actor.name}}">Treat Wound (SR)</label>
+				<label class="healwound rollable check {{data.attributes.color.value}} {{actor.name}}">Heal Wounds (LR)</label>
+				<label class="check dicelabel2 staminacheck rollable check {{data.attributes.color.value}} {{actor.name}}">Stamina Check</label>
 			</div>
 		</div>
 		{{else}}
-		<div style="margin: 0px 28px 8px 28px;; width: auto;"class="checks {{data.attributes.color.value}} ">
+		<div style="margin: 0px 28px 8px 28px;; width: auto;"class="checks {{data.attributes.color.value}} {{actor.name}} ">
 			<h3 style="text-align: center;margin-bottom: -15px;padding: 0; margin-top: 10px;">Checks</h3>
 			<div class="section3" style="margin-left: 113px;margin-right: 113px;">
-				<label class="criticalS rollable check {{data.attributes.color.value}}">Critical Success</label>
-				<label class="criticalF rollable check {{data.attributes.color.value}}">Critical Failure</label>
-				<label class="successatcost rollable check {{data.attributes.color.value}}">Success at a Cost</label>
+				<label class="criticalS rollable check {{data.attributes.color.value}} {{actor.name}}">Critical Success</label>
+				<label class="criticalF rollable check {{data.attributes.color.value}} {{actor.name}}">Critical Failure</label>
+				<label class="successatcost rollable check {{data.attributes.color.value}} {{actor.name}}">Success at a Cost</label>
 			</label></label></label></label>
 			</div></br>
 			<div class="section3" style="margin-left: 113px;margin-right: 113px; margin-top: 0;">
-				<label class="treatwound rollable check {{data.attributes.color.value}}">Treat Wound (SR)</label>
-				<label class="healwound rollable check {{data.attributes.color.value}}">Heal Wounds (LR)</label>
-				<label class="check dicelabel2 staminacheck rollable check {{data.attributes.color.value}}">Stamina Check</label>
+				<label class="treatwound rollable check {{data.attributes.color.value}} {{actor.name}}">Treat Wound (SR)</label>
+				<label class="healwound rollable check {{data.attributes.color.value}} {{actor.name}}">Heal Wounds (LR)</label>
+				<label class="check dicelabel2 staminacheck rollable check {{data.attributes.color.value}} {{actor.name}}">Stamina Check</label>
 			</div>
 		</div>
 		{{/if}}
