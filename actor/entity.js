@@ -1,8 +1,8 @@
-import { Dice5e } from "../dice.js";
-import { ShortRestDialog } from "../apps/short-rest.js";
-import { SpellCastDialog } from "../apps/spell-cast-dialog.js";
-import { AbilityTemplate } from "../pixi/ability-template.js";
-import {DND5E} from '../config.js';
+import { Dice5e } from "../../../../systems/dnd5e/module/dice.js";
+import { ShortRestDialog } from "../../../../systems/dnd5e/module/apps/short-rest.js";
+import { SpellCastDialog } from "../../../../systems/dnd5e/module/apps/spell-cast-dialog.js";
+import { AbilityTemplate } from "../../../../systems/dnd5e/module/pixi/ability-template.js";
+import {DND5E} from '../../../../systems/dnd5e/module/config.js';
 
 
 /**
@@ -73,12 +73,12 @@ export class Actor5e extends Actor {
     // Determine Initiative Modifier
     const init = data.attributes.init;
     init.mod = data.abilities.dex.mod;
-
+    init.mod2 = data.abilities.int.mod;
     if ( joat ) init.prof = Math.floor(0.5 * data.attributes.prof);
     else if ( athlete ) init.prof = Math.ceil(0.5 * data.attributes.prof);
     else init.prof = 0;
     init.bonus = init.value + (flags.initiativeAlert ? 5 : 0);
-    init.total = init.mod + init.prof + init.bonus;
+    init.total = init2.mod + init.prof + init.bonus;
 
 
     // Prepare spell-casting data

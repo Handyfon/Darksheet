@@ -58,6 +58,7 @@
                 <div class="item-image" style="background-image: url({{item.img}})"></div>
                 <h4 class="{{item.flags.darksheet.item.quality}}">
                     {{~#if item.isStack}}({{item.data.quantity}}) {{/if}}
+					{{#if item.flags.darksheet.item.temper}} {{item.flags.darksheet.item.temper}} {{/if}}
 						{{item.name~}} 
 						{{#if item.data.damage.currentweapondamage}}
 							({{item.data.damage.currentweapondamage}})

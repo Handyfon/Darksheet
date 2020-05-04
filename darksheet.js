@@ -2,6 +2,7 @@ import {
     ActorSheet5eCharacter
 } from '../../../../modules/darksheet/actor/sheets/character.js';
 
+
 //Load Templates
 Hooks.once('init', () => loadTemplates([
     'modules/darksheet/templates/actors/parts/actor-inventory.html',
@@ -45,6 +46,14 @@ Hooks.once('init', function() {
         scope: 'world',
         config: true,
         default: false,
+        type: Boolean,
+    });
+    game.settings.register('darksheet', 'intmod', {
+        name: 'Intelligent Initiative',
+        hint: 'Enables the use of the intelligence modifier for the initiative roll',
+        scope: 'world',
+        config: true,
+        default: true,
         type: Boolean,
     });
     console.log("Darker Dungeons | Initializing Darker Dungeons for the D&D 5th Edition System\n", "_____________________________________________________________________________________________\n", "  ____                _                 ____                                                \n", " |  _ \\   __ _  _ __ | | __ ___  _ __  |  _ \\  _   _  _ __    __ _   ___   ___   _ __   ___ \n", " | | | | / _` || '__|| |/ // _ \| '__|  | | | || | | || '_ \\  / _` | / _ \\ / _ \\ | '_ \\ / __| \n", " | |_| || (_| || |   |   <|  __/| |    | |_| || |_| || | | || (_| ||  __/| (_) || | | |\\__ \\ \n", " |____/  \\__,_||_|   |_|\\_\\\\___||_|    |____/  \\__,_||_| |_| \\__, | \\___| \\___/ |_| |_||___/ \n", "                                                             |___/                          \n", "_____________________________________________________________________________________________");
@@ -303,15 +312,6 @@ Hooks.on('createToken', async (scene, sceneId, tokenData, options, userId) => {
     });
 });
 
-export const _getInitiativeFormula = function(combatant) {
-    const actor = combatant.actor;
-    if (!actor) return "1d20";
-    const init = actor.data.data.attributes.init;
-    const parts = ["1d20", init.mod, (init.prof !== 0) ? init.prof : null, (init.bonus !== 0) ? init.bonus : null];
-    if (actor.getFlag("dnd5e", "initiativeAdv")) parts[0] = "2d20kh";
-    if (CONFIG.initiative.tiebreaker) parts.push(actor.data.data.abilities.int.value / 100);
-    return parts.filter(p => p !== null).join(" + ");
-};
 /**
  * Override and extend the core ItemSheet implementation to handle D&D5E specific item types
  * @type {ItemSheet}
@@ -548,13 +548,27 @@ export class DarkSheet extends ActorSheet5eCharacter {
 			});
 			this.render();
 		});
-        html.find('.darksheetbuttonplus').click(event => {
+		
+		html.find('.darksheetbuttonplus').click(event => {
 		    event.preventDefault();
 				const itemID = event.currentTarget.closest('.item').dataset.itemId;
 				let darkitem = this.actor.getEmbeddedEntity('OwnedItem', itemID);
 				let notches = darkitem.flags.darksheet.item.notches;
 				let basenotchdamage;
-				notches ++;
+				let temper = darkitem.flags.darksheet.item.temper;
+				if(temper === undefined){temper = 1;}
+				else if(temper === "Pure"){temper = 0.5;}
+				else if(temper === "Royal"){temper = 0.25;}
+				else if(temper === "Astral"){temper = 0.125;}
+				
+				if(notches === undefined)
+				{
+					notches = temper;
+				}
+				else
+				{
+					notches = Number(notches) + temper;
+				}
 				
 				//VALUE CALCULATION==========================================
 				let quality = darkitem.flags.darksheet.item.quality;
@@ -571,21 +585,23 @@ export class DarkSheet extends ActorSheet5eCharacter {
 				
 				if (darkitem.type === "equipment"){//ARMOR CALCULATION==========================================
 					let AC = darkitem.data.armor.value;
-					let newAC = AC - 1;
-					if(newAC <= 0){newAC = 0};
-					if(notches === 1){
-					 basenotchdamage = AC;
+					if(Number.isInteger(notches))
+					{
+						let newAC = AC - 1;
+						if(newAC <= 0){newAC = 0};
+						if(Math.floor(notches) === 1){
+						 basenotchdamage = AC;
+						}
+						if(newAC >= basenotchdamage){newAC = basenotchdamage}
+						this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.armor.value': newAC});
+						this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.basenotchdamage': basenotchdamage});
 					}
-					if(newAC >= basenotchdamage){newAC = basenotchdamage}
-					this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.armor.value': newAC});
-					this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.basenotchdamage': basenotchdamage});
-
 					
 				}
 				if (darkitem.type === "weapon"){//WEAPON CALCULATION==========================================
 					let updatedamage;
 					//DAMAGE CALCULATION PLUS++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-					
+				if(Number.isInteger(notches)){
 					let damage1 = darkitem.data.damage.parts[0][0];
 		//			console.log(damage1);
 					let dicenumber = damage1.charAt(0); //2
@@ -620,21 +636,24 @@ export class DarkSheet extends ActorSheet5eCharacter {
 					  case "2d10 ":weapondamage = "1d10 + 1d6 ";break;
 					  case "1d10 + 1d6 ":weapondamage = "2d6 ";break;
 					  case "2d6 ":weapondamage = "1d6 + 1d4 ";break;
-					  case "1d6 + 1d4 ":weapondamage = "2d4 ";break;
+					  case "1d6 + 1d4 ":weapondamage = "2d4 ";
+					  this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.basenotchdamage': notches});
+					  break;
 					  case "2d4 ":weapondamage = "1d4 + 1 ";break;
 					  case "1d4 + 1 ":
-						  weapondamage = "2 ";
-						  basenotchdamage = notches;
+						weapondamage = "2 ";
+					this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.basenotchdamage': notches});
 					  break;
 					//CASES FOR single dice damage
 					  case "1d20 ":weapondamage = "1d12 ";break;
 					  case "1d12 ":weapondamage = "1d10 ";break;
 					  case "1d10 ":weapondamage = "1d8 ";break;
 					  case "1d8 ":weapondamage = "1d6 ";break;
-					  case "1d6 ":weapondamage = "1d4 ";break;
-					  case "1d4 ":
-						  weapondamage = "1 ";
-						  basenotchdamage = notches;
+					  case "1d6 ":weapondamage = "1d4 ";
+					  this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.basenotchdamage': notches});
+					  break;
+					  case "1d4 ":weapondamage = "1 ";
+					  this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.basenotchdamage': notches});
 					  break;
 					  default:
 						// code block
@@ -649,6 +668,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 					this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.currentweapondamage': weapondamage});
 					this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.basenotchdamage': basenotchdamage});
 
+					}
 				}
 				this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'flags.darksheet.item.notches': notches});
 				this.render();
@@ -702,7 +722,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 					if(weapondamage === baseweapondamage){
 					weapondamage = baseweapondamage;
 					}
-					else if(notches > basenotchdamage){ //IF NOTCHES AREN'T SMALLER THAN THE BASENOTCHES
+					else if(Math.floor(notches) > basenotchdamage){ //More notches than basenotches?
 					}
 					else{
 					switch(weapondamage) {
