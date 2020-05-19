@@ -1,11 +1,6 @@
 /*BOOK CSS START*/
 /* Style the tab */
-.dnd5e.sheet .window-content .tab {
-    height: 3%;
-    overflow-y: auto;
-    align-content: flex-start;
-    height: fit-content !important;
-}
+
 .questbutton{
 width: 200px;
 }
