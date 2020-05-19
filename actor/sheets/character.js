@@ -1,4 +1,4 @@
-import { ActorSheet5e } from '../../../../modules/darksheet/actor/sheets/base.js';
+import { ActorSheet5e } from './base.js';
 
 /**
  * An Actor sheet for player character type actors in the D&D5E system.

@@ -1,14 +1,14 @@
-import {TraitSelector} from "../../apps/trait-selector.js";
-import {ActorSheetFlags} from "../../apps/actor-flags.js";
-import {DND5E} from '../../config.js';
+import Item5e from "../../../../systems/dnd5e/module/item/entity.js";
+import TraitSelector from "../../../../systems/dnd5e/module/apps/trait-selector.js";
+import ActorSheetFlags from "../../../../systems/dnd5e/module/apps/actor-flags.js";
+import {DND5E} from '../../../../systems/dnd5e/module/config.js';
 
 /**
  * Extend the basic ActorSheet class to do all the D&D5e things!
  * This sheet is an Abstract layer which is not used.
- *
- * @type {ActorSheet}
+ * @extends {ActorSheet}
  */
-export class ActorSheet5e extends ActorSheet {
+export default class ActorSheet5e extends ActorSheet {
   constructor(...args) {
     super(...args);
 
@@ -55,7 +55,7 @@ export class ActorSheet5e extends ActorSheet {
       isNPC: this.entity.data.type === "npc",
       config: CONFIG.DND5E,
     };
-	
+
     // The Actor and its Items
     data.actor = duplicate(this.actor.data);
     data.items = this.actor.items.map(i => {
@@ -82,7 +82,6 @@ export class ActorSheet5e extends ActorSheet {
       skl.label = CONFIG.DND5E.skills[s];
     }
 
-	
     // Update traits
     this._prepareTraits(data.actor.data.traits);
 
@@ -145,12 +144,14 @@ export class ActorSheet5e extends ActorSheet {
       "innate": -10,
       "pact": 0.5
     };
+
     // Label spell slot uses headers
     const useLabels = {
       "-20": "-",
       "-10": "-",
       "0": "&infin;"
     };
+
     // Format a spellbook entry for a certain indexed level
     const registerSection = (sl, i, label, level={}) => {
       spellbook[i] = {
@@ -188,18 +189,21 @@ export class ActorSheet5e extends ActorSheet {
       registerSection("spell0", 0, CONFIG.DND5E.spellLevels[0]);
       registerSection("pact", sections.pact, CONFIG.DND5E.spellPreparationModes.pact, levels.pact);
     }
+
     // Iterate over every spell item, adding spells to the spellbook by section
     spells.forEach(spell => {
       const mode = spell.data.preparation.mode || "prepared";
       let s = spell.data.level || 0;
       const sl = `spell${s}`;
+
       // Spellcasting mode specific headings
       if ( mode in sections ) {
         s = sections[mode];
         if ( !spellbook[s] ){
-          registerSection(sl, s, CONFIG.DND5E.spellPreparationModes[mode], levels[mode]);
+          registerSection(mode, s, CONFIG.DND5E.spellPreparationModes[mode], levels[mode]);
         }
       }
+
       // Higher-level spell headings
       else if ( !spellbook[s] ) {
         registerSection(sl, s, CONFIG.DND5E.spellLevels[s], levels[sl]);
@@ -208,6 +212,7 @@ export class ActorSheet5e extends ActorSheet {
       // Add the spell to the relevant heading
       spellbook[s].spells.push(spell);
     });
+
     // Sort the spellbook by section level
     const sorted = Object.values(spellbook);
     sorted.sort((a, b) => a.order - b.order);
@@ -244,6 +249,7 @@ export class ActorSheet5e extends ActorSheet {
         if ( this.actor.data.type === "npc" ) return true;
         return data.preparation.prepared;
       }
+
       // Equipment-specific filters
       if ( filters.has("equipped") ) {
         if (data.equipped && data.equipped !== true) return false;
@@ -297,6 +303,7 @@ export class ActorSheet5e extends ActorSheet {
 
       // Toggle Skill Proficiency
       html.find('.skill-proficiency').on("click contextmenu", this._onCycleSkillProficiency.bind(this));
+
       // Trait Selector
       html.find('.trait-selector').click(this._onTraitSelector.bind(this));
 
@@ -320,14 +327,6 @@ export class ActorSheet5e extends ActorSheet {
 
       // Roll Skill Checks
       html.find('.skill-name').click(this._onRollSkillCheck.bind(this));
-
-      // Item Dragging
-      let handler = ev => this._onDragItemStart(ev);
-      html.find('li.item').each((i, li) => {
-        if ( li.classList.contains("inventory-header") ) return;
-        li.setAttribute("draggable", true);
-        li.addEventListener("dragstart", handler, false);
-      });
 
       // Item Rolling
       html.find('.item .item-image').click(event => this._onItemRoll(event));
@@ -427,16 +426,17 @@ export class ActorSheet5e extends ActorSheet {
     } catch (err) {
       return false;
     }
+    if ( !data ) return false;
 
-    // Handle a polymorph
-    if (data && (data.type === "Actor")) {
-      if (game.user.isGM || (game.settings.get('dnd5e', 'allowPolymorphing') && this.actor.owner)) {
-        return this._onDropPolymorph(event, data);
-      }
+    // Case 1 - Dropped Item
+    if ( data.type === "Item" ) {
+      return this._onDropItem(event, data);
     }
 
-    // Call parent on drop logic
-    return super._onDrop(event);
+    // Case 2 - Dropped Actor
+    if ( data.type === "Actor" ) {
+      return this._onDropActor(event, data);
+    }
   }
 
   /* -------------------------------------------- */
@@ -447,7 +447,9 @@ export class ActorSheet5e extends ActorSheet {
    * @param {Object} data       The data transfer
    * @private
    */
-  async _onDropPolymorph(event, data) {
+  async _onDropActor(event, data) {
+    const canPolymorph = game.user.isGM || (this.actor.owner && game.settings.get('dnd5e', 'allowPolymorphing'));
+    if ( !canPolymorph ) return false;
 
     // Get the target actor
     let sourceActor = null;
@@ -517,6 +519,66 @@ export class ActorSheet5e extends ActorSheet {
   /* -------------------------------------------- */
 
   /**
+   * Handle dropping of an item reference or item data onto an Actor Sheet
+   * @param {DragEvent} event     The concluding DragEvent which contains drop data
+   * @param {Object} data         The data transfer extracted from the event
+   * @return {Object}             OwnedItem data to create
+   * @private
+   */
+  async _onDropItem(event, data) {
+    if ( !this.actor.owner ) return false;
+    let itemData = await this._getItemDropData(event, data);
+
+    // Create a spell scroll from a spell item
+    if ( (itemData.type === "spell") && (this._tabs[0].active === "inventory") ) {
+      const scroll = await Item5e.createScrollFromSpell(itemData);
+      itemData = scroll.data;
+    }
+
+    // Create the owned item
+    return this.actor.createEmbeddedEntity("OwnedItem", itemData);
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+   * TODO: A temporary shim method until Item.getDropData() is implemented
+   * https://gitlab.com/foundrynet/foundryvtt/-/issues/2866
+   * @private
+   */
+  async _getItemDropData(event, data) {
+    let itemData = null;
+
+    // Case 1 - Import from a Compendium pack
+    const actor = this.actor;
+    if (data.pack) {
+      const pack = game.packs.get(data.pack);
+      if (pack.metadata.entity !== "Item") return;
+      itemData = await pack.getEntry(data.id);
+    }
+
+    // Case 2 - Data explicitly provided
+    else if (data.data) {
+      let sameActor = data.actorId === actor._id;
+      if (sameActor && actor.isToken) sameActor = data.tokenId === actor.token.id;
+      if (sameActor) return this._onSortItem(event, data.data); // Sort existing items
+      itemData = data.data;
+    }
+
+    // Case 3 - Import from World entity
+    else {
+      let item = game.items.get(data.id);
+      if (!item) return;
+      itemData = item.data;
+    }
+
+    // Return a copy of the extracted data
+    return duplicate(itemData);
+  }
+
+  /* -------------------------------------------- */
+
+  /**
    * Handle enabling editing for a spell slot override value
    * @param {MouseEvent} event    The originating click event
    * @private
@@ -539,6 +601,8 @@ export class ActorSheet5e extends ActorSheet {
   }
 
   /* -------------------------------------------- */
+
+  /**
    * Change the uses amount of an Owned Item within the Actor
    * @param {Event} event   The triggering click event
    * @private
@@ -551,6 +615,7 @@ export class ActorSheet5e extends ActorSheet {
       event.target.value = uses;
       return item.update({ 'data.uses.value': uses });
   }
+
   /* -------------------------------------------- */
 
   /**
@@ -624,7 +689,7 @@ export class ActorSheet5e extends ActorSheet {
     const header = event.currentTarget;
     const type = header.dataset.type;
     const itemData = {
-      name: `New ${type.capitalize()}`,
+      name: game.i18n.format("DND5E.ItemNew", {type: type.capitalize()}),
       type: type,
       data: duplicate(header.dataset)
     };

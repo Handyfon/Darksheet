@@ -63,7 +63,9 @@ Hooks.on('updateActor', (actor, updates, options, userId) => {
     const test = "Actor Updated";
     console.log(test);
 	let customsheet;
-	if(actor.data.data.attributes.color.value === "custom"){
+	if(actor.data.data.attributes.color === undefined){
+	}
+	else if(actor.data.data.attributes.color.value === "custom"){
 		customsheet = true;
 		actor.update({'data.attributes.color.custom': customsheet});
 	}
@@ -1765,6 +1767,11 @@ export class DarkSheet extends ActorSheet5eCharacter {
                 }
             });
         });
+		
+        html.find('.gday').click(event => {
+            event.preventDefault();
+            console.log("test");
+        });
 
         html.find('.healwound').click(event => {
             event.preventDefault();
@@ -2142,3 +2149,73 @@ export class DarkSheet extends ActorSheet5eCharacter {
         /*END LOOK FOR DEFENSEROLL END*/
     }
 }
+class Darkscreen {
+    static addChatControl() {
+		const chatControlLeft = document.getElementsByClassName("roll-type-select")[0];
+		let tableNode = document.getElementById("DarkScreen-button");
+		
+		if (chatControlLeft && !tableNode) {
+			const chatControlLeftNode = chatControlLeft.children[1];
+			const number = 4;
+			tableNode = document.createElement("label");
+			tableNode.innerHTML = `<i id="DarkScreen-button" class="fas fa-book-dead DarkScreen-button" style="text-shadow: 0 0 1px black;"></i>`;
+			tableNode.onclick = Darkscreen.initializeDarkscreen;
+			chatControlLeft.insertBefore(tableNode, chatControlLeftNode);
+		}
+	}
+	static initializeDarkscreen() {
+		if (this.dsc === undefined) {
+            this.dsc = new DSC();
+        }
+        this.dsc.openDialog();
+	}
+}
+
+class DSC extends Application {
+    constructor(options = {}) {
+        super(options);
+    }
+    openDialog() {
+        let $dialog = $('.DSC-window');
+        if ($dialog.length > 0) {
+            $dialog.remove();
+            return;
+        }
+        const templateData = { data: [] };
+        const templatePath = "modules/darksheet/templates/darkscreen.html";
+		DSC.renderMenu(templatePath, templateData);
+		this.appId
+		let html = document.getElementsByClassName("dialog-content");
+		console.log(html);
+	}
+    static renderDarkscreen(path, data) {
+        const dialogOptions = {
+            width: 1200,
+            top: 1,
+            left: 1,
+            classes: ['DSC-window']
+        };
+        renderTemplate(path, data).then(dlg => {
+            new Dialog({
+                content: dlg,
+                buttons: {}
+            }, dialogOptions).render(true);
+        });
+    }
+    static renderMenu(path, data) {
+        const dialogOptions = {
+            width: 1200,
+            top: event.clientY - 80,
+            left: window.innerWidth - 510,
+            classes: ['DSC-window']
+        };
+        renderTemplate(path, data).then(dlg => {
+            new Dialog({
+                title: game.i18n.localize('Darker Dungeons - Gamemaster Screen'),
+                content: dlg,
+                buttons: {}
+            }, dialogOptions).render(true);
+        });
+    }
+}
+//Hooks.on('canvasReady', Darkscreen.addChatControl);

@@ -1,4 +1,5 @@
-import { ActorSheet5e } from "./base.js";´
+import { ActorSheet5e } from '../../../../modules/darksheet/actor/sheets/base.js';
+
 /**
  * An Actor sheet for player character type actors in the D&D5E system.
  * Extends the base ActorSheet5e class.
@@ -57,6 +58,7 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
     // Experience Tracking
     sheetData["disableExperience"] = game.settings.get("dnd5e", "disableExperienceTracking");
 	sheetData["slotSetting"] = game.settings.get("darksheet", "slotbasedinventory");
+
     // Return data for rendering
     return sheetData;
   }
@@ -81,15 +83,17 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
 
     // Partition items by category
     let [items, spells, feats, classes] = data.items.reduce((arr, item) => {
+
       // Item details
       item.img = item.img || DEFAULT_TOKEN;
       item.isStack = item.data.quantity ? item.data.quantity > 1 : false;
+
       // Item usage
       item.hasUses = item.data.uses && (item.data.uses.max > 0);
       item.isOnCooldown = item.data.recharge && !!item.data.recharge.value && (item.data.recharge.charged === false);
       item.isDepleted = item.isOnCooldown && (item.data.uses.per && (item.data.uses.value > 0));
       item.hasTarget = !!item.data.target && !(["none",""].includes(item.data.target.type));
-
+	  
       // Item toggle state
       this._prepareItemToggleState(item);
 
@@ -106,7 +110,7 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
     spells = this._filterItems(spells, this._filters.spellbook);
     feats = this._filterItems(feats, this._filters.features);
 
-    // Organize Spellbook and count the number of prepared spells (excluding always, at will, etc...)
+    // Organize Spellbook
     const spellbook = this._prepareSpellbook(data, spells);
     const nPrepared = spells.filter(s => {
       return (s.data.level > 0) && (s.data.preparation.mode === "prepared") && s.data.preparation.prepared;
@@ -119,7 +123,9 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
 	if ( game.settings.get("darksheet", "slotbasedinventory") ) {
     for ( let i of items ) {
       i.data.quantity = i.data.quantity || 0;
-	  i.flags.darksheet.item.slots = getProperty(i, 'flags.darksheet.items.slots') || 10;  
+	  if(i.flags.darksheet===undefined) {i.flags.darksheet={item:{slot:'1'}}}
+	  i.flags.darksheet.item.slots = getProperty(i, 'flags.darksheet.item.slots') || 0; 
+//	  console.log(i.data.slots);
       i.totalWeight = Math.round(i.data.quantity * i.flags.darksheet.item.slots *10)/10;
       inventory[i.type].items.push(i);
       totalWeight += i.totalWeight;
@@ -129,14 +135,14 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
 	    data.data.attributes.inventorys.percent = totalWeight / maxpct *100;
 	}
 	else{
-		for ( let i of items ) {
-		  i.data.quantity = i.data.quantity || 0;
-		  i.data.weight = i.data.weight || 0;
-		  i.totalWeight = Math.round(i.data.quantity * i.data.weight * 10) / 10;
-		  inventory[i.type].items.push(i);
-		  totalWeight += i.totalWeight;
-		}
-		data.data.attributes.encumbrance = this._computeEncumbrance(totalWeight, data);
+    for ( let i of items ) { 
+      i.data.quantity = i.data.quantity || 0;
+      i.data.weight = i.data.weight || 0;
+      i.totalWeight = Math.round(i.data.quantity * i.data.weight * 10) / 10;
+      inventory[i.type].items.push(i);
+      totalWeight += i.totalWeight;
+    }
+    data.data.attributes.encumbrance = this._computeEncumbrance(totalWeight, data);
 	}
 
     // Organize Features
@@ -167,13 +173,10 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
    * @private
    */
   _prepareItemToggleState(item) {
-
     if (item.type === "spell") {
       const isAlways = getProperty(item.data, "preparation.mode") === "always";
       const isPrepared =  getProperty(item.data, "preparation.prepared");
       item.toggleClass = isPrepared ? "active" : "";
-
-
       if ( isAlways ) item.toggleClass = "fixed";
       if ( isAlways ) item.toggleTitle = CONFIG.DND5E.spellPreparationModes.always;
       else if ( isPrepared ) item.toggleTitle = CONFIG.DND5E.spellPreparationModes.prepared;
@@ -216,14 +219,27 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
 
     // Add Currency Weight
     if ( game.settings.get("dnd5e", "currencyWeight") ) {
-      const currency = actorData.data.currency;
-      const numCoins = Object.values(currency).reduce((val, denom) => val += denom, 0);
-      totalWeight += numCoins / 50;
+		if ( game.settings.get("darksheet", "slotbasedinventory") ) {
+			const currency = actorData.data.currency;
+			const numCoins = Object.values(currency).reduce((val, denom) => val += denom, 0);
+			totalWeight += Math.round(numCoins / 100);
+			if (numCoins <= 100){
+				totalWeight -= Math.round(numCoins / 100);
+			}
+			else if (numCoins >= 100){
+				totalWeight -= 1;
+			}
+		}
+		else{
+		  const currency = actorData.data.currency;
+		  const numCoins = Object.values(currency).reduce((val, denom) => val += denom, 0);
+		  totalWeight += numCoins / 50;
+		}
     }
 
     // Compute Encumbrance percentage
     const enc = {
-      max: actorData.data.abilities.str.value * 15 * mod,
+      max: actorData.data.abilities.str.value * CONFIG.DND5E.encumbrance.strMultiplier * mod,
       value: Math.round(totalWeight * 10) / 10,
     };
     enc.pct = Math.min(enc.value * 100 / enc.max, 99);
@@ -263,12 +279,13 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
    * @param {MouseEvent} event    The originating click event
    * @private
    */
-  /*_onDeathSave(event) {
+  _onDeathSave(event) {
     event.preventDefault();
     return this.actor.rollDeathSave({event: event});
-  }*/
+  }
 
   /* -------------------------------------------- */
+
 
   /**
    * Handle toggling the state of an Owned Item within the Actor
@@ -281,7 +298,6 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
     const item = this.actor.getOwnedItem(itemId);
     const attr = item.data.type === "spell" ? "data.preparation.prepared" : "data.equipped";
     return item.update({[attr]: !getProperty(item.data, attr)});
-
   }
 
   /* -------------------------------------------- */
@@ -312,7 +328,7 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
 
   /* -------------------------------------------- */
 
- /**
+  /**
    * Handle mouse click events to convert currency to the highest possible denomination
    * @param {MouseEvent} event    The originating click event
    * @private
@@ -326,4 +342,3 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
     });
   }
 }
-
