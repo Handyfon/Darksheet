@@ -37,8 +37,6 @@ width: 200px;
    background:gray;
 }
 
-@import url(https://fonts.googleapis.com/css?family=Crimson+Text:400,700,900,400italic,700italic,900italic|Playfair+Display:400,700,900,400italic,700italic,900italic|Rock+Salt:400);
-
 *,
 :before,
 :after {
@@ -48,7 +46,6 @@ width: 200px;
 body {
     background-color: #1d1f20;
     color: #e5e5e5;
-    font: 16px/1.25 'Crimson Text', sans-serif;
     margin: 0;
 }
 
@@ -799,41 +796,7 @@ border-width: 5px;
     padding: 0;
     z-index: 160;
 }
-#pause {
-    width: 100%;
-    height: 100px;
-    position: fixed;
-    bottom: 0%;
-    left: 0;
-    pointer-events: none;
-    height: 100%;
-}
-#pause img {
-    position: absolute;
-    bottom: 9% !important;
-    left: calc(50% - 64px);
-    height: 128px;
-    width: 128px;
-    /* opacity: 0.2; */
-    border: none;
-    -webkit-animation: rotation 30s infinite linear;
-    -webkit-animation: rotation 1s infinite;
-    top: unset;
-}
-#pause h3 {
-    margin: 0;
-    font-size: 2em;
-    font-weight: normal;
-    line-height: 100px;
-    text-align: center;
-    position: absolute;
-    left: 43.5%;
-    bottom: 10% !important;
-    z-index: 61;
-}
-#pause.paused {
-    z-index: 1;
-}
+
 
 .select-all, .deselect-all {
     border-radius: 10px;
