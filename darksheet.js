@@ -56,6 +56,14 @@ Hooks.once('init', function() {
         default: true,
         type: Boolean,
     });
+    game.settings.register('darksheet', 'destroyshatter', {
+        name: 'Shattered items should NOT be destroyed.',
+        hint: 'Enabling this will keep shattered items with [Shattered]in their name',
+        scope: 'world',
+        config: true,
+        default: false,
+        type: Boolean,
+    });
     console.log("Darker Dungeons | Initializing Darker Dungeons for the D&D 5th Edition System\n", "_____________________________________________________________________________________________\n", "  ____                _                 ____                                                \n", " |  _ \\   __ _  _ __ | | __ ___  _ __  |  _ \\  _   _  _ __    __ _   ___   ___   _ __   ___ \n", " | | | | / _` || '__|| |/ // _ \| '__|  | | | || | | || '_ \\  / _` | / _ \\ / _ \\ | '_ \\ / __| \n", " | |_| || (_| || |   |   <|  __/| |    | |_| || |_| || | | || (_| ||  __/| (_) || | | |\\__ \\ \n", " |____/  \\__,_||_|   |_|\\_\\\\___||_|    |____/  \\__,_||_| |_| \\__, | \\___| \\___/ |_| |_||___/ \n", "                                                             |___/                          \n", "_____________________________________________________________________________________________");
 });
 //on Update Actor check for status
@@ -555,25 +563,77 @@ export class DarkSheet extends ActorSheet5eCharacter {
 		    event.preventDefault();
 				const itemID = event.currentTarget.closest('.item').dataset.itemId;
 				let darkitem = this.actor.getEmbeddedEntity('OwnedItem', itemID);
+				let name = darkitem.name;
 				let notches = darkitem.flags.darksheet.item.notches;
+				let fragility = darkitem.flags.darksheet.item.fragility;
+				let maxnotches = darkitem.flags.darksheet.item.maxnotches;
 				let basenotchdamage;
 				let temper = darkitem.flags.darksheet.item.temper;
-				if(temper === undefined){temper = 1;}
+				if(temper === "" || temper === undefined){temper = 1;}
 				else if(temper === "Pure"){temper = 0.5;}
 				else if(temper === "Royal"){temper = 0.25;}
 				else if(temper === "Astral"){temper = 0.125;}
 				
-				if(notches === undefined)
+				if(darkitem.name.includes("[Shattered]"))
 				{
-					notches = temper;
+				ui.notifications.warn("This item is [Shattered], you need to rename it first...");
 				}
-				else
-				{
-					notches = Number(notches) + temper;
+				else{
+
+					if(notches === undefined)
+					{
+						notches = temper;
+					}
+					else
+					{
+						notches = Number(notches) + temper;
+					}
+					
+					if (fragility === undefined || fragility === "" || fragility === "indestructible"){
+					fragility = 999;
+					}
+					else if ( fragility === "custom" ){ 
+					fragility = maxnotches;
+					}
+					else if(notches >= parseInt(darkitem.flags.darksheet.item.fragility)){
+					if(game.settings.get('darksheet', 'destroyshatter')){
+					let newname = "[Shattered] " + darkitem.name;
+					this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'name': newname});
+					}
+					else{
+					this.actor.deleteEmbeddedEntity("OwnedItem", darkitem._id);
+					}
+					console.log(name + " should be destroyed");
+					let content = `
+					<div class="dnd5e chat-card item-card">
+						<header class="card-header flexrow">
+							<img src="${this.actor.data.token.img}" title="" width="36" height="36" style="border: none;"/> <h1>${this.actor.name}'s </h1>
+						</header>
+						<label style="font-size: 14px;">${name} just shattered</label>
+					</div>`;
+					let rollWhisper = null;
+						let rollBlind = false;
+						let rollMode = game.settings.get("core", "rollMode");
+						if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperIDs("GM");
+						if (rollMode === "blindroll") rollBlind = true;
+						ChatMessage.create({
+							user: game.user._id,
+							content: content,
+							speaker: {
+							actor: this.actor._id,
+							token: this.actor.token,
+							alias: this.actor.name
+							},
+							sound: CONFIG.sounds.dice,
+						});
+			
+					}
 				}
-				
 				//VALUE CALCULATION==========================================
 				let quality = darkitem.flags.darksheet.item.quality;
+				if(quality === undefined ||quality === ""){
+				quality = "pristine";
+				}
 				if(notches >= 4){
 					quality = "scarred";
 				}
@@ -598,7 +658,9 @@ export class DarkSheet extends ActorSheet5eCharacter {
 						this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.armor.value': newAC});
 						this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.basenotchdamage': basenotchdamage});
 					}
-					
+				}
+				if (darkitem.type === "tool"){
+				this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.notchpen': notches});
 				}
 				if (darkitem.type === "weapon"){//WEAPON CALCULATION==========================================
 					let updatedamage;
@@ -644,7 +706,11 @@ export class DarkSheet extends ActorSheet5eCharacter {
 					  case "2d4 ":weapondamage = "1d4 + 1 ";break;
 					  case "1d4 + 1 ":
 						weapondamage = "2 ";
-					this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.basenotchdamage': notches});
+					  this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.basenotchdamage': notches});
+					  break;
+					  case "2 ":
+						weapondamage = "(1) ";
+					  this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.basenotchdamage': notches});
 					  break;
 					//CASES FOR single dice damage
 					  case "1d20 ":weapondamage = "1d12 ";break;
@@ -683,83 +749,96 @@ export class DarkSheet extends ActorSheet5eCharacter {
 				let notches = darkitem.flags.darksheet.item.notches;
 				let newnotches = notches - 1;
 				let updatedamage;
-				if(notches === undefined){newnotches = "";}
-				if(newnotches <= 0){newnotches = "";}
-				this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'flags.darksheet.item.notches': newnotches});
-				if (darkitem.type === "equipment"){//ARMOR CALCULATION==========================================
-					let AC = darkitem.data.armor.value;
-					let newAC = AC;
-					if(notches > basenotchdamage){ //IF NOTCHES AREN'T SMALLER THAN THE BASENOTCHES
-					}
-					else{newAC ++;}
-					if(newAC >= basenotchdamage){newAC = basenotchdamage}
-					this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.armor.value': newAC});
-					this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.basenotchdamage': basenotchdamage});
+					if(notches === undefined){newnotches = "";}
+					if(newnotches <= 0){newnotches = "";}
+				if(darkitem.name.includes("[Shattered]"))
+				{
+				ui.notifications.warn("This item is [Shattered], you need to rename it first...");
 				}
-				//DAMAGE CALCULATION MINUS-------------------------------------------------------------------
-				if (darkitem.type === "weapon"){
-					let damage1 = darkitem.data.damage.parts[0][0];
-		//			console.log(damage1);
-					let dicenumber = damage1.charAt(0); //2
-					let d = damage1.charAt(1); //d 
-					let damage = damage1.charAt(2) + damage1.charAt(3); //6
-					let mod = " + @mod";
-					let weapondamage;
-					if(darkitem.data.damage.currentweapondamage)
-					{
-					weapondamage = darkitem.data.damage.currentweapondamage;
-					}
-					else{
-					weapondamage = dicenumber+d+damage; //"2d6 "
-					}
-		//			console.log("Darksheet-Dev:" + dicenumber, d, damage);
-		//			console.log("Darksheet-Dev:" +weapondamage);
-
-					let baseweapondamage = darkitem.data.damage.baseweapondamage;
-					if(darkitem.data.damage.baseweapondamage === undefined){
-						baseweapondamage = weapondamage;
-						this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.baseweapondamage': baseweapondamage});
-					}
-					
-					if(weapondamage === baseweapondamage){
-					weapondamage = baseweapondamage;
-					}
-					else if(Math.floor(notches) > basenotchdamage){ //More notches than basenotches?
-					}
-					else{
-					switch(weapondamage) {
-						//CASES FOR 2 DAMAGE DICE
-						  case "2 ":weapondamage = "1d4 + 1 ";break;
-						  case "1d4 + 1 ":weapondamage = "2d4 ";break;
-						  case "2d4 ":weapondamage = "1d6 + 1d4 ";break;
-						  case "1d6 + 1d4 ":weapondamage = "2d6 ";break;
-						  case "2d6 ":weapondamage = "1d8 + 1d6 ";break;
-						  case "1d8 + 1d6 ":weapondamage = "2d8 ";break;
-						  case "2d8 ":weapondamage = "1d10 + 1d8 ";break;
-						  case "1d10 + 1d8 ":weapondamage = "2d10 ";break;
-						  case "2d10 ":weapondamage = "1d12 + 1d10 ";break;
-						  case "1d12 + 1d10 ":weapondamage = "2d12 ";break;
-						  case "2d12 ":weapondamage = "1d20 + 1d12 ";break;
-						  case "1d20 + 1d12":weapondamage = "2d20";break;
-						//CASES FOR SINGLE DAMAGEDICE
-						  case "1 ":weapondamage = "1d4 ";break;
-						  case "1d4 ":weapondamage = "1d6 ";break;
-						  case "1d6 ":weapondamage = "1d8 ";break;
-						  case "1d8 ":weapondamage = "1d10 ";break;
-						  case "1d10 ":weapondamage = "1d12 ";break;
-						  case "1d12 ":weapondamage = "1d20 ";break;
-						  default:
-							// code block
+				else{
+					this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'flags.darksheet.item.notches': newnotches});
+					if (darkitem.type === "equipment"){//ARMOR CALCULATION==========================================
+						let AC = darkitem.data.armor.value;
+						let newAC = AC;
+						if(notches > basenotchdamage){ //IF NOTCHES AREN'T SMALLER THAN THE BASENOTCHES
 						}
+						else{newAC ++;}
+						if(newAC >= basenotchdamage){newAC = basenotchdamage}
+						this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.armor.value': newAC});
+						this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.basenotchdamage': basenotchdamage});
 					}
-					updatedamage = weapondamage+mod;
-					const parts = duplicate(darkitem.data.damage.parts);
-					parts[0][0] = updatedamage;
-					if(newnotches <= 0){basenotchdamage = "";}
-					//NOTCH CALCULATION MINUS-------------------------------------------------------------------
-					this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.basenotchdamage': basenotchdamage});
-					this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.parts': parts});
-					this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.currentweapondamage': weapondamage}); //Weapon Damage On Name
+					if (darkitem.type === "tool"){
+						if (basenotchdamage === undefined || basenotchdamage === ""){basenotchdamage = newnotches;}
+						this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.notchpen': newnotches});
+					}
+					//DAMAGE CALCULATION MINUS-------------------------------------------------------------------
+					if (darkitem.type === "weapon"){
+						let damage1 = darkitem.data.damage.parts[0][0];
+			//			console.log(damage1);
+						let dicenumber = damage1.charAt(0); //2
+						let d = damage1.charAt(1); //d 
+						let damage = damage1.charAt(2) + damage1.charAt(3); //6
+						let mod = " + @mod";
+						let weapondamage;
+						if(darkitem.data.damage.currentweapondamage)
+						{
+						weapondamage = darkitem.data.damage.currentweapondamage;
+						}
+						else{
+						weapondamage = dicenumber+d+damage; //"2d6 "
+						}
+			//			console.log("Darksheet-Dev:" + dicenumber, d, damage);
+			//			console.log("Darksheet-Dev:" +weapondamage);
+
+						let baseweapondamage = darkitem.data.damage.baseweapondamage;
+						if(darkitem.data.damage.baseweapondamage === undefined){
+							baseweapondamage = weapondamage;
+							this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.baseweapondamage': baseweapondamage});
+						}
+						
+						if(weapondamage === baseweapondamage){
+						weapondamage = baseweapondamage;
+						}
+						else if(Math.floor(notches) > basenotchdamage){ //More notches than basenotches?
+						}
+						else{
+						switch(weapondamage) {
+							//CASES FOR 2 DAMAGE DICE
+							  case "2 ":weapondamage = "1d4 + 1 ";break;
+							  case "1d4 + 1 ":weapondamage = "2d4 ";break;
+							  case "2d4 ":weapondamage = "1d6 + 1d4 ";break;
+							  case "1d6 + 1d4 ":weapondamage = "2d6 ";break;
+							  case "2d6 ":weapondamage = "1d8 + 1d6 ";break;
+							  case "1d8 + 1d6 ":weapondamage = "2d8 ";break;
+							  case "2d8 ":weapondamage = "1d10 + 1d8 ";break;
+							  case "1d10 + 1d8 ":weapondamage = "2d10 ";break;
+							  case "2d10 ":weapondamage = "1d12 + 1d10 ";break;
+							  case "1d12 + 1d10 ":weapondamage = "2d12 ";break;
+							  case "2d12 ":weapondamage = "1d20 + 1d12 ";break;
+							  case "1d20 + 1d12":weapondamage = "2d20";break;
+							//CASES FOR SINGLE DAMAGEDICE
+							  case "1 ":weapondamage = "1d4 ";break;
+							  case "(1) ":weapondamage = "2 ";break;
+							  case "1d4 ":weapondamage = "1d6 ";break;
+							  case "1d6 ":weapondamage = "1d8 ";break;
+							  case "1d8 ":weapondamage = "1d10 ";break;
+							  case "1d10 ":weapondamage = "1d12 ";break;
+							  case "1d12 ":weapondamage = "1d20 ";break;
+							  default:
+								// code block
+							}
+						}
+						updatedamage = weapondamage+mod;
+						const parts = duplicate(darkitem.data.damage.parts);
+						parts[0][0] = updatedamage;
+						if(newnotches <= 0){basenotchdamage = "";}
+						if(darkitem.name.includes("[Shattered]"))
+						{newnotches = notches}
+						//NOTCH CALCULATION MINUS-------------------------------------------------------------------
+						this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.basenotchdamage': basenotchdamage});
+						this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.parts': parts});
+						this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.currentweapondamage': weapondamage}); //Weapon Damage On Name
+					}
 				}
 				this.render();
 		});
@@ -804,6 +883,190 @@ export class DarkSheet extends ActorSheet5eCharacter {
 				this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'flags.darksheet.item.ammodie': newammodie});
                 this.render();
             }
+        });
+		html.find('.randomnotch').click(event => {
+			let array = this.actor.items.filter(i => i.type !== "feat" && i.type !== "class" && i.type !== "spell");
+				let numberino = 0;
+				let randomItem = array[Math.floor(Math.random(numberino) * array.length)];
+				let randomID = randomItem.id;
+				let darkitem = this.actor.getEmbeddedEntity('OwnedItem', randomID);
+				let name = darkitem.name;
+				let notches = darkitem.flags.darksheet.item.notches;
+				let fragility = darkitem.flags.darksheet.item.fragility;
+				let maxnotches = darkitem.flags.darksheet.item.maxnotches;
+				let basenotchdamage;
+				let temper = darkitem.flags.darksheet.item.temper;
+				if(temper === "" || temper === undefined){temper = 1;}
+				else if(temper === "Pure"){temper = 0.5;}
+				else if(temper === "Royal"){temper = 0.25;}
+				else if(temper === "Astral"){temper = 0.125;}
+				
+				if(darkitem.name.includes("[Shattered]"))
+				{
+				ui.notifications.warn("This item is [Shattered], you need to rename it first...");
+				}
+				else{
+
+					if(notches === undefined)
+					{
+						notches = temper;
+					}
+					else
+					{
+						notches = Number(notches) + temper;
+					}
+					
+					if (fragility === undefined || fragility === "" || fragility === "indestructible"){
+					fragility = 999;
+					}
+					else if ( fragility === "custom" ){ 
+					fragility = maxnotches;
+					}
+					else if(notches >= parseInt(darkitem.flags.darksheet.item.fragility)){
+					if(game.settings.get('darksheet', 'destroyshatter')){
+					let newname = "[Shattered] " + darkitem.name;
+					this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'name': newname});
+					}
+					else{
+					this.actor.deleteEmbeddedEntity("OwnedItem", darkitem._id);
+					}
+					console.log(name + " should be destroyed");
+					let content = `
+					<div class="dnd5e chat-card item-card">
+						<header class="card-header flexrow">
+							<img src="${this.actor.data.token.img}" title="" width="36" height="36" style="border: none;"/> <h1>${this.actor.name}'s </h1>
+						</header>
+						<label style="font-size: 14px;">${name} just shattered</label>
+					</div>`;
+					let rollWhisper = null;
+						let rollBlind = false;
+						let rollMode = game.settings.get("core", "rollMode");
+						if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperIDs("GM");
+						if (rollMode === "blindroll") rollBlind = true;
+						ChatMessage.create({
+							user: game.user._id,
+							content: content,
+							speaker: {
+							actor: this.actor._id,
+							token: this.actor.token,
+							alias: this.actor.name
+							},
+							sound: CONFIG.sounds.dice,
+						});
+			
+					}
+				}
+				//VALUE CALCULATION==========================================
+				let quality = darkitem.flags.darksheet.item.quality;
+				if(quality === undefined ||quality === ""){
+				quality = "pristine";
+				}
+				if(notches >= 4){
+					quality = "scarred";
+				}
+				else if(notches >= 2 && quality === "worn"){
+					quality = "well-worn";
+				}
+				else if(notches >= 1 && quality === "pristine"){
+					quality = "worn";
+				}
+				this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'flags.darksheet.item.quality': quality});
+				
+				if (darkitem.type === "equipment"){//ARMOR CALCULATION==========================================
+					let AC = darkitem.data.armor.value;
+					if(Number.isInteger(notches))
+					{
+						let newAC = AC - 1;
+						if(newAC <= 0){newAC = 0};
+						if(Math.floor(notches) === 1){
+						 basenotchdamage = AC;
+						}
+						if(newAC >= basenotchdamage){newAC = basenotchdamage}
+						this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.armor.value': newAC});
+						this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.basenotchdamage': basenotchdamage});
+					}
+				}
+				if (darkitem.type === "tool"){
+				this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.notchpen': notches});
+				}
+				if (darkitem.type === "weapon"){//WEAPON CALCULATION==========================================
+					let updatedamage;
+					//DAMAGE CALCULATION PLUS++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+				if(Number.isInteger(notches)){
+					let damage1 = darkitem.data.damage.parts[0][0];
+		//			console.log(damage1);
+					let dicenumber = damage1.charAt(0); //2
+					let d = damage1.charAt(1); //d 
+					let damage = damage1.charAt(2) + damage1.charAt(3); //6
+					let mod = " + @mod";
+					
+					let weapondamage;
+					if(darkitem.data.damage.currentweapondamage)
+					{
+						weapondamage = darkitem.data.damage.currentweapondamage;
+					}
+					else{
+						weapondamage = dicenumber+d+damage; //"2d6 "
+					}
+		//			console.log("Darksheet-Dev:" + dicenumber, d, damage);
+		//			console.log("Darksheet-Dev:" +weapondamage);
+
+					let baseweapondamage = darkitem.data.damage.baseweapondamage;
+					if(darkitem.data.damage.baseweapondamage === undefined){
+						baseweapondamage = weapondamage;
+						this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.baseweapondamage': baseweapondamage});
+					}
+					
+					//WEAPONDAMAGE  PLUS++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+					switch(weapondamage) {
+					//CASES FOR 2 DAMAGE DICE
+					  case "2d20 ":weapondamage = "1d20 + 1d12 ";break;
+					  case "1d20 + 1d12 ":weapondamage = "2d12 ";break;
+					  case "2d12 ":weapondamage = "1d12 + 1d10 ";break;
+					  case "1d12 + 1d10 ":weapondamage = "2d10 ";break;
+					  case "2d10 ":weapondamage = "1d10 + 1d6 ";break;
+					  case "1d10 + 1d6 ":weapondamage = "2d6 ";break;
+					  case "2d6 ":weapondamage = "1d6 + 1d4 ";break;
+					  case "1d6 + 1d4 ":weapondamage = "2d4 ";
+					  this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.basenotchdamage': notches});
+					  break;
+					  case "2d4 ":weapondamage = "1d4 + 1 ";break;
+					  case "1d4 + 1 ":
+						weapondamage = "2 ";
+					  this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.basenotchdamage': notches});
+					  break;
+					  case "2 ":
+						weapondamage = "(1) ";
+					  this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.basenotchdamage': notches});
+					  break;
+					//CASES FOR single dice damage
+					  case "1d20 ":weapondamage = "1d12 ";break;
+					  case "1d12 ":weapondamage = "1d10 ";break;
+					  case "1d10 ":weapondamage = "1d8 ";break;
+					  case "1d8 ":weapondamage = "1d6 ";break;
+					  case "1d6 ":weapondamage = "1d4 ";
+					  this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.basenotchdamage': notches});
+					  break;
+					  case "1d4 ":weapondamage = "1 ";
+					  this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.basenotchdamage': notches});
+					  break;
+					  default:
+						// code block
+					}
+						updatedamage = weapondamage+mod;
+						const parts = duplicate(darkitem.data.damage.parts);
+						parts[0][0] = updatedamage;
+						this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.parts': parts});
+						this.render();
+					
+					//UPDATE WEAPON DAMAGE ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+					this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.currentweapondamage': weapondamage});
+					this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.basenotchdamage': basenotchdamage});
+
+					}
+				}
+				this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'flags.darksheet.item.notches': notches});
+				this.render();
         });
         /*LOOK FOR Stresscheckbox*/
         html.find('.stressroll').click(event => {
@@ -2175,17 +2438,24 @@ class DSC extends Application {
     constructor(options = {}) {
         super(options);
     }
+	getData() {
+        const templateData = { data: [] };
+		templateData.title = "Darker Dungeons - Gamemaster Screen";
+		templateData.statRollSettings = game.settings.get("darkscreen","darkscreenval");
+        const templatePath = "modules/darksheet/templates/darkscreen.html";;
+		return templateData;
+	}
     openDialog() {
         let $dialog = $('.DSC-window');
         if ($dialog.length > 0) {
             $dialog.remove();
             return;
         }
-        const templateData = { data: [] };
+		const templateData = { data: [] };
         const templatePath = "modules/darksheet/templates/darkscreen.html";
 		DSC.renderMenu(templatePath, templateData);
 		this.appId
-		let html = document.getElementsByClassName("dialog-content");
+		let html = document.getElementsByClassName("Dialog");
 		console.log(html);
 	}
     static renderDarkscreen(path, data) {

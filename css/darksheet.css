@@ -262,7 +262,7 @@ body {
 		width: 4em;
 		height: 100%;
 		margin-top: 16px;
-		z-index: 1;
+		z-index: 0;
 	}
 
     .open-book > * {
@@ -379,16 +379,17 @@ body {
 
 /*TRAINING*/
 h4.pristine {
-    color: white !important;
+    color: black !important;
 }
 h4.worn {
-    color: yellow !important;
+	color: #adad00 !important;
 }
 h4.well-worn {
-    color: orange !important;
+    color: #a97007 !important;
+    text-shadow: 0 0 2px;
 }
 h4.scarred {
-    color: red !important;
+    color: #960a0a !important;
     text-shadow: 0 0 2px;
 }
 label.notchlabel:hover + button#minus{
@@ -401,22 +402,23 @@ button#minus:hover {
     visibility: visible !important;
     background-color: #243b55 !important;
     color: #5e9ed4 !important;
-    background-image: linear-gradient(#243b5500, #474a5dfc) !important;
 }
 button#plus:hover {
     visibility: visible !important;
     background-color: #243b55 !important;
     color: #d45e6f !important;
-    background-image: linear-gradient(#243b5500, #474a5dfc) !important;
 }
 button#plus {
     width: 5px;
     visibility: hidden;
-    position: absolute;
-    margin-left: 39px;
-	height: 20px;
+    position: inherit;
+    margin: 0;
+    top: 3px;
+    left: -40px;
+    height: 20px;
+    position: relative;
     align-self: center;
-    background-image: linear-gradient(#474a5dfc, #243b5500) !important;
+    /* background-image: linear-gradient(#474a5dfc, #243b5500) !important; */
 }
 button#plus:after {
     content: "+";
@@ -433,10 +435,14 @@ button#minus:after {
 button#minus {
     width: 5px;
     visibility: hidden;
-    position: absolute;
+    margin-left: 5px;
+    position: relative;
     height: 20px;
     align-self: center;
-    background-image: linear-gradient(#474a5dfc, #243b5500) !important;
+    top: 3px;
+    left: -62px;
+    height: 20px;
+    /* background-image: linear-gradient(#474a5dfc, #243b5500) !important; */
 }
 .ammostyle {
     padding: 7px 15px;
@@ -450,7 +456,7 @@ input[type="checkbox"] {
     transform: scale(1);
 }
 .item-detail.item-weight.notches {
-    display: inline-flex;
+    display: -webkit-box;
 }
 .spell-mats {
     line-height: 15px;
@@ -617,102 +623,21 @@ label.check.dicelabel2.staminacheck.rollable:hover {
 }
 .window-app .window-header {
     flex: 0 0 30px;
-    overflow: hidden;
     padding: 0 8px;
     line-height: 30px;
     border-bottom: 1px solid black;
 }
-#chat-form textarea {
-    width: 100%;
-    height: 100%;
-    resize: none;
-}
-#chat-log .message.whisper {
-    border: 5px solid #000000f2;
-    border: 4px solid #00000000;
-    margin: 5px;
-    border-radius: 0;
-}
-#chat-log .message.blind {
-    border: 2px solid #6b476b;
-	border: dotted #ffffff 1px;
 
-}
 #trait-selector .trait-list {
     list-style: none;
     margin: 0;
     padding: 0;
 }
 
-#sidebar-tabs > .item.active {
-    border: 1px solid #06d6ffa3;
-}
-#sidebar.collapsed #sidebar-tabs > .item.active {
-    border-bottom: 1px solid #76a8ff;
-}
-#sidebar {
-    border: 1px solid #000;
-    z-index: 99;
-	  /* width: 20%; */
-}
-div#sidebar:hover {
-    transition: 0.2s;
-    /* width: 25%; */
-}
-nav#navigation:hover {
-	transition: 0.2s;
-}
-#navigation #scene-list .scene.gm:hover {
-	transition: 0.2s;
-}
-
-#client-settings section.content .settings-list {
-    padding: 20px;
-}
 .dnd5e.sheet.actor .inventory-list .item-price {
     flex: 0 0 100px;
     font-size: 10px;
 }
-#settings button {
-    margin: 0.5em 0;
-}
-
-#controls .scene-control, #controls .control-tool {
-    opacity: 80%;
-}
-
-#controls .scene-control.active, #controls .control-tool.active, #controls .scene-control:hover, #controls .control-tool:hover {
-    border: 1px solid #ffffff;
-    border-bottom: 1px solid black;
-    opacity: 100%;
-}
-
-#package-configuration .package-list .package .package-title, #module-management .package-list .package .package-title {
-    text-decoration: underline;
-    font-size: 16px;
-    margin: 0 0 0.25em;
-}
-
-#navigation #scene-list .scene.gm {
-    border: 1px solid black8f;
-    opacity: 80%;
-}
-#navigation #scene-list .scene.view, #navigation #scene-list .scene.context {
-    cursor: default;
-    border: 1px solid blacke6;
-    border-bottom: 1px solid black;
-    opacity: 100%;
-}
-
-#compendium li.compendium-pack {
-    position: relative;
-    margin: 5px;
-    padding: 5px 0;
-    border-bottom: 1px solid #fff;
-}
-
-
-
 
 .dmgBtn-container-br button {
 	border-radius: 0;
@@ -735,41 +660,10 @@ nav#navigation:hover {
     margin: 0 3px;
 }
 
-}
-#combat #combat-round {
-    flex: 0 0 64px;
-    line-height: 32px;
-    font-size: 20px;
-    text-align: center;
-    border-bottom: 2px groove #444;
-}
-
-#combat #combat-controls {
-    margin: 0;
-    border-top: 2px groove #444;
-    padding-top: 4px;
-}
-
-
-.window-app .window-resizable-handle {
-    width: 20px;
-    height: 20px;
-    position: absolute;
-    bottom: -1px;
-    right: 0;
-    padding: 2px;
-    border: 1px solid #111;
-    border-radius: 4px 0 0 0;
-}
-
 li.folder.collapsed > .folder-header {
 	
 }
-#menu {
-	top: 35%;
-    border-style: outset;
-border-width: 5px;
-}
+
 
 .lmrtfy-actor-avatars input:checked + label img {
     transform: scale(0.9);
@@ -780,17 +674,6 @@ border-width: 5px;
     margin-bottom: -5px !important;
 }
 
-#notifications {
-    position: fixed;
-    width: 60%;
-    top: 100px;
-    left: 20%;
-    list-style: none;
-    margin: 0;
-    visibility: hidden;
-    padding: 0;
-    z-index: 160;
-}
 
 
 .select-all, .deselect-all {
@@ -798,11 +681,6 @@ border-width: 5px;
     flex: 1;
 }
 
-.dnd5e.sheet.actor .inventory-list .item {
-    line-height: 30px;
-    padding: 0 2px;
-    border-bottom: 1px solid #c9c7b8;
-}
 .dnd5e.sheet.actor.character .encumbrance .encumbrance-bar {
     border: 1px solid #000000;
 }
@@ -811,45 +689,10 @@ max-width: 100%;
 }
 
 
-#chat-log .message .message-header {
-    line-height: 20px;
-    padding: 0px 5px 0px 5px;
-}
-
-#chat-log .message {
-    border-radius: 0;
-    border-left: 0px;
-    border-top: 0px;
-    border-right: 0px;
-    padding-left: 10px;
-    padding-right: 10px;
-}
-
-#chat-log .message .message-header .message-metadata {
-    flex: 2;
-    text-align: right;
-    font-size: 12px;
-}
-#chat-log .message .table-result h4.result-text {
-    line-height: 16px;
-    margin: 0;
-}
-#chat-log .message .message-header .message-metadata {
-    flex: 2;
-    text-align: right;
-    font-size: 12px;
-}
-
 form .form-group label {
     line-height: 24px;
 }
-#client-settings section.content h2.module-header {
-    margin: 0.25em 0;
-}
-h2 {
-    font-size: 1.5em;
-    border-bottom: 1px solid #ffffff66;
-}
+
 form .form-group, form .form-group-stacked {
     clear: both;
     display: flex;
@@ -989,7 +832,6 @@ margin-left: 10px;
 }
 
 .dnd5e.sheet .window-content {
-    overflow-y: hidden;
     padding: 5px;
     font-size: 13px;
 }
@@ -1042,7 +884,6 @@ visibility:hidden;
 .app.sheet .editor-content {
     min-height: 100px;
 	max-height: 100%;
-    overflow-y: auto;
 }
 .dicelabel{
 	margin-top: -7px;
@@ -1129,9 +970,7 @@ margin-top: 6px;
 	margin-left: 4.5px;
     padding-bottom: 5px;
 }
-.settingsoption{
-	margin-left: 10px;
-}
+
 .fatecheckbox {
     display: inline-flex;
     cursor: pointer;
@@ -1391,30 +1230,6 @@ margin-bottom: 3px !important;
     padding: 10px;
 	transform: scale(0.8);
 }
-li.macro.active {
-    border: 0;
-}
-#hotbar .macro .tooltip {
-    height: fit-content;
-	margin: auto;
-	width: 300;
-	font-size: small;
-}
-#hotbar .macro .macro-icon {
-    width: 48px;
-    height: 48px;
-    object-fit: cover;
-    object-position: 50% 50%;
-}
-#hotbar .macro .macro-key {
-    position: absolute;
-    top: 2px;
-    right: 2px;
-    padding: 1px 3px;
-    border: 1px black;
-    border-radius: 3px;
-    font-weight: bold;
-}
 .bloodiedcheckbox > input:checked {
     border: 1px solid #b84141;
     padding: 10px;
@@ -1657,7 +1472,6 @@ select.hitdice.afflictionselection{
 }
 .dnd5e.sheet.item .sheet-body .tab {
     padding: 0 5px;
-    overflow: hidden auto;
 }
 .editor-edit {
     font-size: 1.25em;
@@ -1698,40 +1512,6 @@ input.biotextflex:hover {
     border-bottom: dashed 1px black !important;
 }
 /*PROFICIENCY GREEN*/
-}
-.dnd5e.sheet .sheet-navigation .item.active {
-    border-bottom: 3px solid black;
-}
-::-webkit-scrollbar-thumb {
-    outline: none;
-    border-radius: 8px;
-    border: 1px solid #ffffff;
-}
-.spellbook-empty{
-border-bottom: solid 2px !important;
-}
-.dnd5e.sheet.actor .inventory-list .item-detail {
-    font-size: 12px;
-    text-align: center;
-    border-right: 1px solid #c9c7b8;
-}
-.better-npc-sheet input[type=text] {
-    border: none;
-}
-.better-npc-sheet .npc-textinput, .better-npc-sheet .size-selector {
-    font-family: "Nodesto", "Signika", "Palatino Linotype", serif !important;
-    font-size: 20px;
-    border: none;
-}
-.macro-sheet textarea[name="command"] {
-    height: 200px;
-}
-form button {
-    border: 2px groove #f0f0e0;
-}
-.polyglot-lang-select select {
-    height: 24px;
-}
 /*DD TAB*/
 .ddfulltab{
 display: inline
@@ -1827,23 +1607,6 @@ margin-top:15px;
     text-align: center;
     border: groove 2px #5e6069;
 }
-
-.settings {
-    margin-right: 20px;
-    margin-left: 25px;
-    margin-bottom: 20px;
-    height: 120px;
-    padding: 20px;
-    text-align: center;
-    border: groove 2px #5e6069;
-}
-.settingsheader{
-	margin: -16px 0 0.5rem;
-    font-size: 15px;
-    border-bottom: 1px solid;
-    font-size: 2;
-}
-
 .section3 {
 	margin-top: 20px;
     display: flex;
@@ -1883,6 +1646,9 @@ margin-top:15px;
     border-style: solid;
     border-width: 1px;
 }
+.notification {
+    visibility: visible;
+}
 .check {
     padding: 2px 4px 2px 4px;
 }
@@ -1907,17 +1673,3 @@ margin-top:15px;
     border-bottom: 0;
     border-right: 0;
 } 
-
-.settingsbutton{
-	margin-top: 10px;
-	margin: 13px;
-	width: fit-content;
-	height: fit-content;
-	border: solid silver;
-	position: absolute;
-}
-.textarea:focus {
-    outline: 2px solid #782e22;
-    border-style: ridge;
-    border-width: 5px;
-}

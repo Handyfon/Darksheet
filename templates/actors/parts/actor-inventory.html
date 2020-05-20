@@ -10,6 +10,7 @@
         <label class="denomination {{k}}">{{ lookup ../config.currencies k }}</label>
         <input type="text" name="data.currency.{{k}}" value="{{v}}" data-dtype="Number"/>
         {{/each}}
+		<label class="randomnotch rollable">Random Notch</label>
     </ol>
     {{/if}}
 
@@ -30,7 +31,6 @@
         {{#if ../isCharacter}}
 			<div class="item-detail item-weight">Ammodie</div>
 			<div class="item-detail item-weight">Notches</div>
-			<div class="item-detail item-equipped">Equipped</div>
         {{/if}}
 
 		{{#if ../slotSetting}}
@@ -58,7 +58,7 @@
                 <div class="item-image" style="background-image: url({{item.img}})"></div>
                 <h4 class="{{item.flags.darksheet.item.quality}}">
                     {{~#if item.isStack}}({{item.data.quantity}}) {{/if}}
-					{{#if item.flags.darksheet.item.temper}} {{item.flags.darksheet.item.temper}} {{/if}}
+					{{#if item.flags.darksheet.item.temper}} {{item.flags.darksheet.item.temper}} {{else}} <!--{{#if item.flags.darksheet.item.fragility}}<i>({{item.flags.darksheet.item.fragility}})</i>{{/if}}--> {{/if}}
 						{{item.name~}} 
 						{{#if item.data.damage.currentweapondamage}}
 							({{item.data.damage.currentweapondamage}})
@@ -66,6 +66,7 @@
 						{{#if item.data.armor.value}}
 							({{item.data.armor.value}} AC)
 						{{/if}}
+					{{#if item.data.notchpen}} (Minus <b>{{item.data.notchpen}}</b> to checks) {{/if}}
                     {{~#if item.data.attuned}} <i class="fas fa-sun attuned" title={{localize "DND5E.Attuned"}}></i>{{/if}}
                 </h4>
             </div>
@@ -84,12 +85,6 @@
 				<button style="width:5px" class="darksheetbuttonplus" type="button" id="plus"></button>
             </div>
             {{/if}}
-
-
-            <div class="item-detail item-equipped">
-            {{#if item.data.equipped }} Yes
-            {{/if}}
-            </div>
 			
 			<div class="item-detail item-weight">
                 {{#if flags.darksheet.item.slots}}
