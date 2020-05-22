@@ -72,6 +72,14 @@ Hooks.once('init', function() {
         default: false,
         type: Boolean,
     });
+    game.settings.register('darksheet', 'darkscreenval', {
+        name: 'settings',
+        hint: 'settings',
+        scope: 'world',
+        config: true,
+        default: 'no',
+        type: String,
+	});
     console.log("Darker Dungeons | Initializing Darker Dungeons for the D&D 5th Edition System\n", "_____________________________________________________________________________________________\n", "  ____                _                 ____                                                \n", " |  _ \\   __ _  _ __ | | __ ___  _ __  |  _ \\  _   _  _ __    __ _   ___   ___   _ __   ___ \n", " | | | | / _` || '__|| |/ // _ \| '__|  | | | || | | || '_ \\  / _` | / _ \\ / _ \\ | '_ \\ / __| \n", " | |_| || (_| || |   |   <|  __/| |    | |_| || |_| || | | || (_| ||  __/| (_) || | | |\\__ \\ \n", " |____/  \\__,_||_|   |_|\\_\\\\___||_|    |____/  \\__,_||_| |_| \\__, | \\___| \\___/ |_| |_||___/ \n", "                                                             |___/                          \n", "_____________________________________________________________________________________________");
 	console.log();
 });
@@ -1095,7 +1103,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
             // find the table
             let table = game.tables.entities.find(t => t.data.name === "Burnout Consequence");
             // burnoutsettings
-            let bsettings = this.actor.data.data.attributes.burnoutc.value
+            let bsettings = this.actor.data.data.attributes.burnout.value
             // magic region
             var regionmod = parseInt(this.actor.data.data.attributes.regionmod.value, 10);
             //console.log("Regionmod: "+regionmod);
@@ -1138,7 +1146,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 					<h3 style="color: #ff0000;text-shadow: 0 0 2px;">${roll.result}</h3>
 					</header>
 					</br>
-					<h3 style="color: #ff0000;text-shadow: 0 0 2px; text-align: center;">${result[1].text}</h3>
+					<h3 style="color: #ff0000;text-shadow: 0 0 2px; text-align: center;">${result.results[0].text}</h3>
 				</div>`;
                 let content3 = `
 				<div class="dnd5e chat-card item-card" data-acor-id="${this.actor._id}">
@@ -1687,8 +1695,51 @@ export class DarkSheet extends ActorSheet5eCharacter {
 
         html.find('.deathsaveroll').click(event => {
             event.preventDefault();
-            let table = game.tables.entities.find(t => t.data.name === "Death Saving Throw");
-            const result = table.roll()
+            let result = ["You fail two death saving throws.", "You fail one death saving throw.", "No change.", "You regain 1 hit point."]
+			let finalresult = 0;
+			let deathsavevalue = 0;
+			if(this.actor.data.data.attributes.deathsave1.value){deathsavevalue ++;}
+			if(this.actor.data.data.attributes.deathsave2.value){deathsavevalue ++;}
+			if(this.actor.data.data.attributes.deathsave3.value){deathsavevalue ++;}
+			
+			let newDSV = deathsavevalue;
+			
+            let roll = new Roll(`1d20`).roll().total;
+			if(roll <=1){
+			newDSV = newDSV +2;
+			}
+			else if(roll <=9){
+				finalresult = 1;
+				newDSV ++;
+			}
+			else if(roll <=19){
+				finalresult = 2;
+			}
+			else if(roll == 20){
+				finalresult = 3;
+			}
+			
+			if(newDSV === 0){
+				this.actor.update({'data.attributes.deathsave1.value': false});
+				this.actor.update({'data.attributes.deathsave2.value': false});
+				this.actor.update({'data.attributes.deathsave3.value': false});
+			}
+			else if(newDSV === 1){
+				this.actor.update({'data.attributes.deathsave1.value': true});
+				this.actor.update({'data.attributes.deathsave2.value': false});
+				this.actor.update({'data.attributes.deathsave3.value': false});
+			}
+			else if(newDSV === 2){
+				this.actor.update({'data.attributes.deathsave1.value': true});
+				this.actor.update({'data.attributes.deathsave2.value': true});
+				this.actor.update({'data.attributes.deathsave3.value': false});
+			}
+			else if(newDSV >= 2){
+				this.actor.update({'data.attributes.deathsave1.value': true});
+				this.actor.update({'data.attributes.deathsave2.value': true});
+				this.actor.update({'data.attributes.deathsave3.value': true});
+			}
+
             let content = `
 				<div class="dnd5e chat-card item-card" data-acor-id="${this.actor._id}">
 					<header class="card-header flexrow">
@@ -1696,7 +1747,14 @@ export class DarkSheet extends ActorSheet5eCharacter {
 						<h3>Death Saving Throw</h3>
 					</header>
 					</br>
-					<h3 style="text-shadow: 0 0 4px; text-align: center;">${result[1].text}</h3>
+					<h3 style="text-shadow: 0 0 4px; text-align: center;">${result[finalresult]}</h3>
+				</div>`;
+            let dead = `
+				<div style="filter:grayscale(1);" class="dnd5e chat-card item-card" data-acor-id="${this.actor._id}">
+					<header class="card-header flexrow">
+						<img src="${this.actor.data.token.img}" title="" width="36" height="36" style="border: none;"/>
+						<h3>${this.actor.data.name} just died</h3>
+					</header>
 				</div>`;
             let rollWhisper = null;
             let rollBlind = false;
@@ -1720,6 +1778,26 @@ export class DarkSheet extends ActorSheet5eCharacter {
                     }
                 }
             });
+			if(newDSV >=3){
+            ChatMessage.create({
+                user: game.user._id,
+                content: dead,
+                speaker: {
+                    actor: this.actor._id,
+                    token: this.actor.token,
+                    alias: this.actor.name
+                },
+                blind: rollBlind,
+                sound: CONFIG.sounds.dice,
+                flags: {
+                    darksheet: {
+                        outcome: 'bad'
+                    }
+                }
+            });
+			this.actor.update({'data.attributes.alive': false});
+			}	
+			this.render();
         });
         //Inspiration
         html.find('.useInspiration').click(event => {
@@ -2012,7 +2090,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
             let table = game.tables.entities.find(t => t.data.name === "Treatwounds");
             const result = table.roll()
             let content = `
-					<h3 style="text-shadow: 0 0 4px; text-align: center;">${result[1].text}</h3>
+					<h3 style="text-shadow: 0 0 4px; text-align: center;">${result.results[0].text}</h3>
 				</div>`;
             let rollWhisper = null;
             let rollBlind = false;
@@ -2097,7 +2175,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
             const result = table.roll()
             let content = `
 				<div class="dnd5e chat-card item-card" data-acor-id="${this.actor._id}">
-					<h3 style="text-shadow: 0 0 1px; text-align: center;">${result[1].text}</h3>
+					<h3 style="text-shadow: 0 0 1px; text-align: center;">${result.results[0].text}</h3>
 				</div>`;
 
             ChatMessage.create({
@@ -2119,7 +2197,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
             const result = table.roll()
             let content = `
 				<div class="dnd5e chat-card item-card" data-acor-id="${this.actor._id}">
-					<h3 style="text-shadow: 0 0 1px; text-align: center;">${result[1].text}</h3>
+					<h3 style="text-shadow: 0 0 1px; text-align: center;">${result.results[0].text}</h3>
 				</div>`;
             let rollWhisper = null;
             let rollBlind = false;
@@ -2150,7 +2228,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
             const result = table.roll()
             let content = `
 				<div class="dnd5e chat-card item-card" data-acor-id="${this.actor._id}">
-					<h3 style="text-shadow: 0 0 0px; text-align: center;">${result[1].text}</h3>
+					<h3 style="text-shadow: 0 0 0px; text-align: center;">${result.results[0].text}</h3>
 				</div>`;
             let rollWhisper = null;
             let rollBlind = false;
@@ -2446,10 +2524,7 @@ class DSC extends Application {
         super(options);
     }
 	getData() {
-        const templateData = { data: [] };
-		templateData.title = "Darker Dungeons - Gamemaster Screen";
-		templateData.statRollSettings = game.settings.get("darkscreen","darkscreenval");
-        const templatePath = "modules/darksheet/templates/darkscreen.html";;
+
 		return templateData;
 	}
     openDialog() {
@@ -2458,12 +2533,12 @@ class DSC extends Application {
             $dialog.remove();
             return;
         }
-		const templateData = { data: [] };
-        const templatePath = "modules/darksheet/templates/darkscreen.html";
+        const templateData = { data: [] };
+		templateData.title = "Darker Dungeons - Gamemaster Screen";
+		templateData.settings = game.settings.get("darksheet","darkscreenval");
+        const templatePath = "modules/darksheet/templates/darkscreen.html";;
+		console.log(templateData);
 		DSC.renderMenu(templatePath, templateData);
-		this.appId
-		let html = document.getElementsByClassName("Dialog");
-		console.log(html);
 	}
     static renderDarkscreen(path, data) {
         const dialogOptions = {
