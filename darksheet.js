@@ -32,6 +32,14 @@ Hooks.once('init', function() {
         default: false,
         type: Boolean,
     });
+    game.settings.register('darksheet', 'hideSRDCOMP', {
+        name: 'Unloads SRD compendiums (Recommended)',
+        hint: 'This option unloads all redundant SRD compendiums (requires reload)',
+        scope: 'world',
+        config: true,
+        default: true,
+        type: Boolean,
+    });
     game.settings.register('darksheet', 'hidechecks', {
         name: 'Hide "Checks"-Section from player Character sheet',
         hint: 'This option hides the checks section from all character sheets',
@@ -65,6 +73,7 @@ Hooks.once('init', function() {
         type: Boolean,
     });
     console.log("Darker Dungeons | Initializing Darker Dungeons for the D&D 5th Edition System\n", "_____________________________________________________________________________________________\n", "  ____                _                 ____                                                \n", " |  _ \\   __ _  _ __ | | __ ___  _ __  |  _ \\  _   _  _ __    __ _   ___   ___   _ __   ___ \n", " | | | | / _` || '__|| |/ // _ \| '__|  | | | || | | || '_ \\  / _` | / _ \\ / _ \\ | '_ \\ / __| \n", " | |_| || (_| || |   |   <|  __/| |    | |_| || |_| || | | || (_| ||  __/| (_) || | | |\\__ \\ \n", " |____/  \\__,_||_|   |_|\\_\\\\___||_|    |____/  \\__,_||_| |_| \\__, | \\___| \\___/ |_| |_||___/ \n", "                                                             |___/                          \n", "_____________________________________________________________________________________________");
+	console.log();
 });
 //on Update Actor check for status
 Hooks.on('updateActor', (actor, updates, options, userId) => {
@@ -157,11 +166,7 @@ Hooks.on('updateActor', (actor, updates, options, userId) => {
                 if (actorData.data.status.isConcentrating && !t.data.effects.includes(concentrating)) await t.toggleEffect(concentrating);
                 if (!actorData.data.status.isConcentrating && t.data.effects.includes(concentrating)) await t.toggleEffect(concentrating);
 				
-				if (actorData.data.status.isConcentrating && !t.data.effects.includes(concentrating)) await t.toggleEffect(concentrating);
-                if (!actorData.data.status.isConcentrating && t.data.effects.includes(concentrating)) await t.toggleEffect(concentrating);
-				
 				//EXHAUSTION STATUS
-				if(actorData.data.attributes.newexhaustion === 1) await t.toggleEffect(exhaustion1);
                 await t.drawEffects();
             }
         });
@@ -175,7 +180,9 @@ Hooks.on('preUpdateToken', async (scene, sceneId, updates, tokenData) => {
     if (!tokenData.currentData.actorLink) return;
     const tokenActor = game.actors.entities.find(a => a.id == tokenData.currentData.actorId);
     if (!tokenActor) return;
-
+	
+	
+	
     const blinded = "modules/combat-utility-belt/icons/blinded.svg";
     const charmed = "modules/combat-utility-belt/icons/charmed.svg";
     const deafened = "modules/combat-utility-belt/icons/deafened.svg";
@@ -499,7 +506,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
             let food = this.actor.data.data.attributes.saturation.value;
             let water = this.actor.data.data.attributes.thirst.value;
             let fatigue = this.actor.data.data.attributes.fatigue.value;
-            let manualexhaustion = this.actor.data.data.attributes.exhaustionpoints.value;
+            let manualexhaustion = this.actor.data.data.attributes.exhaustion.value;
             //Temperature Exhaustion
             if (temp === "exenegised") {
                 newexhaustion += -1;
@@ -1213,7 +1220,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
             let food = this.actor.data.data.attributes.saturation.value;
             let water = this.actor.data.data.attributes.thirst.value;
             let fatigue = this.actor.data.data.attributes.fatigue.value;
-            let manualexhaustion = this.actor.data.data.attributes.exhaustionpoints.value;
+            let manualexhaustion = this.actor.data.data.attributes.exhaustion.value;
             //Temperature Exhaustion
             if (temp === "exenegised") {
                 newexhaustion += -1;
@@ -1415,7 +1422,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
             let food = this.actor.data.data.attributes.saturation.value;
             let water = this.actor.data.data.attributes.thirst.value;
             let fatigue = this.actor.data.data.attributes.fatigue.value;
-            let manualexhaustion = this.actor.data.data.attributes.exhaustionpoints.value;
+            let manualexhaustion = this.actor.data.data.attributes.exhaustion.value;
             //Temperature Exhaustion
             if (temp === "exenegised") {
                 newexhaustion += -1;
@@ -1463,7 +1470,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
             let food = this.actor.data.data.attributes.saturation.value;
             let water = this.actor.data.data.attributes.thirst.value;
             let fatigue = this.actor.data.data.attributes.fatigue.value;
-            let manualexhaustion = this.actor.data.data.attributes.exhaustionpoints.value;
+            let manualexhaustion = this.actor.data.data.attributes.exhaustion.value;
             //Temperature Exhaustion
             if (temp === "exenegised") {
                 newexhaustion += -1;
@@ -1911,7 +1918,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
                     });
                     this.actor.data.data.attributes.wounds.value--;
                     this.actor.data.data.attributes.hd--;
-                    this.actor.data.data.attributes.exhaustionpoints.value++;
+                    this.actor.data.data.attributes.exhaustion.value++;
                 } else if (roll <= 8) {
                     ChatMessage.create({
                         user: game.user._id,
@@ -1931,7 +1938,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
                         }
                     });
                     this.actor.data.data.attributes.wounds.value--;
-                    this.actor.data.data.attributes.exhaustionpoints.value++;
+                    this.actor.data.data.attributes.exhaustion.value++;
                 } else {
                     ChatMessage.create({
                         user: game.user._id,
@@ -1957,7 +1964,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
             let food = this.actor.data.data.attributes.saturation.value;
             let water = this.actor.data.data.attributes.thirst.value;
             let fatigue = this.actor.data.data.attributes.fatigue.value;
-            let manualexhaustion = this.actor.data.data.attributes.exhaustionpoints.value;
+            let manualexhaustion = this.actor.data.data.attributes.exhaustion.value;
             //Temperature Exhaustion
             if (temp === "exenegised") {
                 newexhaustion += -1;
@@ -2488,4 +2495,14 @@ class DSC extends Application {
         });
     }
 }
-//Hooks.on('canvasReady', Darkscreen.addChatControl);
+//Hooks.on('canvasReady', Darkscreen.addChatControl)
+Hooks.on('canvasReady', function(){
+	if(game.settings.get('darksheet', 'hideSRDCOMP')){
+		game.packs.delete("dnd5e.items");
+//		game.packs.delete("dnd5e.classes");
+		game.packs.delete("dnd5e.tradegoods");
+		game.packs.delete("dnd5e.heroes");
+		console.log("Darksheet || Packs deleted");
+	}
+ 
+});
