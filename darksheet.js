@@ -32,6 +32,54 @@ Hooks.once('init', function() {
         default: false,
         type: Boolean,
     });
+    game.settings.register('darksheet', 'hidenotches', {
+        name: 'Hide Notches',
+        hint: 'Enable to hide the notches from players inventories and from item-sheets',
+        scope: 'world',
+        config: true,
+        default: false,
+        type: Boolean,
+    });
+    game.settings.register('darksheet', 'disablefragility', {
+        name: 'Disable Fragility',
+        hint: 'Check to disable fragility and hide it from item-sheets',
+        scope: 'world',
+        config: true,
+        default: false,
+        type: Boolean,
+    });
+    game.settings.register('darksheet', 'disabletemper', {
+        name: 'Disable Tempering',
+        hint: 'Check to disable item-tempering and hide it from item-sheets',
+        scope: 'world',
+        config: true,
+        default: false,
+        type: Boolean,
+    });
+    game.settings.register('darksheet', 'hidedamageac', {
+        name: 'Hide DAMAGE & AC',
+        hint: 'Check to disable the display of the current damage/ac of an item behind that item',
+        scope: 'world',
+        config: true,
+        default: false,
+        type: Boolean,
+    });
+    game.settings.register('darksheet', 'disableitemquality', {
+        name: 'Disable Item-Quality',
+        hint: 'Check to disable item-quality and hide it from item-sheets',
+        scope: 'world',
+        config: true,
+        default: false,
+        type: Boolean,
+    });
+    game.settings.register('darksheet', 'hideammodie', {
+        name: 'Hide Ammodie',
+        hint: 'Enable to hide the ammodie-section from players inventories and from item-sheets',
+        scope: 'world',
+        config: true,
+        default: false,
+        type: Boolean,
+    });
     game.settings.register('darksheet', 'hideSRDCOMP', {
         name: 'Unloads SRD compendiums (Recommended)',
         hint: 'This option unloads all redundant SRD compendiums (requires reload)',
@@ -55,6 +103,14 @@ Hooks.once('init', function() {
         config: true,
         default: false,
         type: Boolean,
+    }); 
+	game.settings.register('darksheet', 'smalldefense', {
+        name: 'Variant: Small Defense',
+        hint: 'If you want to use smaller modifiers while playing with Active Defense, try this Small Defense variant. Defense Rolls: When you make a defense roll, roll a d20 and add your AC minus 10. The opposing DC is 12 plus the attackers normal attack bonus.',
+        scope: 'world',
+        config: true,
+        default: false,
+        type: Boolean,
     });
     game.settings.register('darksheet', 'intmod', {
         name: 'Intelligent Initiative',
@@ -66,7 +122,15 @@ Hooks.once('init', function() {
     });
     game.settings.register('darksheet', 'destroyshatter', {
         name: 'Shattered items should NOT be destroyed.',
-        hint: 'Enabling this will keep shattered items with [Shattered]in their name',
+        hint: 'Enabling this will keep shattered items with [Shattered] in their name instead of deleting them',
+        scope: 'world',
+        config: true,
+        default: false,
+        type: Boolean,
+    });
+    game.settings.register('darksheet', 'shatterwhen1', {
+        name: '[Houserule] Shatter when 1',
+        hint: 'Enabling this will shatter items when they reach 1 AC or 1 damage regardless of fragility',
         scope: 'world',
         config: true,
         default: false,
@@ -76,7 +140,7 @@ Hooks.once('init', function() {
         name: 'settings',
         hint: 'settings',
         scope: 'world',
-        config: true,
+        config: false,
         default: 'no',
         type: String,
 	});
@@ -377,7 +441,12 @@ export class DarkItemSheet5e extends ItemSheet {
 		data.itemStatus = this._getItemStatus(data.item);
 		data.itemProperties = this._getItemProperties(data.item);
 		data.isPhysical = data.item.data.hasOwnProperty("quantity");
-
+		data.hideammodie = game.settings.get('darksheet', 'hideammodie');//
+		data.hidenotches = game.settings.get('darksheet', 'hidenotches');//
+		data.disablefragility = game.settings.get('darksheet', 'disablefragility');//
+		data.disabletemper = game.settings.get('darksheet', 'disabletemper');//
+		data.disableitemquality = game.settings.get('darksheet', 'disableitemquality');//
+		data.hidedamageac = game.settings.get('darksheet', 'hidedamageac');//
 		// Action Details
 		data.hasAttackRoll = this.item.hasAttack;
 		data.isHealing = data.item.data.actionType === "heal";
@@ -502,6 +571,12 @@ export class DarkSheet extends ActorSheet5eCharacter {
 		data.slotbasedinventory = game.settings.get('darksheet', 'slotbasedinventory');//
 		data.hidesettings = game.settings.get('darksheet', 'hidesettings');//
 		data.hidechecks = game.settings.get('darksheet', 'hidechecks');//
+		data.hideammodie = game.settings.get('darksheet', 'hideammodie');//
+		data.hidenotches = game.settings.get('darksheet', 'hidenotches');//
+		data.disablefragility = game.settings.get('darksheet', 'disablefragility');//
+		data.disabletemper = game.settings.get('darksheet', 'disabletemper');//
+		data.disableitemquality = game.settings.get('darksheet', 'disableitemquality');//
+		data.hidedamageac = game.settings.get('darksheet', 'hidedamageac');//
 
 		return data;
 	}
@@ -588,7 +663,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 				else if(temper === "Pure"){temper = 0.5;}
 				else if(temper === "Royal"){temper = 0.25;}
 				else if(temper === "Astral"){temper = 0.125;}
-				
+				if(game.settings.get('darksheet', 'disabletemper')){temper = 1;}
 				if(darkitem.name.includes("[Shattered]"))
 				{
 				ui.notifications.warn("This item is [Shattered], you need to rename it first...");
@@ -610,39 +685,41 @@ export class DarkSheet extends ActorSheet5eCharacter {
 					else if ( fragility === "custom" ){ 
 					fragility = maxnotches;
 					}
-					else if(notches >= parseInt(darkitem.flags.darksheet.item.fragility)){
-					if(game.settings.get('darksheet', 'destroyshatter')){
-					let newname = "[Shattered] " + darkitem.name;
-					this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'name': newname});
-					}
-					else{
-					this.actor.deleteEmbeddedEntity("OwnedItem", darkitem._id);
-					}
-					console.log(name + " should be destroyed");
-					let content = `
-					<div class="dnd5e chat-card item-card">
-						<header class="card-header flexrow">
-							<img src="${this.actor.data.token.img}" title="" width="36" height="36" style="border: none;"/> <h1>${this.actor.name}'s </h1>
-						</header>
-						<label style="font-size: 14px;">${name} just shattered</label>
-					</div>`;
-					let rollWhisper = null;
-						let rollBlind = false;
-						let rollMode = game.settings.get("core", "rollMode");
-						if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperIDs("GM");
-						if (rollMode === "blindroll") rollBlind = true;
-						ChatMessage.create({
-							user: game.user._id,
-							content: content,
-							speaker: {
-							actor: this.actor._id,
-							token: this.actor.token,
-							alias: this.actor.name
-							},
-							sound: CONFIG.sounds.dice,
-						});
-			
-					}
+					else if(notches >= parseInt(darkitem.flags.darksheet.item.fragility) && game.settings.get('darksheet', 'disablefragility') == false){
+
+						if(game.settings.get('darksheet', 'destroyshatter')){
+							let newname = "[Shattered] " + darkitem.name;
+							this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'name': newname});
+						}
+						else{
+							this.actor.deleteEmbeddedEntity("OwnedItem", darkitem._id);
+						}
+						console.log(name + " should be destroyed");
+						let content = `
+						<div class="dnd5e chat-card item-card">
+							<header class="card-header flexrow">
+								<img src="${this.actor.data.token.img}" title="" width="36" height="36" style="border: none;"/> <h1>${this.actor.name}'s </h1>
+							</header>
+							<label style="font-size: 14px;">${name} just shattered</label>
+						</div>`;
+							let rollWhisper = null;
+							let rollBlind = false;
+							let rollMode = game.settings.get("core", "rollMode");
+							if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperIDs("GM");
+							if (rollMode === "blindroll") rollBlind = true;
+							ChatMessage.create({
+								user: game.user._id,
+								content: content,
+								speaker: {
+								actor: this.actor._id,
+								token: this.actor.token,
+								alias: this.actor.name
+								},
+								sound: CONFIG.sounds.dice,
+							});
+				
+						}
+					
 				}
 				//VALUE CALCULATION==========================================
 				let quality = darkitem.flags.darksheet.item.quality;
@@ -672,6 +749,17 @@ export class DarkSheet extends ActorSheet5eCharacter {
 						if(newAC >= basenotchdamage){newAC = basenotchdamage}
 						this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.armor.value': newAC});
 						this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.basenotchdamage': basenotchdamage});
+						if(newAC <= 1){ //SHATTER IF AC 1 OR SLOWER
+							if(game.settings.get('darksheet', 'shatterwhen1') && game.settings.get('darksheet', 'disablefragility') == false){
+								if(game.settings.get('darksheet', 'destroyshatter')){
+									let newname = "[Shattered] " + darkitem.name;
+									this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'name': newname});
+								}
+								else{
+									this.actor.deleteEmbeddedEntity("OwnedItem", darkitem._id);
+								}
+							}
+						}
 					}
 				}
 				if (darkitem.type === "tool"){
@@ -726,6 +814,15 @@ export class DarkSheet extends ActorSheet5eCharacter {
 					  case "2 ":
 						weapondamage = "(1) ";
 					  this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.basenotchdamage': notches});
+					  if(game.settings.get('darksheet', 'shatterwhen1') && game.settings.get('darksheet', 'disablefragility') == false){
+							if(game.settings.get('darksheet', 'destroyshatter')){
+								let newname = "[Shattered] " + darkitem.name;
+								this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'name': newname});
+							}
+							else{
+								this.actor.deleteEmbeddedEntity("OwnedItem", darkitem._id);
+							}
+					  }
 					  break;
 					//CASES FOR single dice damage
 					  case "1d20 ":weapondamage = "1d12 ";break;
@@ -737,6 +834,15 @@ export class DarkSheet extends ActorSheet5eCharacter {
 					  break;
 					  case "1d4 ":weapondamage = "1 ";
 					  this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.basenotchdamage': notches});
+					  if(game.settings.get('darksheet', 'shatterwhen1') && game.settings.get('darksheet', 'disablefragility') == false){
+							if(game.settings.get('darksheet', 'destroyshatter')){
+								let newname = "[Shattered] " + darkitem.name;
+								this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'name': newname});
+							}
+							else{
+								this.actor.deleteEmbeddedEntity("OwnedItem", darkitem._id);
+							}
+					  }
 					  break;
 					  default:
 						// code block
@@ -868,6 +974,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
             let roll = new Roll('@ammodie', {
                 ammodie: darkitem.flags.darksheet.item.ammodie
             }).roll();
+			let rollWhisper = null;
             let rollMode = game.settings.get("core", "rollMode");
             let currentdie = darkitem.flags.darksheet.item.ammodie;
             if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperIDs("GM");
@@ -910,12 +1017,13 @@ export class DarkSheet extends ActorSheet5eCharacter {
 				let fragility = darkitem.flags.darksheet.item.fragility;
 				let maxnotches = darkitem.flags.darksheet.item.maxnotches;
 				let basenotchdamage;
+				
 				let temper = darkitem.flags.darksheet.item.temper;
 				if(temper === "" || temper === undefined){temper = 1;}
 				else if(temper === "Pure"){temper = 0.5;}
 				else if(temper === "Royal"){temper = 0.25;}
 				else if(temper === "Astral"){temper = 0.125;}
-				
+				if(game.settings.get('darksheet', 'disabletemper')){temper = 1;}
 				if(darkitem.name.includes("[Shattered]"))
 				{
 				ui.notifications.warn("This item is [Shattered], you need to rename it first...");
@@ -937,39 +1045,41 @@ export class DarkSheet extends ActorSheet5eCharacter {
 					else if ( fragility === "custom" ){ 
 					fragility = maxnotches;
 					}
-					else if(notches >= parseInt(darkitem.flags.darksheet.item.fragility)){
-					if(game.settings.get('darksheet', 'destroyshatter')){
-					let newname = "[Shattered] " + darkitem.name;
-					this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'name': newname});
-					}
-					else{
-					this.actor.deleteEmbeddedEntity("OwnedItem", darkitem._id);
-					}
-					console.log(name + " should be destroyed");
-					let content = `
-					<div class="dnd5e chat-card item-card">
-						<header class="card-header flexrow">
-							<img src="${this.actor.data.token.img}" title="" width="36" height="36" style="border: none;"/> <h1>${this.actor.name}'s </h1>
-						</header>
-						<label style="font-size: 14px;">${name} just shattered</label>
-					</div>`;
-					let rollWhisper = null;
-						let rollBlind = false;
-						let rollMode = game.settings.get("core", "rollMode");
-						if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperIDs("GM");
-						if (rollMode === "blindroll") rollBlind = true;
-						ChatMessage.create({
-							user: game.user._id,
-							content: content,
-							speaker: {
-							actor: this.actor._id,
-							token: this.actor.token,
-							alias: this.actor.name
-							},
-							sound: CONFIG.sounds.dice,
-						});
-			
-					}
+					else if(notches >= parseInt(darkitem.flags.darksheet.item.fragility) && game.settings.get('darksheet', 'disablefragility') == false){
+
+						if(game.settings.get('darksheet', 'destroyshatter')){
+							let newname = "[Shattered] " + darkitem.name;
+							this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'name': newname});
+						}
+						else{
+							this.actor.deleteEmbeddedEntity("OwnedItem", darkitem._id);
+						}
+						console.log(name + " should be destroyed");
+						let content = `
+						<div class="dnd5e chat-card item-card">
+							<header class="card-header flexrow">
+								<img src="${this.actor.data.token.img}" title="" width="36" height="36" style="border: none;"/> <h1>${this.actor.name}'s </h1>
+							</header>
+							<label style="font-size: 14px;">${name} just shattered</label>
+						</div>`;
+							let rollWhisper = null;
+							let rollBlind = false;
+							let rollMode = game.settings.get("core", "rollMode");
+							if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperIDs("GM");
+							if (rollMode === "blindroll") rollBlind = true;
+							ChatMessage.create({
+								user: game.user._id,
+								content: content,
+								speaker: {
+								actor: this.actor._id,
+								token: this.actor.token,
+								alias: this.actor.name
+								},
+								sound: CONFIG.sounds.dice,
+							});
+				
+						}
+					
 				}
 				//VALUE CALCULATION==========================================
 				let quality = darkitem.flags.darksheet.item.quality;
@@ -999,6 +1109,17 @@ export class DarkSheet extends ActorSheet5eCharacter {
 						if(newAC >= basenotchdamage){newAC = basenotchdamage}
 						this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.armor.value': newAC});
 						this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.basenotchdamage': basenotchdamage});
+						if(newAC <= 1){ //SHATTER IF AC 1 OR SLOWER
+							if(game.settings.get('darksheet', 'shatterwhen1') && game.settings.get('darksheet', 'disablefragility') == false){
+								if(game.settings.get('darksheet', 'destroyshatter')){
+									let newname = "[Shattered] " + darkitem.name;
+									this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'name': newname});
+								}
+								else{
+									this.actor.deleteEmbeddedEntity("OwnedItem", darkitem._id);
+								}
+							}
+						}
 					}
 				}
 				if (darkitem.type === "tool"){
@@ -1053,6 +1174,15 @@ export class DarkSheet extends ActorSheet5eCharacter {
 					  case "2 ":
 						weapondamage = "(1) ";
 					  this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.basenotchdamage': notches});
+					  if(game.settings.get('darksheet', 'shatterwhen1') && game.settings.get('darksheet', 'disablefragility') == false){
+							if(game.settings.get('darksheet', 'destroyshatter')){
+								let newname = "[Shattered] " + darkitem.name;
+								this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'name': newname});
+							}
+							else{
+								this.actor.deleteEmbeddedEntity("OwnedItem", darkitem._id);
+							}
+					  }
 					  break;
 					//CASES FOR single dice damage
 					  case "1d20 ":weapondamage = "1d12 ";break;
@@ -1064,6 +1194,15 @@ export class DarkSheet extends ActorSheet5eCharacter {
 					  break;
 					  case "1d4 ":weapondamage = "1 ";
 					  this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.basenotchdamage': notches});
+					  if(game.settings.get('darksheet', 'shatterwhen1') && game.settings.get('darksheet', 'disablefragility') == false){
+							if(game.settings.get('darksheet', 'destroyshatter')){
+								let newname = "[Shattered] " + darkitem.name;
+								this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'name': newname});
+							}
+							else{
+								this.actor.deleteEmbeddedEntity("OwnedItem", darkitem._id);
+							}
+					  }
 					  break;
 					  default:
 						// code block
@@ -2307,6 +2446,10 @@ export class DarkSheet extends ActorSheet5eCharacter {
             let roll2 = new Roll(`d20`).roll().total;
             let rollResult = new Roll(`${roll1}+${ac}`).roll().total;
             let rollResult2 = new Roll(`${roll2}+${ac}`).roll().total;
+			if(game.settings.get('darksheet', 'smalldefense')){
+			rollResult -= 10;
+			rollResult2 -=10;
+			}
             let wounds = this.actor.data.data.attributes.wounds.value;
             let content = `
 <div class="dnd5e chat-card item-card" data-acor-id="${this.actor._id}">
@@ -2523,10 +2666,6 @@ class DSC extends Application {
     constructor(options = {}) {
         super(options);
     }
-	getData() {
-
-		return templateData;
-	}
     openDialog() {
         let $dialog = $('.DSC-window');
         if ($dialog.length > 0) {
@@ -2540,20 +2679,6 @@ class DSC extends Application {
 		console.log(templateData);
 		DSC.renderMenu(templatePath, templateData);
 	}
-    static renderDarkscreen(path, data) {
-        const dialogOptions = {
-            width: 1200,
-            top: 1,
-            left: 1,
-            classes: ['DSC-window']
-        };
-        renderTemplate(path, data).then(dlg => {
-            new Dialog({
-                content: dlg,
-                buttons: {}
-            }, dialogOptions).render(true);
-        });
-    }
     static renderMenu(path, data) {
         const dialogOptions = {
             width: 1200,
@@ -2570,7 +2695,7 @@ class DSC extends Application {
         });
     }
 }
-//Hooks.on('canvasReady', Darkscreen.addChatControl)
+Hooks.on('canvasReady', Darkscreen.addChatControl)
 Hooks.on('canvasReady', function(){
 	if(game.settings.get('darksheet', 'hideSRDCOMP')){
 		game.packs.delete("dnd5e.items");
@@ -2581,3 +2706,4 @@ Hooks.on('canvasReady', function(){
 	}
  
 });
+Hooks.on("init", () => {CONFIG.debug.hooks = true})

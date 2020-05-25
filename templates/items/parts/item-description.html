@@ -40,6 +40,7 @@
 			{{/select}}
 			</select>
         </div>
+		{{#unless disableitemquality}}
 		<div class="form-group">
             <label>Quality/Value</label>
             <select class="hitdice white" name="flags.darksheet.item.quality" data-dtype="String">
@@ -51,6 +52,8 @@
 				{{/select}}
 			</select>
         </div>
+		{{/unless}}
+		{{#unless hideammodie}}
 		<div class="form-group">
 					<label class="rollable ammodice">Ammodie</label>
 					<select class="hitdice white" name="flags.darksheet.item.ammodie" placeholder="d20" data-dtype="String">
@@ -66,6 +69,9 @@
 						{{/select}}
 					</select>
 		</div>	
+		{{/unless}}
+		{{#unless hidenotches}}
+		{{#unless disablefragility}}
 		<div class="form-group">
 					<label class="rollable ammodice tempercost">Fragility</label>
 					<select class="hitdice white" name="flags.darksheet.item.fragility" data-dtype="String">
@@ -81,6 +87,8 @@
 						<input type="text" style="margin: 0;text-align: center;" class="fatepoints" name="flags.darksheet.item.maxnotches" value="{{item.flags.darksheet.item.maxnotches}}" placeholder="0" data-dtype="Number"/>
 					</select>
 		</div>	
+		{{/unless}}
+		{{#unless disabletemper}}
 		<div class="form-group">
 					<label class="rollable ammodice tempercost">Temper</label>
 					<select class="hitdice white" name="flags.darksheet.item.temper" data-dtype="String">
@@ -91,11 +99,13 @@
 						<option value="Astral">Astral (Mythic)</option>
 						{{/select}}
 					</select>
-		</div>	
+		</div>
+		{{/unless}}
         <div class="form-group">
             <label>Notches</label>
             <input type="text" readonly style="margin: 0;text-align: center;" class="fatepoints" name="flags.darksheet.item.notches" value="{{item.flags.darksheet.item.notches}}" placeholder="0" data-dtype="Number"/>
         </div>
+		{{/unless}}
         {{/if}}
 
         <ol class="properties-list">

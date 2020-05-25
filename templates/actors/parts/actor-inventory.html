@@ -2,6 +2,7 @@
 
     {{#if isCharacter}}
     <ol class="currency flexrow">
+	{{#unless ../../hidenotches}}<label class="randomnotch rollable">Random Notch</label>{{/unless}}
         <h3>
             {{localize "DND5E.Currency"}}
             <a class="currency-convert" title="Convert Currency"><i class="fas fa-coins"></i></a>
@@ -10,7 +11,7 @@
         <label class="denomination {{k}}">{{ lookup ../config.currencies k }}</label>
         <input type="text" name="data.currency.{{k}}" value="{{v}}" data-dtype="Number"/>
         {{/each}}
-		<label class="randomnotch rollable">Random Notch</label>
+
     </ol>
     {{/if}}
 
@@ -29,8 +30,12 @@
         <h3 class="item-name flexrow">{{localize section.label}}</h3>
 
         {{#if ../isCharacter}}
+			{{#unless ../hideammodie}}
 			<div class="item-detail item-weight">Ammodie</div>
+			{{/unless}}
+			{{#unless ../hidenotches}}
 			<div class="item-detail item-weight">Notches</div>
+			{{/unless}}
         {{/if}}
 
 		{{#if ../slotSetting}}
@@ -54,24 +59,49 @@
     <ol class="item-list">
     {{#each section.items as |item iid|}}
         <li class="item flexrow" data-item-id="{{item._id}}">
-            <div class="item-name flexrow rollable {{item.flags.darksheet.item.quality}}">
+			{{#if ../../disableitemquality}}
+            <div class="item-name flexrow rollable">
                 <div class="item-image" style="background-image: url({{item.img}})"></div>
-                <h4 class="{{item.flags.darksheet.item.quality}}">
+                <h4 >
                     {{~#if item.isStack}}({{item.data.quantity}}) {{/if}}
-					{{#if item.flags.darksheet.item.temper}} {{item.flags.darksheet.item.temper}} {{else}} <!--{{#if item.flags.darksheet.item.fragility}}<i>({{item.flags.darksheet.item.fragility}})</i>{{/if}}--> {{/if}}
+					{{#unless ../../disabletemper}}{{#if item.flags.darksheet.item.temper}} {{item.flags.darksheet.item.temper}} {{else}}<!--{{#if item.flags.darksheet.item.fragility}}<i>({{item.flags.darksheet.item.fragility}})</i>{{/if}}--> {{/if}}{{/unless}}
 						{{item.name~}} 
-						{{#if item.data.damage.currentweapondamage}}
-							({{item.data.damage.currentweapondamage}})
-						{{/if}}
-						{{#if item.data.armor.value}}
-							({{item.data.armor.value}} AC)
-						{{/if}}
+						{{#unless ../../hidedamageac}}
+							{{#if item.data.damage.currentweapondamage}}
+								({{item.data.damage.currentweapondamage}})
+							{{/if}}
+							{{#if item.data.armor.value}}
+								({{item.data.armor.value}} AC)
+							{{/if}}
+						{{/unless}}
 					{{#if item.data.notchpen}} (Minus <b>{{item.data.notchpen}}</b> to checks) {{/if}}
                     {{~#if item.data.attuned}} <i class="fas fa-sun attuned" title={{localize "DND5E.Attuned"}}></i>{{/if}}
                 </h4>
             </div>
+			{{else}}
+            <div class="item-name flexrow rollable {{item.flags.darksheet.item.quality}}">
+                <div class="item-image" style="background-image: url({{item.img}})"></div>
+                <h4 class="{{item.flags.darksheet.item.quality}}">
+                    {{~#if item.isStack}}({{item.data.quantity}}) {{/if}}
+					{{#unless ../../disabletemper}}{{#if item.flags.darksheet.item.temper}} {{item.flags.darksheet.item.temper}} {{else}}<!--{{#if item.flags.darksheet.item.fragility}}<i>({{item.flags.darksheet.item.fragility}})</i>{{/if}}--> {{/if}}{{/unless}}
+						{{item.name~}} 
+						{{#unless ../../hidedamageac}}
+							{{#if item.data.damage.currentweapondamage}}
+								({{item.data.damage.currentweapondamage}})
+							{{/if}}
+							{{#if item.data.armor.value}}
+								({{item.data.armor.value}} AC)
+							{{/if}}
+						{{/unless}}
+					{{#if item.data.notchpen}} (Minus <b>{{item.data.notchpen}}</b> to checks) {{/if}}
+                    {{~#if item.data.attuned}} <i class="fas fa-sun attuned" title={{localize "DND5E.Attuned"}}></i>{{/if}}
+                </h4>
+            </div>
+			{{/if}}
+
 
             {{#if ../../isCharacter}}
+			{{#unless ../../hideammodie}}
 			<div class="item-detail item-weight">
                 <div class="item-detail">
 				{{~#if flags.darksheet.item.ammodie}}
@@ -79,11 +109,14 @@
 				{{/if}}
                 </div>
             </div>
+			{{/unless}}
+			{{#unless ../../hidenotches}}
             <div class="item-detail item-weight notches">
                 <label class="notchlabel" style="display: block;width: 100%;">{{ flags.darksheet.item.notches}}</label>
 				<button style="width:5px;" class="darksheetbutton-" type="button" id="minus"></button>
 				<button style="width:5px" class="darksheetbuttonplus" type="button" id="plus"></button>
             </div>
+			{{/unless}}
             {{/if}}
 			
 			<div class="item-detail item-weight">
