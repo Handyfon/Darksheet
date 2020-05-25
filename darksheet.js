@@ -2695,7 +2695,7 @@ class DSC extends Application {
         });
     }
 }
-Hooks.on('canvasReady', Darkscreen.addChatControl)
+//Hooks.on('canvasReady', Darkscreen.addChatControl)
 Hooks.on('canvasReady', function(){
 	if(game.settings.get('darksheet', 'hideSRDCOMP')){
 		game.packs.delete("dnd5e.items");
@@ -2706,4 +2706,4 @@ Hooks.on('canvasReady', function(){
 	}
  
 });
-Hooks.on("init", () => {CONFIG.debug.hooks = true})
+//Hooks.on("init", () => {CONFIG.debug.hooks = true})
