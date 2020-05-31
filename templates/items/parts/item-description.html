@@ -78,10 +78,14 @@
 						{{#select item.flags.darksheet.item.fragility}}
 						<option value=""></option>
 						<option value="1">Delicate (1 Notch)</option>
+						<option value="2">Frail (2 Notches)</option>
+						<option value="3">Basic (3 Notches)</option>
 						<option value="5">Solid (5 Notches)</option>
 						<option value="10">Sturdy (10 Notches)</option>
+						<option value="15">Durable (15 Notches)</option>
 						<option value="20">Very Sturdy (20 Notches)</option>
-						<option value="indestructible">Indestructible(100+ Notches)</option>
+						<option value="50">Fabled (20 Notches)</option>
+						<option value="100">Indestructible(100+ Notches)</option>
 						<option value="custom">Custom (Field Below)</option>
 						{{/select}}
 						<input type="text" style="margin: 0;text-align: center;" class="fatepoints" name="flags.darksheet.item.maxnotches" value="{{item.flags.darksheet.item.maxnotches}}" placeholder="0" data-dtype="Number"/>

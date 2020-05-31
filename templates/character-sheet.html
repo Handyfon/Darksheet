@@ -570,7 +570,22 @@
 		
 		{{#if data.status.isUnconscious}}<label class="conditiontext activecondition">Unconscious{{else}}<label class="conditiontext">Unconscious{{/if}}
 		<input style="display: none;" type="checkbox" type="Boolean" name="data.status.isUnconscious" data-dtype="Boolean" {{checked data.status.isUnconscious}}/><span></span></label>
-		
+			<div style="display: none;}">
+			{{#if data.status.isExhaustion1}}<label class="conditiontext activecondition">Exhaustion1{{else}}<label class="conditiontext">Exhaustion1{{/if}}
+			<input style="display: none;" type="checkbox" type="Boolean" name="data.status.isExhaustion1" data-dtype="Boolean" {{checked data.status.isExhaustion1}}/><span></span></label>
+			
+			{{#if data.status.isExhaustion2}}<label class="conditiontext activecondition">Exhaustion2{{else}}<label class="conditiontext">Exhaustion2{{/if}}
+			<input style="display: none;" type="checkbox" type="Boolean" name="data.status.isExhaustion2" data-dtype="Boolean" {{checked data.status.isExhaustion2}}/><span></span></label>
+			
+			{{#if data.status.isExhaustion3}}<label class="conditiontext activecondition">Exhaustion3{{else}}<label class="conditiontext">Exhaustion3{{/if}}
+			<input style="display: none;" type="checkbox" type="Boolean" name="data.status.isExhaustion3" data-dtype="Boolean" {{checked data.status.isExhaustion3}}/><span></span></label>
+			
+			{{#if data.status.isExhaustion4}}<label class="conditiontext activecondition">Exhaustion4{{else}}<label class="conditiontext">Exhaustion4{{/if}}
+			<input style="display: none;" type="checkbox" type="Boolean" name="data.status.isExhaustion4" data-dtype="Boolean" {{checked data.status.isExhaustion4}}/><span></span></label>
+			
+			{{#if data.status.isExhaustion5}}<label class="conditiontext activecondition">Exhaustion5{{else}}<label class="conditiontext">Exhaustion5{{/if}}
+			<input style="display: none;" type="checkbox" type="Boolean" name="data.status.isExhaustion5" data-dtype="Boolean" {{checked data.status.isExhaustion5}}/><span></span></label>
+			</div>
 		</div>
 		{{else}}
 		{{/if}}

@@ -136,11 +136,27 @@ Hooks.once('init', function() {
         default: false,
         type: Boolean,
     });
-    game.settings.register('darksheet', 'darkscreenval', {
-        name: 'settings',
-        hint: 'settings',
+    game.settings.register('darksheet', 'darkscreennames', {
+        name: 'names',
+        hint: 'names',
         scope: 'world',
-        config: false,
+        config: true,
+        default: 'no',
+        type: String,
+	});
+    game.settings.register('darksheet', 'darkscreenval', {
+        name: 'values',
+        hint: 'values',
+        scope: 'world',
+        config: true,
+        default: 'no',
+        type: String,
+	});
+    game.settings.register('darksheet', 'questtable', {
+        name: 'values',
+        hint: 'values',
+        scope: 'world',
+        config: true,
         default: 'no',
         type: String,
 	});
@@ -237,6 +253,21 @@ Hooks.on('updateActor', (actor, updates, options, userId) => {
 
                 if (actorData.data.status.isConcentrating && !t.data.effects.includes(concentrating)) await t.toggleEffect(concentrating);
                 if (!actorData.data.status.isConcentrating && t.data.effects.includes(concentrating)) await t.toggleEffect(concentrating);
+
+                if (actorData.data.status.isExhaustion1 && !t.data.effects.includes(exhaustion1)) await t.toggleEffect(exhaustion1);
+                if (!actorData.data.status.isExhaustion1 && t.data.effects.includes(exhaustion1)) await t.toggleEffect(exhaustion1);
+
+                if (actorData.data.status.isExhaustion2 && !t.data.effects.includes(exhaustion2)) await t.toggleEffect(exhaustion2);
+                if (!actorData.data.status.isExhaustion2 && t.data.effects.includes(exhaustion2)) await t.toggleEffect(exhaustion2);
+
+                if (actorData.data.status.isExhaustion3 && !t.data.effects.includes(exhaustion3)) await t.toggleEffect(exhaustion3);
+                if (!actorData.data.status.isExhaustion3 && t.data.effects.includes(exhaustion3)) await t.toggleEffect(exhaustion3);
+
+                if (actorData.data.status.isExhaustion4 && !t.data.effects.includes(exhaustion4)) await t.toggleEffect(exhaustion4);
+                if (!actorData.data.status.isExhaustion4 && t.data.effects.includes(exhaustion4)) await t.toggleEffect(exhaustion4);
+
+                if (actorData.data.status.isExhaustion5 && !t.data.effects.includes(exhaustion5)) await t.toggleEffect(exhaustion5);
+                if (!actorData.data.status.isExhaustion5 && t.data.effects.includes(exhaustion5)) await t.toggleEffect(exhaustion5);
 				
 				//EXHAUSTION STATUS
                 await t.drawEffects();
@@ -252,9 +283,6 @@ Hooks.on('preUpdateToken', async (scene, sceneId, updates, tokenData) => {
     if (!tokenData.currentData.actorLink) return;
     const tokenActor = game.actors.entities.find(a => a.id == tokenData.currentData.actorId);
     if (!tokenActor) return;
-	
-	
-	
     const blinded = "modules/combat-utility-belt/icons/blinded.svg";
     const charmed = "modules/combat-utility-belt/icons/charmed.svg";
     const deafened = "modules/combat-utility-belt/icons/deafened.svg";
@@ -326,6 +354,19 @@ Hooks.on('preUpdateToken', async (scene, sceneId, updates, tokenData) => {
     await tokenActor.update({
         "data.status.isExhaustion1": updates.effects.includes(exhaustion1)
     });
+    await tokenActor.update({
+        "data.status.isExhaustion2": updates.effects.includes(exhaustion2)
+    });
+    await tokenActor.update({
+        "data.status.isExhaustion3": updates.effects.includes(exhaustion3)
+    });
+    await tokenActor.update({
+        "data.status.isExhaustion4": updates.effects.includes(exhaustion4)
+    });
+    await tokenActor.update({
+        "data.status.isExhaustion5": updates.effects.includes(exhaustion5)
+    });
+	
 });
 
 Hooks.on('createToken', async (scene, sceneId, tokenData, options, userId) => {
@@ -395,7 +436,11 @@ Hooks.on('createToken', async (scene, sceneId, tokenData, options, userId) => {
 
             if (actorData.data.status.isConcentrating) await t.toggleEffect(concentrating);
 
-            if (actorData.data.attributes.newexhaustion === 1) await t.toggleEffect(exhaustion1);
+            if (actorData.data.status.isExhaustion1) await t.toggleEffect(exhaustion1);
+            if (actorData.data.status.isExhaustion2) await t.toggleEffect(exhaustion2);
+            if (actorData.data.status.isExhaustion3) await t.toggleEffect(exhaustion3);
+            if (actorData.data.status.isExhaustion4) await t.toggleEffect(exhaustion4);
+            if (actorData.data.status.isExhaustion5) await t.toggleEffect(exhaustion5);
             await t.drawEffects();
         }
     });
@@ -625,8 +670,33 @@ export class DarkSheet extends ActorSheet5eCharacter {
             if (newexhaustion <= 0) {
                 newexhaustion = 0;
             }
-            console.log("(DarkSheet): New Exhaustion: " + this.actor.data.data.attributes.newexhaustion);
+			let exhaustion1 = false;
+			let exhaustion2 = false;
+			let exhaustion3 = false;
+			let exhaustion4 = false;
+			let exhaustion5 = false;
+            if(newexhaustion === 1){
+				exhaustion1 = true;
+			}
+            else if(newexhaustion === 2){
+				exhaustion2 = true;
+			}
+            else if(newexhaustion === 3){
+				exhaustion3 = true;
+			}
+            else if(newexhaustion === 4){
+				exhaustion4 = true;
+			}
+            else if(newexhaustion === 5){
+				exhaustion5 = true;
+			}
+			
 			this.actor.update({'data.attributes.newexhaustion': newexhaustion});
+			this.actor.update({'data.status.isExhaustion1': exhaustion1});
+			this.actor.update({'data.status.isExhaustion2': exhaustion2});
+			this.actor.update({'data.status.isExhaustion3': exhaustion3});
+			this.actor.update({'data.status.isExhaustion4': exhaustion4});
+			this.actor.update({'data.status.isExhaustion5': exhaustion5});
             this.render();
         });
 
@@ -750,7 +820,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 						this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.armor.value': newAC});
 						this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.basenotchdamage': basenotchdamage});
 						if(newAC <= 1){ //SHATTER IF AC 1 OR SLOWER
-							if(game.settings.get('darksheet', 'shatterwhen1') && game.settings.get('darksheet', 'disablefragility') == false){
+							if(game.settings.get('darksheet', 'shatterwhen1') && game.settings.get('darksheet', 'disablefragility') == false && quality === "scarred"){
 								if(game.settings.get('darksheet', 'destroyshatter')){
 									let newname = "[Shattered] " + darkitem.name;
 									this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'name': newname});
@@ -814,7 +884,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 					  case "2 ":
 						weapondamage = "(1) ";
 					  this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.basenotchdamage': notches});
-					  if(game.settings.get('darksheet', 'shatterwhen1') && game.settings.get('darksheet', 'disablefragility') == false){
+					  if(game.settings.get('darksheet', 'shatterwhen1') && game.settings.get('darksheet', 'disablefragility') == false && quality === "scarred"){
 							if(game.settings.get('darksheet', 'destroyshatter')){
 								let newname = "[Shattered] " + darkitem.name;
 								this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'name': newname});
@@ -834,7 +904,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 					  break;
 					  case "1d4 ":weapondamage = "1 ";
 					  this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.basenotchdamage': notches});
-					  if(game.settings.get('darksheet', 'shatterwhen1') && game.settings.get('darksheet', 'disablefragility') == false){
+					  if(game.settings.get('darksheet', 'shatterwhen1') && game.settings.get('darksheet', 'disablefragility') == false && quality === "scarred"){
 							if(game.settings.get('darksheet', 'destroyshatter')){
 								let newname = "[Shattered] " + darkitem.name;
 								this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'name': newname});
@@ -1110,7 +1180,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 						this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.armor.value': newAC});
 						this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.basenotchdamage': basenotchdamage});
 						if(newAC <= 1){ //SHATTER IF AC 1 OR SLOWER
-							if(game.settings.get('darksheet', 'shatterwhen1') && game.settings.get('darksheet', 'disablefragility') == false){
+							if(game.settings.get('darksheet', 'shatterwhen1') && game.settings.get('darksheet', 'disablefragility') == false && quality === "scarred"){
 								if(game.settings.get('darksheet', 'destroyshatter')){
 									let newname = "[Shattered] " + darkitem.name;
 									this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'name': newname});
@@ -1174,7 +1244,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 					  case "2 ":
 						weapondamage = "(1) ";
 					  this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.basenotchdamage': notches});
-					  if(game.settings.get('darksheet', 'shatterwhen1') && game.settings.get('darksheet', 'disablefragility') == false){
+					  if(game.settings.get('darksheet', 'shatterwhen1') && game.settings.get('darksheet', 'disablefragility') == false && quality === "scarred"){
 							if(game.settings.get('darksheet', 'destroyshatter')){
 								let newname = "[Shattered] " + darkitem.name;
 								this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'name': newname});
@@ -1194,7 +1264,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 					  break;
 					  case "1d4 ":weapondamage = "1 ";
 					  this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'data.damage.basenotchdamage': notches});
-					  if(game.settings.get('darksheet', 'shatterwhen1') && game.settings.get('darksheet', 'disablefragility') == false){
+					  if(game.settings.get('darksheet', 'shatterwhen1') && game.settings.get('darksheet', 'disablefragility') == false && quality === "scarred"){
 							if(game.settings.get('darksheet', 'destroyshatter')){
 								let newname = "[Shattered] " + darkitem.name;
 								this.actor.updateEmbeddedEntity('OwnedItem', {_id: darkitem._id, 'name': newname});
@@ -1230,7 +1300,79 @@ export class DarkSheet extends ActorSheet5eCharacter {
             let table = game.tables.entities.find(t => t.data.name === "Afflictions");
             table.draw()
         });
-
+		
+        html.find('.minusspellslot-spell1').click(event => {
+            event.preventDefault();
+			let actor = this.actor.data.data.spells.spell1.value;
+			if(actor >= 1){
+				actor -= 1;
+				this.actor.update({'data.spells.spell1.value': actor});
+			}
+        });
+        html.find('.minusspellslot-spell2').click(event => {
+            event.preventDefault();
+			let actor = this.actor.data.data.spells.spell2.value;
+			if(actor >= 1){
+				actor -= 1;
+				this.actor.update({'data.spells.spell2.value': actor});
+			}
+        });
+        html.find('.minusspellslot-spell3').click(event => {
+            event.preventDefault();
+			let actor = this.actor.data.data.spells.spell3.value;
+			if(actor >= 1){
+				actor -= 1;
+				this.actor.update({'data.spells.spell3.value': actor});
+			}
+        });
+        html.find('.minusspellslot-spell4').click(event => {
+            event.preventDefault();
+			let actor = this.actor.data.data.spells.spell4.value;
+			if(actor >= 1){
+				actor -= 1;
+				this.actor.update({'data.spells.spell4.value': actor});
+			}
+        });
+        html.find('.minusspellslot-spell5').click(event => {
+            event.preventDefault();
+			let actor = this.actor.data.data.spells.spell5.value;
+			if(actor >= 1){
+				actor -= 1;
+				this.actor.update({'data.spells.spell5.value': actor});
+			}
+        });
+        html.find('.minusspellslot-spell6').click(event => {
+            event.preventDefault();
+			let actor = this.actor.data.data.spells.spell2.value;
+			if(actor >= 1){
+				actor -= 1;
+				this.actor.update({'data.spells.spell6.value': actor});
+			}
+        });
+        html.find('.minusspellslot-spell7').click(event => {
+            event.preventDefault();
+			let actor = this.actor.data.data.spells.spell7.value;
+			if(actor >= 1){
+				actor -= 1;
+				this.actor.update({'data.spells.spell7.value': actor});
+			}
+        });
+        html.find('.minusspellslot-spell8').click(event => {
+            event.preventDefault();
+			let actor = this.actor.data.data.spells.spell8.value;
+			if(actor >= 1){
+				actor -= 1;
+				this.actor.update({'data.spells.spell8.value': actor});
+			}
+        });
+        html.find('.minusspellslot-spell9').click(event => {
+            event.preventDefault();
+			let actor = this.actor.data.data.spells.spell9.value;
+			if(actor >= 1){
+				actor -= 1;
+				this.actor.update({'data.spells.spell9.value': actor});
+			}
+        });
         /*LOOK FOR BURNOUTDIE*/
         html.find('.burnoutdie').click(event => {
             event.preventDefault();
@@ -1655,6 +1797,33 @@ export class DarkSheet extends ActorSheet5eCharacter {
             }
             this.actor.data.data.attributes.newexhaustion = newexhaustion;
             console.log("(DarkSheet): New Exhaustion: " + this.actor.data.data.attributes.newexhaustion);
+			
+			let exhaustion1 = false;
+			let exhaustion2 = false;
+			let exhaustion3 = false;
+			let exhaustion4 = false;
+			let exhaustion5 = false;
+            if(newexhaustion === 1){
+				exhaustion1 = true;
+			}
+            else if(newexhaustion === 2){
+				exhaustion2 = true;
+			}
+            else if(newexhaustion === 3){
+				exhaustion3 = true;
+			}
+            else if(newexhaustion === 4){
+				exhaustion4 = true;
+			}
+            else if(newexhaustion === 5){
+				exhaustion5 = true;
+			}
+			
+			this.actor.update({'data.status.isExhaustion1': exhaustion1});
+			this.actor.update({'data.status.isExhaustion2': exhaustion2});
+			this.actor.update({'data.status.isExhaustion3': exhaustion3});
+			this.actor.update({'data.status.isExhaustion4': exhaustion4});
+			this.actor.update({'data.status.isExhaustion5': exhaustion5});
 			this.actor.update({'data.attributes.newexhaustion': newexhaustion});
             this.render();
             let exhaustion = this.actor.data.data.attributes.newexhaustion;
@@ -2667,16 +2836,32 @@ class DSC extends Application {
         super(options);
     }
     openDialog() {
+		//LOAD TEMPLATE DATA
         let $dialog = $('.DSC-window');
         if ($dialog.length > 0) {
             $dialog.remove();
             return;
         }
         const templateData = { data: [] };
+		templateData.data = super.getData();
 		templateData.title = "Darker Dungeons - Gamemaster Screen";
-		templateData.settings = game.settings.get("darksheet","darkscreenval");
-        const templatePath = "modules/darksheet/templates/darkscreen.html";;
-		console.log(templateData);
+		templateData.darkscreenval = game.settings.get('darksheet', 'darkscreenval').split(",");
+		templateData.darkscreennames = game.settings.get('darksheet', 'darkscreennames').split(",");
+		for(let i = 0; i < templateData.darkscreenval.length; i++){
+			templateData[templateData.darkscreennames[i]] = templateData.darkscreenval[i];
+		}
+		//LOAD QUESTTABLE
+		templateData.questtable = game.settings.get('darksheet', 'questtable').split(",");
+		let quest = [];
+		for(let i = 0; i < templateData.questtable.length ; i+=3){
+		quest[i] = "quest" + i;
+		quest[i+1] = "description" +i;
+		quest[i+2] = "reward" + i;
+		templateData[quest[i]] = templateData.questtable[i];
+		templateData[quest[i+1]] = templateData.questtable[i+1];
+		templateData[quest[i+2]] = templateData.questtable[i+2];
+		}
+        const templatePath = "modules/darksheet/templates/darkscreen.html";
 		DSC.renderMenu(templatePath, templateData);
 	}
     static renderMenu(path, data) {
@@ -2688,15 +2873,18 @@ class DSC extends Application {
         };
         renderTemplate(path, data).then(dlg => {
             new Dialog({
-                title: game.i18n.localize('Darker Dungeons - Gamemaster Screen'),
+                title: game.i18n.localize('Darker Dungeons - Gamemaster Screen [WOP version 0.1]'),
                 content: dlg,
                 buttons: {}
             }, dialogOptions).render(true);
         });
     }
 }
-//Hooks.on('canvasReady', Darkscreen.addChatControl)
 Hooks.on('canvasReady', function(){
+	if(game.user.isGM){
+		Darkscreen.addChatControl();
+		console.log("FATE GM TRUE");
+	}
 	if(game.settings.get('darksheet', 'hideSRDCOMP')){
 		game.packs.delete("dnd5e.items");
 //		game.packs.delete("dnd5e.classes");
@@ -2704,6 +2892,8 @@ Hooks.on('canvasReady', function(){
 		game.packs.delete("dnd5e.heroes");
 		console.log("Darksheet || Packs deleted");
 	}
- 
+});
+Hooks.on('closeDialog', function(){
+	event.preventDefault();
 });
 //Hooks.on("init", () => {CONFIG.debug.hooks = true})

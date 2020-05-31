@@ -4,6 +4,16 @@
 .questbutton{
 width: 200px;
 }
+h3.dayheader {
+    color: #b5b1d4 !important;
+}
+input#fname {
+    background: #d9dad6;
+    border: 1px groove black;
+}
+input#itemvalue {
+    width: 200px;
+}
 .flexday{
     background: #d2d2d2;
     display: flex;
@@ -518,7 +528,9 @@ input[type="checkbox"] {
 }
 
 
-
+.biosections {
+    padding: 10px;
+}
 .dnd5e.sheet.item .sheet-body .item-properties {
     flex: 0 0 200px;
     margin: 5px 5px 5px 0;

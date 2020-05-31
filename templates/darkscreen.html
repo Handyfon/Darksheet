@@ -2,10 +2,78 @@
 <html id="darkscreen">
 <form class="{{cssClass}} flexcol" autocomplete="off">
 	<header class="sheet-header flexrow">
-	
+	<script>
+	</script>
 	</header>
 	<section class="sheet-body">
+<script type="text/javascript">
+//ONLOAD
+	console.log("test")
+	/*if (typeof name === "undefined") {
+	let table = document.getElementById("questtable");
+	}
+    var row = table.insertRow(rows);
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    var cell3 = row.insertCell(2);
+    var cell4 = row.insertCell(3);
+    var totalRowCount = 0;
+    var rowCount = 0;
+	var rowname = 0;
+	var questname ="";
+	var questdescription ="";
+	var questreward ="";
+    var rows = game.settings.get('darksheet', 'questtable').split(",").length / 3;
+    for (var i = 0; i < rows; i++) {
+	questname = "quest"+rowCount;
+	questdescription = "description"+rowCount;
+	questreward = "reward"+rowCount;
+    totalRowCount++;
+    rowCount++;
+	rowname = rowCount +2;
+    cell1.innerHTML = `<input class="questtableinput" type="text" style="width:100px" value="${questname}" name="quest${rowCount}">`;
+    cell2.innerHTML = `<input class="questtableinput" type="text" style="width:250px" value="${questdescription}" name="description${rowCount}">`;
+    cell3.innerHTML = `<input class="questtableinput" type="text" style="width:100px" value="${questreward}" name="reward${rowCount}">`;
+    cell4.innerHTML = `<input type="button" value="X" onclick="SomeDeleteRowFunction(this)">`;
+    }
+	*/
+	darkscreenval = game.settings.get('darksheet', 'darkscreenval').split(",");
+	
+	console.log(localStorage);
+	Hooks.on('closeDialog', function(){//ON CLOSE SAVE VALUES
+	save();
+	});
+	
+	function save(){
+	let newdata = [];
+	var darkscreeninputs = document.getElementsByClassName("darkscreeninput");
+	var darkscreennames = [];
+	var darkscreenvalues = [];
+	for(i=0;i<darkscreeninputs.length;i++){
+		darkscreennames.push(darkscreeninputs[i].name);
+		darkscreenvalues.push(darkscreeninputs[i].value);
+	}
+	var questtableinput = document.getElementsByClassName("questtableinput");
+	var questtableoutput = [];
+	for(i=0;i<questtableinput.length;i++){
+		questtableoutput.push(questtableinput[i].value);
+	}
+	//DEBUG
 
+	let odarkscreennames = darkscreennames.toString();
+	let odarkscreenvalues = darkscreenvalues.toString();
+	game.settings.set('darksheet', 'darkscreennames', odarkscreennames);
+	game.settings.set('darksheet', 'darkscreenval', odarkscreenvalues);
+	game.settings.set('darksheet', 'questtable', questtableoutput);
+	console.log(darkscreennames);
+	console.log(darkscreenvalues);
+	
+	//SAVE QÙEST TABLE
+	let table = document.getElementById("questtable");
+	localStorage.setItem("table", table);
+	console.log(table);
+	}
+</script>
 
 
 <div id="wrapper">
@@ -15,7 +83,7 @@
             <div class="tab" style="display:flex">
                Pages:
               <label class="tablinks tool" onclick="openCity(event, 'journey')">Journey Helper</label>
-              <label class="tablinks tool" onclick="openCity(event, 'quest')">Quest-Tracker</label>
+              <!--<label class="tablinks tool" onclick="openCity(event, 'quest')">Quest-Tracker</label>-->
               <label class="tablinks tool" onclick="openCity(event, 'forge')">Item-Forge</label>
             </div>
             <script>
@@ -31,13 +99,14 @@
               }
               document.getElementById(cityName).style.display = "block";
               evt.currentTarget.className += " active";
+			  console.log("test");
             }
             </script>
               <div id="quest" class="tabcontent" style="display:none; height:200%">
                 <div><h3 style="text-align:center;margin-top: 10px;background: #0e0e0e21;">|Quest-Tracker|</h3></div>
             <script>
             function addquest() {
-              var table = document.getElementById("questtable");
+			  table = document.getElementById("questtable");
               var row = table.insertRow(rows);
               var cell1 = row.insertCell(0);
               var cell2 = row.insertCell(1);
@@ -52,13 +121,12 @@
                               rowCount++;
                           }
               }
-              cell1.innerHTML = `<input type="text" style="width:100px" value="Quest" name="fname">`;
-              cell2.innerHTML = `<input type="text" style="width:250px" value="Description" name="fname">`;
-              cell3.innerHTML = `<input type="text" style="width:100px" value="reward" name="fname">`;
+              cell1.innerHTML = `<input class="questtableinput" type="text" style="width:100px" value="quest{{rowCount}}" name="quest${rowCount}">`;
+              cell2.innerHTML = `<input class="questtableinput" type="text" style="width:250px" value="description{{rowCount}}" name="description${rowCount}">`;
+              cell3.innerHTML = `<input class="questtableinput" type="text" style="width:100px" value="reward{{rowCount}}" name="reward${rowCount}">`;
               cell4.innerHTML = `<input type="button" value="X" onclick="SomeDeleteRowFunction(this)">`;
             }
                 function SomeDeleteRowFunction(o) {
-                 //no clue what to put here?
                  var p=o.parentNode.parentNode;
                      p.parentNode.removeChild(p);
                 }
@@ -74,13 +142,32 @@
                   
                 </table>
               </div>
+				<script>
+					function forge(gold){
+					itemvalue = document.getElementById("itemvalue").value;
+					document.getElementById("removeanotch").value = itemvalue * 0.1;
+					document.getElementById("pure").value = itemvalue * 2;
+					document.getElementById("pureprice").value = itemvalue * 3;
+					document.getElementById("royal").value = itemvalue * 4;
+					document.getElementById("royalprice").value = itemvalue * 6;
+					document.getElementById("astral").value = itemvalue * 8;
+					document.getElementById("astralprice").value = itemvalue * 12;
+					document.getElementById("worntopris").value = itemvalue * 0.5;
+					document.getElementById("wellworntoworn").value = itemvalue * 0.3;
+					document.getElementById("scarredtowellworn").value = itemvalue * 0.1;
+								//darkscreenUpdate();
+					}
+					function darkscreenUpdate(){
+					}	
+				</script>
               <div id="forge" class="tabcontent" style="display:none; height:200%">
-                <div><h3 style="text-align:center;margin-top: 10px;background: #0e0e0e21;">|Item-Forge|</h3></div>
+                <div><h3 style="text-align:center;margin-top: 10px;background: #0e0e0e21;">|Darker Dungeons Item-Forge|</h3></div>
                 <h2>Item Value</h2>
-                <input type="number"> <input type="button" value="Calculate"></br>
+                <input class="darkscreeninput" type="number" id="itemvalue" name="itemvalue" value="{{itemvalue}}"> <input type="button" onclick="forge(this.value);" value="Calculate"></br>
+
                  </br>
                <div style="display:flex; border-top: solid 1px black;">
-                <h3>Remove a Notch<h3><input type="String" value="10% item value">
+                <h3>Remove a Notch<h3><input class="darkscreeninput" id="removeanotch" name="removeanotch" type="String"  value="{{removeanotch}}" placeholder="10% item value">
               </div>
                <div style="border-top: solid 1px black;">
                 <h3 style="text-align:center">Tempering Costs</h3>
@@ -93,21 +180,21 @@
                     </tr>
                     <tr>
                       <td>Pure</td>
-                      <td><input type="String" value="Base Value x2"></td>
+                      <td><input class="darkscreeninput" id="pure" name="pure" type="String" value="{{pure}}" placeholder="Base Value x2"></td>
                       <td>3 Days</td>
-                      <td><input type="String" value="Base Value x3"></td>
+                      <td><input class="darkscreeninput" id="pureprice" name="pureprice" type="String" value="{{pureprice}}" placeholder="Base Value x3"></td>
                     </tr>
                     <tr>
                       <td>Royal</td>
-                      <td><input type="String" value="Base Value x2"></td>
+                      <td><input class="darkscreeninput" id="royal" name="royal" type="String" value="{{royal}}" placeholder="Base Value x4"></td>
                       <td>1 Week</td>
-                      <td><input type="String" value="Base Value x6"></td>
+                      <td><input class="darkscreeninput" id="royalprice" name="royalprice"type="String" value="{{royalprice}}" placeholder="Base Value x6"></td>
                     </tr>
                     <tr>
                       <td>Astral</td>
-                      <td><input type="String" value="Base Value x8"></td>
+                      <td><input class="darkscreeninput" id="astral" name="astral" type="String" value="{{astral}}" placeholder="Base Value x8"></td>
                       <td>2 Weeks</td>
-                      <td><input type="String" value="Base Value x12"></td>
+                      <td><input class="darkscreeninput" id="astralprice" name="astralprice" type="String" value="{{astralprice}}" placeholder="Base Value x12"></td>
                     </tr>
                   </table>
                   <h3 style="text-align:center">Item Restoration</h3>
@@ -120,15 +207,15 @@
                     </tr>
                     <tr>
                       <td>Worn to Pristine</td>
-                      <td><input type="String" value="50%"></td>
+                      <td><input class="darkscreeninput" id="worntopris" name="worntopris" type="String" value="{{worntopris}}" placeholder="50%"></td>
                     </tr>
                     <tr>
                       <td>Well-Worn to Worn</td>
-                      <td><input type="String" value="30%"></td>
+                      <td><input class="darkscreeninput" id="wellworntoworn" name="wellworntoworn" type="String" value="{{wellworntoworn}}" placeholder="30%"></td>
                     </tr>
                     <tr>
                       <td>Scarred to Well-Worn</td>
-                      <td><input type="String" value="10%"></td>
+                      <td><input class="darkscreeninput" id="scarredtowellworn" name="scarredtowellworn" type="String" value="{{scarredtowellworn}}" placeholder="10%"></td>
                     </tr>
                   </table>
               </div>
@@ -137,74 +224,145 @@
               <h3 style="text-align:center;margin-top: 10px;background: #0e0e0e21;">|Journey Helper|</h3>
               <div style="display:inline-table; border: groove 1px black; padding:10px; width: 500px;">
               <div style="display:flex; border-bottom: 1px solid black; margin-bottom: 5px">
-                Journey Duration<input class="journeydur" style="width: 40px;" type="number" value="{{templateData.journeyd}}" name="templateData.journeyd"> Travel-Pace <input style="width: 30px;" type="text" id="fname" name="fname">
+                Journey Duration<input class="darkscreeninput" style="width: 40px;" type="number" id="journeydur" value="{{journeydur}}" name="journeydur"></input> 
+				Travel-Pace 
+                  <select class="darkscreeninput" name="travelpace" title="{{travelpace}}" id="travelpace">
+					{{#select travelpace}}
+                    <option value="slow">Slow</option>
+                    <option value="medium">Medium</option>
+                    <option value="fast">Fast</option>
+					{{/select}}
+                  </select>
               </div>
               <div>
                 <h3 style="display:inline">Danger-Level</h3>
-                  <select class="test" id="cars">
-                    <option value="5">Lush and verdant forest;</option>
-                    <option value="10">Forest; Coast;.</option>
+                  <select class="darkscreeninput" id="dangerlevel" name="dangerlevel" title="{{dangerlevel}}">
+				   {{#select dangerlevel}}
+                    <option value="1">Safe and civilised</option>
+                    <option value="2">Dangerous frontier</option>
+                    <option value="3">Enemy territory</option>
+                    <option value="4">Heavily populated hostile territory</option>
+                    <option value="5">Lethal and actively hunted</option>
+					{{/select}}
+                  </select>
+				  <script>
+					if (typeof sel === 'undefined') {
+						let sel = document.getElementById('dangerlevel');
+						sel.addEventListener ("change", function () {
+						let dangerlevel = document.getElementById("dangerlevel").value;
+						   document.getElementById("dangerlevelvalue").value = dangerlevel;			   
+						   if(dangerlevel === "1"){
+						   document.getElementById("dangerleveltext").textContent  = "A village, a barren desert, a well-defended plain.";
+						   }
+						   else if(dangerlevel === "2"){
+						   document.getElementById("dangerleveltext").textContent  = "A wild forest, a treacherous swamp, a disturbed graveyard.";
+						   }
+						   else if(dangerlevel === "3"){
+						   document.getElementById("dangerleveltext").textContent  = "A monster's lair, an enemy camp, a haunted wood.";
+						   }
+						   else if(dangerlevel === "4"){
+						   document.getElementById("dangerleveltext").textContent  = "An enemy settlement, a mind-flayer city, a kobold nest.";
+						   }
+						   else if(dangerlevel === "5"){
+						   document.getElementById("dangerleveltext").textContent  = "A plane of madness, a god's domain, a layer of hell.";
+						   }
+						   
+						});
+					}
+				  </script>
+                Danger:<input style="width: 40px;" type="text" id="dangerlevelvalue" readonly name="dangerlevelvalue" value="{{dangerlevel}}">
+				<div class="dangerleveltext" id="dangerleveltext" name="dangerleveltext"> A village, a barren desert, a well-defended plain</div>
+            </div>
+			
+			<div>
+                <h3 style="display:inline">Foraging</h3>
+                  <select class="darkscreeninput" id="foraging" name="foraging" title="{{foraging}}">
+				   {{#select foraging}}
+                    <option value="5">Lush and verdant forest</option>
+                    <option value="10">Forest, Coast.</option>
                     <option value="15">Thin woodland and greenwood.</option>
                     <option value="20">Dry, open plains;</option>
-                    <option value="25">Desert and barren or polluted land;</option>
-                    <option value="30">Toxic or corrupted deadlands;</option>
+                    <option value="25">Desert and barren or polluted land</option>
+                    <option value="30">Toxic or corrupted deadlands</option>
+					{{/select}}
                   </select>
-                DC:<input style="width: 40px;" type="text" id="fname" readonly name="fname" value="5">
+				  <script>
+					if (typeof sel2 === 'undefined') {
+						let sel2 = document.getElementById('foraging');
+						sel2.addEventListener ("change", function () {
+						let foragingdc = document.getElementById("foraging").value;
+						   document.getElementById("foragingdc").value = foragingdc;
+						   if(foragingdc === "5"){
+						   document.getElementById("dangerleveltext-foraging").textContent  = "Food and water are everywhere.";
+						   }					   
+						   else if(foragingdc === "10"){
+						   document.getElementById("dangerleveltext-foraging").textContent  = "Abundant food and clean water.";
+						   }
+						   else if(foragingdc === "15"){
+						   document.getElementById("dangerleveltext-foraging").textContent  = "Food must be actively hunted and water is harder to find.";
+						   }
+						   else if(foragingdc === "20"){
+						   document.getElementById("dangerleveltext-foraging").textContent  = "Very little food or clean water.";
+						   }
+						   else if(foragingdc === "25"){
+						   document.getElementById("dangerleveltext-foraging").textContent  = "Food is extremely rare and water may need treatment.";
+						   }
+						   else if(foragingdc === "30"){
+						   document.getElementById("dangerleveltext-foraging").textContent  = "Food is inedible and water sources are poisoned.";
+						   }
+						   
+						});
+					}
+				  </script>
+                DC:<input style="width: 40px;" type="text" id="foragingdc" readonly name="foragingdc" value="{{foraging}}">
+				<div class="dangerleveltext-foraging" id="dangerleveltext-foraging" name="dangerleveltext-foraging"> Food and Water is easy to come by</div>
             </div>
-               <div> <p style="text-align:center">Food and Water is easy to come by</p></div>
+			<div>
+                <h3 style="display:inline">Guidance</h3>
+                  <select class="darkscreeninput" id="guidance" name="guidance" title="{{guidance}}">
+				   {{#select guidance}}
+                    <option value="5">Wide open plains;</option>
+                    <option value="10">Tall landmarks; Small hills</option>
+                    <option value="15">Light rain or mist</option>
+                    <option value="20">Moonlight night;</option>
+                    <option value="25">Fog; Thick and obscure forest</option>
+                    <option value="30">Clouded night; Impossibly thick fog;</option>
+					{{/select}}
+                  </select>
+				  <script>
+					if (typeof sel3 === 'undefined') {
+						let sel3 = document.getElementById('guidance');
+						sel3.addEventListener ("change", function () {
+						let guidancedc = document.getElementById("guidance").value;
+						   document.getElementById("guidancedc").value = guidancedc;
+						   if(guidancedc === "5"){
+						   document.getElementById("dangerleveltext-guidance").textContent  = "Clear landmarks; Obvious pathway.";
+						   }					   
+						   else if(guidancedc === "10"){
+						   document.getElementById("dangerleveltext-guidance").textContent  = "Tall landmarks; Small hills.";
+						   }
+						   else if(guidancedc === "15"){
+						   document.getElementById("dangerleveltext-guidance").textContent  = "Woods and hills.";
+						   }
+						   else if(guidancedc === "20"){
+						   document.getElementById("dangerleveltext-guidance").textContent  = "Heavy rain or mist ";
+						   }
+						   else if(guidancedc === "25"){
+						   document.getElementById("dangerleveltext-guidance").textContent  = "Fog; Thick and obscure forest";
+						   }
+						   else if(guidancedc === "30"){
+						   document.getElementById("dangerleveltext-guidance").textContent  = " A shifting maze; Magically treacherous terrain.";
+						   }
+						   
+						});
+					}
+				  </script>
+                DC:<input style="width: 40px;" type="text" id="guidancedc" readonly name="guidancedc" value="{{guidance}}">
+				<div class="dangerleveltext-guidance" id="dangerleveltext-guidance" name="dangerleveltext-guidance"> Clear landmarks; Obvious pathway.</div>
             </div>
-              
-            <div style="display:inline-table; height: 50px; width:350px">
-      
-              <div style="border: 1px solid black; height: fit-content;">
-                <h3 class="dayheader">Dawn</h3> 
-                  <div class="flexday">
-                  <div style="width:50%; text-align:center;"> +1 Hunger, +1 Thirst</div>
-                  <input type style="width:50%; text-align:center;" name="RC1" value="{{RC1}}" placeholder="Random Encounter?"></input>
-                  </div>
-                <input type="text" id="fname" style="width:600px " value="this is placeholder text" name="fname">
-              </div>
-              <div style="border: 1px solid black; height: fit-content;">
-                <h3 class="dayheader">Noon</h3>
-                <div class="flexday">
-                  <div style="width:50%; text-align:center;">+1 Fatigue</div>
-                  <input type style="width:50%; text-align:center;" value="Random Encounter"></input>
-                  </div>
-                <input type="text" id="fname" style="width:600px " value="this is placeholder text" name="fname">
-              </div>
-                <div style="border: 1px solid black; height: fit-content;">
-                <h3 class="dayheader">Afternoon</h3>
-                  <div class="flexday">
-                  
-                  <div style="width:50%; text-align:center;"></div>
-                  <input type style="width:50%; text-align:center;" value="Random Encounter"></input>
-                  </div>
-                <input type="text" id="fname" style="width:600px " value="this is placeholder text" name="fname">
-              </div>
-                <div style="border: 1px solid black; height: fit-content;">
-                <h3 class="dayheader">Dusk</h3>
-                  <div class="flexday">
-                  
-                  <div style="width:50%; text-align:center;">+1 Hunger, +1 Thirst, +1 Fatigue</div>
-                  <input type style="width:50%; text-align:center;" value="Random Encounter"></input>
-                  </div>
-                <input type="text" id="fname" style="width:600px " value="this is placeholder text" name="fname">
-              </div>
-              <div style="border: 1px solid black; height: fit-content;">
-                <h3 class="dayheader">Night</h3>
-                  <div class="flexday">
-                  
-                  <div style="width:50%; text-align:center;"></div>
-                  <input type style="width:50%; text-align:center;" value="Random Encounter"></input>
-                  </div>
-                <input type="text" id="fname" style="width:600px " value="this is placeholder text" name="fname">
-              </div>
-              <div style="text-align:center;margin:10px"><label style="background:lightblue;padding:8px;" id="generator" class="generator">Generate Day</label></div>
-			 <script type="module">
-			  /*document.querySelector('#generator').addEventListener('click', generate_Day);*/
-			  </script>
+			
             </div>
-            <div style="border: 1px solid green; width:500px; height 600px; display:table;">
+<div style="border: 1px solid green; width:500px; height 600px; display:table;">
               <h1 style="text-align:center">Player Roles</h1>
               <table>
                 <tr>
@@ -213,13 +371,42 @@
                   <th>Check</th>
                 </tr>
                 <tr>
+				<script>
+				for(let i = 0; i<game.users._source.length; i++){
+				const option = document.createElement("OPTION");
+				const name = document.createTextNode(game.users._source[i].name);
+				option.value = game.users._source[i].name;
+				option.appendChild(name);
+				document.querySelector('#player-guide').appendChild(option);
+				}
+				for(let i = 0; i<game.users._source.length; i++){
+				const option = document.createElement("OPTION");
+				const name = document.createTextNode(game.users._source[i].name);
+				option.value = game.users._source[i].name;
+				option.appendChild(name);
+				document.querySelector('#player-forager').appendChild(option);
+				}
+				for(let i = 0; i<game.users._source.length; i++){
+				const option = document.createElement("OPTION");
+				const name = document.createTextNode(game.users._source[i].name);
+				option.value = game.users._source[i].name;
+				option.appendChild(name);
+				document.querySelector('#player-lookout').appendChild(option);
+				}
+				for(let i = 0; i<game.users._source.length; i++){
+				const option = document.createElement("OPTION");
+				const name = document.createTextNode(game.users._source[i].name);
+				option.value = game.users._source[i].name;
+				option.appendChild(name);
+				document.querySelector('#player-scout').appendChild(option);
+				}
+				</script>
                   <td>Guide:</td>
                   <td>
-                  <select id="guide">
-                  <option value="volvo">Player 1</option>
-                  <option value="saab">Player 2</option>
-                  <option value="mercedes">Player 3</option>
-                  <option value="audi">Player 4</option>
+                  <select class="darkscreeninput" id="player-guide" name="player-guide" title="{{player-guide}}">
+				   {{#select player-guide}}
+				   
+					{{/select}}
                   </select>
                   </td>
                   <td><button type="button" id="guide">Guide-Check</button></td>
@@ -227,40 +414,168 @@
                 <tr>
                   <td>Forager:</td>
                   <td>
-                    <select id="forager">
-                    <option value="volvo">Player 1</option>
-                    <option value="saab">Player 2</option>
-                    <option value="mercedes">Player 3</option>
-                    <option value="audi">Player 4</option>
-                    </select>
+                    <select class="darkscreeninput" id="player-forager" name="player-forager" title="{{player-forager}}">
+				   {{#select player-forager}}
+				   
+					{{/select}}
+					</select>
                   </td>
                   <td><button type="button" id="guide">Foraging-Check</button></td>
                 </tr>
                 <tr>
                   <td>Lookout:</td>
                   <td>
-                    <select id="lookout">
-                    <option value="volvo">Player 1</option>
-                    <option value="saab">Player 2</option>
-                    <option value="mercedes">Player 3</option>
-                    <option value="audi">Player 4</option>
-                    </select>
+                    <select class="darkscreeninput" id="player-lookout" name="player-lookout" title="{{player-lookout}}">
+				   {{#select player-lookout}}
+				   
+					{{/select}}
+				   </select>
                   </td>
                   <td><button type="button" id="guide">Perception-Roll</button></td>
                 </tr>
                 <tr>
                   <td>Scout:</td>
                   <td>
-                    <select id="forager">
-                      <option value="volvo">Player 1</option>
-                      <option value="saab">Player 2</option>
-                      <option value="mercedes">Player 3</option>
-                      <option value="audi">Player 4</option>
-                    </select>
+                    <select class="darkscreeninput" id="player-scout" name="player-scout" title="{{player-scout}}">
+				   {{#select player-scout}}
+				   
+					{{/select}}
+					</select>
                   </td>
                   <td><button type="button" id="guide">Perception-Roll</button></td>
                 </tr>
               </table>
+            </div>
+            <div style="display:inline-table; height: 50px; width:350px">
+			<h1>Generated Day</h1>
+              <div style="border: 1px solid black; height: fit-content;">
+                <h3 class="dayheader">Dawn</h3> 
+                  <div class="flexday">
+                  <div style="width:50%; text-align:center;"> +1 Hunger, +1 Thirst</div>
+                  <input type="text" class="darkscreeninput" style="width:50%; text-align:center;" id="RC1" name="RC1" value="{{RC1}}" placeholder="Random Encounter?"></input>
+                  </div>
+                <input type="text" class="darkscreeninput" id="RC1description" style="width:600px " name="RC1description" title="{{RC1description}}" value="{{RC1description}}" placeholder="Encounter Description">
+              </div>
+                <h3 class="dayheader">Morning</h3> 
+                  <div class="flexday">
+                  <div style="width:50%; text-align:center;"></div>
+                  <input type="text" class="darkscreeninput" style="width:50%; text-align:center;" id="RC2" name="RC2" value="{{RC2}}" placeholder="Random Encounter?"></input>
+                  </div>
+                <input type="text" class="darkscreeninput" id="RC2description" style="width:600px " name="RC2description" title="{{RC2description}}" value="{{RC2description}}" placeholder="Encounter Description">
+              </div>
+              <div style="border: 1px solid black; height: fit-content;">
+                <h3 class="dayheader">Noon</h3>
+                <div class="flexday">
+                  <div style="width:50%; text-align:center;">+1 Fatigue</div>
+                  <input type="text" class="darkscreeninput" style="width:50%; text-align:center;" id="RC3" name="RC3" value="{{RC3}}" placeholder="Random Encounter?"></input>
+                  </div>
+                <input type="text" class="darkscreeninput" id="RC3description" style="width:600px " name="RC3description" title="{{RC3description}}" value="{{RC3description}}" placeholder="Encounter Description">
+              </div>
+                <div style="border: 1px solid black; height: fit-content;">
+                <h3 class="dayheader">Afternoon</h3>
+                  <div class="flexday">
+                  
+                  <div style="width:50%; text-align:center;"></div>
+                  <input type="text" class="darkscreeninput" style="width:50%; text-align:center;" id="RC4" name="RC4" value="{{RC4}}" placeholder="Random Encounter?"></input>
+                  </div>
+                <input type="text" class="darkscreeninput" id="RC4description" style="width:600px " name="RC4description" title="{{RC4description}}" value="{{RC4description}}" placeholder="Encounter Description">
+              </div>
+                <div style="border: 1px solid black; height: fit-content;">
+                <h3 class="dayheader">Dusk</h3>
+                  <div class="flexday">
+                  
+                  <div style="width:50%; text-align:center;">+1 Hunger, +1 Thirst, +1 Fatigue</div>
+                  <input type="text" class="darkscreeninput" style="width:50%; text-align:center;" id="RC5" name="RC5" value="{{RC5}}" placeholder="Random Encounter?"></input>
+                  </div>
+                <input type="text" class="darkscreeninput" id="RC5description" style="width:600px " name="RC5description" title="{{RC5description}}" value="{{RC5description}}" placeholder="Encounter Description">
+              </div>
+              <div style="border: 1px solid black; height: fit-content;">
+                <h3 class="dayheader">Night</h3>
+                  <div class="flexday">
+                  
+                  <div style="width:50%; text-align:center;"></div>
+                  <input type="text" class="darkscreeninput" style="width:50%; text-align:center;" id="RC6" name="RC6" value="{{RC6}}" placeholder="Random Encounter?"></input>
+                  </div>
+                <input type="text" class="darkscreeninput" id="RC6description" style="width:600px " name="RC6description" title="{{RC6description}}" value="{{RC6description}}" placeholder="Encounter Description">
+              </div>
+              <div style="text-align:center;margin:10px"><label style="background:lightblue;padding:8px;" id="generator" value="{{generator}}" class="generator">Generate Day</label></div>
+			 <script type="module">
+					console.log("test 2537");
+			  		let generateday = document.getElementById('generator');
+					generateday.addEventListener ("click", function () {
+					let dangerlevel = document.getElementById("dangerlevel").value;
+					let table = game.tables.entities.find(t => t.data.name === "Encounter Types");
+					let newval;
+					console.log("test 2537");
+					document.getElementById('RC1').value = "";
+					document.getElementById('RC2').value = "";
+					document.getElementById('RC3').value = "";
+					document.getElementById('RC4').value = "";
+					document.getElementById('RC5').value = "";
+					document.getElementById('RC6').value = "";
+					document.getElementById('RC1description').value = "";
+					document.getElementById('RC2description').value = "";
+					document.getElementById('RC3description').value = "";
+					document.getElementById('RC4description').value = "";
+					document.getElementById('RC5description').value = "";
+					document.getElementById('RC6description').value = "";
+					let result1 = table.roll();
+					let result1text = result1.results[0].text.split(':');
+					let result2 = table.roll();
+					let result2text = result2.results[0].text.split(':');
+					let result3 = table.roll();
+					let result3text = result3.results[0].text.split(':');
+					let result4 = table.roll();
+					let result4text = result4.results[0].text.split(':');
+					let result5 = table.roll();
+					let result5text = result5.results[0].text.split(':');
+					let result6 = table.roll();
+					let result6text = result6.results[0].text.split(':');
+					let roll1 = new Roll(`1d6`).roll().total;
+					if(roll1 <= dangerlevel){
+					document.getElementById('RC1').value = result1text[0];
+					document.getElementById('RC1description').value = result1text[1];
+					}
+					let roll2 = new Roll(`1d6`).roll().total;
+					if(roll2 <= dangerlevel){
+					document.getElementById('RC2').value = result2text[0];
+					document.getElementById('RC2description').value = result2text[1];
+					}
+					let roll3 = new Roll(`1d6`).roll().total;
+					if(roll3 <= dangerlevel){
+					document.getElementById('RC3').value = result3text[0];
+					document.getElementById('RC3description').value = result3text[1];
+					}
+					let roll4 = new Roll(`1d6`).roll().total;
+					if(roll4 <= dangerlevel){
+					document.getElementById('RC4').value = result4text[0];
+					document.getElementById('RC4description').value = result4text[1];
+					}
+					let roll5 = new Roll(`1d6`).roll().total;
+					if(roll5 <= dangerlevel){
+					document.getElementById('RC5').value = result5text[0];
+					document.getElementById('RC5description').value = result5text[1];
+					}
+					let roll6 = new Roll(`1d6`).roll().total;
+					if(roll6 <= dangerlevel){
+					document.getElementById('RC6').value = result6text[0];
+					document.getElementById('RC6description').value = result6text[1];
+					}
+					if(document.getElementById('generator').value != 1){
+						document.getElementById('generator').textContent = "Next Day";
+						document.getElementById('generator').value = 1;
+						console.log("first day generated");
+					}
+					else{
+						document.getElementById('journeydur').value -= 1;
+						console.log("Journeyduration", document.getElementById('journeydur').value);
+					}
+					if(document.getElementById('journeydur').value <= 0){
+						document.getElementById('generator').value = 0;
+						document.getElementById('generator').textContent = "Generate Day";
+					}
+					});
+			  </script>
             </div>
             </div>
                </article>
