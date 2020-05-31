@@ -2883,7 +2883,7 @@ class DSC extends Application {
 Hooks.on('canvasReady', function(){
 	if(game.user.isGM){
 		Darkscreen.addChatControl();
-		console.log("FATE GM TRUE");
+		console.log("Darkscreen GM True");
 	}
 	if(game.settings.get('darksheet', 'hideSRDCOMP')){
 		game.packs.delete("dnd5e.items");
