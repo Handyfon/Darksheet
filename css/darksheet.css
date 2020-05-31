@@ -7,6 +7,19 @@ width: 200px;
 h3.dayheader {
     color: #b5b1d4 !important;
 }
+button#minuspell {
+    width: 7px !important;
+    height: 16px !important;
+    display: block !important;
+    margin-top: 4px !important;
+    position: initial !important;
+    margin-left: -8px !important;
+    margin-bottom: -20px !important;
+}
+button#minuspell:hover {
+    background: #552424 !important;
+    color: black !important;
+}
 input#fname {
     background: #d9dad6;
     border: 1px groove black;
