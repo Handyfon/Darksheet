@@ -1,8 +1,28 @@
 /*BOOK CSS START*/
 /* Style the tab */
-
+.encounterdescription {
+    background: #c7c7c7;
+    min-width: -webkit-fill-available;
+    min-height: 1px;
+}
+.dnd5e.sheet.actor .sheet-header .summary {
+    height: 40px !important;
+}
+ul.summary.trainingssummary {
+    text-align: center;
+    /* position: absolute; */
+    right: 20%;
+    /* bottom: 75%; */
+    /* margin-top: 12% !important; */
+}
+.dnd5e.sheet .sheet-header .summary li {
+    text-align: center;
+}
 .questbutton{
 width: 200px;
+}
+.dnd5e.sheet .sheet-navigation .item {
+    margin: 0 15px !important;
 }
 h3.dayheader {
     color: #b5b1d4 !important;
@@ -787,6 +807,9 @@ form .form-header {
     position: absolute;
     margin-top: 9px;
     margin-left: 55px;
+    background-image: linear-gradient(#233a53, #375779) !important;
+    color: #c3e1fc;
+    display: unset !important;
     text-align: center;
 }
 .trainpointa.green {
@@ -808,6 +831,7 @@ form .form-header {
     height: 18px !important;
     margin: 0px !important;
     margin-top: 11px !important;
+    display: unset !important;
 }
 .trainingcheckbox1 {
     width: 18px !important;
@@ -815,6 +839,7 @@ form .form-header {
     margin-left: 70px !important;
     margin-right: 0px !important;
     margin-top: 9px !important;
+    display: unset !important;
 }
 .statuses .status .status-value {
 	text-align: center;
@@ -852,12 +877,15 @@ margin-left: 10px;
     border: 1px solid #7a7971;
 }
 
+.dnd5e.sheet.actor .ability-scores {
+    margin-left: 5px;
+}
 .dnd5e.sheet .editable .rollable:hover {
     cursor: pointer;
 }
 
 .dnd5e.sheet .window-content {
-    padding: 5px;
+    padding: 5px !important;
     font-size: 13px;
 }
 .dnd5e.sheet .sheet-header img.profile {

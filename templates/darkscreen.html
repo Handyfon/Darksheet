@@ -9,69 +9,34 @@
 <script type="text/javascript">
 //ONLOAD
 	console.log("test")
-	/*if (typeof name === "undefined") {
-	let table = document.getElementById("questtable");
-	}
-    var row = table.insertRow(rows);
-    var cell1 = row.insertCell(0);
-    var cell2 = row.insertCell(1);
-    var cell3 = row.insertCell(2);
-    var cell4 = row.insertCell(3);
-    var totalRowCount = 0;
-    var rowCount = 0;
-	var rowname = 0;
-	var questname ="";
-	var questdescription ="";
-	var questreward ="";
-    var rows = game.settings.get('darksheet', 'questtable').split(",").length / 3;
-    for (var i = 0; i < rows; i++) {
-	questname = "quest"+rowCount;
-	questdescription = "description"+rowCount;
-	questreward = "reward"+rowCount;
-    totalRowCount++;
-    rowCount++;
-	rowname = rowCount +2;
-    cell1.innerHTML = `<input class="questtableinput" type="text" style="width:100px" value="${questname}" name="quest${rowCount}">`;
-    cell2.innerHTML = `<input class="questtableinput" type="text" style="width:250px" value="${questdescription}" name="description${rowCount}">`;
-    cell3.innerHTML = `<input class="questtableinput" type="text" style="width:100px" value="${questreward}" name="reward${rowCount}">`;
-    cell4.innerHTML = `<input type="button" value="X" onclick="SomeDeleteRowFunction(this)">`;
-    }
-	*/
 	darkscreenval = game.settings.get('darksheet', 'darkscreenval').split(",");
-	
 	console.log(localStorage);
 	Hooks.on('closeDialog', function(){//ON CLOSE SAVE VALUES
 	save();
 	});
 	
 	function save(){
-	let newdata = [];
-	var darkscreeninputs = document.getElementsByClassName("darkscreeninput");
-	var darkscreennames = [];
-	var darkscreenvalues = [];
-	for(i=0;i<darkscreeninputs.length;i++){
-		darkscreennames.push(darkscreeninputs[i].name);
-		darkscreenvalues.push(darkscreeninputs[i].value);
-	}
-	var questtableinput = document.getElementsByClassName("questtableinput");
-	var questtableoutput = [];
-	for(i=0;i<questtableinput.length;i++){
-		questtableoutput.push(questtableinput[i].value);
-	}
-	//DEBUG
+		let newdata = [];
+		var darkscreeninputs = document.getElementsByClassName("darkscreeninput");
+		var darkscreennames = [];
+		var darkscreenvalues = [];
+		for(i=0;i<darkscreeninputs.length;i++){
+			darkscreennames.push(darkscreeninputs[i].name);
+			darkscreenvalues.push(darkscreeninputs[i].value);
+		}
+		var questtableinput = document.getElementsByClassName("questtableinput");
+		var questtableoutput = [];
+		for(i=0;i<questtableinput.length;i++){
+			questtableoutput.push(questtableinput[i].value);
+		}
+		//DEBUG
 
-	let odarkscreennames = darkscreennames.toString();
-	let odarkscreenvalues = darkscreenvalues.toString();
-	game.settings.set('darksheet', 'darkscreennames', odarkscreennames);
-	game.settings.set('darksheet', 'darkscreenval', odarkscreenvalues);
-	game.settings.set('darksheet', 'questtable', questtableoutput);
-	console.log(darkscreennames);
-	console.log(darkscreenvalues);
-	
-	//SAVE QÙEST TABLE
-	let table = document.getElementById("questtable");
-	localStorage.setItem("table", table);
-	console.log(table);
+		let odarkscreennames = darkscreennames.toString();
+		let odarkscreenvalues = darkscreenvalues.toString();
+		game.settings.set('darksheet', 'darkscreennames', odarkscreennames);
+		game.settings.set('darksheet', 'darkscreenval', odarkscreenvalues);
+		console.log(darkscreennames);
+		console.log(darkscreenvalues);
 	}
 </script>
 
@@ -102,45 +67,7 @@
 			  console.log("test");
             }
             </script>
-              <div id="quest" class="tabcontent" style="display:none; height:200%">
-                <div><h3 style="text-align:center;margin-top: 10px;background: #0e0e0e21;">|Quest-Tracker|</h3></div>
-            <script>
-            function addquest() {
-			  table = document.getElementById("questtable");
-              var row = table.insertRow(rows);
-              var cell1 = row.insertCell(0);
-              var cell2 = row.insertCell(1);
-              var cell3 = row.insertCell(2);
-              var cell4 = row.insertCell(3);
-              var totalRowCount = 0;
-              var rowCount = 0;
-              var rows = table.getElementsByTagName("tr")
-                      for (var i = 0; i < rows.length; i++) {
-                          totalRowCount++;
-                          if (rows[i].getElementsByTagName("td").length > 0) {
-                              rowCount++;
-                          }
-              }
-              cell1.innerHTML = `<input class="questtableinput" type="text" style="width:100px" value="quest{{rowCount}}" name="quest${rowCount}">`;
-              cell2.innerHTML = `<input class="questtableinput" type="text" style="width:250px" value="description{{rowCount}}" name="description${rowCount}">`;
-              cell3.innerHTML = `<input class="questtableinput" type="text" style="width:100px" value="reward{{rowCount}}" name="reward${rowCount}">`;
-              cell4.innerHTML = `<input type="button" value="X" onclick="SomeDeleteRowFunction(this)">`;
-            }
-                function SomeDeleteRowFunction(o) {
-                 var p=o.parentNode.parentNode;
-                     p.parentNode.removeChild(p);
-                }
-            </script>
-                <table id="questtable">
-                  <tr>
-                    <th>Giver | </th>
-                    <th>Description</th>
-                    <th> | Reward</th>
-                  </tr>
-                  <br>
-                  <button type="button"  class="questbutton"  onclick="addquest()">Add Quest</button>
-                  
-                </table>
+            <div id="quest" class="tabcontent" style="display:none; height:200%">
               </div>
 				<script>
 					function forge(gold){
@@ -447,29 +374,117 @@
               </table>
             </div>
             <div style="display:inline-table; height: 50px; width:350px">
-			<h1>Generated Day</h1>
+			
+			<h1>Generated Day <i class="fa fa-question-circle" title="You need to import all rolltables and roll on them at least once for this to work" aria-hidden="true"></i></h1>
               <div style="border: 1px solid black; height: fit-content;">
-                <h3 class="dayheader">Dawn</h3> 
+                <h3 class="dayheader">Dawn<button type="button" id="berechnen" style="width: 47px;margin-left: 5px;display: initial;" title="apply Hunger and Thirst" onclick="applydawn()">Apply</button></h3>
+				<script>
+				function applydawn(){
+				console.log("Applying Dawn");
+					for(i = 0; i < game.users.size -1; i++){
+						if(game.users.players[i].active){
+						
+						let food;
+						if (game.users.players[i].character.data.data.attributes.saturation.value === "foodstuffed") {
+							console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is now well-fed");
+							food = "foodwellfed";
+						} else if (game.users.players[i].character.data.data.attributes.saturation.value === "foodwellfed") {
+							console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is now ok");
+							food = "foodok";
+						} else if (game.users.players[i].character.data.data.attributes.saturation.value === "foodok") {
+							console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is now pekish");
+							food = "foodpekish";
+						} else if (game.users.players[i].character.data.data.attributes.saturation.value === "foodpekish") {
+							console.log("(DarkSheet): " + game.users.players[i].character.data.name + "  is now hungry");
+							food = "foodhungry";
+						} else if (game.users.players[i].character.data.data.attributes.saturation.value === "foodhungry") {
+							console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is now ravenous");
+							food = "foodravenous";
+						} else if (game.users.players[i].character.data.data.attributes.saturation.value === "foodravenous") {
+							console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is now starving");
+							food = "foodstarving";
+						} else {
+							console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is starving");
+						}
+						let water;
+						if (game.users.players[i].character.data.data.attributes.thirst.value === "wquenched") {
+							console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is now refreshed");
+							water = "wrefreshed";
+						} else if (game.users.players[i].character.data.data.attributes.thirst.value === "wrefreshed") {
+							console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is now ok");
+							water = "wok";
+						} else if (game.users.players[i].character.data.data.attributes.thirst.value === "wok") {
+							console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is now parched");
+							water = "wparched";
+						} else if (game.users.players[i].character.data.data.attributes.thirst.value === "wparched") {
+							console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is now thirsty");
+							water = "wthirsty";
+						} else if (game.users.players[i].character.data.data.attributes.thirst.value === "wthirsty") {
+							console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is now dry");
+							water = "wdry";
+						} else if (game.users.players[i].character.data.data.attributes.thirst.value === "wdry") {
+							console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is now dehydrated");
+							water = "wdehydrated";
+						} else {
+							console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is dehydrated");
+						}
+						game.users.players[i].character.update({'data.attributes.thirst.value': water});
+						game.users.players[i].character.update({'data.attributes.saturation.value': food});
+						}
+						}
+				}
+				</script>
                   <div class="flexday">
                   <div style="width:50%; text-align:center;"> +1 Hunger, +1 Thirst</div>
                   <input type="text" class="darkscreeninput" style="width:50%; text-align:center;" id="RC1" name="RC1" value="{{RC1}}" placeholder="Random Encounter?"></input>
                   </div>
-                <input type="text" class="darkscreeninput" id="RC1description" style="width:600px " name="RC1description" title="{{RC1description}}" value="{{RC1description}}" placeholder="Encounter Description">
+                <textarea type="text" class="darkscreeninput encounterdescription" id="RC1description" style="width:600px " name="RC1description" title="{{RC1description}}" value="{{RC1description}}" placeholder="Encounter Description"></textarea>
               </div>
                 <h3 class="dayheader">Morning</h3> 
                   <div class="flexday">
                   <div style="width:50%; text-align:center;"></div>
                   <input type="text" class="darkscreeninput" style="width:50%; text-align:center;" id="RC2" name="RC2" value="{{RC2}}" placeholder="Random Encounter?"></input>
                   </div>
-                <input type="text" class="darkscreeninput" id="RC2description" style="width:600px " name="RC2description" title="{{RC2description}}" value="{{RC2description}}" placeholder="Encounter Description">
-              </div>
+                <textarea type="text" class="darkscreeninput encounterdescription" id="RC2description" style="width:600px " name="RC2description" title="{{RC2description}}" value="{{RC2description}}" placeholder="Encounter Description"></textarea>
               <div style="border: 1px solid black; height: fit-content;">
-                <h3 class="dayheader">Noon</h3>
+                <h3 class="dayheader">Noon<button type="button" id="berechnen" style="width: 47px;margin-left: 5px;display: initial;" title="apply Fatigue" onclick="applynoon()">Apply</button></h3>
+				<script>
+				function applynoon(){
+				console.log("Applying Noon");
+					for(i = 0; i < game.users.size -1; i++){
+						if(game.users.players[i].active){
+						let fatigue;
+						if (game.users.players[i].character.data.data.attributes.fatigue.value === "exenegised") {
+							console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is now well-rested");
+							fatigue = "exwell";
+						} else if (game.users.players[i].character.data.data.attributes.fatigue.value === "exwell") {
+							console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is now ok");
+							fatigue = "exok";
+						} else if (game.users.players[i].character.data.data.attributes.fatigue.value === "exok") {
+							console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is now tired");
+							fatigue = "extired";
+						} else if (game.users.players[i].character.data.data.attributes.fatigue.value === "extired") {
+							console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is now sleepy");
+							fatigue = "exsleepy";
+						} else if (game.users.players[i].character.data.data.attributes.fatigue.value === "exsleepy") {
+							console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is now very sleepy");
+							fatigue = "exvsleepy";
+						} else if (game.users.players[i].character.data.data.attributes.fatigue.value === "exvsleepy") {
+							console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is now barely awake");
+							fatigue = "exbarely";
+						} else {
+							console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is barely awake");
+						}
+						game.users.players[i].character.update({'data.attributes.fatigue.value': fatigue});
+						}
+						}
+				}
+				</script>
                 <div class="flexday">
                   <div style="width:50%; text-align:center;">+1 Fatigue</div>
                   <input type="text" class="darkscreeninput" style="width:50%; text-align:center;" id="RC3" name="RC3" value="{{RC3}}" placeholder="Random Encounter?"></input>
                   </div>
-                <input type="text" class="darkscreeninput" id="RC3description" style="width:600px " name="RC3description" title="{{RC3description}}" value="{{RC3description}}" placeholder="Encounter Description">
+                <textarea type="text" class="darkscreeninput encounterdescription" id="RC3description" style="width:600px " name="RC3description" title="{{RC3description}}" value="{{RC3description}}" placeholder="Encounter Description"></textarea>
               </div>
                 <div style="border: 1px solid black; height: fit-content;">
                 <h3 class="dayheader">Afternoon</h3>
@@ -478,16 +493,93 @@
                   <div style="width:50%; text-align:center;"></div>
                   <input type="text" class="darkscreeninput" style="width:50%; text-align:center;" id="RC4" name="RC4" value="{{RC4}}" placeholder="Random Encounter?"></input>
                   </div>
-                <input type="text" class="darkscreeninput" id="RC4description" style="width:600px " name="RC4description" title="{{RC4description}}" value="{{RC4description}}" placeholder="Encounter Description">
+                <textarea type="text" class="darkscreeninput encounterdescription" id="RC4description" style="width:600px " name="RC4description" title="{{RC4description}}" value="{{RC4description}}" placeholder="Encounter Description"></textarea>
               </div>
                 <div style="border: 1px solid black; height: fit-content;">
-                <h3 class="dayheader">Dusk</h3>
-                  <div class="flexday">
-                  
+                <h3 class="dayheader">Dusk<button type="button" id="berechnen" style="width: 47px;margin-left: 5px;display: initial;" title="apply Hunger, Thirst and Fatigue" onclick="applydusk()">Apply</button></h3>
+				<script>
+				function applydusk(){
+				console.log("Applying Dusk");
+				for(i = 0; i < game.users.size -1; i++){
+						if(game.users.players[i].active){
+							let food;
+							if (game.users.players[i].character.data.data.attributes.saturation.value === "foodstuffed") {
+								console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is now well-fed");
+								food = "foodwellfed";
+							} else if (game.users.players[i].character.data.data.attributes.saturation.value === "foodwellfed") {
+								console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is now ok");
+								food = "foodok";
+							} else if (game.users.players[i].character.data.data.attributes.saturation.value === "foodok") {
+								console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is now pekish");
+								food = "foodpekish";
+							} else if (game.users.players[i].character.data.data.attributes.saturation.value === "foodpekish") {
+								console.log("(DarkSheet): " + game.users.players[i].character.data.name + "  is now hungry");
+								food = "foodhungry";
+							} else if (game.users.players[i].character.data.data.attributes.saturation.value === "foodhungry") {
+								console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is now ravenous");
+								food = "foodravenous";
+							} else if (game.users.players[i].character.data.data.attributes.saturation.value === "foodravenous") {
+								console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is now starving");
+								food = "foodstarving";
+							} else {
+								console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is starving");
+							}
+							let water;
+							if (game.users.players[i].character.data.data.attributes.thirst.value === "wquenched") {
+								console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is now refreshed");
+								water = "wrefreshed";
+							} else if (game.users.players[i].character.data.data.attributes.thirst.value === "wrefreshed") {
+								console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is now ok");
+								water = "wok";
+							} else if (game.users.players[i].character.data.data.attributes.thirst.value === "wok") {
+								console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is now parched");
+								water = "wparched";
+							} else if (game.users.players[i].character.data.data.attributes.thirst.value === "wparched") {
+								console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is now thirsty");
+								water = "wthirsty";
+							} else if (game.users.players[i].character.data.data.attributes.thirst.value === "wthirsty") {
+								console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is now dry");
+								water = "wdry";
+							} else if (game.users.players[i].character.data.data.attributes.thirst.value === "wdry") {
+								console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is now dehydrated");
+								water = "wdehydrated";
+							} else {
+								console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is dehydrated");
+							}
+							let fatigue;
+							if (game.users.players[i].character.data.data.attributes.fatigue.value === "exenegised") {
+								console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is now well-rested");
+								fatigue = "exwell";
+							} else if (game.users.players[i].character.data.data.attributes.fatigue.value === "exwell") {
+								console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is now ok");
+								fatigue = "exok";
+							} else if (game.users.players[i].character.data.data.attributes.fatigue.value === "exok") {
+								console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is now tired");
+								fatigue = "extired";
+							} else if (game.users.players[i].character.data.data.attributes.fatigue.value === "extired") {
+								console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is now sleepy");
+								fatigue = "exsleepy";
+							} else if (game.users.players[i].character.data.data.attributes.fatigue.value === "exsleepy") {
+								console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is now very sleepy");
+								fatigue = "exvsleepy";
+							} else if (game.users.players[i].character.data.data.attributes.fatigue.value === "exvsleepy") {
+								console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is now barely awake");
+								fatigue = "exbarely";
+							} else {
+								console.log("(DarkSheet): " + game.users.players[i].character.data.name + " is barely awake");
+							}
+							game.users.players[i].character.update({'data.attributes.fatigue.value': fatigue});
+							game.users.players[i].character.update({'data.attributes.thirst.value': water});
+							game.users.players[i].character.update({'data.attributes.saturation.value': food});
+						}
+					}
+				}
+				</script>
+				 <div class="flexday">
                   <div style="width:50%; text-align:center;">+1 Hunger, +1 Thirst, +1 Fatigue</div>
                   <input type="text" class="darkscreeninput" style="width:50%; text-align:center;" id="RC5" name="RC5" value="{{RC5}}" placeholder="Random Encounter?"></input>
                   </div>
-                <input type="text" class="darkscreeninput" id="RC5description" style="width:600px " name="RC5description" title="{{RC5description}}" value="{{RC5description}}" placeholder="Encounter Description">
+                <textarea type="text" class="darkscreeninput encounterdescription" id="RC5description" style="width:600px " name="RC5description" title="{{RC5description}}" value="{{RC5description}}" placeholder="Encounter Description"></textarea>
               </div>
               <div style="border: 1px solid black; height: fit-content;">
                 <h3 class="dayheader">Night</h3>
@@ -496,9 +588,10 @@
                   <div style="width:50%; text-align:center;"></div>
                   <input type="text" class="darkscreeninput" style="width:50%; text-align:center;" id="RC6" name="RC6" value="{{RC6}}" placeholder="Random Encounter?"></input>
                   </div>
-                <input type="text" class="darkscreeninput" id="RC6description" style="width:600px " name="RC6description" title="{{RC6description}}" value="{{RC6description}}" placeholder="Encounter Description">
+                <textarea type="text" class="darkscreeninput encounterdescription" id="RC6description" style="width:600px " name="RC6description" title="{{RC6description}}" value="{{RC6description}}" placeholder="Encounter Description"></textarea>
               </div>
               <div style="text-align:center;margin:10px"><label style="background:lightblue;padding:8px;" id="generator" value="{{generator}}" class="generator">Generate Day</label></div>
+			  </div>
 			 <script type="module">
 					console.log("test 2537");
 			  		let generateday = document.getElementById('generator');

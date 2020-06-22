@@ -12,26 +12,31 @@
 				   <input style="display: inline-flex;" name="name" type="text" value="{{actor.name}}" placeholder="Character Name"/>
 				{{/if}}
 			{{else}}
-			<input style="display: inline-flex;" name="name" type="text" value="{{actor.name}}" placeholder="Character Name"/>
+			<input name="name" type="text" value="{{actor.name}}" placeholder="{{ localize 'DND5E.Name' }}"/>
 			{{/if}}
 			
             </h1>
 
-            <div class="charlevel" style="margin-top: 0;">
-                <div class="level {{#if disableExperience}}noxp{{/if}}">
-                    <label>Level {{data.details.level}}</label>
+            <aside class="header-exp flexcol">
+                <div class="charlevel" style="justify-content: flex-end;">
+                    <label>{{ localize "DND5E.Level" }} {{data.details.level}}</label>
+                    <span class="levels">{{classLabels}}</span>
                 </div>
+
+                <div class="experience flexrow">
                 {{#unless disableExperience}}
-                <div class="experience">
                     <input name="data.details.xp.value" type="text" value="{{data.details.xp.value}}"
                            data-dtype="Number" placeholder="0"/>
-                    <span class="max"> / {{data.details.xp.max}}</span>
+                    <span class="sep">/</span>
+                    <span class="max">{{data.details.xp.max}}</span>
+                {{/unless}}
                 </div>
+                {{#unless disableExperience}}
                 <div class="xpbar">
                     <span class="bar" style="width: {{data.details.xp.pct}}%"></span>
                 </div>
                 {{/unless}}
-            </div>
+            </aside>
 			{{#if disableExperience}}
             <ul class="summary trainingssummary {{data.attributes.color.value}} {{actor._id}}">
                 <label class="trainingslabel {{data.attributes.color.value}} {{actor._id}}">Training</label>
@@ -61,6 +66,9 @@
                 <li>
                     <input type="text" name="data.details.alignment" value="{{data.details.alignment}}" placeholder="{{ localize 'DND5E.Alignment' }}"/>
                 </li>
+                <li class="proficiency">
+                    <span>{{ localize "DND5E.Proficiency" }} {{numberFormat data.attributes.prof decimals=0 sign=true}}</span>
+                </li> 
             </ul>
 
             {{!-- Header Attributes --}}
@@ -83,14 +91,24 @@
                 </li>
 
                 <li class="attribute">
+                    <h4 class="attribute-name box-title">{{ localize "DND5E.HitDice" }}</h4>
+                    <div class="attribute-value multiple">
+                        <label class="hit-dice">{{data.attributes.hd}} <span class="sep"> / </span> {{data.details.level}}</label>
+                    </div>
+                    <footer class="attribute-footer">
+                        <a class="rest short-rest">{{ localize "DND5E.RestS" }}</a>
+                        <a class="rest long-rest">{{ localize "DND5E.RestL" }}</a>
+                    </footer>
+                </li>
+
+                <li class="attribute">
                     <h4 class="attribute-name box-title rollable handy-ac">{{ localize "DND5E.ArmorClass" }}</h4>
                     <div class="attribute-value">
                         <input name="data.attributes.ac.value" type="text" value="{{data.attributes.ac.value}}"
                                data-dtype="Number" placeholder="10"/>
                     </div>
                     <footer class="attribute-footer">
-                        <span>{{ localize "DND5E.Proficiency" }}</span>
-                        <span>{{numberFormat data.attributes.prof decimals=0 sign=true}}</span>
+                        <span class="spell-dc">{{localize "DND5E.SpellDC"}} {{data.attributes.spelldc}}</span>																   
                     </footer>
                 </li>
 
@@ -106,14 +124,15 @@
                     </footer>
                 </li>
 
-                <li class="attribute">
-                    <h4 class="attribute-name box-title">{{ localize "DND5E.HitDice" }}</h4>
-                    <div class="attribute-value multiple">
-                        <label class="hit-dice">{{data.attributes.hd}} / {{data.details.level}}</label>
+                <li class="attribute initiative">
+                    <h4 class="attribute-name box-title">{{ localize "DND5E.Initiative" }}</h4>
+                    <div class="attribute-value">
+                        <span>{{numberFormat data.attributes.init.total decimals=0 sign=true}}</span>
                     </div>
                     <footer class="attribute-footer">
-                        <a class="rest short-rest">{{ localize "DND5E.RestS" }}</a>
-                        <a class="rest long-rest">{{ localize "DND5E.RestL" }}</a>
+                        <span>{{ localize "DND5E.Modifier" }}</span>
+                        <input name="data.attributes.init.value" type="text" placeholder="0" data-dtype="Number"
+                               value="{{numberFormat data.attributes.init.value decimals=0 sign=true}}"/>
                     </footer>
                 </li>
             </ul>
@@ -175,38 +194,24 @@
                             <input name="data.resources.{{res.name}}.label" type="text" value="{{res.label}}"
                                    placeholder="{{res.placeholder}}" />
                         </h4>
-                        <div class="attribute-value multiple">
+                        <div class="attribute-value">
+                            <label class="recharge checkbox">
+                                {{ localize "DND5E.AbbreviationSR" }} <input name="data.resources.{{res.name}}.sr" type="checkbox" {{checked res.sr}}/>
+                            </label>
+
                             <input name="data.resources.{{res.name}}.value" type="text" value="{{res.value}}"
                                    data-dtype="Number" placeholder="0"/>
                             <span class="sep"> / </span>
-                           <input name="data.resources.{{res.name}}.max" type="text" value="{{res.max}}"
+                            <input name="data.resources.{{res.name}}.max" type="text" value="{{res.max}}"
                                   data-dtype="Number" placeholder="0"/>
-                        </div>
-                        <footer class="attribute-footer">
-                            <label class="checkbox">
+													
 
-                                {{ localize "DND5E.AbbreviationSR" }} <input name="data.resources.{{res.name}}.sr" type="checkbox" {{checked res.sr}}/>
-                            </label>
-                            <label class="checkbox">
-
+                            <label class="recharge checkbox">
                                 {{ localize "DND5E.AbbreviationLR" }} <input name="data.resources.{{res.name}}.lr" type="checkbox" {{checked res.lr}}/>
                             </label>
-                        </footer>
+                        </div>
                     </li>
                     {{/each}}
-
-                    <li class="attribute initiative">
-                        <h4 class="attribute-name box-title">Initiative</h4>
-                        <div class="attribute-value">
-                            <span>{{numberFormat data.attributes.init.total decimals=0 sign=true}}</span>
-                        </div>
-                        <footer class="attribute-footer">
-
-                            <span>Modifier</span>
-                            <input name="data.attributes.init.value" type="text" placeholder="0" data-dtype="Number" value="{{numberFormat data.attributes.init.value decimals=0 sign=true}}" />
-
-                        </footer>
-                    </li>
                 </ul>
 
                 {{!-- Counters --}}
@@ -251,7 +256,7 @@
                     <div class="counter flexrow">
                         <h4 title="Click to roll for reopened wounds" class="deathsavelabel woundroll rollable" style="margin-right: -56px;">Closed Wounds</h4>
                         <div class="attribute-value multiple">
-                            <input style="margin-left: -40px; "name="data.attributes.wounds.value" type="text" value="{{data.attributes.wounds.value}}">
+                            <input style="margin-left: -26px;; "name="data.attributes.wounds.value" type="text" value="{{data.attributes.wounds.value}}">
                             <span class="sep"> / </span>
                             <input type="text" name="data.attributes.maxwounds.value" value="{{data.attributes.maxwounds.value}}">
                         </div>
