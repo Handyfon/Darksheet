@@ -2,10 +2,6 @@ import {
     ActorSheet5eCharacter
 } from '../../../../modules/darksheet/actor/sheets/character.js';
 
-import{
-	BetterRollsHooks
-}from '../../../../modules/betterrolls5e/scripts/hooks.js';
-
 
 //Load Templates
 Hooks.once('init', () => loadTemplates([
@@ -16,6 +12,7 @@ Hooks.once('init', () => loadTemplates([
 
 //Register Sheet
 Hooks.once('init', function() {
+	
     Actors.registerSheet('dnd5e', DarkSheet, {
         types: ['character']
     });
@@ -28,8 +25,16 @@ Hooks.once('init', function() {
         default: true,
         type: Boolean,
     });
-	BetterRollsHooks.addActorSheet("DarkSheet");
-	BetterRollsHooks.addItemSheet("DarkItemSheet5e");
+	$.get('../../../../modules/betterrolls5e/scripts/hooks.js')
+		.done(function() { 
+		const BetterRollsHooks = '../../../../modules/betterrolls5e/scripts/hooks.js';
+		import(BetterRollsHooks);
+		BetterRollsHooks.addActorSheet("DarkSheet");
+		BetterRollsHooks.addItemSheet("DarkItemSheet5e");
+		}).fail(function() { 
+		console.log("Darksheet | BetterRolls is not enabled");
+	})
+	
     game.settings.register('darksheet', 'hidesettings', {
         name: 'Hide Settings from player character sheet',
         hint: 'This option hides the settings section from all character sheets',
