@@ -8,7 +8,7 @@ import {DND5E} from '../../../../systems/dnd5e/module/config.js';
  * This sheet is an Abstract layer which is not used.
  * @extends {ActorSheet}
  */
-export class ActorSheet5e extends ActorSheet {
+export default class ActorSheet5e extends ActorSheet {
   constructor(...args) {
     super(...args);
 
@@ -252,7 +252,7 @@ export class ActorSheet5e extends ActorSheet {
 
       // Equipment-specific filters
       if ( filters.has("equipped") ) {
-        if (data.equipped && data.equipped !== true) return false;
+        if ( data.equipped !== true ) return false;
       }
       return true;
     });
@@ -529,6 +529,10 @@ export class ActorSheet5e extends ActorSheet {
     if ( !this.actor.owner ) return false;
     let itemData = await this._getItemDropData(event, data);
 
+    // Handle item sorting within the same Actor
+    const actor = this.actor;
+    let sameActor = (data.actorId === actor._id) || (actor.isToken && (data.tokenId === actor.token.id));
+    if (sameActor) return this._onSortItem(event, itemData);
     // Create a spell scroll from a spell item
     if ( (itemData.type === "spell") && (this._tabs[0].active === "inventory") ) {
       const scroll = await Item5e.createScrollFromSpell(itemData);
@@ -559,9 +563,6 @@ export class ActorSheet5e extends ActorSheet {
 
     // Case 2 - Data explicitly provided
     else if (data.data) {
-      let sameActor = data.actorId === actor._id;
-      if (sameActor && actor.isToken) sameActor = data.tokenId === actor.token.id;
-      if (sameActor) return this._onSortItem(event, data.data); // Sort existing items
       itemData = data.data;
     }
 
@@ -792,7 +793,7 @@ export class ActorSheet5e extends ActorSheet {
     const a = event.currentTarget;
     const label = a.parentElement.querySelector("label");
     const options = {
-      name: label.getAttribute("for"),
+      name: a.dataset.target,
       title: label.innerText,
       choices: CONFIG.DND5E[a.dataset.options]
     };

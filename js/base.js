@@ -252,7 +252,7 @@ export default class ActorSheet5e extends ActorSheet {
 
       // Equipment-specific filters
       if ( filters.has("equipped") ) {
-        if (data.equipped && data.equipped !== true) return false;
+        if ( data.equipped !== true ) return false;
       }
       return true;
     });
@@ -295,8 +295,11 @@ export default class ActorSheet5e extends ActorSheet {
     // Editable Only Listeners
     if ( this.isEditable ) {
 
+      // Select data on click
+      const inputs = html.find("input");
+      inputs.focus(ev => ev.currentTarget.select());
       // Relative updates for numeric fields
-      html.find('input[data-dtype="Number"]').change(this._onChangeInputDelta.bind(this));
+      inputs.find('input[data-dtype="Number"]').change(this._onChangeInputDelta.bind(this));
 
       // Ability Proficiency
       html.find('.ability-proficiency').click(this._onToggleAbilityProficiency.bind(this));
@@ -529,6 +532,10 @@ export default class ActorSheet5e extends ActorSheet {
     if ( !this.actor.owner ) return false;
     let itemData = await this._getItemDropData(event, data);
 
+    // Handle item sorting within the same Actor
+    const actor = this.actor;
+    let sameActor = (data.actorId === actor._id) || (actor.isToken && (data.tokenId === actor.token.id));
+    if (sameActor) return this._onSortItem(event, itemData);
     // Create a spell scroll from a spell item
     if ( (itemData.type === "spell") && (this._tabs[0].active === "inventory") ) {
       const scroll = await Item5e.createScrollFromSpell(itemData);
@@ -559,9 +566,6 @@ export default class ActorSheet5e extends ActorSheet {
 
     // Case 2 - Data explicitly provided
     else if (data.data) {
-      let sameActor = data.actorId === actor._id;
-      if (sameActor && actor.isToken) sameActor = data.tokenId === actor.token.id;
-      if (sameActor) return this._onSortItem(event, data.data); // Sort existing items
       itemData = data.data;
     }
 
@@ -792,7 +796,7 @@ export default class ActorSheet5e extends ActorSheet {
     const a = event.currentTarget;
     const label = a.parentElement.querySelector("label");
     const options = {
-      name: label.getAttribute("for"),
+      name: a.dataset.target,
       title: label.innerText,
       choices: CONFIG.DND5E[a.dataset.options]
     };

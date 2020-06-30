@@ -1,11 +1,11 @@
-import { ActorSheet5e } from '../../../../modules/darksheet/actor/sheets/base.js';
+import ActorSheet5e from "../../../../modules/darksheet/actor/sheets/base.js";
 
 /**
  * An Actor sheet for player character type actors in the D&D5E system.
  * Extends the base ActorSheet5e class.
  * @type {ActorSheet5e}
  */
-export class ActorSheet5eCharacter extends ActorSheet5e {
+export default class ActorSheet5eCharacter extends ActorSheet5e {
 
   /**
    * Define default rendering options for the NPC sheet
@@ -14,8 +14,8 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
 	static get defaultOptions() {
 	  return mergeObject(super.defaultOptions, {
       classes: ["dnd5e", "sheet", "actor", "character"],
-      width: 672,
-      height: 736
+      width: 720,
+      height: 680
     });
   }
 
@@ -116,13 +116,13 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
     spells = this._filterItems(spells, this._filters.spellbook);
     feats = this._filterItems(feats, this._filters.features);
 
-    // Organize Spellbook
+  // Organize Spellbook and count the number of prepared spells (excluding always, at will, etc...)
     const spellbook = this._prepareSpellbook(data, spells);
     const nPrepared = spells.filter(s => {
       return (s.data.level > 0) && (s.data.preparation.mode === "prepared") && s.data.preparation.prepared;
     }).length;
 
-    // Organize Inventory
+    // Organize Inventory or Item Slots
     let totalWeight = 0;
 	let pct = 0;
 	let maxpct = parseInt(data.data.attributes.inventoryslots) + parseInt(this.actor.data.data.abilities.str.mod);

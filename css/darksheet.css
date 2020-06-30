@@ -8,6 +8,10 @@
 .dnd5e.sheet.actor .sheet-header .summary {
     height: 40px !important;
 }
+.mess.settings {
+    max-height: 650px;
+    min-height: 650px;
+}
 ul.summary.trainingssummary {
     text-align: center;
     /* position: absolute; */
@@ -930,9 +934,6 @@ margin-left: 10px;
 .item-detail{
 width: 58px;
 }
-.hidden{
-visibility:hidden;
-}
 
 .app.sheet .editor-content {
     min-height: 100px;
@@ -1225,10 +1226,15 @@ margin-bottom: 3px !important;
 .activecondition{
 	text-shadow: 0 0 2px black;
 }
+.dnd5e.sheet.actor.character .sheet-header .summary .proficiency {
+    margin-left: 5%;
+}
 .dnd5e.sheet.actor .counters {
-    flex: 0 0 100%;
-    border-bottom: 2px groove #eeede0;
-    margin-top: px;
+    border-bottom: 1px #ffffff57 solid;
+    margin-top: 1px;
+    border-top: 0;
+    place-items: center;
+    flex: none;
 }
 .deathcheckbox > input:checked {
     border: 1px solid #b84141;
