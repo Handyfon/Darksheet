@@ -7,6 +7,7 @@ import {
 Hooks.once('init', () => loadTemplates([
     'modules/darksheet/templates/actors/parts/actor-inventory.html',
     'modules/darksheet/templates/actors/parts/actor-spellbook.html',
+    'modules/darksheet/templates/actors/parts/actor-features.html',
     'modules/darksheet/templates/items/parts/item-description.html'
 ]));
 
@@ -25,16 +26,6 @@ Hooks.once('init', function() {
         default: true,
         type: Boolean,
     });
-	$.get('../../../../modules/betterrolls5e/scripts/hooks.js')
-		.done(function() { 
-		const BetterRollsHooks = '../../../../modules/betterrolls5e/scripts/hooks.js';
-		import(BetterRollsHooks);
-		BetterRollsHooks.addActorSheet("DarkSheet");
-		BetterRollsHooks.addItemSheet("DarkItemSheet5e");
-		}).fail(function() { 
-		console.log("Darksheet | BetterRolls is not enabled");
-	})
-	
     game.settings.register('darksheet', 'hidesettings', {
         name: 'Hide Settings from player character sheet',
         hint: 'This option hides the settings section from all character sheets',
@@ -1616,6 +1607,45 @@ export class DarkSheet extends ActorSheet5eCharacter {
             // Rolling table, from best to worst
             let table = game.tables.entities.find(t => t.data.name === "Afflictions");
             table.draw()
+        });
+        html.find('.darksheetbuttonHDplus').click(event => {
+            event.preventDefault();
+            const itemID = event.currentTarget.closest('.item').dataset.itemId;
+            let darkitem = this.actor.getEmbeddedEntity('OwnedItem', itemID);
+			console.log(darkitem);
+			let used = darkitem.data.hitDiceUsed + 1;
+			//INVALID VALUE CHECK
+			if(used > darkitem.data.levels){
+				used = darkitem.data.levels;
+			}
+			else if(used < 0){
+				used = 0;
+			}
+			this.actor.updateEmbeddedEntity('OwnedItem', {
+                                _id: darkitem._id,
+                                'data.hitDiceUsed': used
+            });
+			
+        });
+        html.find('.darksheetbuttonHDmin').click(event => {
+            event.preventDefault();
+            const itemID = event.currentTarget.closest('.item').dataset.itemId;
+            let darkitem = this.actor.getEmbeddedEntity('OwnedItem', itemID);
+			console.log(darkitem);
+			let used = darkitem.data.hitDiceUsed - 1;
+			
+			//INVALID VALUE CHECK
+			if(used > darkitem.data.levels){
+				used = darkitem.data.levels;
+			}
+			else if(used < 0){
+				used = 0;
+			}
+			
+			this.actor.updateEmbeddedEntity('OwnedItem', {
+                                _id: darkitem._id,
+                                'data.hitDiceUsed': used
+            });
         });
 
         html.find('.minusspellslot-spell1').click(event => {
@@ -3285,5 +3315,14 @@ Hooks.on('canvasReady', function() {
 });
 Hooks.on('closeDialog', function() {
     event.preventDefault();
+});
+Hooks.on(`ready`, () => {
+		$.get('../../../../modules/betterrolls5e/scripts/hooks.js')
+		.done(function() { 
+		BetterRolls.hooks.addActorSheet("DarkSheet");
+		BetterRolls.hooks.addItemSheet("DarkSheet");
+		}).fail(function() { 
+		console.log("Darksheet | BetterRolls is not enabled");
+	})
 });
 //Hooks.on("init", () => {CONFIG.debug.hooks = true})

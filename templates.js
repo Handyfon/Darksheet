@@ -4,7 +4,7 @@ export const preloadPartials = function () {
     "systems/dnd5e/templates/actors/parts/actor-traits.html",
     "modules/darksheet/templates/actors/parts/actor-inventory.html",
     "modules/darksheet/templates/actors/parts/actor-spellbook.html",
-    "systems/dnd5e/templates/actors/parts/actor-features.html",
+    "modules/darksheet/templates/actors/parts/actor-features.html",
 
     // Item Sheet Partials
     "systems/dnd5e/templates/items/parts/item-action.html",

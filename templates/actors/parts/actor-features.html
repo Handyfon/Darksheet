@@ -1,16 +1,15 @@
-<div class="inventory-filters">
+<div class="inventory-filters flexrow">
     <ul class="filter-list flexrow" data-filter="features">
-        <li class="filter-title">{{localize "DND5E.FilterTitle"}}</li>
-        <li class="filter-item" data-filter="action">{{localize "DND5E.FilterAction"}}</li>
-        <li class="filter-item" data-filter="bonus">{{localize "DND5E.FilterBonus"}}</li>
-        <li class="filter-item" data-filter="reaction">{{localize "DND5E.FilterReaction"}}</li>
+        <li class="filter-item" data-filter="action">{{localize "DND5E.Action"}}</li>
+        <li class="filter-item" data-filter="bonus">{{localize "DND5E.BonusAction"}}</li>
+        <li class="filter-item" data-filter="reaction">{{localize "DND5E.Reaction"}}</li>
     </ul>
 </div>
 
 <ol class="inventory-list">
 {{#each sections as |section sid|}}
     <li class="inventory-header flexrow">
-        <h3 class="item-name flexrow">{{section.label}}</h3>
+        <h3 class="item-name flexrow">{{localize section.label}}</h3>
 
         {{#if section.hasActions}}
         <div class="item-detail item-uses">{{localize "DND5E.Uses"}}</div>
@@ -19,8 +18,8 @@
 
         {{#if ../owner}}
         <div class="item-controls">
-            <a class="item-control item-create" title="Create Item" {{#each section.dataset as |v k|}}data-{{k}}="{{v}}"{{/each}}>
-                <i class="fas fa-plus"></i> Add
+            <a class="item-control item-create" title="{{localize 'DND5E.FeatureAdd'}}" {{#each section.dataset as |v k|}}data-{{k}}="{{v}}"{{/each}}>
+                <i class="fas fa-plus"></i> {{localize "DND5E.Add"}}
             </a>
         </div>
         {{/if}}
@@ -56,8 +55,16 @@
             <div class="item-detail player-class">
                 {{item.data.subclass}}
             </div>
-            <div class="item-detail">
+            <div class="item-detail item-action">
                 Level {{item.data.levels}}
+            </div>
+            <div class="item-detail item-hitDiceUsed">
+				<div class="hdbuttons" style="display: -webkit-inline-box;">
+				<button style="width:5px;height: 15px;" class="darksheetbuttonHDplus" type="button" id="plusHD"></button>
+				</br>
+				<button style="width:5px;height: 15px;" class="darksheetbuttonHDmin" type="button" id="minusHD"></button>
+				</div>
+				{{item.data.hitDiceUsed}}/{{item.data.levels}}
             </div>
             {{/if}}
 

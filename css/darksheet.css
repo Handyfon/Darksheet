@@ -1,3 +1,40 @@
+button#plusHD {
+    width: 5px;
+    height: 15px;
+    position: relative;
+    left: -4px;
+    top: -7px;
+}
+button#minusHD {
+    position: relative;
+    left: -4px;
+    top: -20px;
+}
+button#plusHD:after {
+    content: "+";
+	margin-left: -4.3px;
+    margin-top: -14px;
+    position: absolute;
+}
+button#minusHD:after {
+    content: "-";
+    margin-left: -3px;
+    margin-top: -14px;
+    position: absolute;
+}
+button#minusHD:hover {
+    visibility: visible !important;
+    background-color: #243b55 !important;
+    color: #5e9ed4 !important;
+}
+button#plusHD:hover {
+    visibility: visible !important;
+    background-color: #243b55 !important;
+    color: #d45e6f !important;
+}
+.item-detail.item-hitDiceUsed {
+    height: 33px;
+}
 /*BOOK CSS START*/
 /* Style the tab */
 .encounterdescription {
@@ -5,6 +42,7 @@
     min-width: -webkit-fill-available;
     min-height: 1px;
 }
+
 .dnd5e.sheet.actor .sheet-header .summary {
     height: 40px !important;
 }
