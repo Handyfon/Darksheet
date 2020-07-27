@@ -12,19 +12,8 @@
             <input type="text" name="data.weight" value="{{data.weight}}" placeholder="0" data-dtype="Number"/>
         </div>
         <div class="form-group">
-            <label>Slots</label>
-			<select class="hitdice" name="data.slots" placeholder="1" data-type="Number" style="color: white !important;">
-				{{#select data.slots}}
-				<option value=""></option>
-				<option value="0.2">Tiny, 0.2</option>
-				<option value="1">Small, 1</option>
-				<option value="2">Medium, 2</option>
-				<option value="3">Large, 3</option>
-				<option value="6">Extra Large, 6</option>
-				<option value="9">XXL, 9</option>
-				{{/select}}
-			</select>
-			
+            <label>Bulk</label>
+				<input type="text" name="flags.darksheet.item.slots" placeholder="0" value="{{item.flags.darksheet.item.slots}}" data-dType="Number">
         </div>
         <div class="form-group">
             <label>Price</label>
