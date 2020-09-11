@@ -32,6 +32,9 @@ button#plusHD:hover {
     background-color: #243b55 !important;
     color: #d45e6f !important;
 }
+option:disabled {
+    color: gray;
+}
 .item-detail.item-hitDiceUsed {
     height: 33px;
 }
@@ -679,7 +682,9 @@ label.check.dicelabel2.staminacheck.rollable:hover {
 }
 
 
-
+.notification.error{
+visibility:hidden;
+}
 
 
 
@@ -693,11 +698,9 @@ label.check.dicelabel2.staminacheck.rollable:hover {
 
 
 .dnd5e.sheet.actor.character {
-    min-width: 720px !important;
+    min-width: 769px !important;
     min-height: 736px;
 }
-
-
 .tab.spellbook.flexcol.active {
     border-style: groove;
     border-right: 0;
@@ -1453,10 +1456,12 @@ margin-bottom: 3px !important;
 .foodcheckbox > input:checked + span::before {
     content: '\2714';
     display: block;
+    color: #000000;
     position: absolute;
     margin-top: -5px;
     margin-left: -26px;
     padding-bottom: 5px;
+    color: #b5b1d4;
     padding: 10px;
 }
 

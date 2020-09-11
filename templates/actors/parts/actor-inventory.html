@@ -157,9 +157,8 @@
 {{/each}}
 </ol>
 
-
 {{#if isCharacter }}
-{{#with data.attributes.encumbrance}}
+{{#with data.attributes.encumbs}}
 <div class="encumbrance {{#if encumbered}}encumbered{{/if}}">
     <span class="encumbrance-bar" style="width:{{pct}}%"></span>
     <span class="encumbrance-label">{{value}} / {{max}}</span>

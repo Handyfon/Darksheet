@@ -26,6 +26,14 @@ Hooks.once('init', function() {
         default: true,
         type: Boolean,
     });
+	game.settings.register('darksheet', 'savecantrips', {
+        name: 'Variant Rule "Save Cantrips"',
+        hint: 'If this is checked it will disable the ability to select the d12 for the burnout die. ',
+        scope: 'world',
+        config: true,
+        default: false,
+        type: Boolean,
+    });
     game.settings.register('darksheet', 'hidesettings', {
         name: 'Hide Settings from player character sheet',
         hint: 'This option hides the settings section from all character sheets',
@@ -138,6 +146,14 @@ Hooks.once('init', function() {
         default: false,
         type: Boolean,
     });
+	game.settings.register('darksheet', 'silverstandard', {
+        name: '[Houserule] Silver Standart',
+        hint: 'All items will have sp worth instead of gp',
+        scope: 'world',
+        config: true,
+        default: false,
+        type: Boolean,
+    });
     game.settings.register('darksheet', 'darkscreennames', {
         name: 'names',
         hint: 'names',
@@ -167,80 +183,80 @@ Hooks.once('init', function() {
 });
 //on Update Actor check for status
 Hooks.on('updateActor', (actor, updates, options, userId) => {
-    let newexhaustion = 0;
+	if(actor.data.type === "character"){
+		let newexhaustion = 0;
 
-    let temp = actor.data.data.attributes.temp;
-    let food = actor.data.data.attributes.saturation.value;
-    let water = actor.data.data.attributes.thirst.value;
-    let fatigue = actor.data.data.attributes.fatigue.value;
-    let manualexhaustion = actor.data.data.attributes.exhaustion.value;
-    //Temperature Exhaustion
-    if (temp === "exenegised") {
-        newexhaustion += -1;
-    } else if (temp === "exvsleepy" || temp === "exbarely") {
-        newexhaustion += 1;
-    }
-    //Food Exhaustion
-    if (food === "foodstuffed") {
-        newexhaustion += -1;
-    } else if (food === "foodravenous" || food === "foodstarving") {
-        newexhaustion += 1;
-    }
-    //Water Exhaustion
-    if (water === "wquenched") {
-        newexhaustion += -1;
-    } else if (water === "wdry" || water === "wdehydrated") {
-        newexhaustion += 1;
-    }
-    //Fatigue Exhaustion
-    if (fatigue === "exenegised") {
-        newexhaustion += -1;
-    } else if (fatigue === "exvsleepy" || fatigue === "exbarely") {
-        newexhaustion += 1;
-    }
-    //exhaustion over 3?
-    if (newexhaustion >= 4) {
-        console.log("(DarkSheet): Maximum exhaustion achieved through needs. Total exhaustion from fron needs cannot exceed 3");
-        newexhaustion = 3;
-    }
-    //adding manual exhaustion
-    newexhaustion = (newexhaustion * 1 + manualexhaustion * 1);
-    //exhaustion <0?
-    if (newexhaustion <= 0) {
-        newexhaustion = 0;
-    }
-    let exhaustion1 = false;
-    let exhaustion2 = false;
-    let exhaustion3 = false;
-    let exhaustion4 = false;
-    let exhaustion5 = false;
-    if (newexhaustion === 1) {
-        exhaustion1 = true;
-    } else if (newexhaustion === 2) {
-        exhaustion2 = true;
-    } else if (newexhaustion === 3) {
-        exhaustion3 = true;
-    } else if (newexhaustion === 4) {
-        exhaustion4 = true;
-    } else if (newexhaustion === 5) {
-        exhaustion5 = true;
-    }
-    if (actor.data.data.attributes.newexhaustion != newexhaustion) {
-		actor.update({
-			'data.attributes.newexhaustion': newexhaustion,
-			'data.status.isExhaustion1': exhaustion1,
-			'data.status.isExhaustion2': exhaustion2,
-			'data.status.isExhaustion3': exhaustion3,
-			'data.status.isExhaustion4': exhaustion4,
-			'data.status.isExhaustion5': exhaustion5
-		});
-    }
-    console.log("(DarkSheet): New Exhaustion: " + actor.data.data.attributes.newexhaustion);
-
-    const test = "Actor Updated";
-    console.log(test);
+		let temp = actor.data.data.attributes.temp;
+		let food = actor.data.data.attributes.saturation.value;
+		let water = actor.data.data.attributes.thirst.value;
+		let fatigue = actor.data.data.attributes.fatigue.value;
+		let manualexhaustion = actor.data.data.attributes.exhaustion.value;
+		//Temperature Exhaustion
+		if (temp === "exenegised") {
+			newexhaustion += -1;
+		} else if (temp === "exvsleepy" || temp === "exbarely") {
+			newexhaustion += 1;
+		}
+		//Food Exhaustion
+		if (food === "foodstuffed") {
+			newexhaustion += -1;
+		} else if (food === "foodravenous" || food === "foodstarving") {
+			newexhaustion += 1;
+		}
+		//Water Exhaustion
+		if (water === "wquenched") {
+			newexhaustion += -1;
+		} else if (water === "wdry" || water === "wdehydrated") {
+			newexhaustion += 1;
+		}
+		//Fatigue Exhaustion
+		if (fatigue === "exenegised") {
+			newexhaustion += -1;
+		} else if (fatigue === "exvsleepy" || fatigue === "exbarely") {
+			newexhaustion += 1;
+		}
+		//exhaustion over 3?
+		if (newexhaustion >= 4) {
+			console.log("(DarkSheet): Maximum exhaustion achieved through needs. Total exhaustion from fron needs cannot exceed 3");
+			newexhaustion = 3;
+		}
+		//adding manual exhaustion
+		newexhaustion = (newexhaustion * 1 + manualexhaustion * 1);
+		//exhaustion <0?
+		if (newexhaustion <= 0) {
+			newexhaustion = 0;
+		}
+		let exhaustion1 = false;
+		let exhaustion2 = false;
+		let exhaustion3 = false;
+		let exhaustion4 = false;
+		let exhaustion5 = false;
+		if (newexhaustion === 1) {
+			exhaustion1 = true;
+		} else if (newexhaustion === 2) {
+			exhaustion2 = true;
+		} else if (newexhaustion === 3) {
+			exhaustion3 = true;
+		} else if (newexhaustion === 4) {
+			exhaustion4 = true;
+		} else if (newexhaustion === 5) {
+			exhaustion5 = true;
+		}
+		if (actor.data.data.attributes.newexhaustion != newexhaustion) {
+			actor.update({
+				'data.attributes.newexhaustion': newexhaustion,
+				'data.status.isExhaustion1': exhaustion1,
+				'data.status.isExhaustion2': exhaustion2,
+				'data.status.isExhaustion3': exhaustion3,
+				'data.status.isExhaustion4': exhaustion4,
+				'data.status.isExhaustion5': exhaustion5
+			});
+			console.log("(DarkSheet): New Exhaustion: " + actor.data.data.attributes.newexhaustion);
+		}
+	}
     let customsheet;
-    if (actor.data.data.attributes.color === undefined) {} else if (actor.data.data.attributes.color.value === "custom") {
+    if (actor.data.data.attributes.color === undefined) {}
+	else if (actor.data.data.attributes.color.value === "custom") {
         customsheet = true;
         actor.update({
             'data.attributes.color.custom': customsheet
@@ -442,6 +458,145 @@ Hooks.on('preUpdateToken', async (scene, sceneId, updates, tokenData) => {
 
 });
 
+Hooks.on('createChatMessage', (userId) => {
+console.log("Chat Message Detected");
+
+let message = userId.data.content;
+let actor = game.actors.getName(userId.data.speaker.alias);
+let spellburnout = false;
+let iscantrip = false;
+let onlyonce = false;
+console.log(actor);
+if(message.includes("<span>Cantrip</span>")){
+iscantrip = true;
+}
+else if(message.includes("<span>V") || message.includes("<span>M") || message.includes("<span>S") || message.includes("slots")){
+spellburnout = true;
+}
+if(iscantrip && actor.data.data.attributes.autmomaticburnout && game.settings.get('darksheet', 'savecantrips') === false && game.user.character.data._id === actor.data._id || actor.data.data.attributes.autmomaticburnout && spellburnout){
+// Rolling table, from best to worst
+            const rollings = ['12', '10', '8', '6', '4'];
+            // Value of the burnoutdice
+            let burnoutdie = actor.data.data.attributes.burnout.value;
+            // find the table
+            let table = game.tables.entities.find(t => t.data.name === "Burnout Consequence");
+            // burnoutsettings
+            let bsettings = actor.data.data.attributes.burnout.value
+            // magic region
+            var regionmod = parseInt(actor.data.data.attributes.regionmod.value, 10);
+            //console.log("Regionmod: "+regionmod);
+            // burnoutdice changed through region
+            if (regionmod < 0) {
+                var regionmodz = rollings.indexOf(actor.data.data.attributes.burnout.value) - parseInt(regionmod);
+                //console.log("Regionmodz step2 kleiner: "+regionmodz);
+                if (regionmodz >= 5) {
+                    regionmodz = 4;
+                }
+            } else {
+                var regionmodz = rollings.indexOf(actor.data.data.attributes.burnout.value) - parseInt(regionmod);
+                //console.log("Regionmodz step3 größer: "+regionmodz);
+                if (regionmodz <= 0) {
+                    regionmodz = 0;
+                }
+            }
+            var burnoutARegion = rollings[regionmodz];
+            let rollcon = burnoutARegion;
+            let rollcona = "d" + rollcon
+            let roll = new Roll(`${rollcona}`).roll();
+            const result = table.roll()
+
+
+
+            if (burnoutdie === 0) {} else {
+                let content = `
+				<div class="dnd5e chat-card item-card" data-acor-id="${actor._id}">
+					<header class="card-header flexrow">
+						<img src="${actor.data.token.img}" title="" width="36" height="36" style="border: none;"/>
+						<h3>Burnoutdice(${rollcona}): </h3>
+					<h3>${roll.result}</h3>
+					</header>
+				</div>`;
+                let content2 = `
+				<div class="dnd5e chat-card item-card" data-acor-id="${actor._id}">
+					<header class="card-header flexrow">
+						<img src="${actor.data.token.img}" title="" width="36" height="36" style="border: none;"/>
+						<h3>Burnoutdice(${rollcona}): </h3>
+					<h3 style="color: #ff0000;text-shadow: 0 0 2px;">${roll.result}</h3>
+					</header>
+					</br>
+					<h3 style="color: #ff0000;text-shadow: 0 0 2px; text-align: center;">${result.results[0].text}</h3>
+				</div>`;
+                let content3 = `
+				<div class="dnd5e chat-card item-card" data-acor-id="${actor._id}">
+					<header class="card-header flexrow">
+						<img src="${actor.data.token.img}" title="" width="36" height="36" style="border: none;"/>
+						<h3>Burnoutdice(${rollcona}): </h3>
+					<h3 style="color: #ff0000;text-shadow: 0 0 2px;">${roll.result}</h3>
+					</header>
+				</div>`;
+                let rollWhisper = null;
+                let rollBlind = false;
+                let rollMode = game.settings.get("core", "rollMode");
+                if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperIDs("GM");
+                if (rollMode === "blindroll") rollBlind = true;
+                if (roll.result <= 2) {
+                    if (bsettings) {
+                        ChatMessage.create({
+                            user: game.user._id,
+                            content: content2,
+                            speaker: {
+                                actor: actor._id,
+                                token: actor.token,
+                                alias: actor.name
+                            },
+
+                            sound: CONFIG.sounds.dice,
+                            flags: {
+                                darksheet: {
+                                    outcome: 'bad'
+                                }
+                            }
+                        });
+                    } else {
+                        ChatMessage.create({
+                            user: game.user._id,
+                            content: content3,
+                            speaker: {
+                                actor: actor._id,
+                                token: actor.token,
+                                alias: actor.name
+                            },
+
+                            sound: CONFIG.sounds.dice,
+                            flags: {
+                                darksheet: {
+                                    outcome: 'bad'
+                                }
+                            }
+                        });
+                    }
+                    // Lower burnoutdie rank
+                    const new_burnoutdie = rollings.indexOf(actor.data.data.attributes.burnout.value) + 1;
+                    if (new_burnoutdie < rollings.length) {
+                        actor.data.data.attributes.burnout.value = rollings[new_burnoutdie];
+                    }
+                    actor.render();
+                } else {
+                    ChatMessage.create({
+                        user: game.user._id,
+                        content: content,
+                        speaker: {
+                            actor: actor._id,
+                            token: actor.token,
+                            alias: actor.name
+                        },
+                        sound: CONFIG.sounds.dice
+                    });
+                }
+            }
+	}
+});
+
 Hooks.on('createToken', async (scene, sceneId, tokenData, options, userId) => {
     //if the token has no linked actor, return
     if (!tokenData.actorLink) return;
@@ -569,6 +724,8 @@ export class DarkItemSheet5e extends ItemSheet {
         data.disabletemper = game.settings.get('darksheet', 'disabletemper'); //
         data.disableitemquality = game.settings.get('darksheet', 'disableitemquality'); //
         data.hidedamageac = game.settings.get('darksheet', 'hidedamageac'); //
+		data.savecantrips = game.settings.get('darksheet', 'savecantrips'); //
+		data.silverstandard = game.settings.get('darksheet', 'silverstandard'); //
         // Action Details
         data.hasAttackRoll = this.item.hasAttack;
         data.isHealing = data.item.data.actionType === "heal";
@@ -699,6 +856,8 @@ export class DarkSheet extends ActorSheet5eCharacter {
         data.disabletemper = game.settings.get('darksheet', 'disabletemper'); //
         data.disableitemquality = game.settings.get('darksheet', 'disableitemquality'); //
         data.hidedamageac = game.settings.get('darksheet', 'hidedamageac'); //
+		data.savecantrips = game.settings.get('darksheet', 'savecantrips'); //
+		data.silverstandard = game.settings.get('darksheet', 'silverstandard'); //
 
         return data;
     }
@@ -1233,7 +1392,8 @@ export class DarkSheet extends ActorSheet5eCharacter {
                                 weapondamage = "1d20 ";
                                 break;
                             default:
-                                // code block
+                                if(darkitem.data.damage.baseweapondamage) weapondamage = darkitem.data.damage.baseweapondamage;
+                                break;
                         }
                     }
                     updatedamage = weapondamage + mod;
@@ -3317,12 +3477,19 @@ Hooks.on('closeDialog', function() {
     event.preventDefault();
 });
 Hooks.on(`ready`, () => {
-		$.get('../../../../modules/betterrolls5e/scripts/hooks.js')
-		.done(function() { 
+		if(game.modules.get('darksheet')?.active === true){
 		BetterRolls.hooks.addActorSheet("DarkSheet");
 		BetterRolls.hooks.addItemSheet("DarkSheet");
-		}).fail(function() { 
-		console.log("Darksheet | BetterRolls is not enabled");
-	})
+		console.log("Darksheet | BetterRolls detected and enabled");
+		}
+		
+		if(game.modules.get('SilverStandard')?.active === true){
+			Hooks.on('renderDarkSheet', (sheet, html) => {
+			  html.find('.denomination.ep').remove();
+			  html.find('[name="data.currency.ep"]').remove();
+			});
+		console.log("Darksheet | SilverStandard detected and enabled");
+		}
+		
 });
 //Hooks.on("init", () => {CONFIG.debug.hooks = true})

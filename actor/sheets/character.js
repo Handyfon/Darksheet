@@ -119,6 +119,7 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
     // Organize Inventory
     let totalWeight = 0;
 	let pct = 0;
+	let enc = 1;
 	let maxpct = parseInt(data.data.attributes.inventoryslots) + parseInt(this.actor.data.data.abilities.str.mod);
 	if ( game.settings.get("darksheet", "slotbasedinventory") ) {
     for ( let i of items ) {
@@ -133,6 +134,7 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
 	    data.data.attributes.inventorys = this._computeEncumbrance(totalWeight, data);
 	    data.data.attributes.inventorys.max = maxpct;
 	    data.data.attributes.inventorys.percent = totalWeight / maxpct *100;
+
 	}
 	else{
     for ( let i of items ) { 
@@ -142,7 +144,7 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
       inventory[i.type].items.push(i);
       totalWeight += i.totalWeight;
     }
-    data.data.attributes.encumbrance = this._computeEncumbrance(totalWeight, data);
+	data.data.attributes.encumbs = this._computeEncumbrance(totalWeight, data);
 	}
 
     // Organize Features

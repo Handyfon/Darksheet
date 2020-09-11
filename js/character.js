@@ -126,6 +126,7 @@ export default class ActorSheet5eCharacter extends ActorSheet5e {
     let totalWeight = 0;
 	let pct = 0;
 	let maxpct = parseInt(data.data.attributes.inventoryslots) + parseInt(this.actor.data.data.abilities.str.mod);
+	
 	if ( game.settings.get("darksheet", "slotbasedinventory") ) {
     for ( let i of items ) {
       i.data.quantity = i.data.quantity || 0;
@@ -149,6 +150,7 @@ export default class ActorSheet5eCharacter extends ActorSheet5e {
       totalWeight += i.totalWeight;
     }
     data.data.attributes.encumbrance = this._computeEncumbrance(totalWeight, data);
+	data.data.attributes.inventorys.encumbrance = true;
 	}
 
     // Organize Features

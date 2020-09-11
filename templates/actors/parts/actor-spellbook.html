@@ -23,7 +23,7 @@
 			<select name="data.attributes.burnout.value" data-type="String" value="D12">
 				{{#select data.attributes.burnout.value}}
 				<option value="0"></option>
-				<option value="12">d12</option>
+				<option {{#if savecantrips}}disabled="disabled" title="You can't select this because the save cantrips rule is active"{{/if}} value="12">d12</option>
 				<option value="10">d10</option>
 				<option value="8">d8</option>
 				<option value="6">d6</options>
@@ -32,21 +32,21 @@
 			</select>
 			<label style="margin-left: 5px;margin-right: 5px;"><h3 style="text-align: center;">Regional Magic</h3></label>
 			<select name="data.attributes.regionmod.value" data-type="String" value="0">
-		{{#if isNPC}}
-        <h3>{{localize "DND5E.SpellcasterLevel"}}</h3>
-        <input class="spellcasting-level" type="text" name="data.details.spellLevel"
-               value="{{data.details.spellLevel}}" data-dtype="Number" placeholder="0"/>
-        {{/if}}
 				{{#select data.attributes.regionmod.value}}
 				<option value="3">Serene +3</option>
 				<option value="2">Calm +2</option>
 				<option value="1">Stable +1</option>
-				<option selected="selected" value="0">Normal</option>
+				<option value="0">Normal</option>
 				<option value="-1">Unstable -1</options>
 				<option value="-2">Wild -2</option>
 				<option value="-3">Chaotic -3</option>
 					{{/select}}
 			</select>
+		{{#if isNPC}}
+        <h3>{{localize "DND5E.SpellcasterLevel"}}</h3>
+        <input class="spellcasting-level" type="text" name="data.details.spellLevel"
+               value="{{data.details.spellLevel}}" data-dtype="Number" placeholder="0"/>
+        {{/if}}
     </div>
 
     <ul class="filter-list flexrow" data-filter="spellbook">

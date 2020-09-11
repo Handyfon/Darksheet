@@ -15,30 +15,33 @@
             <input type="text" name="data.weight" value="{{data.weight}}" placeholder="0" data-dtype="Number"/>
         </div>
         <div class="form-group">
-            <label>Slots</label>
-			<select class="hitdice white"name="flags.darksheet.item.slots" placeholder="1" data-dtype="Number">
-				{{#select item.flags.darksheet.item.slots}}
-				<option value=""></option>
-				<option value="0.2">Tiny, 0.2</option>
-				<option value="1">Small, 1</option>
-				<option value="2">Medium, 2</option>
-				<option value="3">Large, 3</option>
-				<option value="6">Extra Large, 6</option>
-				<option value="9">XXL, 9</option>
-				{{/select}}
-			</select>
+			<label>Slots</label>
+				<input type="text" name="flags.darksheet.item.slots" placeholder="0" value="{{item.flags.darksheet.item.slots}}" data-dType="Number">
 			
         </div>
         <div class="form-group">
             <label>Price</label>
             <input type="text" name="data.price" value="{{data.price}}" data-dtype="Number"/>
+			{{#if silverstandard}}
 			<select class="hitdice white"name="flags.darksheet.item.currency" placeholder="1" data-dtype="String">
 				{{#select item.flags.darksheet.item.currency}}
+				<option value="pp">pp</option>
 				<option value="gp">gp</option>
+				<option value="sp" selected="selected">sp</option>
+				<option value="cp">cp</option>
+			{{/select}}
+			</select>
+			{{else}}
+			<select class="hitdice white"name="flags.darksheet.item.currency" placeholder="1" data-dtype="String">
+				{{#select item.flags.darksheet.item.currency}}
+				<option value="pp">pp</option>
+				<option value="gp" selected="selected">gp</option>
 				<option value="sp">sp</option>
 				<option value="cp">cp</option>
 			{{/select}}
 			</select>
+			{{/if}}
+
         </div>
 		{{#unless disableitemquality}}
 		<div class="form-group">

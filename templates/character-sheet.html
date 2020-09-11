@@ -7,7 +7,7 @@
 			<h1 class="charname">
 			{{#if data.attributes.titlesetting}}
 				{{#if data.attributes.title}}
-				<div class="{{data.attributes.color.value}} {{actor._id}}"label title="{{data.details.title}}" style="font-size: 20px;color: #c7e5ff;text-transform: capitalize;font-style: italic;">({{data.attributes.title}})</label><label style="font-size:30px"> {{actor.name}}</label>
+				<div class="{{data.attributes.color.value}} {{actor._id}}"label title="{{data.details.title}}" style="font-size: 20px;color: #c7e5ff;text-transform: capitalize;font-style: italic;padding-top: 11px;">({{data.attributes.title}})</label><label style="font-size:30px"> {{actor.name}}</label>
 				{{else}}
 				   <input style="display: inline-flex;" name="name" type="text" value="{{actor.name}}" placeholder="Character Name"/>
 				{{/if}}
@@ -74,7 +74,7 @@
             {{!-- Header Attributes --}}
             <ul class="attributes flexrow">
                 <li class="attribute health">
-                    <h4 class="attribute-name box-title">{{ localize "DND5E.Health" }}</h4>
+                    <h4 class="attribute-name box-title">Hitpoints</h4>
                     <div class="attribute-value multiple">
                         <input name="data.attributes.hp.value" type="text" value="{{data.attributes.hp.value}}"
                                data-dtype="Number" placeholder="10"/>
@@ -400,9 +400,8 @@
 					<input class="inventoryslots" style="width: 30px;height: 15px;border: 1px solid #233a54;margin-left: 5px;" name="data.attributes.inventoryslots" type="text" value="{{data.attributes.inventoryslots}}" data-dtype="{{data.attributes.inventoryslots}}" placeholder="18" />
 					<div class="counter-value">
 					</div>
-							<label style="margin-left: 5px;">Automatic Burnout Consequence:</label>
-								<label class="bloodiedcheckbox">
-									<input style="margin-top: -4px;" class="ressourcecheckbox" type="checkbox" type="Boolean" name="data.attributes.burnoutc.value" data-dtype="Boolean" {{checked data.attributes.burnoutc.value}}/><span></span></label>
+					<label style="margin-left: 5px;">Automatic Burnout Dice:</label><label class="bloodiedcheckbox"><input style="margin-top: -4px;" class="ressourcecheckbox" type="checkbox" type="Boolean" name="data.attributes.autmomaticburnout" data-dtype="Boolean" {{checked data.attributes.autmomaticburnout}}/><span></span></label>
+					<label style="margin-left: 5px;">Automatic Burnout Consequence:</label><label class="bloodiedcheckbox"><input style="margin-top: -4px;" class="ressourcecheckbox" type="checkbox" type="Boolean" name="data.attributes.burnoutc.value" data-dtype="Boolean" {{checked data.attributes.burnoutc.value}}/><span></span></label>
 				<label style="margin-left: 5px;">Show Title</label>
 						<label class="titlecheckbox" style="margin-right: 20px;">
 						<input style="position: absolute; margin-top: -5px;" type="checkbox" type="Boolean" name="data.attributes.titlesetting" data-dtype="Boolean" {{checked data.attributes.titlesetting}}/><span></span></label>
