@@ -48,8 +48,11 @@
             <div class="tab" style="display:flex">
                Pages:
               <label class="tablinks tool" onclick="openCity(event, 'journey')">Journey Helper</label>
-              <!--<label class="tablinks tool" onclick="openCity(event, 'quest')">Quest-Tracker</label>-->
+              <label class="tablinks tool" onclick="openCity(event, 'quick')">Quick Reference</label>
               <label class="tablinks tool" onclick="openCity(event, 'forge')">Item-Forge</label>
+            </div>
+		    <div id="quick" class="tabcontent" style="display:none; height:200%">
+			<iframe src="http://giffyglyph.com/darkerdungeons/rules/" title="W3Schools Free Online Web Tutorials" style="border: 5px solid black;width: 218% !important;max-width: 218% !important;height: 94%;margin-left: -550px;margin-top: 29px;"></iframe>
             </div>
             <script>
             function openCity(evt, cityName) {
@@ -62,13 +65,11 @@
               for (i = 0; i < tablinks.length; i++) {
                 tablinks[i].className = tablinks[i].className.replace(" active", "");
               }
-              document.getElementById(cityName).style.display = "block";
+              document.getElementById(cityName).style.display = "contents";
               evt.currentTarget.className += " active";
 			  console.log("test");
             }
             </script>
-            <div id="quest" class="tabcontent" style="display:none; height:200%">
-              </div>
 				<script>
 					function forge(gold){
 					itemvalue = document.getElementById("itemvalue").value;
@@ -89,14 +90,15 @@
 				</script>
               <div id="forge" class="tabcontent" style="display:none; height:200%">
                 <div><h3 style="text-align:center;margin-top: 10px;background: #0e0e0e21;">|Darker Dungeons Item-Forge|</h3></div>
-                <h2>Item Value</h2>
+                <div style="display:flex;">
+				<h2>Item Value</h2>
                 <input class="darkscreeninput" type="number" id="itemvalue" name="itemvalue" value="{{itemvalue}}"> <input type="button" onclick="forge(this.value);" value="Calculate"></br>
-
+				</div>
                  </br>
                <div style="display:flex; border-top: solid 1px black;">
                 <h3>Remove a Notch<h3><input class="darkscreeninput" id="removeanotch" name="removeanotch" type="String"  value="{{removeanotch}}" placeholder="10% item value">
               </div>
-               <div style="border-top: solid 1px black;">
+               <div style="border-top: solid 1px black;height: 168%;">
                 <h3 style="text-align:center">Tempering Costs</h3>
                   <table style="border: 1px groove black" id="myTable">
                     <tr>
@@ -147,9 +149,9 @@
                   </table>
               </div>
               </div>
-              <div id="journey" class="tabcontent" style="display:block">
+              <div id="journey" class="tabcontent" style="display:contents">
               <h3 style="text-align:center;margin-top: 10px;background: #0e0e0e21;">|Journey Helper|</h3>
-              <div style="display:inline-table; border: groove 1px black; padding:10px; width: 500px;">
+              <div style="display:inline-table; border: groove 1px black; padding:10px; width: 500px;    margin-left: 13px;">
               <div style="display:flex; border-bottom: 1px solid black; margin-bottom: 5px">
                 Journey Duration<input class="darkscreeninput" style="width: 40px;" type="number" id="journeydur" value="{{journeydur}}" name="journeydur"></input> 
 				Travel-Pace 
@@ -303,6 +305,7 @@
 				const option = document.createElement("OPTION");
 				const name = document.createTextNode(game.users._source[i].name);
 				option.value = game.users._source[i].name;
+				option.id = i + "_" + game.users._source[i].name;
 				option.appendChild(name);
 				document.querySelector('#player-guide').appendChild(option);
 				}
@@ -330,13 +333,105 @@
 				</script>
                   <td>Guide:</td>
                   <td>
-                  <select class="darkscreeninput" id="player-guide" name="player-guide" title="{{player-guide}}">
+                  <select class="darkscreeninput" id="player-guide" name="player-guide">
 				   {{#select player-guide}}
 				   
 					{{/select}}
                   </select>
                   </td>
-                  <td><button type="button" id="guide">Guide-Check</button></td>
+                  <td><button type="button" id="guidebutton" onclick="check(1)">Guide-Check</button></td>
+				  <script>
+				  function check(what){
+				  let player,success,checktype,mod,user,actor,dc,successmessage,failmessage, message, perception;
+				  let color = "black";
+				  let roll = new Roll('1d20').roll();
+				  if(what === 1){
+					  checktype = "guidance";
+					  document.getElementById("player-guide");
+					  player = $("#player-guide :selected").text();
+					  user = game.users.entities.find(u => u.name === player);
+					  actor = user.character;
+					  mod = actor.data.data.abilities.int.mod;
+					  dc = document.getElementById("guidancedc").value;
+					  successmessage = "The party is on track. Subtract today's progress from the remaining travel time.";
+					  failmessage = "You veered off course and lost your way. Add 0.5 day to the remaining travel time.";
+				  }
+				  else if(what === 2){
+					  checktype = "foraging";
+					  document.getElementById("player-forager");
+					  player = $("#player-forager :selected").text();
+					  user = game.users.entities.find(u => u.name === player);
+					  actor = user.character;
+					  mod = actor.data.data.abilities.int.mod;
+					  dc = document.getElementById("foragingdc").value;
+					  successmessage = "You recover [[2d4]] rations-worth of food and water—you can divide this however you like.";
+					  failmessage = "You were unable to find anything.";
+				  }
+				  else if(what === 3){
+					  checktype = "perception";
+					  document.getElementById("player-lookout");
+					  player = $("#player-lookout :selected").text();
+					  user = game.users.entities.find(u => u.name === player);
+					  actor = user.character;
+					  mod = actor.data.data.skills.prc.mod;
+					  successmessage = "";
+					  failmessage = "";
+					  perception =  parseInt(roll.result, 10) + parseInt(mod, 10);
+					  perception = "Roll: "+perception;
+				  }
+				  else if(what === 4){
+					  checktype = "perception";
+					  document.getElementById("player-lookout");
+					  player = $("#player-scout :selected").text();
+					  user = game.users.entities.find(u => u.name === player);
+					  actor = user.character;
+					  mod = actor.data.data.skills.prc.mod;
+					  successmessage = "";
+					  failmessage = "";
+					  perception =  parseInt(roll.result, 10) + parseInt(mod, 10);
+					  perception = "Roll: "+perception;
+				  }
+				  	  console.log(actor);
+					  let check =  parseInt(roll.result, 10) + parseInt(mod, 10);
+					  if(check >= dc){
+					  success = "successful";
+					  color = "green";
+					  message = successmessage;
+					  }
+					  else{
+					  success = "unsuccessful";
+					  color = "red";
+					  message = failmessage;
+					  }
+					if(what === 3 || what === 4){
+					success= "";
+					}
+					console.log(player + " made a "+success+" "+checktype+" check DC(" + dc + ") Check:"  + check);
+                    let content = `
+						<div class="dnd5e chat-card item-card">
+							<header class="card-header flexrow">
+								<img src="${actor.data.token.img}" title="" width="36" height="36" style="border: none;"/> <h1 style="font-size: 19px;">${actor.name}'s </h1>
+							</header>
+							<div style="padding-bottom:4px; content-align:center;"><label style="font-size: 15px;">Made a </label><label style="background:${color};color:white;font-size: 15px;">${success}</label><label style="font-size: 15px;"> ${checktype} check ${perception}</label></div>
+							<i><label style="font-size: 13px;">${message}</label></i>
+						</div>`;
+                    let rollWhisper = null;
+                    let rollBlind = false;
+                    let rollMode = game.settings.get("core", "rollMode");
+                    if (["gmroll", "blindroll"].includes(rollMode) || what === 3 || what === 4) rollWhisper = ChatMessage.getWhisperIDs("GM");
+                    if (rollMode === "blindroll") rollBlind = true;
+                    ChatMessage.create({
+                        user: game.user._id,
+                        content: content,
+                        speaker: {
+                            actor: actor._id,
+                            token: actor.token,
+                            alias: actor.name
+                        },
+                        sound: CONFIG.sounds.dice,
+                    });
+				  }
+				  </script>
                 </tr>
                 <tr>
                   <td>Forager:</td>
@@ -347,7 +442,7 @@
 					{{/select}}
 					</select>
                   </td>
-                  <td><button type="button" id="guide">Foraging-Check</button></td>
+                  <td><button type="button" id="foragingbutton" onclick="check(2)">Foraging-Check</button></td>
                 </tr>
                 <tr>
                   <td>Lookout:</td>
@@ -358,7 +453,7 @@
 					{{/select}}
 				   </select>
                   </td>
-                  <td><button type="button" id="guide">Perception-Roll</button></td>
+                  <td><button type="button" onclick="check(3)">Perception-Roll</button></td>
                 </tr>
                 <tr>
                   <td>Scout:</td>
@@ -369,7 +464,7 @@
 					{{/select}}
 					</select>
                   </td>
-                  <td><button type="button" id="guide">Perception-Roll</button></td>
+                  <td><button type="button" onclick="check(4)">Perception-Roll</button></td>
                 </tr>
               </table>
             </div>
