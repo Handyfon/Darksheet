@@ -1,14 +1,12 @@
-<div class="inventory-filters spellbook-filters">
-    <div style="display: inline-flex !important;" class="form-group spellcasting-ability">
-        {{#if isNPC}}
-		
-        <div class="spellcasting-level flexrow">
-            <label><h3>Spellcasting Level</h3></label>
-            <input class="spellcasting-level" type="text" name="data.details.spellLevel"
-                   value="{{data.details.spellLevel}}" data-dtype="Number" placeholder="0"/>
-        </div>
-        {{/if}}
-		 <h3>{{localize "DND5E.SpellAbility"}}</h3>
+<div class="inventory-filters spellbook-filters flexrow">
+    <div class="form-group spellcasting-ability" style="flex: auto;">
+        {{#unless isNPC}}
+        <label>{{localize "DND5E.SpellAbility"}}</label>
+        {{else}}
+        <label>{{localize "DND5E.Level"}}</label>
+        <input class="spellcasting-level" type="text" name="data.details.spellLevel"
+               value="{{data.details.spellLevel}}" data-dtype="Number" placeholder="0"/>	  
+        {{/unless}}
         <select style="margin-left: 10px;"name="data.attributes.spellcasting" data-type="String">
             {{#select data.attributes.spellcasting}}
             <option value="">{{localize "DND5E.None"}}</option>
@@ -42,15 +40,9 @@
 				<option value="-3">Chaotic -3</option>
 					{{/select}}
 			</select>
-		{{#if isNPC}}
-        <h3>{{localize "DND5E.SpellcasterLevel"}}</h3>
-        <input class="spellcasting-level" type="text" name="data.details.spellLevel"
-               value="{{data.details.spellLevel}}" data-dtype="Number" placeholder="0"/>
-        {{/if}}
     </div>
 
-    <ul class="filter-list flexrow" data-filter="spellbook">
-        <li class="filter-title">{{localize "DND5E.Filter"}}</li>
+    <ul class="filter-list flexrow" data-filter="spellbook">														 
         <li class="filter-item" data-filter="action">{{localize "DND5E.Action"}}</li>
         <li class="filter-item" data-filter="bonus">{{localize "DND5E.BonusAction"}}</li>
         <li class="filter-item" data-filter="reaction">{{localize "DND5E.Reaction"}}</li>
@@ -60,22 +52,17 @@
     </ul>
 </div>
 
-<ol class="inventory-list {{data.attributes.color.value}}">
+<ol class="items-list  inventory-list {{data.attributes.color.value}}">
 {{#each spellbook as |section|}}
-    <li class="item flexrow inventory-header spellbook-header {{data.attributes.color.value}}">
-        <div class="item-name flexrow {{data.attributes.color.value}}">
-            <h3>{{section.label}}</h3>
-        </div>
-
+    <li class="items-header spellbook-header flexrow {{data.attributes.color.value}}">
+        <h3 class="item-name flexrow {{data.attributes.color.value}}">{{section.label}}</h3>
+		
        <div class="spell-slots {{data.attributes.color.value}}" id="spellrow">
             {{#if section.usesSlots}}
 			<button name="{{section.prop}}" onclick="return(this.name)" style="width: 7px;height: 16px;display: block;margin-top: 3px;position: fixed;margin-left: -3px;" class="minusspellslot-{{section.prop}}" type="button" id="minuspell"><p style="margin: 0;margin-top: -10px;margin-left: -2px;">-</p></button>
-            <script>
-			</script>
 			<input type="text" name="data.spells.{{section.prop}}.value" value="{{section.uses}}" placeholder="0"
                    data-dtype="Number"/>
             <span class="sep"> / </span>
-
             <span class="spell-max {{data.attributes.color.value}}" data-level="{{section.prop}}" data-slots="{{section.slots}}">
                 {{{section.slots}}}
                 {{#if ../editable}}
@@ -108,9 +95,9 @@
     {{#each section.spells as |item i|}}
         <li class="item flexrow" data-item-id="{{item._id}}">
             <div class="item-name flexrow rollable">
-                <div class="item-image" style="background-image: url({{item.img}})"></div>
+                <div class="item-image" style="background-image: url('{{item.img}}')"></div>
                 <h4>{{item.name}}</h4>
-                {{#if item.data.uses.value }}
+                {{#if item.data.uses.per }}
                 <div class="item-detail spell-uses">Uses {{item.data.uses.value}} / {{item.data.uses.max}}</div>
                 {{/if}}
             </div>
@@ -136,7 +123,7 @@
             </div>
 
             {{#if ../../owner}}
-            <div class="item-controls">
+            <div class="item-controls flexrow">
                 {{#if section.canPrepare}}
                 <a class="item-control item-toggle {{item.toggleClass}}" title="{{item.toggleTitle}}"><i class="fas fa-sun"></i></a>
                 {{/if}}
@@ -153,7 +140,7 @@
     <li class="item flexrow"><p class="notes">{{localize "DND5E.FilterNoSpells"}}</p></li>
     {{else}}
     <li class="item flexrow inventory-header spellbook-header spellbook-empty">
-        <div class="item-controls">
+        <div class="item-controls flexrow">
             <a class="item-control item-create" title="{{localize 'DND5E.SpellCreate'}}" data-type="spell"
                data-level="{{lvl}}"><i class="fas fa-plus"></i> {{localize "DND5E.SpellAdd"}}</a>
         </div>

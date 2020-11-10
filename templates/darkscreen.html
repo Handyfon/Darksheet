@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html id="darkscreen">
 <form class="{{cssClass}} flexcol" autocomplete="off">
-	<header class="sheet-header flexrow">
-	<script>
-	</script>
-	</header>
 	<section class="sheet-body">
 <script type="text/javascript">
 //ONLOAD
@@ -52,7 +48,7 @@
               <label class="tablinks tool" onclick="openCity(event, 'forge')">Item-Forge</label>
             </div>
 		    <div id="quick" class="tabcontent" style="display:none; height:200%">
-			<iframe src="http://giffyglyph.com/darkerdungeons/rules/" title="W3Schools Free Online Web Tutorials" style="border: 5px solid black;width: 218% !important;max-width: 218% !important;height: 94%;margin-left: -550px;margin-top: 29px;"></iframe>
+			<iframe src="http://giffyglyph.com/darkerdungeons/rules/" title="W3Schools Free Online Web Tutorials" class="darkframe"></iframe>
             </div>
             <script>
             function openCity(evt, cityName) {
@@ -88,11 +84,12 @@
 					function darkscreenUpdate(){
 					}	
 				</script>
-              <div id="forge" class="tabcontent" style="display:none; height:200%">
-                <div><h3 style="text-align:center;margin-top: 10px;background: #0e0e0e21;">|Darker Dungeons Item-Forge|</h3></div>
+              <div id="forge" class="tabcontent" style="min-width: 34em;height: 98%;position: absolute;background: rgb(217, 218, 214) !important;display: none;">
+              <div style="min-width: 34em;height: 98%;position: absolute;background: rgb(217, 218, 214) !important;display: block;">
+				<div><h3 style="text-align:center;margin-top: 10px;background: #0e0e0e21;">|Darker Dungeons Item-Forge|</h3></div>
                 <div style="display:flex;">
 				<h2>Item Value</h2>
-                <input class="darkscreeninput" type="number" id="itemvalue" name="itemvalue" value="{{itemvalue}}"> <input type="button" onclick="forge(this.value);" value="Calculate"></br>
+                <input class="darkscreeninput" type="number" id="itemvalue" name="itemvalue" value="{{itemvalue}}"> GP <input type="button" class="darksheet-button"onclick="forge(this.value);" value="Calculate"></br>
 				</div>
                  </br>
                <div style="display:flex; border-top: solid 1px black;">
@@ -149,9 +146,10 @@
                   </table>
               </div>
               </div>
+			</div>
               <div id="journey" class="tabcontent" style="display:contents">
               <h3 style="text-align:center;margin-top: 10px;background: #0e0e0e21;">|Journey Helper|</h3>
-              <div style="display:inline-table; border: groove 1px black; padding:10px; width: 500px;    margin-left: 13px;">
+              <div style="display:contents; border: groove 1px black; padding:10px; width: 500px;    margin-left: 13px;">
               <div style="display:flex; border-bottom: 1px solid black; margin-bottom: 5px">
                 Journey Duration<input class="darkscreeninput" style="width: 40px;" type="number" id="journeydur" value="{{journeydur}}" name="journeydur"></input> 
 				Travel-Pace 
@@ -291,9 +289,9 @@
             </div>
 			
             </div>
-<div style="border: 1px solid green; width:500px; height 600px; display:table;">
+<div style="border: 1px solid green; width:500px; height 600px; display:contents;">
               <h1 style="text-align:center">Player Roles</h1>
-              <table>
+              <table style="margin-bottom: 266px;">
                 <tr>
                   <th>Role</th>
                   <th>Player</th>
@@ -391,7 +389,6 @@
 					  perception =  parseInt(roll.result, 10) + parseInt(mod, 10);
 					  perception = "Roll: "+perception;
 				  }
-				  	  console.log(actor);
 					  let check =  parseInt(roll.result, 10) + parseInt(mod, 10);
 					  if(check >= dc){
 					  success = "successful";
@@ -406,13 +403,13 @@
 					if(what === 3 || what === 4){
 					success= "";
 					}
-					console.log(player + " made a "+success+" "+checktype+" check DC(" + dc + ") Check:"  + check);
+					console.log(player + " made a "+success+" " +checktype+ " check DC(" + dc + ") Check:"  + check);
                     let content = `
 						<div class="dnd5e chat-card item-card">
 							<header class="card-header flexrow">
 								<img src="${actor.data.token.img}" title="" width="36" height="36" style="border: none;"/> <h1 style="font-size: 19px;">${actor.name}'s </h1>
 							</header>
-							<div style="padding-bottom:4px; content-align:center;"><label style="font-size: 15px;">Made a </label><label style="background:${color};color:white;font-size: 15px;">${success}</label><label style="font-size: 15px;"> ${checktype} check ${perception}</label></div>
+							<div style="padding-bottom:4px; content-align:center;"><label style="font-size: 15px;">Made a </label><label style="background:${color};color:white;font-size: 15px;">${success}</label><label style="font-size: 15px;"> ${checktype} check with <i class="fas fa-dice-d20"></i> (${roll.result}+${mod})</label></div>
 							<i><label style="font-size: 13px;">${message}</label></i>
 						</div>`;
                     let rollWhisper = null;
@@ -468,7 +465,7 @@
                 </tr>
               </table>
             </div>
-            <div style="display:inline-table; height: 50px; width:350px">
+            <div style="display:contents; height: 50px; width:350px">
 			
 			<h1>Generated Day <i class="fa fa-question-circle" title="You need to import all rolltables and roll on them at least once for this to work" aria-hidden="true"></i></h1>
               <div style="border: 1px solid black; height: fit-content;">
@@ -533,15 +530,17 @@
                   <div style="width:50%; text-align:center;"> +1 Hunger, +1 Thirst</div>
                   <input type="text" class="darkscreeninput" style="width:50%; text-align:center;" id="RC1" name="RC1" value="{{RC1}}" placeholder="Random Encounter?"></input>
                   </div>
-                <textarea type="text" class="darkscreeninput encounterdescription" id="RC1description" style="width:600px " name="RC1description" title="{{RC1description}}" value="{{RC1description}}" placeholder="Encounter Description"></textarea>
+                <textarea type="text" class="darkscreeninput encounterdescription" id="RC1description"  name="RC1description" title="{{RC1description}}" value="{{RC1description}}" placeholder="Encounter Description"></textarea>
               </div>
+			  <div style="border: 1px solid black; height: fit-content;">
                 <h3 class="dayheader">Morning</h3> 
                   <div class="flexday">
                   <div style="width:50%; text-align:center;"></div>
                   <input type="text" class="darkscreeninput" style="width:50%; text-align:center;" id="RC2" name="RC2" value="{{RC2}}" placeholder="Random Encounter?"></input>
-                  </div>
-                <textarea type="text" class="darkscreeninput encounterdescription" id="RC2description" style="width:600px " name="RC2description" title="{{RC2description}}" value="{{RC2description}}" placeholder="Encounter Description"></textarea>
-              <div style="border: 1px solid black; height: fit-content;">
+				</div>
+                <textarea type="text" class="darkscreeninput encounterdescription" id="RC2description"  name="RC2description" title="{{RC2description}}" value="{{RC2description}}" placeholder="Encounter Description"></textarea>
+			  </div>
+			  <div style="border: 1px solid black; height: fit-content;">
                 <h3 class="dayheader">Noon<button type="button" id="berechnen" style="width: 47px;margin-left: 5px;display: initial;" title="apply Fatigue" onclick="applynoon()">Apply</button></h3>
 				<script>
 				function applynoon(){
@@ -579,7 +578,7 @@
                   <div style="width:50%; text-align:center;">+1 Fatigue</div>
                   <input type="text" class="darkscreeninput" style="width:50%; text-align:center;" id="RC3" name="RC3" value="{{RC3}}" placeholder="Random Encounter?"></input>
                   </div>
-                <textarea type="text" class="darkscreeninput encounterdescription" id="RC3description" style="width:600px " name="RC3description" title="{{RC3description}}" value="{{RC3description}}" placeholder="Encounter Description"></textarea>
+                <textarea type="text" class="darkscreeninput encounterdescription" id="RC3description"  name="RC3description" title="{{RC3description}}" value="{{RC3description}}" placeholder="Encounter Description"></textarea>
               </div>
                 <div style="border: 1px solid black; height: fit-content;">
                 <h3 class="dayheader">Afternoon</h3>
@@ -588,7 +587,7 @@
                   <div style="width:50%; text-align:center;"></div>
                   <input type="text" class="darkscreeninput" style="width:50%; text-align:center;" id="RC4" name="RC4" value="{{RC4}}" placeholder="Random Encounter?"></input>
                   </div>
-                <textarea type="text" class="darkscreeninput encounterdescription" id="RC4description" style="width:600px " name="RC4description" title="{{RC4description}}" value="{{RC4description}}" placeholder="Encounter Description"></textarea>
+                <textarea type="text" class="darkscreeninput encounterdescription" id="RC4description"  name="RC4description" title="{{RC4description}}" value="{{RC4description}}" placeholder="Encounter Description"></textarea>
               </div>
                 <div style="border: 1px solid black; height: fit-content;">
                 <h3 class="dayheader">Dusk<button type="button" id="berechnen" style="width: 47px;margin-left: 5px;display: initial;" title="apply Hunger, Thirst and Fatigue" onclick="applydusk()">Apply</button></h3>
@@ -674,7 +673,7 @@
                   <div style="width:50%; text-align:center;">+1 Hunger, +1 Thirst, +1 Fatigue</div>
                   <input type="text" class="darkscreeninput" style="width:50%; text-align:center;" id="RC5" name="RC5" value="{{RC5}}" placeholder="Random Encounter?"></input>
                   </div>
-                <textarea type="text" class="darkscreeninput encounterdescription" id="RC5description" style="width:600px " name="RC5description" title="{{RC5description}}" value="{{RC5description}}" placeholder="Encounter Description"></textarea>
+                <textarea type="text" class="darkscreeninput encounterdescription" id="RC5description"  name="RC5description" title="{{RC5description}}" value="{{RC5description}}" placeholder="Encounter Description"></textarea>
               </div>
               <div style="border: 1px solid black; height: fit-content;">
                 <h3 class="dayheader">Night</h3>
@@ -683,9 +682,9 @@
                   <div style="width:50%; text-align:center;"></div>
                   <input type="text" class="darkscreeninput" style="width:50%; text-align:center;" id="RC6" name="RC6" value="{{RC6}}" placeholder="Random Encounter?"></input>
                   </div>
-                <textarea type="text" class="darkscreeninput encounterdescription" id="RC6description" style="width:600px " name="RC6description" title="{{RC6description}}" value="{{RC6description}}" placeholder="Encounter Description"></textarea>
+                <textarea type="text" class="darkscreeninput encounterdescription" id="RC6description"  name="RC6description" title="{{RC6description}}" value="{{RC6description}}" placeholder="Encounter Description"></textarea>
               </div>
-              <div style="text-align:center;margin:10px"><label style="background:lightblue;padding:8px;" id="generator" value="{{generator}}" class="generator">Generate Day</label></div>
+              <div style="text-align:center;margin:10px"><label style="padding:8px;" id="generator" value="{{generator}}" class="generator darksheet-button">Generate Day</label></div>
 			  </div>
 			 <script type="module">
 					console.log("test 2537");
@@ -779,4 +778,5 @@
 
 	</section>
 </form>
+<div class="window-resizable-handle"><i class="fas fa-arrows-alt-h"></i></div>
 </html>

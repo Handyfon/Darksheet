@@ -1,10 +1,11 @@
 import Item5e from "../../../../systems/dnd5e/module/item/entity.js";
 import TraitSelector from "../../../../systems/dnd5e/module/apps/trait-selector.js";
 import ActorSheetFlags from "../../../../systems/dnd5e/module/apps/actor-flags.js";
+import MovementConfig from "../../../../systems/dnd5e/module/apps/movement-config.js";														   
 import {DND5E} from '../../../../systems/dnd5e/module/config.js';
-
+import {onManageActiveEffect, prepareActiveEffectCategories} from "../../../../systems/dnd5e/module/effects.js";
 /**
- * Extend the basic ActorSheet class to do all the D&D5e things!
+ * Extend the basic ActorSheet class to suppose system-specific logic and functionality.
  * This sheet is an Abstract layer which is not used.
  * @extends {ActorSheet}
  */
@@ -19,7 +20,8 @@ export default class ActorSheet5e extends ActorSheet {
     this._filters = {
       inventory: new Set(),
       spellbook: new Set(),
-      features: new Set()
+      features: new Set(),
+      effects: new Set()
     };
   }
 
@@ -31,12 +33,20 @@ export default class ActorSheet5e extends ActorSheet {
       scrollY: [
         ".inventory .inventory-list",
         ".features .inventory-list",
-        ".spellbook .inventory-list"
+        ".spellbook .inventory-list",
+        ".effects .inventory-list"
       ],
       tabs: [{navSelector: ".tabs", contentSelector: ".sheet-body", initial: "description"}]
     });
   }
 
+  /* -------------------------------------------- */
+
+  /** @override */
+  get template() {
+    if ( !game.user.isGM && this.actor.limited ) return "systems/dnd5e/templates/actors/limited-sheet.html";
+    return `systems/dnd5e/templates/actors/${this.actor.data.type}-sheet.html`;
+  }
 
   /* -------------------------------------------- */
 
@@ -53,6 +63,7 @@ export default class ActorSheet5e extends ActorSheet {
       cssClass: isOwner ? "editable" : "locked",
       isCharacter: this.entity.data.type === "character",
       isNPC: this.entity.data.type === "npc",
+      isVehicle: this.entity.data.type === 'vehicle',										 
       config: CONFIG.DND5E,
     };
 
@@ -74,13 +85,18 @@ export default class ActorSheet5e extends ActorSheet {
       abl.label = CONFIG.DND5E.abilities[a];
     }
 
-    // Update skill labels
-    for ( let [s, skl] of Object.entries(data.actor.data.skills)) {
-      skl.ability = data.actor.data.abilities[skl.ability].label.substring(0, 3);
-      skl.icon = this._getProficiencyIcon(skl.value);
-      skl.hover = CONFIG.DND5E.proficiencyLevels[skl.value];
-      skl.label = CONFIG.DND5E.skills[s];
+   // Skills
+    if (data.actor.data.skills) {
+      for ( let [s, skl] of Object.entries(data.actor.data.skills)) {
+        skl.ability = CONFIG.DND5E.abilityAbbreviations[skl.ability];
+        skl.icon = this._getProficiencyIcon(skl.value);
+        skl.hover = CONFIG.DND5E.proficiencyLevels[skl.value];
+        skl.label = CONFIG.DND5E.skills[s];
+      }
     }
+
+    // Movement speeds
+    data.movement = this._getMovementSpeed(data.actor);
 
     // Update traits
     this._prepareTraits(data.actor.data.traits);
@@ -88,17 +104,49 @@ export default class ActorSheet5e extends ActorSheet {
     // Prepare owned items
     this._prepareItems(data);
 
+    // Prepare active effects
+    data.effects = prepareActiveEffectCategories(this.entity.effects);
+
     // Return data to the sheet
     return data
   }
 
   /* -------------------------------------------- */
 
+
+  /**
+   * Prepare the display of movement speed data for the Actor
+   * @param {object} actorData
+   * @returns {{primary: string, special: string}}
+   * @private
+   */
+  _getMovementSpeed(actorData) {
+    const movement = actorData.data.attributes.movement;
+    const speeds = [
+      [movement.walk, `${movement.walk} (${movement.hover ? game.i18n.localize("DND5E.MovementHover") : game.i18n.localize("DND5E.MovementWalk")})`],
+      [movement.burrow, `${movement.burrow} (${game.i18n.localize("DND5E.MovementBurrow")})`],
+      [movement.climb, `${movement.climb}  (${game.i18n.localize("DND5E.MovementClimb")})`],
+      [movement.fly, `${movement.fly}  (${game.i18n.localize("DND5E.MovementFly")})`],
+      [movement.swim, `${movement.swim} (${game.i18n.localize("DND5E.MovementSwim")})`]
+    ].filter(s => !!s[0]).sort((a, b) => b[0] - a[0]);
+    return {
+      primary: speeds[0] ? speeds[0][1] : "",
+      special: speeds.length > 1 ? speeds.slice(1).map(s => s[1]).join(", ") : ""
+    }
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Prepare the data structure for traits data like languages, resistances & vulnerabilities, and proficiencies
+   * @param {object} traits   The raw traits data object from the actor data
+   * @private
+   */	 
   _prepareTraits(traits) {
     const map = {
-      "dr": CONFIG.DND5E.damageTypes,
-      "di": CONFIG.DND5E.damageTypes,
-      "dv": CONFIG.DND5E.damageTypes,
+      "dr": CONFIG.DND5E.damageResistanceTypes,
+      "di": CONFIG.DND5E.damageResistanceTypes,
+      "dv": CONFIG.DND5E.damageResistanceTypes,
       "ci": CONFIG.DND5E.conditionTypes,
       "languages": CONFIG.DND5E.languages,
       "armorProf": CONFIG.DND5E.armorProficiencies,
@@ -152,19 +200,19 @@ export default class ActorSheet5e extends ActorSheet {
       "0": "&infin;"
     };
 
-    // Format a spellbook entry for a certain indexed level
-    const registerSection = (sl, i, label, level={}) => {
+     // Format a spellbook entry for a certain indexed level
+    const registerSection = (sl, i, label, {prepMode="prepared", value, max, override}={}) => {
       spellbook[i] = {
         order: i,
         label: label,
         usesSlots: i > 0,
-        canCreate: owner && (i >= 1),
+        canCreate: owner,
         canPrepare: (data.actor.type === "character") && (i >= 1),
         spells: [],
-        uses: useLabels[i] || level.value || 0,
-        slots: useLabels[i] || level.max || 0,
-        override: level.override || 0,
-        dataset: {"type": "spell", "level": i},
+        uses: useLabels[i] || value || 0,
+        slots: useLabels[i] || max || 0,
+        override: override || 0,
+        dataset: {"type": "spell", "level": prepMode in sections ? 1 : i, "preparation.mode": prepMode},
         prop: sl
       };
     };
@@ -177,7 +225,7 @@ export default class ActorSheet5e extends ActorSheet {
       return max;
     }, 0);
 
-    // Structure the spellbook for every level up to the maximum which has a slot
+    // Level-based spellcasters have cantrips and leveled slots
     if ( maxLevel > 0 ) {
       registerSection("spell0", 0, CONFIG.DND5E.spellLevels[0]);
       for (let lvl = 1; lvl <= maxLevel; lvl++) {
@@ -185,9 +233,18 @@ export default class ActorSheet5e extends ActorSheet {
         registerSection(sl, lvl, CONFIG.DND5E.spellLevels[lvl], levels[sl]);
       }
     }
+
+    // Pact magic users have cantrips and a pact magic section
     if ( levels.pact && levels.pact.max ) {
-      registerSection("spell0", 0, CONFIG.DND5E.spellLevels[0]);
-      registerSection("pact", sections.pact, CONFIG.DND5E.spellPreparationModes.pact, levels.pact);
+      if ( !spellbook["0"] ) registerSection("spell0", 0, CONFIG.DND5E.spellLevels[0]);
+      const l = levels.pact;
+      const config = CONFIG.DND5E.spellPreparationModes.pact;
+      registerSection("pact", sections.pact, config, {
+        prepMode: "pact",
+        value: l.value,
+        max: l.max,
+        override: l.override
+      });
     }
 
     // Iterate over every spell item, adding spells to the spellbook by section
@@ -196,17 +253,24 @@ export default class ActorSheet5e extends ActorSheet {
       let s = spell.data.level || 0;
       const sl = `spell${s}`;
 
-      // Spellcasting mode specific headings
+      // Specialized spellcasting modes (if they exist)
       if ( mode in sections ) {
         s = sections[mode];
         if ( !spellbook[s] ){
-          registerSection(mode, s, CONFIG.DND5E.spellPreparationModes[mode], levels[mode]);
+          const l = levels[mode] || {};
+          const config = CONFIG.DND5E.spellPreparationModes[mode];
+          registerSection(mode, s, config, {
+            prepMode: mode,
+            value: l.value,
+            max: l.max,
+            override: l.override
+          });
         }
       }
 
-      // Higher-level spell headings
+      // Sections for higher-level spells which the caster "should not" have, but spell items exist for
       else if ( !spellbook[s] ) {
-        registerSection(sl, s, CONFIG.DND5E.spellLevels[s], levels[sl]);
+        registerSection(sl, s, CONFIG.DND5E.spellLevels[s], {levels: levels[sl]});
       }
 
       // Add the spell to the relevant heading
@@ -295,8 +359,10 @@ export default class ActorSheet5e extends ActorSheet {
     // Editable Only Listeners
     if ( this.isEditable ) {
 
-      // Relative updates for numeric fields
-      html.find('input[data-dtype="Number"]').change(this._onChangeInputDelta.bind(this));
+      // Input focus and update
+      const inputs = html.find("input");
+      inputs.focus(ev => ev.currentTarget.select());
+      inputs.addBack().find('[data-dtype="Number"]').change(this._onChangeInputDelta.bind(this));
 
       // Ability Proficiency
       html.find('.ability-proficiency').click(this._onToggleAbilityProficiency.bind(this));
@@ -308,6 +374,7 @@ export default class ActorSheet5e extends ActorSheet {
       html.find('.trait-selector').click(this._onTraitSelector.bind(this));
 
       // Configure Special Flags
+      html.find('.configure-movement').click(this._onMovementConfig.bind(this));
       html.find('.configure-flags').click(this._onConfigureFlags.bind(this));
 
       // Owned Item management
@@ -316,6 +383,9 @@ export default class ActorSheet5e extends ActorSheet {
       html.find('.item-delete').click(this._onItemDelete.bind(this));
       html.find('.item-uses input').click(ev => ev.target.select()).change(this._onUsesChange.bind(this));
       html.find('.slot-max-override').click(this._onSpellSlotOverride.bind(this));
+
+      // Active Effect management
+      html.find(".effect-control").click(ev => onManageActiveEffect(ev, this.entity));
     }
 
     // Owner Only Listeners
@@ -416,37 +486,6 @@ export default class ActorSheet5e extends ActorSheet {
   /* -------------------------------------------- */
 
   /** @override */
-  async _onDrop (event) {
-    event.preventDefault();
-
-    // Get dropped data
-    let data;
-    try {
-      data = JSON.parse(event.dataTransfer.getData('text/plain'));
-    } catch (err) {
-      return false;
-    }
-    if ( !data ) return false;
-
-    // Case 1 - Dropped Item
-    if ( data.type === "Item" ) {
-      return this._onDropItem(event, data);
-    }
-
-    // Case 2 - Dropped Actor
-    if ( data.type === "Actor" ) {
-      return this._onDropActor(event, data);
-    }
-  }
-
-  /* -------------------------------------------- */
-
-  /**
-   * Handle dropping an Actor on the sheet to trigger a Polymorph workflow
-   * @param {DragEvent} event   The drop event
-   * @param {Object} data       The data transfer
-   * @private
-   */
   async _onDropActor(event, data) {
     const canPolymorph = game.user.isGM || (this.actor.owner && game.settings.get('dnd5e', 'allowPolymorphing'));
     if ( !canPolymorph ) return false;
@@ -518,68 +557,20 @@ export default class ActorSheet5e extends ActorSheet {
 
   /* -------------------------------------------- */
 
-  /**
-   * Handle dropping of an item reference or item data onto an Actor Sheet
-   * @param {DragEvent} event     The concluding DragEvent which contains drop data
-   * @param {Object} data         The data transfer extracted from the event
-   * @return {Object}             OwnedItem data to create
-   * @private
-   */
-  async _onDropItem(event, data) {
-    if ( !this.actor.owner ) return false;
-    let itemData = await this._getItemDropData(event, data);
-
-    // Handle item sorting within the same Actor
-    const actor = this.actor;
-    let sameActor = (data.actorId === actor._id) || (actor.isToken && (data.tokenId === actor.token.id));
-    if (sameActor) return this._onSortItem(event, itemData);
-    // Create a spell scroll from a spell item
+  /** @override */
+  async _onDropItemCreate(itemData) {														
+    // Create a Consumable spell scroll on the Inventory tab
     if ( (itemData.type === "spell") && (this._tabs[0].active === "inventory") ) {
       const scroll = await Item5e.createScrollFromSpell(itemData);
       itemData = scroll.data;
     }
 
-    // Create the owned item
-    return this.actor.createEmbeddedEntity("OwnedItem", itemData);
+    // Create the owned item as normal
+    return super._onDropItemCreate(itemData);
   }
 
   /* -------------------------------------------- */
-
-  /**
-   * TODO: A temporary shim method until Item.getDropData() is implemented
-   * https://gitlab.com/foundrynet/foundryvtt/-/issues/2866
-   * @private
-   */
-  async _getItemDropData(event, data) {
-    let itemData = null;
-
-    // Case 1 - Import from a Compendium pack
-    const actor = this.actor;
-    if (data.pack) {
-      const pack = game.packs.get(data.pack);
-      if (pack.metadata.entity !== "Item") return;
-      itemData = await pack.getEntry(data.id);
-    }
-
-    // Case 2 - Data explicitly provided
-    else if (data.data) {
-      itemData = data.data;
-    }
-
-    // Case 3 - Import from World entity
-    else {
-      let item = game.items.get(data.id);
-      if (!item) return;
-      itemData = item.data;
-    }
-
-    // Return a copy of the extracted data
-    return duplicate(itemData);
-  }
-
-  /* -------------------------------------------- */
-
-  /**
+  /*
    * Handle enabling editing for a spell slot override value
    * @param {MouseEvent} event    The originating click event
    * @private
@@ -792,16 +783,24 @@ export default class ActorSheet5e extends ActorSheet {
     event.preventDefault();
     const a = event.currentTarget;
     const label = a.parentElement.querySelector("label");
-    const options = {
-      name: a.dataset.target,
-      title: label.innerText,
-      choices: CONFIG.DND5E[a.dataset.options]
-    };
+    const choices = CONFIG.DND5E[a.dataset.options];
+    const options = { name: a.dataset.target, title: label.innerText, choices };
     new TraitSelector(this.actor, options).render(true)
   }
 
   /* -------------------------------------------- */
 
+  /**
+   * Handle spawning the TraitSelector application which allows a checkbox of multiple trait options
+   * @param {Event} event   The click event which originated the selection
+   * @private
+   */
+  _onMovementConfig(event) {
+    event.preventDefault();
+    new MovementConfig(this.object).render(true);
+  }
+
+  /* -------------------------------------------- */
   /** @override */
   _getHeaderButtons() {
     let buttons = super._getHeaderButtons();

@@ -1,14 +1,71 @@
+.dnd5e.sheet.actor.character .sheet-header .charlevel {
+    flex: 0 0 20px;
+    height: 20px;
+    font-size: 24px;
+    position: absolute;
+    color: #7a7971;
+    top: 48px;
+    right: 3px;
+    white-space: nowrap;
+}
+.form-group.inactive.woundsection {
+    border: 1px groove;
+    display: none;
+}
+label.randomnotch.rollable {
+    position: absolute;
+    margin-top: 20px;
+    padding: 3px;
+    border: 1px solid;
+    margin-left: unset !important;
+	cursor: pointer;
+}
+.fa-book-dead:before {
+    content: "\f6b7";
+    margin-right: 5px;
+}
+.dnd5e.sheet.actor.character .biography {
+    max-width: 100% !important;
+}
+
+.darksheet-button{
+	background: #131e2c !important;
+    color: #b5b1d4 !important;
+}
+.darksheet-button:hover {
+    box-shadow: 0px 4px 16px;
+    border: 1px solid black;
+    background: linear-gradient(0deg, #2f343e, #364558) !important;
+}
+.darksheet-button:active{
+    color: white !important;
+    background: linear-gradient(0deg, #364558, #2f343e) !important;
+    transition: 0s;
+    border: unset;
+}
+
+.DSC-window {
+  min-width: 665px;
+    border: unset;
+    background: transparent;
+}
+.darkframe{
+    border: 5px solid black !important;
+    width: 100% !important;
+    height: 94% !important;
+    max-width: 83vw !important;
+    margin-top: 29px !important;
+    position: absolute !important;
+}
 button#plusHD {
-    width: 5px;
-    height: 15px;
     position: relative;
     left: -4px;
-    top: -7px;
+    top: 0px;
 }
 button#minusHD {
     position: relative;
     left: -4px;
-    top: -20px;
+    top: -1px;
 }
 button#plusHD:after {
     content: "+";
@@ -76,10 +133,9 @@ button#minuspell {
     width: 7px !important;
     height: 16px !important;
     display: block !important;
-    margin-top: 4px !important;
-    position: initial !important;
+    position: relative !important;
     margin-left: -8px !important;
-    margin-bottom: -20px !important;
+    margin-bottom: -18px !important;
 }
 button#minuspell:hover {
     background: #552424 !important;
@@ -90,7 +146,7 @@ input#fname {
     border: 1px groove black;
 }
 input#itemvalue {
-    width: 200px;
+    width: 150px;
 }
 .flexday{
     background: #d2d2d2;
@@ -137,10 +193,8 @@ body {
     margin-right: auto;
     max-width: 80em;
 }
-
 #container {
     float: left;
-    padding: 1em;
     width: 100%;
 }
 
@@ -465,21 +519,18 @@ body {
 }
 /*BOOK CSS END*/
 
-/*TRAINING*/
-h4.pristine {
-    color: black !important;
+/*Inventory Wear and Tear*/
+.item-name.flexrow.rollable.well-worn {
+	background: #ff935f63;
 }
-h4.worn {
-	color: #adad00 !important;
+.item-name.flexrow.rollable.worn {
+    background: #ffff5f30;
 }
-h4.well-worn {
-    color: #a97007 !important;
-    text-shadow: 0 0 2px;
+.item-name.flexrow.rollable.scarred {
+    background: #86393980 !important;
+    color: #520000 !important;
 }
-h4.scarred {
-    color: #960a0a !important;
-    text-shadow: 0 0 2px;
-}
+
 label.notchlabel:hover + button#minus{
 	visibility: visible !important;
 }
@@ -540,9 +591,7 @@ button#minus {
     width: max-content;
     height: max-content;
 }
-input[type="checkbox"] {
-    transform: scale(1);
-}
+
 .item-detail.item-weight.notches {
     display: -webkit-box;
 }
@@ -848,14 +897,8 @@ form .form-header {
     font-size: 20px;
 }
 .trainpointa {
-    width: 80px;
-    position: absolute;
-    margin-top: 9px;
-    margin-left: 55px;
-    background-image: linear-gradient(#233a53, #375779) !important;
-    color: #c3e1fc;
-    display: unset !important;
-    text-align: center;
+    width: 80px !important;
+    position: relative;
 }
 .trainpointa.green {
     width: 80px;
@@ -872,18 +915,14 @@ form .form-header {
     text-align: center;
 }
 .trainingcheckbox {
-    width: 18px !important;
     height: 18px !important;
     margin: 0px !important;
     margin-top: 11px !important;
     display: unset !important;
 }
 .trainingcheckbox1 {
-    width: 18px !important;
     height: 18px !important;
-    margin-left: 70px !important;
     margin-right: 0px !important;
-    margin-top: 9px !important;
     display: unset !important;
 }
 .statuses .status .status-value {
@@ -891,28 +930,17 @@ form .form-header {
 }
 
 .trainingslabel {
-    margin-right: 0px;
+    margin-right: 10px;
     text-align: right;
     margin-top: 5px;
     font-size: 25px;
-    position: absolute;
 }
 .spentlable {
-    margin-right: 0px;
+    margin-right: 10px;
     margin-left: 10px;
     text-align: right;
     margin-top: 5px;
     font-size: 25px;
-    position: absolute;
-}
-.spentlable{
-margin-right: 0px;
-margin-left: 10px;
-
-    text-align: right;
-    margin-top: 5px;
-    font-size: 25px;
-	position:absolute;
 }
 .trainingssummary{
 	border-bottom: 0px !important;
@@ -924,9 +952,6 @@ margin-left: 10px;
 
 .dnd5e.sheet.actor .ability-scores {
     margin-left: 5px;
-}
-.dnd5e.sheet .editable .rollable:hover {
-    cursor: pointer;
 }
 
 .dnd5e.sheet .window-content {
@@ -1085,146 +1110,13 @@ margin-bottom: 3px !important;
     text-align: center;
 	
 }
-.exhaustionpoints{
-    width: 40px;
-	margin-top: 5px;
-    position: relative;
-    margin-left: -20px;
-    text-align: center;
-}
-.heropoints{
-    width: 40px;
-	margin-top: 5px;
-    position: relative;
-    margin-left: -25px;
-    text-align: center;
-}
-.inspirationpoints{
-    width: 40px;
-	margin-top: 5px;
-    position: relative;
-    margin-left: -20px;
-    text-align: center;
-}
-.fatecheckbox > input {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    -o-appearance: none;
-    appearance: none;
-    outline: none;
-    transition-duration: 0.2s;
-    border-style: solid;
-    border-width: 1px;
-    cursor: pointer;
-    width: 20px;
-    height: 20px;
-    border-bottom-style: dotted;
-    border-top-style: dotted;
-    padding: 10px;
-    border-bottom-style: dotted;
-    border-top-style: dotted;
-    padding: 10px;
-}
-
-.fatecheckbox > input:checked {
-    border: 1px solid #fce100;
-	padding: 10px;
-}
-
-.fatecheckbox > input:checked + span::before {
-    content: '\1F320';
-    display: block;
-    position: absolute;
-    margin-top: -1px;
-	margin-left: 4.5px;
-    padding-bottom: 5px;
-}
-
-.herocheckbox {
-    display: inline-flex;
-    cursor: pointer;
-    position: relative;
-	margin-top:2px;
-	width: 20px;
-	height: 20px;
-}
-.herocheckbox{
-margin-bottom: 3px !important;
-}
-
-.herocheckbox > input {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    -o-appearance: none;
-    appearance: none;
-    outline: none;
-    transition-duration: 0.2s;
-    border-style: solid;
-    border-width: 1px;
-    cursor: pointer;
-    width: 20px;
-    height: 20px;
-    border-bottom-style: dotted;
-    border-top-style: dotted;
-	border-radius: 100px;
-}
-
-.herocheckbox > input:checked {
-    border: 1px solid #fff0;
-}
-
-.herocheckbox > input:checked + span::before {
-    content: '\1F7E0';
-    display: block;
-    position: absolute;
-    margin-top: -1px;
-	margin-left: 4.5px;
-    padding-bottom: 5px;
-}
-
-
-
-
-.inspirationcheckbox {
-    display: inline-flex;
-    cursor: pointer;
-    position: relative;
-	margin-top:2px;
-	width: 20px;
-	height: 20px;
-}
-.inspirationcheckbox{
-margin-bottom: 3px !important;
-}
-
-.inspirationcheckbox > input {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    -o-appearance: none;
-    appearance: none;
-    outline: none;
-    transition-duration: 0.2s;
-    border-style: solid;
-    border-width: 1px;
-    cursor: pointer;
-    width: 20px;
-    height: 20px;
-    border-bottom-style: dotted;
-    border-top-style: dotted;
-	border-radius: 100px;
-}
-
-.inspirationcheckbox > input:checked {
-    border: 1px solid #fff0;
-}
-
-.inspirationcheckbox > input:checked + span::before {
-    content: '\1F7E1';
-    display: block;
-    position: absolute;
-    margin-top: -1px;
-	margin-left: 4.5px;
-    padding-bottom: 5px;
+.points {
+    width: 40px !important;
+    margin: -12px !important;
+    color: #b5b1d4 !important text-align: center !important;
+    border-radius: unset !important;
+    border: #000000 groove 2px !important;
+    text-align: center !important;
 }
 
 .ressourcecheckbox {
@@ -1271,7 +1163,6 @@ margin-bottom: 3px !important;
     margin-left: 5%;
 }
 .dnd5e.sheet.actor .counters {
-    border-bottom: 1px #ffffff57 solid;
     margin-top: 1px;
     border-top: 0;
     place-items: center;

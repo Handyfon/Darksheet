@@ -114,6 +114,14 @@ Hooks.once('init', function() {
         default: false,
         type: Boolean,
     });
+    game.settings.register('darksheet', 'nonpcattack', {
+        name: 'No NPC Attacks (Active Defense Instead!)',
+        hint: '!Warning - Will Overwrite Actor Attacks ! Enable this if you want to only roll damage when using npc attacks ONLY SUPPORTS THE BetterNPCSheet5e',
+        scope: 'world',
+        config: true,
+        default: false,
+        type: Boolean,
+    });
     game.settings.register('darksheet', 'smalldefense', {
         name: 'Variant: Small Defense',
         hint: 'If you want to use smaller modifiers while playing with Active Defense, try this Small Defense variant. Defense Rolls: When you make a defense roll, roll a d20 and add your AC minus 10. The opposing DC is 12 plus the attackers normal attack bonus.',
@@ -537,7 +545,7 @@ if(iscantrip && actor.data.data.attributes.autmomaticburnout && game.settings.ge
                 let rollWhisper = null;
                 let rollBlind = false;
                 let rollMode = game.settings.get("core", "rollMode");
-                if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperIDs("GM");
+                if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperRecipients("GM")
                 if (rollMode === "blindroll") rollBlind = true;
                 if (roll.result <= 2) {
                     if (bsettings) {
@@ -1021,7 +1029,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
                     let rollWhisper = null;
                     let rollBlind = false;
                     let rollMode = game.settings.get("core", "rollMode");
-                    if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperIDs("GM");
+                    if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperRecipients("GM")
                     if (rollMode === "blindroll") rollBlind = true;
                     ChatMessage.create({
                         user: game.user._id,
@@ -1436,7 +1444,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
             let rollWhisper = null;
             let rollMode = game.settings.get("core", "rollMode");
             let currentdie = darkitem.flags.darksheet.item.ammodie;
-            if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperIDs("GM");
+            if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperRecipients("GM")
             roll.toMessage({
                 speaker: ChatMessage.getSpeaker({
                     actor: this
@@ -1529,7 +1537,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
                     let rollWhisper = null;
                     let rollBlind = false;
                     let rollMode = game.settings.get("core", "rollMode");
-                    if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperIDs("GM");
+                    if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperRecipients("GM")
                     if (rollMode === "blindroll") rollBlind = true;
                     ChatMessage.create({
                         user: game.user._id,
@@ -1965,7 +1973,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
                 let rollWhisper = null;
                 let rollBlind = false;
                 let rollMode = game.settings.get("core", "rollMode");
-                if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperIDs("GM");
+                if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperRecipients("GM")
                 if (rollMode === "blindroll") rollBlind = true;
                 if (roll.result <= 2) {
                     if (bsettings) {
@@ -2104,7 +2112,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
             let rollWhisper = null;
             let rollBlind = false;
             let rollMode = game.settings.get("core", "rollMode");
-            if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperIDs("GM");
+            if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperRecipients("GM")
             if (rollMode === "blindroll") rollBlind = true;
             if (roll.result <= 2) {
                 console.log("(DarkSheet): Hunger");
@@ -2435,7 +2443,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
             let rollWhisper = null;
             let rollBlind = false;
             let rollMode = game.settings.get("core", "rollMode");
-            if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperIDs("GM");
+            if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperRecipients("GM")
             if (rollMode === "blindroll") rollBlind = true;
             if (newexhaustion === 1) {
                 ChatMessage.create({
@@ -2632,7 +2640,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
             let rollWhisper = null;
             let rollBlind = false;
             let rollMode = game.settings.get("core", "rollMode");
-            if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperIDs("GM");
+            if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperRecipients("GM")
             if (rollMode === "blindroll") rollBlind = true;
 
             ChatMessage.create({
@@ -2680,7 +2688,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
             let rollWhisper = null;
             let rollBlind = false;
             let rollMode = game.settings.get("core", "rollMode");
-            if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperIDs("GM");
+            if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperRecipients("GM")
             if (rollMode === "blindroll") rollBlind = true;
             if (this.actor.data.data.attributes.inspirations.value <= 0) {
                 ChatMessage.create({
@@ -2744,7 +2752,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
             let rollWhisper = null;
             let rollBlind = false;
             let rollMode = game.settings.get("core", "rollMode");
-            if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperIDs("GM");
+            if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperRecipients("GM")
             if (rollMode === "blindroll") rollBlind = true;
             if (this.actor.data.data.attributes.heropoints.value <= 0) {
                 ChatMessage.create({
@@ -2854,7 +2862,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
                 let rollWhisper = null;
                 let rollBlind = false;
                 let rollMode = game.settings.get("core", "rollMode");
-                if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperIDs("GM");
+                if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperRecipients("GM")
                 if (rollMode === "blindroll") rollBlind = true;
                 if (roll <= 1) {
                     ChatMessage.create({
@@ -2976,7 +2984,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
             let rollWhisper = null;
             let rollBlind = false;
             let rollMode = game.settings.get("core", "rollMode");
-            if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperIDs("GM");
+            if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperRecipients("GM")
             if (rollMode === "blindroll") rollBlind = true;
 
             ChatMessage.create({
@@ -3030,7 +3038,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
             let rollWhisper = null;
             let rollBlind = false;
             let rollMode = game.settings.get("core", "rollMode");
-            if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperIDs("GM");
+            if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperRecipients("GM")
             if (rollMode === "blindroll") rollBlind = true;
             ChatMessage.create({
                 user: game.user._id,
@@ -3055,7 +3063,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
             let rollMode = game.settings.get("core", "rollMode");
             let isWhisper = false;
             if (["gmroll", "blindroll"].includes(rollMode)) {
-                isWhisper = ChatMessage.getWhisperIDs("GM");
+                isWhisper = ChatMessage.getWhisperRecipients("GM")
             }
             const result = table.roll()
             let content = `
@@ -3087,7 +3095,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
             let rollWhisper = null;
             let rollBlind = false;
             let rollMode = game.settings.get("core", "rollMode");
-            if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperIDs("GM");
+            if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperRecipients("GM")
             if (rollMode === "blindroll") rollBlind = true;
 
             ChatMessage.create({
@@ -3118,7 +3126,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
             let rollWhisper = null;
             let rollBlind = false;
             let rollMode = game.settings.get("core", "rollMode");
-            if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperIDs("GM");
+            if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperRecipients("GM")
             if (rollMode === "blindroll") rollBlind = true;
 
             ChatMessage.create({
@@ -3158,7 +3166,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 					<h3 style="text-shadow: 0 0 4px; text-align: center;">${roll1}</h3>
 			</div>`;
             let rollMode = game.settings.get("core", "rollMode");
-            if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperIDs("GM");
+            if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperRecipients("GM")
             if (rollMode === "blindroll") rollBlind = true;
             // If Epic fail
             ChatMessage.create({
@@ -3330,7 +3338,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
             let rollWhisper = false;
             let rollBlind = false;
             let rollMode = game.settings.get("core", "rollMode");
-            if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperIDs("GM");
+            if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperRecipients("GM")
             if (rollMode === "blindroll") rollBlind = false;
             // If Epic fail
             if (roll1 === 1) {
@@ -3388,11 +3396,11 @@ export class DarkSheet extends ActorSheet5eCharacter {
 }
 class Darkscreen {
     static addChatControl() {
-        const chatControlLeft = document.getElementsByClassName("roll-type-select")[0];
+        const chatControlLeft = document.getElementsByClassName("chat-control-icon")[0];
         let tableNode = document.getElementById("DarkScreen-button");
 
         if (chatControlLeft && !tableNode) {
-            const chatControlLeftNode = chatControlLeft.children[1];
+            const chatControlLeftNode = chatControlLeft.firstElementChild;
             const number = 4;
             tableNode = document.createElement("label");
             tableNode.innerHTML = `<i id="DarkScreen-button" class="fas fa-book-dead DarkScreen-button" style="text-shadow: 0 0 1px black;"></i>`;
@@ -3446,14 +3454,15 @@ class DSC extends Application {
     }
     static renderMenu(path, data) {
         const dialogOptions = {
-            width: 1200,
+            width: 1134,
             top: event.clientY - 80,
             left: window.innerWidth - 510,
-            classes: ['DSC-window']
+            classes: ['DSC-window resizable']
         };
+		dialogOptions.resizable = true;
         renderTemplate(path, data).then(dlg => {
             new Dialog({
-                title: game.i18n.localize('Darker Dungeons - Gamemaster Screen [WOP version 0.1]'),
+                title: game.i18n.localize('Darker Dungeons - Gamemaster Screen [WOP version 0.2]'),
                 content: dlg,
                 buttons: {}
             }, dialogOptions).render(true);
@@ -3477,9 +3486,72 @@ Hooks.on('closeDialog', function() {
     event.preventDefault();
 });
 Hooks.on(`ready`, () => {
+		Hooks.on('renderDarkSheet', (sheet, html) => {
+			let maxwounds = sheet.actor.data.data.attributes.maxwounds.value;
+			var objectArray = {0: "wound1", 1: "wound2"};
+			let woundlisttext;
+			let insert;
+			for(let i = 0; i < sheet.actor.data.data.attributes.maxwounds.value; i++){
+				console.log(i);
+				woundlisttext = "wound"+i;
+				woundlisttext = objectArray[i];
+				let forforwounds = "actordata.data.data.attributes.woundlist.wound"+i;
+				if(woundlisttext != "")
+				{
+				insert = '<tr id="wound'+ i +'"><th>Wound '+ i +' <td><input type="text" id="wounddes" name="wound'+i+'" value="'+woundlisttext+'"></td><td><input type="button" id="wound'+i+'"value="X"></td></th></tr>'
+				woundlistid.insertAdjacentHTML('beforeend', insert);
+				}
+			}
+			console.log(objectArray[0]);
+		});
+		/*
+		$('table').on('click', 'input[type="button"]', function(e){
+		   let maxwounds = parseInt(sheet.actor.data.data.attributes.maxwounds.value) - 1;
+		   //remove the maxwound from the count
+		   sheet.actor.update({'data.attributes.maxwounds.value': maxwounds});
+		   //update the actor
+		   let actordata = sheet.actor;
+		   switch(this.id){
+		   case "wound0" : actordata.data.data.attributes.woundlist.wound0 = "";break;
+		   case "wound1" : actordata.data.data.attributes.woundlist.wound1 = "";break;
+		   case "wound2" : actordata.data.data.attributes.woundlist.wound2 = "";break;
+		   case "wound3" : actordata.data.data.attributes.woundlist.wound3 = "";break;
+		   case "wound4" : actordata.data.data.attributes.woundlist.wound4 = "";break;
+		   case "wound5" : actordata.data.data.attributes.woundlist.wound5 = "";break;
+		   case "wound6" : actordata.data.data.attributes.woundlist.wound6 = "";break;
+		   case "wound7" : actordata.data.data.attributes.woundlist.wound7 = "";break;
+		   case "wound8" : actordata.data.data.attributes.woundlist.wound8 = "";break;
+		   case "wound9" : actordata.data.data.attributes.woundlist.wound9 = "";break;
+		   case "wound10" : actordata.data.data.attributes.woundlist.wound10 = "";break;
+		   }
+		   let forwounds;
+		   let woundafter;
+		   let woundbefore;
+		   for(var i = 0; i <= maxwounds; i++){
+				forwounds = "actordata.data.data.attributes.woundlist.wound"+i;
+				forwounds = [forwounds];
+				woundafter = i+1;
+			    woundafter = "actordata.data.data.attributes.woundlist.wound"+woundafter;
+			    woundafter = [woundafter];
+
+		   }
+		   let update = actordata.data.data.attributes.woundlist;
+		   sheet.actor.update({'data.attributes.woundlist': update});
+		   console.log(update);
+		})
+		  $("input").change(function(){
+			let changedtext = event.currentTarget.value;
+			let tochange = event.currentTarget.name;
+			let updatetarget = "data.attributes.woundlist." + tochange;
+			sheet.actor.update({[updatetarget]: changedtext});
+			console.log("CHANGED");
+		  });
+		});
+		*/
+		
 		if(game.modules.get('darksheet')?.active === true){
 		BetterRolls.hooks.addActorSheet("DarkSheet");
-		BetterRolls.hooks.addItemSheet("DarkSheet");
+		BetterRolls.hooks.addItemSheet("DarkItemSheet5e");
 		console.log("Darksheet | BetterRolls detected and enabled");
 		}
 		
@@ -3489,6 +3561,55 @@ Hooks.on(`ready`, () => {
 			  html.find('[name="data.currency.ep"]').remove();
 			});
 		console.log("Darksheet | SilverStandard detected and enabled");
+		}
+		if(game.modules.get('betternpcsheet5e')?.active === true){
+			Hooks.on('renderBetterNPCActor5eSheet', (sheet, html) => {
+			let actor = sheet.object;
+			let DAC = 0;
+			var profmod = actor.data.data.attributes.prof;
+			var dexmod = actor.data.data.abilities.dex.mod;
+			var strmod = actor.data.data.abilities.str.mod;
+			let inventory = actor.data.items;
+			let itemid;
+			var i;
+			let mod;
+			
+			for(i = 0; i < actor.data.items.length; i++){
+			   itemid = actor.data.items[i]._id;
+			   if(actor.data.items[i].type === "weapon"){
+				  mod = actor.data.items[i].data.ability;
+				  if(mod === "str"){
+					  DAC = strmod + profmod;
+				  }
+				  else if(mod === "dex"){
+					  DAC = dexmod + profmod;
+				  }
+			    if(game.settings.get('darksheet', 'nonpcattack') && actor.data.items[i].data.actionType === "mwak" || game.settings.get('darksheet', 'nonpcattack') && actor.data.items[i].data.actionType === "rwak" ){
+                    if(actor.data.items[i].data.save.ability === ""){
+					actor.updateEmbeddedEntity('OwnedItem', {
+                        _id: itemid,
+                        "data.actionType": "util"
+                    });
+					}
+					else{
+					actor.updateEmbeddedEntity('OwnedItem', {
+                        _id: itemid,
+                        "data.actionType": "save"
+                    });
+					}
+					console.log("Darksheet | Attack " + actor.data.items[i].name +" from " + actor.data.name +" is now Util")
+				}
+			   }
+			}
+			if(game.settings.get('darksheet', 'smalldefense')){
+					  DAC +=12;
+				  }
+				  else{
+					  DAC +=22;
+			}
+			html.find('[class="tab active"]').before(`<label style="margin-left: 2.5px;font-weight: bold;">Attack DC: ${DAC}</label>`);
+			});
+		console.log("Darksheet | BetterNPCActor5eSheet detected and enabled.");
 		}
 		
 });

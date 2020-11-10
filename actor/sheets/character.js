@@ -1,7 +1,8 @@
-import ActorSheet5e from '../../../../systems/dnd5e/module/actor/sheets/base.js';
+import ActorSheet5e from "../../../../systems/dnd5e/module/actor/sheets/base.js";
+import Actor5e from "../../../../systems/dnd5e/module/actor/entity.js";
 
 /**
- * An Actor sheet for player character type actors in the D&D5E system.
+ * An Actor sheet for player character type actors.
  * Extends the base ActorSheet5e class.
  * @type {ActorSheet5e}
  */
@@ -14,22 +15,9 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
 	static get defaultOptions() {
 	  return mergeObject(super.defaultOptions, {
       classes: ["dnd5e", "sheet", "actor", "character"],
-      width: 672,
-      height: 736
+      width: 720,
+      height: 680
     });
-  }
-
-  /* -------------------------------------------- */
-  /*  Rendering                                   */
-  /* -------------------------------------------- */
-
-  /**
-   * Get the correct HTML template path to use for rendering this particular sheet
-   * @type {String}
-   */
-  get template() {
-    if ( !game.user.isGM && this.actor.limited ) return "systems/dnd5e/templates/actors/limited-sheet.html";
-    return "systems/dnd5e/templates/actors/character-sheet.html";
   }
 
   /* -------------------------------------------- */
@@ -57,6 +45,7 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
 
     // Experience Tracking
     sheetData["disableExperience"] = game.settings.get("dnd5e", "disableExperienceTracking");
+    sheetData["classLabels"] = this.actor.itemTypes.class.map(c => c.name).join(", ");
 	sheetData["slotSetting"] = game.settings.get("darksheet", "slotbasedinventory");
 
     // Return data for rendering
@@ -86,14 +75,14 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
 
       // Item details
       item.img = item.img || DEFAULT_TOKEN;
-      item.isStack = item.data.quantity ? item.data.quantity > 1 : false;
+      item.isStack = Number.isNumeric(item.data.quantity) && (item.data.quantity !== 1);
 
       // Item usage
       item.hasUses = item.data.uses && (item.data.uses.max > 0);
       item.isOnCooldown = item.data.recharge && !!item.data.recharge.value && (item.data.recharge.charged === false);
       item.isDepleted = item.isOnCooldown && (item.data.uses.per && (item.data.uses.value > 0));
       item.hasTarget = !!item.data.target && !(["none",""].includes(item.data.target.type));
-	  
+
       // Item toggle state
       this._prepareItemToggleState(item);
 
@@ -110,11 +99,7 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
     spells = this._filterItems(spells, this._filters.spellbook);
     feats = this._filterItems(feats, this._filters.features);
 
-    // Organize Spellbook
-    const spellbook = this._prepareSpellbook(data, spells);
-    const nPrepared = spells.filter(s => {
-      return (s.data.level > 0) && (s.data.preparation.mode === "prepared") && s.data.preparation.prepared;
-    }).length;
+    // Organize items
 
     // Organize Inventory
     let totalWeight = 0;
@@ -146,6 +131,12 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
     }
 	data.data.attributes.encumbs = this._computeEncumbrance(totalWeight, data);
 	}
+    
+	// Organize Spellbook and count the number of prepared spells (excluding always, at will, etc...)
+    const spellbook = this._prepareSpellbook(data, spells);
+    const nPrepared = spells.filter(s => {
+      return (s.data.level > 0) && (s.data.preparation.mode === "prepared") && s.data.preparation.prepared;
+    }).length;
 
     // Organize Features
     const features = {
@@ -193,7 +184,7 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
 
   /* -------------------------------------------- */
 
-  /**
+  /*
    * Compute the level and percentage of encumbrance for an Actor.
    *
    * Optionally include the weight of carried currency across all denominations by applying the standard rule
@@ -260,34 +251,42 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
 	activateListeners(html) {
     super.activateListeners(html);
     if ( !this.options.editable ) return;
-
-    // Inventory Functions
-    html.find(".currency-convert").click(this._onConvertCurrency.bind(this));
-
+	
     // Item State Toggling
     html.find('.item-toggle').click(this._onToggleItem.bind(this));
 
     // Short and Long Rest
     html.find('.short-rest').click(this._onShortRest.bind(this));
     html.find('.long-rest').click(this._onLongRest.bind(this));
-    // Death saving throws
-    html.find('.death-save').click(this._onDeathSave.bind(this));
+
+    // Rollable sheet actions
+    html.find(".rollable[data-action]").click(this._onSheetAction.bind(this));
   }
 
   /* -------------------------------------------- */
-
   /**
-   * Handle rolling a death saving throw for the Character
+   * Handle mouse click events for character sheet actions
    * @param {MouseEvent} event    The originating click event
    * @private
    */
-  _onDeathSave(event) {
+  _onSheetAction(event) {
     event.preventDefault();
-    return this.actor.rollDeathSave({event: event});
+    const button = event.currentTarget;
+    switch( button.dataset.action ) {
+      case "convertCurrency":
+        return Dialog.confirm({
+          title: `${game.i18n.localize("DND5E.CurrencyConvert")}`,
+          content: `<p>${game.i18n.localize("DND5E.CurrencyConvertHint")}</p>`,
+          yes: () => this.actor.convertCurrency()
+        });
+      case "rollDeathSave":
+        return this.actor.rollDeathSave({event: event});
+      case "rollInitiative":
+        return this.actor.rollInitiative({createCombatants: true});
+    }
   }
 
   /* -------------------------------------------- */
-
 
   /**
    * Handle toggling the state of an Owned Item within the Actor
@@ -330,17 +329,40 @@ export class ActorSheet5eCharacter extends ActorSheet5e {
 
   /* -------------------------------------------- */
 
-  /**
-   * Handle mouse click events to convert currency to the highest possible denomination
-   * @param {MouseEvent} event    The originating click event
-   * @private
-   */
-  async _onConvertCurrency(event) {
-    event.preventDefault();
-    return Dialog.confirm({
-      title: `${game.i18n.localize("DND5E.CurrencyConvert")}`,
-      content: `<p>${game.i18n.localize("DND5E.CurrencyConvertHint")}</p>`,
-      yes: () => this.actor.convertCurrency()
-    });
+  /** @override */
+  async _onDropItemCreate(itemData) {
+    let addLevel = false;
+
+    // Upgrade the number of class levels a character has and add features
+    if ( itemData.type === "class" ) {
+      const cls = this.actor.itemTypes.class.find(c => c.name === itemData.name);
+      let priorLevel = cls?.data.data.levels ?? 0;
+      const hasClass = !!cls;
+
+      // Increment levels instead of creating a new item
+      if ( hasClass ) {
+        const next = Math.min(priorLevel + 1, 20 + priorLevel - this.actor.data.data.details.level);
+        if ( next > priorLevel ) {
+          itemData.levels = next;
+          await cls.update({"data.levels": next});
+          addLevel = true;
+        }
+      }
+
+      // Add class features
+      if ( !hasClass || addLevel ) {
+        const features = await Actor5e.getClassFeatures({
+          className: itemData.name,
+          subclassName: itemData.data.subclass,
+          level: itemData.levels,
+          priorLevel: priorLevel
+        });
+        await this.actor.createEmbeddedEntity("OwnedItem", features);
+      }
+    }
+
+    // Default drop handling if levels were not added
+    if ( !addLevel ) super._onDropItemCreate(itemData);
   }
 }
+ 
