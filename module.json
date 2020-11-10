@@ -41,5 +41,5 @@
     "manifest": "https://raw.githubusercontent.com/Handyfon/Darksheet/master/module.json",
     "download": "https://github.com/Handyfon/Darksheet/raw/master/darksheet.zip",
 	"minimumCoreVersion": "0.6.0",
-	"compatibleCoreVersion": "0.6.5"
+	"compatibleCoreVersion": "0.7.6"
 }
