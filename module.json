@@ -2,7 +2,7 @@
 	"name": "darksheet",
 	"title": "darksheet 5e",
 	"description": "Darker Dungeons replacement for the default 5e actor sheet",
-	"version": "2.9.9",
+	"version": "3.0",
 	"author": "Handyfon#8390",
 	"esmodules": ["darksheet.js", "/js/character.js", "/js/base.js", "templates.js"],
 	"styles": ["css/darksheet.css"],
@@ -20,6 +20,13 @@
 			"system": "dnd5e",
 			"path": "./packs/darkitems.db",
 			"entity": "Item" 
+		},
+		{
+			"name": "darkmacros",
+			"label": "Darksheet Macros",
+			"system": "dnd5e",
+			"path": "./packs/darksheet-macros.db",
+			"entity": "Macro" 
 		},
 		{
 			"name": "afflictions",
@@ -41,5 +48,5 @@
     "manifest": "https://raw.githubusercontent.com/Handyfon/Darksheet/master/module.json",
     "download": "https://github.com/Handyfon/Darksheet/raw/master/darksheet.zip",
 	"minimumCoreVersion": "0.6.0",
-	"compatibleCoreVersion": "0.7.6"
+	"compatibleCoreVersion": "0.7.9"
 }

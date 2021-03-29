@@ -1,11 +1,20 @@
-<form class="{{cssClass}} flexcol {{data.attributes.color.value}} {{actor._id}}" style="{{#if data.attributes.color.saturation}}filter: saturate(1.5);{{/if}}{{#if data.attributes.color.saturation}}filter: saturate(1.5);{{/if}}{{#if data.attributes.color.highcontrast}}filter: contrast(1.5);{{/if}}{{#if data.attributes.color.brighter}}filter: brightness(1.2);{{/if}}{{#if data.attributes.color.grayscale}}filter: grayscale(1);{{/if}}" autocomplete="off">
+<form class="{{cssClass}} flexcol {{data.attributes.color.value}} {{actor._id}}" style="{{#if data.attributes.color.saturation}}filter: saturate(1.5);{{/if}}{{#if data.attributes.color.saturation}}filter: saturate(1.5);{{/if}}{{#if data.attributes.color.highcontrast}}filter: contrast(1.5);{{/if}}{{#if data.attributes.color.brighter}}filter: brightness(1.2);{{/if}}{{#if data.attributes.isdead}}filter: grayscale(1);{{/if}}" autocomplete="off">
     {{!-- Sheet Header --}}
     <header class="sheet-header flexrow {{data.attributes.color.value}} {{actor._id}}">
 	<img class="profile" src="{{actor.img}}" title="{{actor._id}}" data-edit="img" />
 
         <section class="header-details flexrow {{data.attributes.color.value}} {{actor._id}}">
 			<h1 class="charname">
+			{{#if data.attributes.titlesetting}}
+				{{#if data.attributes.title}}
+				<div class="{{data.attributes.color.value}} {{actor._id}} flexrow"> <label id="titlename" style="font-size: 20px;color: #c7e5ff;align-self: center;text-align: center;white-space: nowrap;">[{{data.attributes.title}}]</label><input style="display: inline-flex; flex:3" name="name" type="text" value="{{actor.name}}" placeholder="Character Name"/></div>
+				{{else}}
+				   <input style="display: inline-flex;" name="name" type="text" value="{{actor.name}}" placeholder="Character Name"/>
+				{{/if}}
+			{{else}}
 			<input name="name" type="text" value="{{actor.name}}" placeholder="{{ localize 'DND5E.Name' }}"/>
+			{{/if}}
+			
             </h1>
 
             <aside class="header-exp flexcol">
@@ -93,30 +102,31 @@
                 </li>
 
                 <li class="attribute">
-                    <h4 class="attribute-name box-title rollable handy-ac">{{ localize "DND5E.ArmorClass" }}</h4>
+                    <h4 class="attribute-name box-title rollable handy-ac darkcheck check" title="Click to roll for Active Defense.">{{ localize "DND5E.ArmorClass" }}</h4>
                     <div class="attribute-value">
                         <input name="data.attributes.ac.value" type="number" value="{{data.attributes.ac.value}}" placeholder="10"/>																 
                     </div>
                     <footer class="attribute-footer">
-                        <span class="spell-dc">{{localize "DND5E.SpellDC"}} {{data.attributes.spelldc}}</span>
+                        <label class="spell-dc check" title="Click to roll a Saving Attack." >{{localize "DND5E.SpellDC"}} {{data.attributes.spelldc}}</label>
                     </footer>
                 </li>
-                <li class="attribute">
+                <li class="attribute movement">
                     <h4 class="attribute-name box-title">
-                        {{ localize "DND5E.Speed" }} ({{data.attributes.movement.units}})
+                        {{ localize "DND5E.Movement" }}
+                        <a class="config-button" data-action="movement" title="{{localize 'DND5E.MovementConfig'}}"><i class="fas fa-cog"></i></a>
                     </h4>
                     <div class="attribute-value">
-                        <span>{{movement.primary}}</span>																			
+                        <span>{{movement.primary}}</span>
                     </div>
                     <footer class="attribute-footer">
-                        <span>{{movement.special}}</span>																								
+                        <span>{{movement.special}}</span>
                     </footer>
                 </li>
 
                 <li class="attribute initiative">
-                    <h4 class="attribute-name box-title rollable" data-action="rollInitiative">{{ localize "DND5E.Initiative" }}</h4>
+                    <h4 class="attribute-name box-title rollable check" data-action="rollInitiative">{{ localize "DND5E.Initiative" }}</h4>
                     <div class="attribute-value">
-                        <span>{{numberFormat data.attributes.init.total decimals=0 sign=true}}</span>
+                        <span id="initiativevalue">{{numberFormat data.attributes.init.total decimals=0 sign=true}}</span>
                     </div>
                     <footer class="attribute-footer">
                         <span>{{ localize "DND5E.Modifier" }}</span>
@@ -204,30 +214,39 @@
                 {{!-- Counters --}}
                 <div class="counters flexrow">
                     <div class="status flexrow death-saves" style="flex: 2;margin-right: 4px;">
-                        <label class="rollable deathsaveroll"><h4 class="deathsavelabel">{{ localize "DND5E.DeathSave" }}</h4></label>
+						{{#if data.attributes.isdead}}
+						<label style="align-self: center;">{{actor.name}} is dead:</label>
+						<div class="revive">
+						<i style="font-size: 15px;" id="revive" style="color:green" id="reviveicon" class="fas fa-angle-double-up" name="data.attributes.isdead" data-dtype="Boolean" {{checked data.attributes.isdead}} title="Click to Revive this Character">
+						<input type="checkbox"class="ressourcecheckbox check" id="hidecheck" name="data.attributes.isdead" data-dtype="Boolean" {{checked data.attributes.isdead}}></input></i>
+						</div>
+						{{else}}
+                        <label class="rollable deathsaveroll darkcheck"><h4 class="deathsavelabel">{{ localize "DND5E.DeathSave" }}</h4></label>
                         <div class="counter-value">
                             <label class="deathcheckbox">
-                                <input class="ressourcecheckbox" type="checkbox" type="Boolean" name="data.attributes.deathsave1.value" data-dtype="Boolean" {{checked data.attributes.deathsave1.value}} /><span></span></label>
+                                <input class="ressourcecheckbox check" type="checkbox" type="Boolean" name="data.attributes.deathsave1.value" data-dtype="Boolean" {{checked data.attributes.deathsave1.value}} /><span></span></label>
                             <label class="deathcheckbox">														
-                                <input class="ressourcecheckbox" type="checkbox" type="Boolean" name="data.attributes.deathsave2.value" title="@{deathsave_fail2}" data-dtype="Boolean" {{checked data.attributes.deathsave2.value}} /><span></span></label>
+                                <input class="ressourcecheckbox check" type="checkbox" type="Boolean" name="data.attributes.deathsave2.value" title="@{deathsave_fail2}" data-dtype="Boolean" {{checked data.attributes.deathsave2.value}} /><span></span></label>
                             <label class="deathcheckbox">
-                                <input class="ressourcecheckbox" type="checkbox" type="Boolean" name="data.attributes.deathsave3.value" title="@{deathsave_fail3}" data-dtype="Boolean" {{checked data.attributes.deathsave3.value}} /><span></span></label>
+                                <input class="ressourcecheckbox check" type="checkbox" type="Boolean" name="data.attributes.deathsave3.value" title="@{deathsave_fail3}" data-dtype="Boolean" {{checked data.attributes.deathsave3.value}} /><span></span></label>
+                        </div>
+						{{/if}}
+					
+                    </div>
+                    <div class="counter flexrow">
+
+                        <h4 title="Push explanation to chat" class="exhaustionstatus rollable darkcheck">{{ localize "DND5E.Exhaustion" }}</h4>
+                        <div class="status-value">
+
+
+                            <input type="number" min="0" max="6" class="exhaustionpoints points" name="data.attributes.exhaustion.value" value="{{data.attributes.exhaustion.value}}" placeholder="0"/>
                         </div>
                     </div>
                     <div class="counter flexrow">
 
-                        <h4 title="Push explanation to chat" class="exhaustionstatus rollable">{{ localize "DND5E.Exhaustion" }}</h4>
+                        <h4 >Fate Points</h4>
                         <div class="status-value">
-
-
-                            <input type="number" min="0" max="6" class="exhaustionpoints points" name="data.attributes.exhaustion.value" value="{{data.attributes.exhaustion.value}}"/>
-                        </div>
-                    </div>
-                    <div class="counter flexrow">
-
-                        <h4>Fate Points</h4>
-                        <div class="status-value">
-                            <input type="number" min="0" max="3" class="fatepoints points" name="data.attributes.fatepoints.value" value="{{data.attributes.fatepoints.value}}" />
+                            <input type="number" min="0" max="3" class="fatepoints points" name="data.attributes.fatepoints.value" value="{{data.attributes.fatepoints.value}}" placeholder="0" />
 
                         </div>
                     </div>
@@ -237,43 +256,54 @@
                 <div class="counters flexrow">
 
                     <div class="counter flexrow" style="flex: 2;">
-                        <h4 title="Click to roll for reopened wounds" class="deathsavelabel woundroll rollable" style="margin-right: -56px;">Closed Wounds</h4>
-                        <div class="attribute-value multiple" style="text-align: center;">
-                            <input style="margin-left: -26px;"name="data.attributes.wounds.value" type="text" value="{{data.attributes.wounds.value}}">
+                        <h4 title="Click to roll for reopened wounds" class="deathsavelabel woundroll rollable darkcheck" style="flex: 1;">Closed Wounds</h4>
+                        <div class="attribute-value multiple" style="text-align: center;text-align: -webkit-match-parent;">
+                            <input name="data.attributes.wounds.value" type="text" value="{{data.attributes.wounds.value}}" {{#if game.user.isGM}}{{else}}disabled{{/if}}>
                             <span class="sep"> / </span>
-                            <input type="text" name="data.attributes.maxwounds.value" value="{{data.attributes.maxwounds.value}}">
+                            <input type="text" name="data.attributes.maxwounds.value" value="{{data.attributes.maxwounds.value}}" {{#if game.user.isGM}}{{else}}disabled{{/if}}>
                         </div>
                     </div>
 					{{#if noheropoints}}
                     <div class="counter flexrow">
-                        <h4 style="flex: 0;" title="Use 1 Inspiration" class="rollable useInspiration">Inspiration</h4>
+                        <h4 style="flex: 0;" title="Use 1 Inspiration" class="rollable useInspiration darkcheck">Inspiration</h4>
                         <div class="status-value">
-                            <input style="margin-left: 10px;" type="number" min="0" max="3" class="inspirationpoints points" name="data.attributes.inspirations.value" value="{{data.attributes.inspirations.value}}" />
+                            <input style="margin-left: 10px;" type="number" min="0" max="3" class="inspirationpoints points" name="data.attributes.inspirations.value" value="{{data.attributes.inspirations.value}}" placeholder="0"/>
 						</div>
 					</div>	
 					{{else}}
 					<div class="counter flexrow">
-                        <h4 title="Use 1 Hero Point" class="rollable useHeroPoint">Hero Points</h4>
+                        <h4 title="Use 1 Hero Point" class="rollable useHeroPoint darkcheck">Hero Points</h4>
                         <div class="status-value">
-                            <input type="number" min="0" max="3" class="heropoints points" name="data.attributes.heropoints.value" value="{{data.attributes.heropoints.value}}" />
+                            <input type="number" min="0" max="3" class="heropoints points" name="data.attributes.heropoints.value" value="{{data.attributes.heropoints.value}}" placeholder="0"/>
                         </div>
 					</div>
 					<div class="counter flexrow">
-                        <h4 title="Use 1 Inspiration" class="rollable useInspiration">Inspiration</h4>
+                        <h4 title="Use 1 Inspiration" class="rollable useInspiration darkcheck">Inspiration</h4>
                         <div class="status-value">
-                            <input type="number" min="0" max="3" class="inspirationpoints points" name="data.attributes.inspirations.value" value="{{data.attributes.inspirations.value}}" />
+                            <input type="number" min="0" max="3" class="inspirationpoints points" name="data.attributes.inspirations.value" value="{{data.attributes.inspirations.value}}" placeholder="0"/>
                         </div>
 					</div>
 					{{/if}}
 
                 </div>
-				<div class="form-group inactive woundsection">
+				<div class="form-group woundsection">
 					<label title="Click to roll for reopened wounds" class="deathsavelabel woundroll rollable">Wounds</label>
-						<i class="fas fa-plus" onclick="addwound()"></i>
+						<i class="fas fa-plus addwoundbutton" id="addwound"></i>
 				</div>
-			    <div class="form-group inactive woundsection">
+			    <div class="form-group woundsection">
 						<table class="woundlist" id="woundlistid" name="data.attributes.woundslist" value="{{data.attributes.woundslist}}" placeholder="Unseeable">
-						
+						<tr><td><label style="margin-left: 5px;">Wound</label></td><td><label>Treated</label></td><td></td><td>Exhaustion</td></tr>
+						<tr id="{{actor._id}}-woundtr1" style="display:none;"><td><input type="text" id="{{actor._id}}-wounddes1" name="data.flags.darksheet-wounds.wound1" value="{{data.flags.darksheet-wounds.wound1}}" placeholder="Where is this wound?"></td><td><input class="
+						box" id="{{actor._id}}-woundcheck1" type="checkbox" name="data.flags.darksheet-wounds.wound1treated.value" data-dtype="Boolean" {{checked data.flags.darksheet-wounds.wound1treated.value}}/></td><td><input class="removewoundbutton" type="button" id="wound1"value="X"></td><td>{{#unless data.flags.darksheet-wounds.wound1treated.value}}<label class="exhaustiontip">+1 Exh.</label>{{/unless}}</td></th></tr>
+						<tr id="{{actor._id}}-woundtr2" style="display:none;"><td><input type="text" id="{{actor._id}}-wounddes2" name="data.flags.darksheet-wounds.wound2" value="{{data.flags.darksheet-wounds.wound2}}" placeholder="Where is this wound?"></td><td><input class="woundcheckbox" id="{{actor._id}}-woundcheck2" type="checkbox" name="data.flags.darksheet-wounds.wound2treated.value" data-dtype="Boolean" {{checked data.flags.darksheet-wounds.wound2treated.value}}/></td><td><input class="removewoundbutton" type="button" id="wound2"value="X"></td><td>{{#unless data.flags.darksheet-wounds.wound2treated.value}}<label class="exhaustiontip">+1 Exh.</label>{{/unless}}</td></th></tr>
+						<tr id="{{actor._id}}-woundtr3" style="display:none;"><td><input type="text" id="{{actor._id}}-wounddes3" name="data.flags.darksheet-wounds.wound3" value="{{data.flags.darksheet-wounds.wound3}}" placeholder="Where is this wound?"></td><td><input class="woundcheckbox" id="{{actor._id}}-woundcheck3" type="checkbox" name="data.flags.darksheet-wounds.wound3treated.value" data-dtype="Boolean" {{checked data.flags.darksheet-wounds.wound3treated.value}}/></td><td><input class="removewoundbutton" type="button" id="wound3"value="X"></td><td>{{#unless data.flags.darksheet-wounds.wound3treated.value}}<label class="exhaustiontip">+1 Exh.</label>{{/unless}}</td></th></tr>
+						<tr id="{{actor._id}}-woundtr4" style="display:none;"><td><input type="text" id="{{actor._id}}-wounddes4" name="data.flags.darksheet-wounds.wound4" value="{{data.flags.darksheet-wounds.wound4}}" placeholder="Where is this wound?"></td><td><input class="woundcheckbox" id="{{actor._id}}-woundcheck4" type="checkbox" name="data.flags.darksheet-wounds.wound4treated.value" data-dtype="Boolean" {{checked data.flags.darksheet-wounds.wound4treated.value}}/></td><td><input class="removewoundbutton" type="button" id="wound4"value="X"></td><td>{{#unless data.flags.darksheet-wounds.wound4treated.value}}<label class="exhaustiontip">+1 Exh.</label>{{/unless}}</td></th></tr>
+						<tr id="{{actor._id}}-woundtr5" style="display:none;"><td><input type="text" id="{{actor._id}}-wounddes5" name="data.flags.darksheet-wounds.wound5" value="{{data.flags.darksheet-wounds.wound5}}" placeholder="Where is this wound?"></td><td><input class="woundcheckbox" id="{{actor._id}}-woundcheck5" type="checkbox" name="data.flags.darksheet-wounds.wound5treated.value" data-dtype="Boolean" {{checked data.flags.darksheet-wounds.wound5treated.value}}/></td><td><input class="removewoundbutton" type="button" id="wound5"value="X"></td><td>{{#unless data.flags.darksheet-wounds.wound5treated.value}}<label class="exhaustiontip">+1 Exh.</label>{{/unless}}</td></th></tr>
+						<tr id="{{actor._id}}-woundtr6" style="display:none;"><td><input type="text" id="{{actor._id}}-wounddes6" name="data.flags.darksheet-wounds.wound6" value="{{data.flags.darksheet-wounds.wound6}}" placeholder="Where is this wound?"></td><td><input class="woundcheckbox" id="{{actor._id}}-woundcheck6" type="checkbox" name="data.flags.darksheet-wounds.wound6treated.value" data-dtype="Boolean" {{checked data.flags.darksheet-wounds.wound6treated.value}}/></td><td><input class="removewoundbutton" type="button" id="wound6"value="X"></td><td>{{#unless data.flags.darksheet-wounds.wound6treated.value}}<label class="exhaustiontip">+1 Exh.</label>{{/unless}}</td></th></tr>
+						<tr id="{{actor._id}}-woundtr7" style="display:none;"><td><input type="text" id="{{actor._id}}-wounddes7" name="data.flags.darksheet-wounds.wound7" value="{{data.flags.darksheet-wounds.wound7}}" placeholder="Where is this wound?"></td><td><input class="woundcheckbox" id="{{actor._id}}-woundcheck7" type="checkbox" name="data.flags.darksheet-wounds.wound7treated.value" data-dtype="Boolean" {{checked data.flags.darksheet-wounds.wound7treated.value}}/></td><td><input class="removewoundbutton" type="button" id="wound7"value="X"></td><td>{{#unless data.flags.darksheet-wounds.wound7treated.value}}<label class="exhaustiontip">+1 Exh.</label>{{/unless}}</td></th></tr>
+						<tr id="{{actor._id}}-woundtr8" style="display:none;"><td><input type="text" id="{{actor._id}}-wounddes8" name="data.flags.darksheet-wounds.wound8" value="{{data.flags.darksheet-wounds.wound8}}" placeholder="Where is this wound?"></td><td><input class="woundcheckbox" id="{{actor._id}}-woundcheck8" type="checkbox" name="data.flags.darksheet-wounds.wound8treated.value" data-dtype="Boolean" {{checked data.flags.darksheet-wounds.wound8treated.value}}/></td><td><input class="removewoundbutton" type="button" id="wound8"value="X"></td><td>{{#unless data.flags.darksheet-wounds.wound8treated.value}}<label class="exhaustiontip">+1 Exh.</label>{{/unless}}</td></th></tr>
+						<tr id="{{actor._id}}-woundtr9" style="display:none;"><td><input type="text" id="{{actor._id}}-wounddes9" name="data.flags.darksheet-wounds.wound9" value="{{data.flags.darksheet-wounds.wound9}}" placeholder="Where is this wound?"></td><td><input class="woundcheckbox" id="{{actor._id}}-woundcheck9" type="checkbox" name="data.flags.darksheet-wounds.wound9treated.value" data-dtype="Boolean" {{checked data.flags.darksheet-wounds.wound9treated.value}}/></td><td><input class="removewoundbutton" type="button" id="wound9"value="X"></td><td>{{#unless data.flags.darksheet-wounds.wound9treated.value}}<label class="exhaustiontip">+1 Exh.</label>{{/unless}}</td></th></tr>
+						<tr id="{{actor._id}}-woundtr10" style="display:none;"><td><input type="text" id="{{actor._id}}-wounddes10" name="data.flags.darksheet-wounds.wound10" value="{{data.flags.darksheet-wounds.wound10}}" placeholder="Where is this wound?"></td><td><input class="woundcheckbox" id="{{actor._id}}-woundcheck10" type="checkbox" name="data.flags.darksheet-wounds.wound10treated.value" data-dtype="Boolean" {{checked data.flags.darksheet-wounds.wound10treated.value}}/></td><td><input class="removewoundbutton" type="button" id="wound10"value="X"></td><td>{{#unless data.flags.darksheet-wounds.wound10treated.value}}<label class="exhaustiontip">+1 Exh.</label>{{/unless}}</td></th></tr>
 						</table>
 						<script>
 						function addwound(){
@@ -327,29 +357,29 @@
         {{!-- Biography Tab --}}
         <div class="tab biography flexcol {{data.attributes.color.value}} {{actor._id}}" data-group="primary" data-tab="biography">
 		<div class="biosections {{data.attributes.color.value}} {{actor._id}}" style="display: flex;">
-			<div class="biosection"  style="text-align: left; margin-right: 2.5%;">
+			<div class="biosection"  style="text-align: left; margin-right: 0.5%;">
 				<h2 class="bioh2" style="margin-top:0; text-align: center;">Details</h2>
-				<div class="details"><label style="margin-right:16px;">Race</label><input style="width: 85% !important; text-align:center" type="text" class="bio" name="data.details.racedetails" value="{{data.details.racedetails}}" placeholder="Race" required></div>
-				<div class="details"><label style="margin-right:16px;">Age</label><input style="width: 85% !important; text-align:center" type="text" class="bio" name="data.details.age" value="{{data.details.age}}" placeholder="Age" required></div>
-				<div class="details"><label>Height</label><input style="width: 85% !important; text-align:center" type="text" class="bio" name="data.details.height" value="{{data.details.height}}" placeholder="Height" required></div>
-				<div class="details"><label>Weight</label><input style="width: 85% !important; text-align:center;"type="text"class="bio"  name="data.details.weight" value="{{data.details.weight}}" placeholder="Weight" required></div><br>
-				<div class="details"><label style="margin-right:15px;">Hair</label><input style="width: 85% !important; text-align:center;"type="text"class="bio"  name="data.details.hcolor" value="{{data.details.hcolor}}" placeholder="Hair Color" required></div>
-				<div class="details"><label style="margin-right:15px;">Eyes</label><input style="width: 85% !important; text-align:center;"type="text"class="bio"  name="data.details.ecolor" value="{{data.details.ecolor}}" placeholder="Eye Color" required></div>
-				<div class="details"><label>Distinguishing Feature</label><input style="width: 62% !important; text-align:center;"type="text"class="bio"  name="data.details.notable" value="{{data.details.notable}}" placeholder="" required></div>
-				<div class="details" style="display: flex;"><label style="align-self: center;margin-right: 30px;">Active Title:</label>
-				<select style="text-align-last: center;" required title="{{data.details.title}}" name="data.attributes.title" data-type="String" id="atitle" required >
+				<div class="details flexrow"><label class="biolabel">Race</label><input  type="text" class="bio" name="data.details.racedetails flexrow" value="{{data.details.racedetails}}" placeholder="Race" required></div>
+				<div class="details flexrow"><label class="biolabel">Age</label><input  type="text" class="bio" name="data.details.age" value="{{data.details.age}}" placeholder="Age" required></div>
+				<div class="details flexrow"><label class="biolabel">Height</label><input  type="text" class="bio" name="data.details.height" value="{{data.details.height}}" placeholder="Height" required></div>
+				<div class="details flexrow"><label class="biolabel">Weight</label><input type="text"class="bio"  name="data.details.weight" value="{{data.details.weight}}" placeholder="Weight" required></div><br>
+				<div class="details flexrow"><label class="biolabel">Hair</label><input type="text"class="bio"  name="data.details.hcolor" value="{{data.details.hcolor}}" placeholder="Hair Color" required></div>
+				<div class="details flexrow"><label class="biolabel">Eyes</label><input type="text"class="bio"  name="data.details.ecolor" value="{{data.details.ecolor}}" placeholder="Eye Color" required></div>
+				<div class="details flexrow"><label class="biolabel">Distinguishing Feature</label><input type="text"class="bio" style="height: 30px !important;"  name="data.details.notable" value="{{data.details.notable}}" placeholder="" required></div>
+				<div class="details flexrow" style="display: flex;"><label style="align-self: center;width: 20px;flex: 0.5;">Active Title:</label>
+				<select id="titleselect" style="text-align-last: center;" required title="{{data.details.title}}" name="data.attributes.title" data-type="String" id="atitle" required >
 						{{#select data.attributes.title}}
 						<option value=""></option>
-						<option title="{{data.details.title1e}}" value="{{data.details.title1}}">{{data.details.title1}}</option>
-						<option title="{{data.details.title2e}}" value="{{data.details.title2}}">{{data.details.title2}}</option>
-						<option title="{{data.details.title3e}}" value="{{data.details.title3}}">{{data.details.title3}}</option>
+						<option id="titleselected1" title="{{data.details.title1e}}" value="{{data.details.title1}}">{{data.details.title1}}</option>
+						<option id="titleselected2" title="{{data.details.title2e}}" value="{{data.details.title2}}">{{data.details.title2}}</option>
+						<option id="titleselected3" title="{{data.details.title3e}}" value="{{data.details.title3}}">{{data.details.title3}}</option>
 						{{/select}}
 				</select>
 				</div>
-				<div class="details"><label>Mid-Term-Goal</label><input style="width: 75% !important;"type="text"class="bio"  name="data.details.goal1" value="{{data.details.goal1}}" placeholder="" required></div>
-				<div class="details"><label>Long-Term-Goal</label><input style="width: 73% !important; text-align:center;"type="text"class="bio"  name="data.details.goal2" value="{{data.details.goal2}}" placeholder="" required></div>
-				<div class="details"><label>Motivation</label><input style="width: 82% !important; text-align:center" type="text"class="bio"  name="data.details.motivation" value="{{data.details.motivation}}" placeholder="Motivation" required></div>
-				<div class="details"><label>Habit</label><input style="width: 90% !important; text-align:center" type="text"class="bio"  name="data.details.habit" value="{{data.details.habit}}" placeholder="Habbit" required></div>
+				<div class="details flexrow"><label class="biolabel">Mid-Term-Goal</label><input type="text"class="bio"  name="data.details.goal1" value="{{data.details.goal1}}" placeholder="Mid-Term-Goal" required></div>
+				<div class="details flexrow"><label class="biolabel">Long-Term-Goal</label><input type="text"class="bio"  name="data.details.goal2" value="{{data.details.goal2}}" placeholder="Long-Term-Goal" required></div>
+				<div class="details flexrow"><label class="biolabel">Motivation</label><input  type="text"class="bio"  name="data.details.motivation" value="{{data.details.motivation}}" placeholder="Motivation" required></div>
+				<div class="details flexrow"><label class="biolabel">Habit</label><input  type="text"class="bio"  name="data.details.habit" value="{{data.details.habit}}" placeholder="Habbit" required></div>
 				
 				<h2 class="bioh2" style="text-align:center">Family</h2>
 				<input type="text" title="{{data.details.family}}" class="biotextflex" name="data.details.family" value="{{data.details.family}}" placeholder="" id="flaw" required>
@@ -362,23 +392,23 @@
 				<input type="text" title="{{data.details.scar3}}" class="biotextflex" name="data.details.scar3" value="{{data.details.scar3}}" placeholder="" id="flaw6" required>
 							
 			</div>
-			<div class ="biosection" style="margin-left: 2.5%;">
+			<div class ="biosection" style="margin-left: 0.5%;">
 				<h2 class="bioh2" style="margin-top:0">Personality Traits</h2>
 				<input type="text" title="{{data.details.pt1}}" class="biotextflex" name="data.details.pt1" value="{{data.details.pt1}}" placeholder="" id="flaw7" required>
 				<input type="text" title="{{data.details.pt2}}" class="biotextflex" name="data.details.pt2" value="{{data.details.pt2}}" placeholder="" id="flaw8" required>
 				<input type="text" title="{{data.details.pt3}}" class="biotextflex" name="data.details.pt3" value="{{data.details.pt3}}" placeholder="" id="flaw9" required>
 				
-				<h2 class="bioh2">Ideals</h2>
+				<h2 class="bioh2" style="background: #a1fc1d1a;">Ideals</h2>
 				<input type="text" title="{{data.details.ideal1}}" class="biotextflex" name="data.details.ideal1" value="{{data.details.ideal1}}" placeholder="" id="flaw11" required>
 				<input type="text" title="{{data.details.ideal2}}" class="biotextflex" name="data.details.ideal2" value="{{data.details.ideal2}}" placeholder="" id="flaw12" required>
 				<input type="text" title="{{data.details.ideal3}}" class="biotextflex" name="data.details.ideal3" value="{{data.details.ideal3}}" placeholder="" id="flaw13" required>
 				
-				<h2 class="bioh2">Bonds</h2>
+				<h2 class="bioh2" style="background: #1da0fc1a;">Bonds</h2>
 				<input type="text" title="{{data.details.bond1}}" class="biotextflex" name="data.details.bond1" value="{{data.details.bond1}}" placeholder="" id="flaw14" required>
 				<input type="text" title="{{data.details.bond2}}" class="biotextflex" name="data.details.bond2" value="{{data.details.bond2}}" placeholder="" id="flaw15" required>
 				<input type="text" title="{{data.details.bond3}}" class="biotextflex" name="data.details.bond3" value="{{data.details.bond3}}" placeholder="" id="flaw16" required>
 				
-				<h2 class="bioh2">Flaws</h2>
+				<h2 class="bioh2" style="background: #fc1d1d1a;">Flaws</h2>
 				<input type="text" title="{{data.details.flaw1}}" class="biotextflex" name="data.details.flaw1" value="{{data.details.flaw1}}" placeholder="" id="flaw17" required>
 				<input type="text" title="{{data.details.flaw2}}" class="biotextflex" name="data.details.flaw2" value="{{data.details.flaw2}}" placeholder="" id="flaw18" required>
 				<input type="text" title="{{data.details.flaw3}}" class="biotextflex" name="data.details.flaw3" value="{{data.details.flaw3}}" placeholder="" id="flaw19" required>
@@ -390,28 +420,30 @@
 			</div>
 		</div>
 			<div>
-				<h2 class="gray" style="font-size: 20px;text-align: center;border-bottom: 5px solid;border-top: 5px solid;margin-top: 50px;">Other Information</h2>
+				<h2 class="gray" style="font-size: 20px;text-align: center;border-bottom: 5px solid;border-top: 5px solid;margin-top: 5px;padding: 5px;margin-left: 10px;margin-right: 10px;">Other Information</h2>
 					{{editor content=data.details.biography.value target="data.details.biography.value" button=true owner=owner editable=editable}}	
 				</div>
-			<div style="margin-bottom: 50px"><h2 class="bioh2" style="text-align:center">Titles</h2>
-						<div class="details"><input style="width: 25%" type="text" title="{{data.details.title1}}" class="biotextflex" name="data.details.title1" value="{{data.details.title1}}" placeholder="Title" id="title1" required><input style="width: 75%" type="text" title="{{data.details.title1e}}" class="biotextflex" name="data.details.title1e" value="{{data.details.title1e}}" placeholder="Description" id="flaw41" required></div>
-						<div class="details"><input style="width: 25%" type="text" title="{{data.details.title2}}" class="biotextflex" name="data.details.title2" value="{{data.details.title2}}" placeholder="" id="title2" required><input style="width: 75%" type="text" title="{{data.details.title2e}}" class="biotextflex" name="data.details.title2e" value="{{data.details.title2e}}" placeholder="" id="flaw42" required></div>
-						<div class="details"><input style="width: 25%" type="text" title="{{data.details.title3}}" class="biotextflex" name="data.details.title3" value="{{data.details.title3}}" placeholder="" id="title3" required><input style="width: 75%" type="text" title="{{data.details.title3e}}" class="biotextflex" name="data.details.title3e" value="{{data.details.title3e}}" placeholder="" id="flaw43" required></div>
+			<div><h2 class="bioh2" style="text-align: center;margin-left: 10px;margin-right: 10px;">Titles</h2>
+					<div class="biotitles" style="padding:5px;">
+						<div class="details flexrow biotitle"><input style="flex:1" type="text" title="{{data.details.title1}}" class="biotextflextitle" name="data.details.title1" value="{{data.details.title1}}" placeholder="Title" id="title1" required><input id="title1Text" style="flex:3" type="text" title="{{data.details.title1e}}" class="biotextflextitle" name="data.details.title1e" value="{{data.details.title1e}}" placeholder="Description" id="flaw41" required></div>
+						<div class="details flexrow biotitle"><input style="flex:1" type="text" title="{{data.details.title2}}" class="biotextflextitle" name="data.details.title2" value="{{data.details.title2}}" placeholder="Title" id="title2" required><input id="title2Text" style="flex:3" type="text" title="{{data.details.title2e}}" class="biotextflextitle" name="data.details.title2e" value="{{data.details.title2e}}" placeholder="Description" id="flaw42" required></div>
+						<div class="details flexrow biotitle"><input style="flex:1" type="text" title="{{data.details.title3}}" class="biotextflextitle" name="data.details.title3" value="{{data.details.title3}}" placeholder="Title" id="title3" required><input id="title3Text" style="flex:3" type="text" title="{{data.details.title3e}}" class="biotextflextitle" name="data.details.title3e" value="{{data.details.title3e}}" placeholder="Description" id="flaw43" required></div>
+					</div>
 			</div>
         </div>
         {{!-- DD Tab --}}
         <div class="tab dd ddfulltab flexcol" data-group="primary" data-tab="dd">
-		<div class="">
-			<label class="conditionbutton" title="Conditions" style="margin-top: 40px; padding: 2px 6px;">&#9877;<input type="checkbox"class="ressourcecheckbox" style="display:none;" id="hidecheck" name="data.attributes.conditions.value" data-dtype="Boolean" {{checked data.attributes.conditions.value}}><span></span></input></label>
+		<div style="flex: 0;">
+			<label class="conditionbutton check" title="Conditions" style="margin-top: 25px; padding: 2px 6px;">&#9877;<input type="checkbox"class="ressourcecheckbox check" style="display:none;" id="hidecheck" name="data.attributes.conditions.value" data-dtype="Boolean" {{checked data.attributes.conditions.value}}><span></span></input></label>
 			{{#unless hidesettings}}
-			<label class="conditionbutton" title="Settings" style="padding: 2px 3px;">&#9881;<input type="checkbox"class="ressourcecheckbox" style="display:none;" id="hidecheck2" name="data.attributes.settingsdisplay.value" data-dtype="Boolean" {{checked data.attributes.settingsdisplay.value}}><span></span></input></label>
+			<label class="conditionbutton check" title="Settings" style="padding: 2px 3px;">&#9881;<input type="checkbox"class="ressourcecheckbox check" style="display:none;" id="hidecheck2" name="data.attributes.settingsdisplay.value" data-dtype="Boolean" {{checked data.attributes.settingsdisplay.value}}><span></span></input></label>
 			{{/unless}}
 		</div>
 		{{#unless hidesettings}}
 			{{#if data.attributes.settingsdisplay.value}}
 				<div class="settings {{data.attributes.color.value}} {{actor._id}}">
-				<h4  class="settingsheader">Settings</h4>
-				<span style="display: inline-flex;"class="settingsoption">
+				<h3  class="settingsheader">Settings</h3>
+				<span style="display: inline-flex;"class="settingsoption flexrow">
 				<label class="hitdiceroll rollable">Hitdice:</label>
 					<select class="hitdice {{data.attributes.color.value}} {{actor._id}}" name="data.attributes.hitdice.value" data-type="String">
 						{{#select data.attributes.hitdice.value}}
@@ -426,11 +458,10 @@
 					<input class="inventoryslots" style="width: 30px;height: 15px;border: 1px solid #233a54;margin-left: 5px;" name="data.attributes.inventoryslots" type="text" value="{{data.attributes.inventoryslots}}" data-dtype="{{data.attributes.inventoryslots}}" placeholder="18" />
 					<div class="counter-value">
 					</div>
-					<label style="margin-left: 5px;">Automatic Burnout Dice:</label><label class="bloodiedcheckbox"><input style="margin-top: -4px;" class="ressourcecheckbox" type="checkbox" type="Boolean" name="data.attributes.autmomaticburnout" data-dtype="Boolean" {{checked data.attributes.autmomaticburnout}}/><span></span></label>
-					<label style="margin-left: 5px;">Automatic Burnout Consequence:</label><label class="bloodiedcheckbox"><input style="margin-top: -4px;" class="ressourcecheckbox" type="checkbox" type="Boolean" name="data.attributes.burnoutc.value" data-dtype="Boolean" {{checked data.attributes.burnoutc.value}}/><span></span></label>
-				<label style="margin-left: 5px;">Show Title</label>
-						<label class="titlecheckbox" style="margin-right: 20px;">
-						<input style="position: absolute; margin-top: -5px;" type="checkbox" type="Boolean" name="data.attributes.titlesetting" data-dtype="Boolean" {{checked data.attributes.titlesetting}}/><span></span></label>
+					<label style="margin-left: 5px;">Automatic Burnout Consequence:</label><label class="bloodiedcheckbox"><input style="margin-top: -4px;" class="ressourcecheckbox check" type="checkbox" type="Boolean" name="data.attributes.burnoutc.value" data-dtype="Boolean" {{checked data.attributes.burnoutc.value}}/><span></span></label>
+					<label style="margin-left: 5px;">Show Title</label>
+					<label class="titlecheckbox" style="margin-right: 20px;">
+					<input style="position: absolute; margin-top: -5px;" type="checkbox" type="Boolean" name="data.attributes.titlesetting" data-dtype="Boolean" {{checked data.attributes.titlesetting}}/><span></span></label>
 					<label style="margin-left: 10px;">Address:</label>
 					<select class="hitdice {{data.attributes.adress}}" name="data.attributes.adress" data-type="String">
 						{{#select data.attributes.adress}}
@@ -439,6 +470,8 @@
 						<option value="her">her</option>
 						{{/select}}
 					</select>
+					<label style="margin-left: 5px;">Automatic Exhaustion 
+					</label><label class="bloodiedcheckbox"><input style="margin-top: -4px;" class="ressourcecheckbox check" type="checkbox" type="Boolean" name="data.attributes.automaticexhaust" data-dtype="Boolean" {{checked data.attributes.automaticexhaust}}/><span></span></label>
 				</span>
 				<h4  class="settingsheader" style="margin-top: 10px;">Character Customization</h4>
 				<span style="display: inline-flex;"class="settingsoption">
@@ -459,6 +492,23 @@
 						<option value="custom">custom</option>
 						{{/select}}
 					</select>
+					<label>Character Sheet Font:</label>
+					<select class="hitdice {{data.attributes.color.value}} {{actor._id}}" name="data.attributes.font.value" data-type="String">
+						{{#select data.attributes.font.value}}
+						<option value="unset">default</option>
+						<option value="air !important">air</option>
+						<option value="Font Awesome 5 Free !important">Font Awesome 5 Free</option>
+						<option value="monospace">monospace</option>
+						<option value="serif">serif</option>
+						<option value="fire">Fire</option>
+						<option value="water">Water</option>
+						<option value="earth">Earth</option>
+						<option value="ice">ice</option>
+						<option value="forest">forest</option>
+						{{/select}}
+					</select>
+					Font-Size:
+					<input class="inventoryslots" style="width: 30px;height: 15px;border: 1px solid #233a54;margin-left: 5px;" name="data.attributes.fontsize.value" type="text" value="{{data.attributes.fontsize.value}}" placeholder="13" />
 					<input style="display:none" type="checkbox" type="Boolean" name="data.attributes.color.custom" data-dtype="Boolean" {{checked data.attributes.color.custom}}/>
 					{{#if data.attributes.color.custom}}
 					<span style="display: inline-flex;"class="settingsoption">
@@ -483,9 +533,6 @@
 					<label style="margin-left: 5px;">High Contrast</label>
 						<label class="titlecheckbox" style="margin-right: 20px;">
 						<input style="position: absolute; margin-top: -5px;" type="checkbox" type="Boolean" name="data.attributes.color.highcontrast" data-dtype="Boolean" {{checked data.attributes.color.highcontrast}}/><span></span></label>
-					<label style="margin-left: 5px;">Grayscale</label>
-						<label class="titlecheckbox" style="margin-right: 20px;">
-						<input style="position: absolute; margin-top: -5px;" type="checkbox" type="Boolean" name="data.attributes.color.grayscale" data-dtype="Boolean" {{checked data.attributes.color.grayscale}}/><span></span></label>
 					<label style="margin-left: 5px;">Brighter Sheet</label>
 						<label class="titlecheckbox" style="margin-right: 20px;">
 						<input style="position: absolute; margin-top: -5px;" type="checkbox" type="Boolean" name="data.attributes.color.brighter" data-dtype="Boolean" {{checked data.attributes.color.brighter}}/><span></span></label>
@@ -498,6 +545,10 @@
 			{{/if}}
 		{{/unless}}
 		<style>
+			form.editable.flexcol {
+				font-family:{{data.attributes.font.value}};
+				font-size: {{data.attributes.fontsize.value}}px !important;
+			}
 			form.editable.flexcol.custom.{{actor._id}}{
 			background-color: {{data.color.custom.color}};
 			color: {{data.color.custom.textcolor}};
@@ -622,17 +673,17 @@
 		<div class="section1" style="margin-top:0;">
 		<div class="part1 {{data.attributes.color.value}} {{actor._id}} allparts">
     <h4 class="darksheetheader {{data.attributes.color.value}} {{actor._id}}">Food</h4>
-    <div class="status-value">
+    <div>
         <label class="foodcheckbox">
-            <input class="ressourcecheckbox foodcheckbox" type="checkbox" name="data.attributes.food.value" data-dtype="Boolean" {{checked data.attributes.food.value}}/><span></span></label>
+            <input class="ressourcecheckbox check" type="checkbox" name="data.attributes.food.value" data-dtype="Boolean" {{checked data.attributes.food.value}}/><span></span></label>
         <label class="foodcheckbox">
-            <input class="ressourcecheckbox" type="checkbox" name="data.attributes.food2.value" data-dtype="Boolean" {{checked data.attributes.food2.value}}/><span></span></label>
+            <input class="ressourcecheckbox check" type="checkbox" name="data.attributes.food2.value" data-dtype="Boolean" {{checked data.attributes.food2.value}}/><span></span></label>
         <label class="foodcheckbox">
-            <input class="ressourcecheckbox" type="checkbox" name="data.attributes.food3.value" data-dtype="Boolean" {{checked data.attributes.food3.value}}/><span></span></label>
+            <input class="ressourcecheckbox check" type="checkbox" name="data.attributes.food3.value" data-dtype="Boolean" {{checked data.attributes.food3.value}}/><span></span></label>
         <label class="foodcheckbox">
-            <input class="ressourcecheckbox" type="checkbox" name="data.attributes.food4.value" data-dtype="Boolean" {{checked data.attributes.food4.value}}/><span></span></label>
+            <input class="ressourcecheckbox check" type="checkbox" name="data.attributes.food4.value" data-dtype="Boolean" {{checked data.attributes.food4.value}}/><span></span></label>
         <label class="foodcheckbox">
-            <input class="ressourcecheckbox" type="checkbox" type="radio" name="data.attributes.food5.value" data-dtype="Boolean" {{checked data.attributes.food5.value}}/><span></span></label>
+            <input class="ressourcecheckbox check" type="checkbox" type="radio" name="data.attributes.food5.value" data-dtype="Boolean" {{checked data.attributes.food5.value}}/><span></span></label>
     </div>
     <select class="saturationbox" id="sel" name="data.attributes.saturation.value" data-type="String" >
         {{#select data.attributes.saturation.value}}
@@ -648,17 +699,17 @@
 	</div>
 	<div class="part2 {{data.attributes.color.value}} {{actor._id}} allparts">
 		<h4 class="darksheetheader {{data.attributes.color.value}} {{actor._id}}">Waterskin</h4>
-		<div class="status-value">
+		<div>
 			<label class="watercheckbox {{data.attributes.color.value}} {{actor._id}}">
-				<input class="ressourcecheckbox" type="checkbox" name="data.attributes.waterskin.value" title="@{waterskin1}" data-dtype="Boolean" {{checked data.attributes.waterskin.value}}/><span></span></label>
+				<input class="ressourcecheckbox check" type="checkbox" name="data.attributes.waterskin.value" title="@{waterskin1}" data-dtype="Boolean" {{checked data.attributes.waterskin.value}}/><span></span></label>
 			<label class="watercheckbox {{data.attributes.color.value}} {{actor._id}}">
-				<input class="ressourcecheckbox" type="checkbox" name="data.attributes.waterskin2.value" title="@{waterskin2}" data-dtype="Boolean" {{checked data.attributes.waterskin2.value}}/><span></span></label>
+				<input class="ressourcecheckbox check" type="checkbox" name="data.attributes.waterskin2.value" title="@{waterskin2}" data-dtype="Boolean" {{checked data.attributes.waterskin2.value}}/><span></span></label>
 			<label class="watercheckbox {{data.attributes.color.value}} {{actor._id}}">
-				<input class="ressourcecheckbox" type="checkbox" name="data.attributes.waterskin3.value" title="@{waterskin3}" data-dtype="Boolean" {{checked data.attributes.waterskin3.value}}/><span></span></label>
+				<input class="ressourcecheckbox check" type="checkbox" name="data.attributes.waterskin3.value" title="@{waterskin3}" data-dtype="Boolean" {{checked data.attributes.waterskin3.value}}/><span></span></label>
 			<label class="watercheckbox {{data.attributes.color.value}} {{actor._id}}">
-				<input class="ressourcecheckbox" type="checkbox" name="data.attributes.waterskin4.value" title="@{waterskin4}" data-dtype="Boolean" {{checked data.attributes.waterskin4.value}}/><span></span></label>
+				<input class="ressourcecheckbox check" type="checkbox" name="data.attributes.waterskin4.value" title="@{waterskin4}" data-dtype="Boolean" {{checked data.attributes.waterskin4.value}}/><span></span></label>
 			<label class="watercheckbox {{data.attributes.color.value}} {{actor._id}}">
-				<input class="ressourcecheckbox" type="checkbox" type="radio" name="data.attributes.waterskin5.value" title="@{waterskin5}" data-dtype="Boolean" {{checked data.attributes.waterskin5.value}}/><span></span></label>
+				<input class="ressourcecheckbox check" type="checkbox" type="radio" name="data.attributes.waterskin5.value" title="@{waterskin5}" data-dtype="Boolean" {{checked data.attributes.waterskin5.value}}/><span></span></label>
 		</div>
 		<select class="saturationbox" name="data.attributes.thirst.value" data-type="String">
 			{{#select data.attributes.thirst.value}}
@@ -688,13 +739,13 @@
 			<option value="exbarely">Barely awake +1 exhaustion</option>
 			{{/select}}
 		</select>
-		<div style="margin-top: 9px;"><label class="dicelabel2 staminacheck rollable">Stamina Check</label></div>
+		<div style="margin-top: 9px;"><label class="dicelabel2 staminacheck rollable darkcheck check">Stamina Check</label></div>
 	</div>
 	</div>
-	<div class="section1 allparts">
-		<div class="part4 {{data.attributes.color.value}} {{actor._id}}" style="    margin-left: 13px;">
+	<div class="section1 flexrow">
+		<div class="part4 {{data.attributes.color.value}} {{actor._id}} allparts">
 			<h4 class="darksheetheader {{data.attributes.color.value}} {{actor._id}}">Temperature</h4>
-			<select class="exhaustionbox" name="data.attributes.temp" data-type="String" style="width: 163px;" >
+			<select class="exhaustionbox" name="data.attributes.temp" data-type="String" style="width: 163px;" {{#if globalRegMagic}}disabled{{/if}}>
 				{{#select data.attributes.temp}}
 				<option value="exenegised">Perfect -1 Exhaustion</option>
 				<option value="exwell">Comfortable</option>
@@ -708,25 +759,25 @@
 			<div style="margin-top: 15px;">
 				<span class="settingsoption exhaustioncalc">
 					<label class="rollable exhaustioncalc">Calculate Exhaustion:</label>
-						<input type="text" class="exhaustionpoints" name="data.attributes.newexhaustion" readonly value="{{data.attributes.newexhaustion}}" placeholder="click" style="height: 30px;background: #65656500;border-style: solid; border-bottom: inset; border-color: #fdffa7;width: 30px;"/>
-					</br><label class="rollable exhaustionstatus">Exhaustion Information</label>
+						<input type="text" class="exhaustionpoints" name="data.attributes.newexhaustion" readonly value="{{data.attributes.newexhaustion}}" placeholder="click" />
+					</br><label class="rollable exhaustionstatus check">Exhaustion Information</label>
 				</span>
 			</div>
 		</div>
 		<div class="checks {{data.attributes.color.value}} {{actor._id}}">
-			<h3 class="stressroll rollable" style="text-align: center;padding: 0;width: 120px;margin-left: 145px;margin-top: 10px;">Stress & Afflictions</h3>
+			<h3 class="stressroll rollable check" style="text-align: center;padding: 0;margin-top: 10px;">Stress & Afflictions</h3>
 			<div style="display: inline-flex;">
 				<div class="stress" style="width: 155px;padding-top: 15px;padding-right: 40px;">
 				Stress
 				<div class="attribute-value">
-							<input name="data.attributes.stress.value" type="text" value="{{data.attributes.stress.value}}" data-dtype="{{data.attributes.stress.type}}" placeholder="10" style="border-style: double;border-width: 1px;border: groove;height: 50px;width: 50px;font-size: 20px;"/>
+							<input name="data.attributes.stress.value" type="text" value="{{data.attributes.stress.value}}" data-dtype="{{data.attributes.stress.type}}" placeholder="0" style="border-style: double;border-width: 1px;border: groove;height: 50px;width: 50px;font-size: 20px;"/>
 				</div>
 				</div>
 				<div class="breaks">
 					<div>
 						<div style="display: inline-flex;"><label class="stresscheckbox">
-							<input class="ressourcecheckbox stresscheckbox" type="checkbox" name="data.attributes.break1" title="@{break}" data-dtype="Boolean" {{checked data.attributes.break1}}/><span></span></label> 
-							{{#if data.attributes.break1}}<label class="afflictiontext" style="color:#f3afaf;"><b>20</b></label>
+							<input class="ressourcecheckbox check stresscheckbox" type="checkbox" name="data.attributes.break1" title="@{break}" data-dtype="Boolean" {{checked data.attributes.break1}}/><span></span></label> 
+							{{#if data.attributes.break1}}<label class="afflictiontext" style="color: #ad0000;"><b>20</b></label>
 								<select class="hitdice {{data.attributes.color.value}} {{actor._id}} afflictionselection" name="data.attributes.affliction1.value" data-type="String">
 								{{#select data.attributes.affliction1.value}}
 								<option value="Fearful">Fearful</option>
@@ -754,8 +805,8 @@
 							{{/if}}
 						</div>
 						</br><div style="display: inline-flex;"><label class="stresscheckbox">
-							<input class="ressourcecheckbox stresscheckbox" type="checkbox" name="data.attributes.break2" title="@{break}" data-dtype="Boolean" {{checked data.attributes.break2}}/><span></span></label> 
-							{{#if data.attributes.break2}}<label class="afflictiontext" style="color:#f3afaf;"><b>30</b></label>
+							<input class="ressourcecheckbox check stresscheckbox" type="checkbox" name="data.attributes.break2" title="@{break}" data-dtype="Boolean" {{checked data.attributes.break2}}/><span></span></label> 
+							{{#if data.attributes.break2}}<label class="afflictiontext" style="color: #ad0000;"><b>30</b></label>
 								<select class="hitdice {{data.attributes.color.value}} {{actor._id}} afflictionselection" name="data.attributes.affliction2.value" data-type="String">
 								{{#select data.attributes.affliction2.value}}
 								<option value="Fearful">Fearful</option>
@@ -783,8 +834,8 @@
 							{{/if}}
 						</div>
 						</br><div style="display: inline-flex;"><label class="stresscheckbox">
-							<input class="ressourcecheckbox stresscheckbox" type="checkbox" name="data.attributes.break3" title="@{break}" data-dtype="Boolean" {{checked data.attributes.break3}}/><span></span></label> 
-							{{#if data.attributes.break3}}<label class="afflictiontext" style="color:#f3afaf;"><b>35</b></label>
+							<input class="ressourcecheckbox check stresscheckbox" type="checkbox" name="data.attributes.break3" title="@{break}" data-dtype="Boolean" {{checked data.attributes.break3}}/><span></span></label> 
+							{{#if data.attributes.break3}}<label class="afflictiontext" style="color: #ad0000;"><b>35</b></label>
 								<select class="hitdice {{data.attributes.color.value}} {{actor._id}} afflictionselection" name="data.attributes.affliction3.value" data-type="String">
 								{{#select data.attributes.affliction3.value}}
 								<option value="Fearful">Fearful</option>
@@ -812,9 +863,9 @@
 							{{/if}}
 						</div>
 						</br><div style="display: inline-flex;"><label class="stresscheckbox">
-							<input class="ressourcecheckbox" type="checkbox" name="data.attributes.break4" title="@{break4}" data-dtype="Boolean" {{checked data.attributes.break4}}/><span></span></label> 
+							<input class="ressourcecheckbox check" type="checkbox" name="data.attributes.break4" title="@{break4}" data-dtype="Boolean" {{checked data.attributes.break4}}/><span></span></label> 
 							{{#if data.attributes.break4}}
-							<label class="afflictiontext" style="color:#f3afaf;"> <b>40</b> Hit your Breaking Point </label>
+							<label class="afflictiontext" style="color: #ad0000;"> <b>40</b> Hit your Breaking Point </label>
 							{{else}}
 							<label class="afflictiontext"> <b>40</b> Hit your Breaking Point </label>
 							{{/if}}
@@ -826,22 +877,8 @@
 		</div>
 	</div>	
 		{{#if hidechecks}}
-		<div style="visibility:hidden;margin: 0px 28px 8px 28px; width: auto;"class="checks {{data.attributes.color.value}} {{actor._id}} ">
-			<h3 style="text-align: center;margin-bottom: -15px;padding: 0; margin-top: 10px;">Checks</h3>
-			<div class="section3" style="margin-left: 113px;margin-right: 113px;">
-				<label class="criticalS rollable check {{data.attributes.color.value}} {{actor._id}}">Critical Success</label>
-				<label class="criticalF rollable check {{data.attributes.color.value}} {{actor._id}}">Critical Failure</label>
-				<label class="successatcost rollable check {{data.attributes.color.value}} {{actor._id}}">Success at a Cost</label>
-			</label></label></label></label>
-			</div></br>
-			<div class="section3" style="margin-left: 113px;margin-right: 113px; margin-top: 0;">
-				<label class="treatwound rollable check {{data.attributes.color.value}} {{actor._id}}">Treat Wound (SR)</label>
-				<label class="healwound rollable check {{data.attributes.color.value}} {{actor._id}}">Heal Wounds (LR)</label>
-				<label class="check dicelabel2 staminacheck rollable check {{data.attributes.color.value}} {{actor._id}}">Stamina Check</label>
-			</div>
-		</div>
 		{{else}}
-		<div style="margin: 0px 28px 8px 28px;; width: auto;"class="checks {{data.attributes.color.value}} {{actor._id}} ">
+		<div class="checks {{data.attributes.color.value}} {{actor._id}} ddchecks">
 			<h3 style="text-align: center;margin-bottom: -15px;padding: 0; margin-top: 10px;">Checks</h3>
 			<div class="section3" style="margin-left: 113px;margin-right: 113px;">
 				<label class="criticalS rollable check {{data.attributes.color.value}} {{actor._id}}">Critical Success</label>

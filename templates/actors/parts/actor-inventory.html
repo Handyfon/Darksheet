@@ -1,8 +1,6 @@
 <div class="inventory-filters flexrow">
-
     {{#unless isNPC}}
-    <ol class="currency flexrow">
-	{{#unless ../../hidenotches}}<label class="randomnotch rollable">Random Notch</label>{{/unless}}																		 
+    <ol class="currency flexrow">						 
         <h3>
             {{localize "DND5E.Currency"}}
             <a class="currency-convert rollable" data-action="convertCurrency" title="Convert Currency">
@@ -11,20 +9,19 @@
         </h3>
         {{#each data.currency as |v k|}}
         <label class="denomination {{k}}">{{ lookup ../config.currencies k }}</label>
-        <input type="text" name="data.currency.{{k}}" value="{{v}}" data-dtype="Number"/>
+        <input type="text" id="currency{{k}}" name="data.currency.{{k}}" value="{{v}}" data-dtype="Number"/>
         {{/each}}
 
     </ol>
-    {{/unless}}
-
+{{#unless ../../hidenotches}}<label class="randomnotch rollable">Random Notch</label>{{/unless}}												
     {{#unless isVehicle}}
-    <ul class="filter-list flexrow" data-filter="inventory">
-																 
+    <ul class="filter-list flexrow" data-filter="inventory">				 
         <li class="filter-item" data-filter="action">{{localize "DND5E.Action"}}</li>
         <li class="filter-item" data-filter="bonus">{{localize "DND5E.BonusAction"}}</li>
         <li class="filter-item" data-filter="reaction">{{localize "DND5E.Reaction"}}</li>
         <li class="filter-item" data-filter="equipped">{{localize "DND5E.Equipped"}}</li>
     </ul>
+    {{/unless}}
     {{/unless}}
 </div>
 
@@ -114,7 +111,7 @@
 			<div class="item-detail item-weight">
                 <div class="item-detail">
 				{{~#if flags.darksheet.item.ammodie}}
-                    <label id ="rollableammodice" class="rollable ammodice ammostyle">{{flags.darksheet.item.ammodie}}</label>
+                    <label id ="rollableammodice" class="rollable ammodice ammostyle check" style="padding:16px;">{{flags.darksheet.item.ammodie}}</label>
 				{{/if}}
                 </div>
             </div>

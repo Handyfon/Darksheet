@@ -1,3 +1,114 @@
+.removewoundbutton{
+	border: 1px solid #b5b3a4;
+    border-radius: 2px;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 0 3px;
+    margin: 0 3px;
+	width: 25px;
+    height: 25px;
+}
+.removewoundbutton:hover{
+    background: #b5b3a4;
+    color: white;
+}
+.woundrollmessage{
+	border: 1px solid #b5b3a4;
+    border-radius: 2px;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 0 3px;
+    margin: 0 3px;
+}
+.dnd5e.sheet.actor .encumbrance .encumbrance-label {
+    color: #fff;
+    background: #00000030;
+}
+label.dicelabel2.burnoutclick.burnoutdie.rollable {
+    border: 1px solid #b5b3a4;
+    border-radius: 2px;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 0 3px;
+    margin: 0 3px;
+}
+.biotitle{
+    padding: 5px;
+}
+.details.flexrow.biotitle {
+    margin: 10px;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+.dnd5e.sheet select {
+    cursor: pointer;
+    background: #ceccc1;
+}
+.dnd5e.sheet select:hover {
+    background: #b5b3a4;
+}
+.biotextflextitle{
+	height: 30px !important;
+}
+input.biotextflextitle:hover {
+    border: 1px solid #9a9991 !important;
+    box-shadow: 0 0 2px #b5b3a4 !important;
+    transition: 0.1s;
+}
+input.biotextflextitle:focus {
+    border: 0 !important;
+    border-bottom: solid 1px black !important;
+    box-shadow: 0 0 8px #b5b3a4 !important;
+    transition: 0.3s;
+    border: 1px solid #9a9991 !important;
+    background: #cdcbc0 !important;
+    color: white;
+}
+select.hitrice {
+    margin-top: 3px;
+    margin-left: 6px;
+}
+label.exhaustiontip {
+    border-radius: 5px;
+    padding: 5px 5px;
+}
+table#woundlistid {
+    text-align: center;
+}
+.addwoundbutton {
+    text-align: center;
+    font-size: 20px;
+    border: 1px solid #b5b3a4;
+    border-radius: 2px;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 0 3px;
+    margin: 0 3px;
+}
+.addwoundbutton:hover {
+    background: #0000004a !important;
+    color: white;
+    border: 1px solid;
+}
+input.exhaustionpoints {
+    width: 80%;
+}
+.ddchecks {
+    margin: 35px;
+    margin-top: 20px;
+    margin-right: 25px;
+    margin-left: 25px;
+    width: 93.5% !important;
+}
+.settings {
+    padding: 15px;
+    margin: 30px;
+    margin-top: 0px;
+    margin-bottom: 14px;
+    border: 5px solid;
+}
+ol.currency.flexrow {
+    padding: 5px !important;
+}
+.counters.flexrow {
+    padding: 5px !important;
+}
 .dnd5e.sheet.actor.character .sheet-header .charlevel {
     flex: 0 0 20px;
     height: 20px;
@@ -8,17 +119,32 @@
     right: 3px;
     white-space: nowrap;
 }
+.tabbedchatlog .item {
+    height: 26px;
+}
+input.bio {
+	flex: 4 !important;
+}
+label.biolabel {
+    flex: 2;
+}
+select#atitle {
+    flex: 2.6;
+}
 .form-group.inactive.woundsection {
     border: 1px groove;
     display: none;
 }
 label.randomnotch.rollable {
-    position: absolute;
-    margin-top: 20px;
-    padding: 3px;
     border: 1px solid;
-    margin-left: unset !important;
-	cursor: pointer;
+    text-shadow: 0 0 1px;
+    left: 5px;
+    margin-top: 42px;
+    position: absolute;
+    margin-left: 8px;
+    padding: 3px;
+    width: 169px;
+    text-align: center;
 }
 .fa-book-dead:before {
     content: "\f6b7";
@@ -134,7 +260,7 @@ button#minuspell {
     height: 16px !important;
     display: block !important;
     position: relative !important;
-    margin-left: -8px !important;
+    margin-left: -16px !important;
     margin-bottom: -18px !important;
 }
 button#minuspell:hover {
@@ -539,20 +665,20 @@ label.notchlabel:hover + button#minus + button#plus{
 }
 button#minus:hover {
     visibility: visible !important;
-    background-color: #243b55 !important;
-    color: #5e9ed4 !important;
+    background-color: #7a7971;
+    color: #ffffff !important;
 }
 button#plus:hover {
     visibility: visible !important;
-    background-color: #243b55 !important;
-    color: #d45e6f !important;
+    background-color: #7a7971;
+    color: #ffffff !important;
 }
 button#plus {
     width: 5px;
     visibility: hidden;
     position: inherit;
     margin: 0;
-    top: 3px;
+    top: 0px;
     left: -40px;
     height: 20px;
     position: relative;
@@ -578,7 +704,7 @@ button#minus {
     position: relative;
     height: 20px;
     align-self: center;
-    top: 3px;
+    top: 0px;
     left: -62px;
     height: 20px;
     /* background-image: linear-gradient(#474a5dfc, #243b5500) !important; */
@@ -653,7 +779,9 @@ button#minus {
     margin-left: 6px;
     font-size: 15px;
 }
-
+.dnd5e.sheet .editor {
+    height: unset;
+}
 
 .biosections {
     padding: 10px;
@@ -663,6 +791,8 @@ button#minus {
     margin: 5px 5px 5px 0;
     padding-right: 5px;
     border-right: 2px groove #eeede0;
+    height: 240px;
+    overflow: auto;
 }
 /*CHECK SECTION ON THE DD TAB*/
 
@@ -792,6 +922,7 @@ visibility:hidden;
 .dnd5e.sheet.actor .inventory-list .item .item-name h4 {
     margin: 0;
     line-height: 15px;
+    padding: 6px;
     margin: auto;
 }
 
@@ -878,24 +1009,21 @@ form .form-header {
 .red-dual .dice-row {
     clear: both;
 }
-.dnd5e.chat-card .card-header {
-    padding: 3px 0;
-    border-top: 2px groove #4c447b;
-    border-bottom: 2px groove #4c447b;
-    padding: 0px 5px 0 5px;
-}
+
 .dnd5e.chat-card .card-header img {
     flex: 0 0 36px;
     margin-right: 5px;
     margin-top: 4px;
 }
+/*
 .dnd5e.chat-card .card-header h3 {
     flex: 1;
     margin: 0;
-    line-height: 36px;
+    line-height: 20px;
     font-family: "Nodesto", "Signika", "Palatino Linotype", serif;
-    font-size: 20px;
-}
+    font-size: 17px;
+	align-self: center;
+}*/
 .trainpointa {
     width: 80px !important;
     position: relative;
@@ -988,10 +1116,6 @@ form .form-header {
     border-radius: 3px;
 }
 
-.app.sheet .editor-content {
-    padding: 10px;
-}
-
 .dnd5e.actor .inventory-list .item .item-quality, .dnd5e.actor .inventory-list .item .item-weight {
     font-size: 12px;
     text-align: center;
@@ -1000,10 +1124,10 @@ form .form-header {
 .item-detail{
 width: 58px;
 }
-
 .app.sheet .editor-content {
-    min-height: 100px;
-	max-height: 100%;
+    min-height: 111px;
+    padding: 5px;
+    overflow-y: auto;
 }
 .dicelabel{
 	margin-top: -7px;
@@ -1115,7 +1239,6 @@ margin-bottom: 3px !important;
     margin: -12px !important;
     color: #b5b1d4 !important text-align: center !important;
     border-radius: unset !important;
-    border: #000000 groove 2px !important;
     text-align: center !important;
 }
 
@@ -1159,20 +1282,25 @@ margin-bottom: 3px !important;
 .activecondition{
 	text-shadow: 0 0 2px black;
 }
+.trainpointa {
+    border-radius: 0px !important;
+}
 .dnd5e.sheet.actor.character .sheet-header .summary .proficiency {
     margin-left: 5%;
 }
 .dnd5e.sheet.actor .counters {
-    margin-top: 1px;
-    border-top: 0;
     place-items: center;
-    flex: none;
 }
 .deathcheckbox > input:checked {
     border: 1px solid #b84141;
     padding: 10px;
 }
-
+.counter-value {
+    text-align-last: center;
+}
+.attribute-value.multiple {
+    text-align-last: center;
+}
 .deathcheckbox > input:checked + span::before {
     content: '\1F480';
     display: block;
@@ -1180,13 +1308,22 @@ margin-bottom: 3px !important;
     margin-top: 4px;
     margin-left: -20px;
 }
-
-.deathsavelabel {
-    margin-top: 8px;
-    margin-left: 3px;
-    margin-right: -3px;
+label.rollable.deathsaveroll.darkcheck {
+    height: 23px;
+    align-self: flex-end;
 }
-
+.deathsavelabel {
+    font-family: inherit !important;
+    font-weight: bold;
+    font-size: 13px;
+    color: #4b4a44;
+}
+.dnd5e.sheet.item .sheet-header img.profile {
+    border: 0px solid #000;
+}
+.dnd5e.sheet.actor .inventory-list .item .item-name .item-image:hover {
+    border: 1px transparent groove;
+}
 .bloodiedcheckbox {
     display: inline-flex;
     cursor: pointer;
@@ -1197,12 +1334,6 @@ margin-bottom: 3px !important;
 }
 .bloodiedcheckbox{
 margin-bottom: 3px !important;
-}
-.dnd5e.sheet.item .sheet-header img.profile {
-    border: 0px solid #000;
-}
-.dnd5e.sheet.actor .inventory-list .item .item-name .item-image:hover {
-    border: 1px transparent groove;
 }
 .bloodiedcheckbox > input {
     -webkit-appearance: none;
@@ -1232,6 +1363,49 @@ margin-bottom: 3px !important;
     margin-top: -4px;
     margin-left: -17px;
     font-size: 15px;
+}
+
+input.ressourcecheckbox.spellburn {
+    flex: 0;
+    background: inherit;
+    background: #ffffff57;
+    background-size: 22px;
+    background-position-x: center;
+}
+
+.spellburnoutcheck{
+margin-bottom: 3px !important;
+}
+.spellburnoutcheck > input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+    outline: none;
+    transition-duration: 0.2s;
+    border-style: solid;
+    border-width: 1px;
+    cursor: pointer;
+    width: 10px !important;
+    height: 10px !important;
+    border-bottom-style: dotted;
+    border-top-style: dotted;
+    padding: 10px;
+	transform: scale(0.8);
+}
+.spellburnoutcheck > input:checked {
+    border: 1px solid #b84141;
+    padding: 10px;
+}
+.spellburnoutcheck > input:checked + span::before {
+    content: '\1F525';
+    display: block;
+    position: absolute;
+    margin-top: 1px;
+    margin-left: 3px;
+    font-size: 15px;
+    transform: rotateZ(15deg) scale3d(1.2, 1.2, 1.2);
+    filter: invert(1);
 }
 
 .dnd5e .form-header {
@@ -1352,7 +1526,6 @@ margin-bottom: 3px !important;
     margin-top: -5px;
     margin-left: -26px;
     padding-bottom: 5px;
-    color: #b5b1d4;
     padding: 10px;
 }
 
@@ -1364,7 +1537,6 @@ margin-bottom: 3px !important;
 	height: 20px;
 }
 
-}
 
 .stresscheckbox > input {
     -webkit-appearance: none;
@@ -1397,6 +1569,7 @@ margin-bottom: 3px !important;
     margin-left: -28px;
     padding-bottom: 5px;
     padding: 10px;
+    transform: scale(1.3);
 }
 label.afflictiontext {
     margin-top: 7px;
@@ -1478,7 +1651,7 @@ select.hitdice.afflictionselection{
 }
 .biosection{
 	display: block;
-
+    padding: 5px;
     width: 50%;
     text-align: center;
     justify-content: space-evenly;
@@ -1491,18 +1664,43 @@ select.hitdice.afflictionselection{
 .details{
     border-bottom: 1px dashed;
 }
+input.bio {
+    height: 15px !important;
+}
+input.bio:hover {
+    border: 1px solid #9a9991 !important;
+    box-shadow: 0 0 2px #b5b3a4 !important;
+    transition: 0.1s;
+}
+input.bio:focus {
+    border: 0 !important;
+    border-bottom: solid 1px black !important;
+    box-shadow: 0 0 8px #b5b3a4 !important;
+    transition: 0.3s;
+    border: 1px solid #9a9991 !important;
+    background: #cdcbc0 !important;
+    color: white;
+}
 input.biotextflex {
     height: 15px !important;
-    border-bottom: dashed 1px black !important;
 }
 input.biotextflex :break{
 	word-wrap: break-word !important;
     word-break: break-all !important;
 }
 input.biotextflex:hover {
-    height: 15px !important;
+    border: 1px solid #9a9991 !important;
+    box-shadow: 0 0 2px #b5b3a4 !important;
+    transition: 0.1s;
+}
+input.biotextflex:focus {
     border: 0 !important;
-    border-bottom: dashed 1px black !important;
+    border-bottom: solid 1px black !important;
+    box-shadow: 0 0 8px #b5b3a4 !important;
+    transition: 0.3s;
+    border: 1px solid #9a9991 !important;
+    background: #cdcbc0 !important;
+    color: white;
 }
 /*PROFICIENCY GREEN*/
 /*DD TAB*/
@@ -1513,6 +1711,9 @@ display: inline
     display: inline-block;
     padding: 13px;
     padding-top: 0px;
+    margin-left: 25px;
+    margin-right: 25px;
+    width: 33%;
 }
 .part1 {
     border: groove 2px #22473b;
@@ -1537,19 +1738,14 @@ display: inline
     border-width: 1px
 }
 .part4 {
-    width: 193px;
-    margin-left: 10px;
     border: groove 2px #727584;
     padding: 15px;
-    margin-left: 13px;
+    margin-left: 0;
+    flex: 1;
+    width: 33%;
 }
-
-.part4.black{
-	width: 193px;
-    margin-left: 10px;
-    padding: 15px;
-	border-style: solid;
-    border-width: 1px;
+label.dicelabel2.staminacheck.rollable.darkcheck {
+    padding: 5px;
 }
 .burnoutclick {
     margin: 0px 50px 0px 50px;
@@ -1569,12 +1765,11 @@ margin-top:15px;
     width: min-content;
 }
 .conditionbutton {
-    margin-left: 2px;
-    padding: 2px 1px;
-    padding-top: 4px;
-    padding-bottom: 4px;
     border: 1px solid #5f5e5e;
     position: absolute;
+    width: 26px;
+    text-align: center;
+    left: 0;
 }
 .conditionbutton:hover {
     border: solid 1px #b5b3a4 important;
@@ -1592,6 +1787,10 @@ margin-top:15px;
     display: flex;
     text-align: center;
     justify-content: space-evenly;
+}
+.section1.flexrow {
+    margin-right: 25px;
+    margin-left: 25px;
 }
 .section2 {
     margin: 10px 30px 0px 24px;
@@ -1615,35 +1814,23 @@ margin-top:15px;
 .checks {
     padding-bottom: 10px;
     padding-top: 0px;
-    margin: 0px 13px 0px 28px;
     width: 650px;
     border: groove 2px #603b60;
-}
-.checks.green {
-    padding-bottom: 10px;
-    padding-top: 0px;
-    margin: 0px 13px 0px 28px;
-    width: 650px;
-}
-.checks.red {
-    padding-bottom: 10px;
-    padding-top: 0px;
-    margin: 0px 13px 0px 28px;
-    width: 650px;
-}
-.checks.black {
-    padding-bottom: 10px;
-    padding-top: 0px;
-    margin: 0px 13px 0px 28px;
-    width: 650px;
-    border-style: solid;
-    border-width: 1px;
+    flex: 3.5;
 }
 .notification {
     visibility: visible;
 }
 .check {
-    padding: 2px 4px 2px 4px;
+    border: 1px solid #b5b3a4;
+    border-radius: 2px;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 0 3px;
+    margin: 0 3px;
+}
+.check:hover {
+    background: #b5b3a4;
+    color: white;
 }
 .check.green {
     padding: 2px 4px 2px 4px;

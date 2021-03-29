@@ -3,10 +3,8 @@
 <form class="{{cssClass}} flexcol" autocomplete="off">
 	<section class="sheet-body">
 <script type="text/javascript">
-//ONLOAD
-	console.log("test")
 	darkscreenval = game.settings.get('darksheet', 'darkscreenval').split(",");
-	console.log(localStorage);
+	//console.log(localStorage);
 	Hooks.on('closeDialog', function(){//ON CLOSE SAVE VALUES
 	save();
 	});
@@ -31,8 +29,8 @@
 		let odarkscreenvalues = darkscreenvalues.toString();
 		game.settings.set('darksheet', 'darkscreennames', odarkscreennames);
 		game.settings.set('darksheet', 'darkscreenval', odarkscreenvalues);
-		console.log(darkscreennames);
-		console.log(darkscreenvalues);
+//		console.log(darkscreennames);
+//		console.log(darkscreenvalues);
 	}
 </script>
 
@@ -48,7 +46,7 @@
               <label class="tablinks tool" onclick="openCity(event, 'forge')">Item-Forge</label>
             </div>
 		    <div id="quick" class="tabcontent" style="display:none; height:200%">
-			<iframe src="http://giffyglyph.com/darkerdungeons/rules/" title="W3Schools Free Online Web Tutorials" class="darkframe"></iframe>
+			<iframe src="http://giffyglyph.com/darkerdungeons/grimoire/3.1.1/en/" title="Darkscreen" class="darkframe"></iframe>
             </div>
             <script>
             function openCity(evt, cityName) {
@@ -291,7 +289,7 @@
             </div>
 <div style="border: 1px solid green; width:500px; height 600px; display:contents;">
               <h1 style="text-align:center">Player Roles</h1>
-              <table style="margin-bottom: 266px;">
+              <table style="margin-bottom: 30px;">
                 <tr>
                   <th>Role</th>
                   <th>Player</th>
@@ -464,6 +462,68 @@
                   <td><button type="button" onclick="check(4)">Perception-Roll</button></td>
                 </tr>
               </table>
+			  <div class="flexrow" style="margin-bottom:15px">
+			  <label style="flex:1">Change Temperature</label>
+              <select class="darkscreenTempChangee" id="darkscreenTempChange" name="darkscreenTempChange" title="{{darkscreenTempChange}}" value="darkscreenTempChange" onchange="GM_ChangeTemp()">
+					{{#select darkscreenTempChange}}
+						<option value="exenegised">Perfect -1 Exhaustion</option>
+						<option value="exwell">Comfortable</option>
+						<option value="exok">Ok</option>
+						<option value="extired">Noticeable</option>
+						<option value="exsleepy">Uncomfortable</option>
+						<option value="exvsleepy">Overwhelming +1 exhaustion</option>
+						<option value="exbarely">Unbearable +1 exhaustion</option>
+					{{/select}}
+			  </select>
+			 </div>
+			<div class="flexrow" style="margin-bottom:150px">
+			<label style="flex:1"> Change Regional Magic</label>
+			<select class="darkscreenRegMagChange" id="darkscreenRegMagChange" name="darkscreenRegMagChange" title="{{darkscreenRegMagChange}}" value="darkscreenRegMagChange" onchange="GM_ChangeRegionalMagic()">
+				{{#select darkscreenRegMagChange}}
+					<option value="3">Serene +3</option>
+					<option value="2">Calm +2</option>
+					<option value="1">Stable +1</option>
+					<option value="0">Normal</option>
+					<option value="-1">Unstable -1</options>
+					<option value="-2">Wild -2</option>
+					<option value="-3">Chaotic -3</option>
+				{{/select}}
+			</select>
+			</div>
+			  <script>
+			  function GM_ChangeTemp(){
+			  let temp = document.getElementById("darkscreenTempChange").value;
+			  let activePlayers = game.users.entities.filter((u) => u.active).map((u) => u);
+			  if(activePlayers[0] != undefined)//check if more than one player is online
+				{
+					for(i = 0; i < activePlayers.length; i++){
+						if(activePlayers[i].character != undefined){
+						console.log("Darkscreen-Debug | Player: "+game.users.entities.filter((u) => u.active).map((u) => u)[0].name+" has a character active");
+							activePlayers[i].character.update({
+							'data.attributes.temp': temp
+							});
+							console.log("Darkscreen | Temperature changed to *"+temp+"* for:" + activePlayers[i].character.name)
+						}
+					}
+				}
+			  }
+			  function GM_ChangeRegionalMagic(){
+			  let temp = document.getElementById("darkscreenRegMagChange").value;
+			  let activePlayers = game.users.entities.filter((u) => u.active).map((u) => u);
+			  if(activePlayers[0] != undefined)//check if more than one player is online
+				{
+					for(i = 0; i < activePlayers.length; i++){
+						if(activePlayers[i].character != undefined){
+						console.log("Darkscreen-Debug | Player: "+game.users.entities.filter((u) => u.active).map((u) => u)[0].name+" has a character active");
+							activePlayers[i].character.update({
+							'data.attributes.regionmod.value': temp
+							});
+							console.log("Darkscreen | Regional-Magic modifier changed to *"+temp+"* for:" + activePlayers[i].character.name)
+						}
+					}
+				}
+			  }
+			  </script>
             </div>
             <div style="display:contents; height: 50px; width:350px">
 			
