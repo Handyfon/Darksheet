@@ -398,9 +398,9 @@ Hooks.on('updateActor', (actor, updates, options, userId) => {
 	}
 	//Intelligent Initiative
 	if(game.settings.get('darksheet', 'intmod')){
-		sheet.actor.data.data.attributes.init.mod = sheet.actor.data.data.abilities.int.mod;
-		sheet.actor.data.data.attributes.init.total = parseInt(sheet.actor.data.data.abilities.int.mod + sheet.actor.data.data.attributes.init.bonus + sheet.actor.data.data.attributes.init.prof);
-		document.getElementById('initiativevalue').innerHTML = "+"+sheet.actor.data.data.attributes.init.total;
+		actor.data.data.attributes.init.mod = actor.data.data.abilities.int.mod;
+		actor.data.data.attributes.init.total = parseInt(actor.data.data.abilities.int.mod + actor.data.data.attributes.init.bonus + actor.data.data.attributes.init.prof);
+		document.getElementById('initiativevalue').innerHTML = "+"+actor.data.data.attributes.init.total;
 	}
 });
 
@@ -3744,12 +3744,12 @@ Hooks.on(`ready`, () => {
 				'data.attributes.wounds.value': woundstreated
 			});
 			}
-			/*?//Intelligent Initiative
+			//Intelligent Initiative
 			if(game.settings.get('darksheet', 'intmod')){
 				sheet.actor.data.data.attributes.init.mod = sheet.actor.data.data.abilities.int.mod;
 				sheet.actor.data.data.attributes.init.total = parseInt(sheet.actor.data.data.abilities.int.mod + sheet.actor.data.data.attributes.init.bonus + sheet.actor.data.data.attributes.init.prof);
 				document.getElementById('initiativevalue').innerHTML = "+"+sheet.actor.data.data.attributes.init.total;
-			}*/
+			}
 		});
 
 		if(game.modules.get('betterrolls5e')?.active === true){
