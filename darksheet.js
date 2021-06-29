@@ -25,6 +25,30 @@ Hooks.once('init', function() {
         default: true,
         type: Boolean,
     });
+	    game.settings.register('darksheet', 'ActiveInitiativeHadTurn', {
+        name: 'Saves Turn Value',
+        hint: 'Dont Touch',
+        scope: 'world',
+        config: false,
+        default: "",
+        type: String,
+    });
+	game.settings.register('darksheet', 'activeInitiative', {
+        name: 'Active Initiative [TESTING]"',
+        hint: 'Enables Active Initiative',
+        scope: 'world',
+        config: true,
+        default: false,
+        type: Boolean,
+    });
+	game.settings.register('darksheet', 'activeInitiativeDisplayTurns', {
+        name: 'ActiveIni AdditionalDisplay',
+        hint: 'Enable additional actors display during active initiativee',
+        scope: 'world',
+        config: true,
+        default: true,
+        type: Boolean,
+    });
 	game.settings.register('darksheet', 'savecantrips', {
         name: 'Variant Rule "Safe Cantrips"',
         hint: 'If this is checked it will disable the ability to select the d12 for the burnout die. ',
@@ -202,12 +226,35 @@ Hooks.once('init', function() {
         default: false,
         type: Boolean,
     });
+	game.settings.register('darksheet', 'afflictionFromComp', {
+        name: 'Afflictions from Compendium',
+        hint: 'Enabling this option will roll from the Afflictions compendium instead of the rollable table and display the compendium entry in chat.',
+        scope: 'world',
+        config: false,
+        default: false,
+        type: Boolean,
+    });
     console.log("Darker Dungeons | Initializing Darker Dungeons for the D&D 5th Edition System\n", "_____________________________________________________________________________________________\n", "  ____                _                 ____                                                \n", " |  _ \\   __ _  _ __ | | __ ___  _ __  |  _ \\  _   _  _ __    __ _   ___   ___   _ __   ___ \n", " | | | | / _` || '__|| |/ // _ \| '__|  | | | || | | || '_ \\  / _` | / _ \\ / _ \\ | '_ \\ / __| \n", " | |_| || (_| || |   |   <|  __/| |    | |_| || |_| || | | || (_| ||  __/| (_) || | | |\\__ \\ \n", " |____/  \\__,_||_|   |_|\\_\\\\___||_|    |____/  \\__,_||_| |_| \\__, | \\___| \\___/ |_| |_||___/ \n", "                                                             |___/                          \n", "_____________________________________________________________________________________________");
     console.log();
 });
 //on Update Actor check for status
 Hooks.on('updateActor', (actor, updates, options, userId) => {
-	if(actor.data.type === "character" && actor.data.data.attributes.automaticexhaust){
+	if(actor.data.type!="character") return;
+	//UPDATE CUSTOM SHEET VALUE AND DISPLAY HIDDEN OPTIONS
+	let customsheet;
+	if (actor.data.data.attributes.color === undefined) {}
+	else if (actor.data.data.attributes.color.value === "custom") {
+		customsheet = true;
+		actor.update({
+			'data.attributes.color.custom': customsheet
+		});
+	} else {
+		customsheet = false;
+		actor.update({
+			'data.attributes.color.custom': customsheet
+		});
+	}
+	if(actor.data.data.attributes.automaticexhaust){
 			let newexhaustion = 0;
 			let temp = actor.data.data.attributes.temp;
 			let food = actor.data.data.attributes.saturation.value;
@@ -221,7 +268,7 @@ Hooks.on('updateActor', (actor, updates, options, userId) => {
 			}
 			else{
 			}
-			console.log("ExhaustionTRACKINGGGGG");
+			//console.log("ExhaustionTRACKINGGGGG");
 			let woundexhaustion = maxwounds - closedwounds;
 			newexhaustion += woundexhaustion;
 			//Temperature Exhaustion
@@ -286,19 +333,8 @@ Hooks.on('updateActor', (actor, updates, options, userId) => {
 				});
 				console.log("(DarkSheet): New Exhaustion: " + actor.data.data.attributes.newexhaustion);
 			}
-		let customsheet;
-		if (actor.data.data.attributes.color === undefined) {}
-		else if (actor.data.data.attributes.color.value === "custom") {
-			customsheet = true;
-			actor.update({
-				'data.attributes.color.custom': customsheet
-			});
-		} else {
-			customsheet = false;
-			actor.update({
-				'data.attributes.color.custom': customsheet
-			});
-		}
+	}
+	//STATUS UPDATES
 		if (updates.data && updates.data.status) {
 
 			const blinded = "modules/combat-utility-belt/icons/blinded.svg";
@@ -313,7 +349,7 @@ Hooks.on('updateActor', (actor, updates, options, userId) => {
 			const petrified = "modules/combat-utility-belt/icons/petrified.svg";
 			const poisoned = "modules/combat-utility-belt/icons/poisoned.svg";
 			const prone = "modules/combat-utility-belt/icons/prone.svg";
-			const restraint = "modules/combat-utility-belt/icons/restraint.svg";
+			const restrained = "modules/combat-utility-belt/icons/restrained.svg";
 			const stunned = "modules/combat-utility-belt/icons/stunned.svg";
 			const unconscious = "modules/combat-utility-belt/icons/unconscious.svg";
 			const concentrating = "modules/combat-utility-belt/icons/concentrating.svg";
@@ -363,8 +399,8 @@ Hooks.on('updateActor', (actor, updates, options, userId) => {
 					if (actorData.data.status.isProne && !t.data.effects.includes(prone)) await t.toggleEffect(prone);
 					if (!actorData.data.status.isProne && t.data.effects.includes(prone)) await t.toggleEffect(prone);
 
-					if (actorData.data.status.isRestrained && !t.data.effects.includes(restraint)) await t.toggleEffect(restraint);
-					if (!actorData.data.status.isRestrained && t.data.effects.includes(restraint)) await t.toggleEffect(restraint);
+					if (actorData.data.status.isRestrained && !t.data.effects.includes(restrained)) await t.toggleEffect(restrained);
+					if (!actorData.data.status.isRestrained && t.data.effects.includes(restrained)) await t.toggleEffect(restrained);
 
 					if (actorData.data.status.isStunned && !t.data.effects.includes(stunned)) await t.toggleEffect(stunned);
 					if (!actorData.data.status.isStunned && t.data.effects.includes(stunned)) await t.toggleEffect(stunned);
@@ -395,7 +431,6 @@ Hooks.on('updateActor', (actor, updates, options, userId) => {
 				}
 			});
 		}
-	}
 	//Intelligent Initiative
 	if(game.settings.get('darksheet', 'intmod')){
 		actor.data.data.attributes.init.mod = actor.data.data.abilities.int.mod;
@@ -422,11 +457,10 @@ Hooks.on('preUpdateToken', async (scene, sceneId, updates, tokenData) => {
     const petrified = "modules/combat-utility-belt/icons/petrified.svg";
     const poisoned = "modules/combat-utility-belt/icons/poisoned.svg";
     const prone = "modules/combat-utility-belt/icons/prone.svg";
-    const restraint = "modules/combat-utility-belt/icons/restraint.svg";
+    const restrained = "modules/combat-utility-belt/icons/restrained.svg";
     const stunned = "modules/combat-utility-belt/icons/stunned.svg";
     const unconscious = "modules/combat-utility-belt/icons/unconscious.svg";
     const concentrating = "modules/combat-utility-belt/icons/concentrating.svg";
-
     const exhaustion1 = "modules/combat-utility-belt/icons/exhaustion1.svg";
     const exhaustion2 = "modules/combat-utility-belt/icons/exhaustion2.svg";
     const exhaustion3 = "modules/combat-utility-belt/icons/exhaustion3.svg";
@@ -445,7 +479,7 @@ Hooks.on('preUpdateToken', async (scene, sceneId, updates, tokenData) => {
         "data.status.isPetrified": updates.effects.includes(petrified),
         "data.status.isPoisoned": updates.effects.includes(poisoned),
         "data.status.isProne": updates.effects.includes(prone),
-        "data.status.isRestrained": updates.effects.includes(restraint),
+        "data.status.isRestrained": updates.effects.includes(restrained),
         "data.status.isStunned": updates.effects.includes(stunned),
         "data.status.isUnconscious": updates.effects.includes(unconscious),
         "data.status.isConcentrating": updates.effects.includes(concentrating),
@@ -527,7 +561,7 @@ else if(iscantrip == false && spellburnout == true && actor.data.data.attributes
 					<h3 style="color: #ff0000;text-shadow: 0 0 2px;">${roll.result}</h3>
 					</header>
 					</br>
-					<h3 style="color: #ff0000;text-shadow: 0 0 2px; text-align: center;">${result.results[0].text}</h3>
+					<h3 style="color: #ff0000;text-shadow: 0 0 2px; text-align: center;">${result.results[0].data.text}</h3>
 				</div>`;
                 let content3 = `
 				<div class="dnd5e chat-card item-card" data-acor-id="${actor._id}">
@@ -620,11 +654,10 @@ Hooks.on('createToken', async (scene, sceneId, tokenData, options, userId) => {
     const petrified = "modules/combat-utility-belt/icons/petrified.svg";
     const poisoned = "modules/combat-utility-belt/icons/poisoned.svg";
     const prone = "modules/combat-utility-belt/icons/prone.svg";
-    const restraint = "modules/combat-utility-belt/icons/restraint.svg";
+    const restrained = "modules/combat-utility-belt/icons/restrained.svg";
     const stunned = "modules/combat-utility-belt/icons/stunned.svg";
     const unconscious = "modules/combat-utility-belt/icons/unconscious.svg";
     const concentrating = "modules/combat-utility-belt/icons/concentrating.svg";
-
     const exhaustion1 = "modules/combat-utility-belt/icons/exhaustion1.svg";
     const exhaustion2 = "modules/combat-utility-belt/icons/exhaustion2.svg";
     const exhaustion3 = "modules/combat-utility-belt/icons/exhaustion3.svg";
@@ -658,7 +691,7 @@ Hooks.on('createToken', async (scene, sceneId, tokenData, options, userId) => {
 
             if (actorData.data.status.isProne) await t.toggleEffect(prone);
 
-            if (actorData.data.status.isRestrained) await t.toggleEffect(restraint);
+            if (actorData.data.status.isRestrained) await t.toggleEffect(restrained);
 
             if (actorData.data.status.isStunned) await t.toggleEffect(stunned);
 
@@ -710,16 +743,38 @@ export class ItemSheet5e extends ItemSheet {
      */
     getData() {
         const data = super.getData();
-        data.labels = this.item.labels;
+		const itemData = data.data;
+		data.labels = this.item.labels;
+		data.config = CONFIG.DND5E;
 
         // Include CONFIG values
         data.config = CONFIG.DND5E;
 
-        // Item Type, Status, and Details
-        data.itemType = data.item.type.titleCase();
-        data.itemStatus = this._getItemStatus(data.item);
-        data.itemProperties = this._getItemProperties(data.item);
-        data.isPhysical = data.item.data.hasOwnProperty("quantity");
+		// Item Type, Status, and Details
+		data.itemType = game.i18n.localize(`ITEM.Type${data.item.type.titleCase()}`);
+		data.itemStatus = this._getItemStatus(itemData);
+		data.itemProperties = this._getItemProperties(itemData);
+		data.isPhysical = itemData.data.hasOwnProperty("quantity");
+		
+		// Potential consumption targets
+		data.abilityConsumptionTargets = this._getItemConsumptionTargets(itemData);
+
+		// Action Details
+		data.hasAttackRoll = this.item.hasAttack;
+		data.isHealing = itemData.data.actionType === "heal";
+		data.isFlatDC = getProperty(itemData, "data.save.scaling") === "flat";
+		data.isLine = ["line", "wall"].includes(itemData.data.target?.type);
+		
+		// Original maximum uses formula
+		const sourceMax = foundry.utils.getProperty(this.item.data._source, "data.uses.max");
+		if ( sourceMax ) itemData.data.uses.max = sourceMax;
+
+
+		// Re-define the template data references (backwards compatible)
+		data.item = itemData;
+		data.data = itemData.data;
+		
+		//DARKER DUNGEONS SPECIFIC
         data.hideammodie = game.settings.get('darksheet', 'hideammodie'); //
         data.hidenotches = game.settings.get('darksheet', 'hidenotches'); //
         data.disablefragility = game.settings.get('darksheet', 'disablefragility'); //
@@ -728,60 +783,148 @@ export class ItemSheet5e extends ItemSheet {
         data.hidedamageac = game.settings.get('darksheet', 'hidedamageac'); //
 		data.savecantrips = game.settings.get('darksheet', 'savecantrips'); //
 		data.silverstandard = game.settings.get('darksheet', 'silverstandard'); //
-        // Action Details
-        data.hasAttackRoll = this.item.hasAttack;
-        data.isHealing = data.item.data.actionType === "heal";
-        data.isFlatDC = getProperty(data.item.data, "save.scaling") === "flat";
+		data.slotbasedinventory = game.settings.get('darksheet', 'slotbasedinventory'); //
+
         return data;
     }
+	/* -------------------------------------------- */
+
+  /**
+   * Get the valid item consumption targets which exist on the actor
+   * @param {Object} item         Item data for the item being displayed
+   * @return {{string: string}}   An object of potential consumption targets
+   * @private
+   */
+  _getItemConsumptionTargets(item) {
+    const consume = item.data.consume || {};
+    if ( !consume.type ) return [];
+    const actor = this.item.actor;
+    if ( !actor ) return {};
+
+    // Ammunition
+    if ( consume.type === "ammo" ) {
+      return actor.itemTypes.consumable.reduce((ammo, i) =>  {
+        if ( i.data.data.consumableType === "ammo" ) {
+          ammo[i.id] = `${i.name} (${i.data.data.quantity})`;
+        }
+        return ammo;
+      }, {[item._id]: `${item.name} (${item.data.quantity})`});
+    }
+
+    // Attributes
+    else if ( consume.type === "attribute" ) {
+      const attributes = TokenDocument.getTrackedAttributes(actor.data.data);
+      attributes.bar.forEach(a => a.push("value"));
+      return attributes.bar.concat(attributes.value).reduce((obj, a) => {
+        let k = a.join(".");
+        obj[k] = k;
+        return obj;
+      }, {});
+    }
+
+    // Materials
+    else if ( consume.type === "material" ) {
+      return actor.items.reduce((obj, i) => {
+        if ( ["consumable", "loot"].includes(i.data.type) && !i.data.data.activation ) {
+          obj[i.id] = `${i.name} (${i.data.data.quantity})`;
+        }
+        return obj;
+      }, {});
+    }
+
+    // Charges
+    else if ( consume.type === "charges" ) {
+      return actor.items.reduce((obj, i) => {
+
+        // Limited-use items
+        const uses = i.data.data.uses || {};
+        if ( uses.per && uses.max ) {
+          const label = uses.per === "charges" ?
+            ` (${game.i18n.format("DND5E.AbilityUseChargesLabel", {value: uses.value})})` :
+            ` (${game.i18n.format("DND5E.AbilityUseConsumableLabel", {max: uses.max, per: uses.per})})`;
+          obj[i.id] = i.name + label;
+        }
+
+        // Recharging items
+        const recharge = i.data.data.recharge || {};
+        if ( recharge.value ) obj[i.id] = `${i.name} (${game.i18n.format("DND5E.Recharge")})`;
+        return obj;
+      }, {})
+    }
+    else return {};
+  }
+
+  /* -------------------------------------------- */
+	
     /**
      * Get the text item status which is shown beneath the Item type in the top-right corner of the sheet
      * @return {string}
      * @private
      */
-    _getItemStatus(item) {
-        if (item.type === "spell") return item.data.preparation.prepared ? "Prepared" : "Unprepared";
-        else if (["weapon", "equipment"].includes(item.type)) return item.data.equipped ? "Equipped" : "Unequipped";
-        else if (item.type === "tool") return item.data.proficient ? "Proficient" : "Not Proficient";
-    } /* -------------------------------------------- */
-    /**
-     * Get the Array of item properties which are used in the small sidebar of the description tab
-     * @return {Array}
-     * @private
-     */
-    _getItemProperties(item) {
-        const props = [];
-        const labels = this.item.labels;
-        if (item.type === "weapon") {
-            props.push(...Object.entries(item.data.properties)
-                .filter(e => e[1] === true)
-                .map(e => CONFIG.DND5E.weaponProperties[e[0]]));
-        } else if (item.type === "spell") {
-            props.push(
-                labels.components,
-                labels.materials,
-                item.data.components.concentration ? "Concentration" : null,
-                item.data.components.ritual ? "Ritual" : null
-            )
-        } else if (item.type === "equipment") {
-            props.push(CONFIG.DND5E.equipmentTypes[item.data.armor.type]);
-            props.push(labels.armor);
-        } else if (item.type === "feat") {
-            props.push(labels.featType);
-        } // Action type
-        if (item.data.actionType) {
-            props.push(CONFIG.DND5E.itemActionTypes[item.data.actionType]);
-        } // Action usage
-        if ((item.type !== "weapon") && item.data.activation && !isObjectEmpty(item.data.activation)) {
-            props.push(
-                labels.activation,
-                labels.range,
-                labels.target,
-                labels.duration
-            )
-        }
-        return props.filter(p => !!p);
-    } /* -------------------------------------------- */
+  _getItemStatus(item) {
+    if ( item.type === "spell" ) {
+      return CONFIG.DND5E.spellPreparationModes[item.data.preparation];
+    }
+    else if ( ["weapon", "equipment"].includes(item.type) ) {
+      return game.i18n.localize(item.data.equipped ? "DND5E.Equipped" : "DND5E.Unequipped");
+    }
+    else if ( item.type === "tool" ) {
+      return game.i18n.localize(item.data.proficient ? "DND5E.Proficient" : "DND5E.NotProficient");
+    }
+  }
+	/* -------------------------------------------- */
+
+  /**
+   * Get the Array of item properties which are used in the small sidebar of the description tab
+   * @return {Array}
+   * @private
+   */
+  _getItemProperties(item) {
+    const props = [];
+    const labels = this.item.labels;
+
+    if ( item.type === "weapon" ) {
+      props.push(...Object.entries(item.data.properties)
+        .filter(e => e[1] === true)
+        .map(e => CONFIG.DND5E.weaponProperties[e[0]]));
+    }
+
+    else if ( item.type === "spell" ) {
+      props.push(
+        labels.components,
+        labels.materials,
+        item.data.components.concentration ? game.i18n.localize("DND5E.Concentration") : null,
+        item.data.components.ritual ? game.i18n.localize("DND5E.Ritual") : null
+      )
+    }
+
+    else if ( item.type === "equipment" ) {
+      props.push(CONFIG.DND5E.equipmentTypes[item.data.armor.type]);
+      props.push(labels.armor);
+    }
+
+    else if ( item.type === "feat" ) {
+      props.push(labels.featType);
+    }
+
+    // Action type
+    if ( item.data.actionType ) {
+      props.push(CONFIG.DND5E.itemActionTypes[item.data.actionType]);
+    }
+
+    // Action usage
+    if ( (item.type !== "weapon") && item.data.activation && !isObjectEmpty(item.data.activation) ) {
+      props.push(
+        labels.activation,
+        labels.range,
+        labels.target,
+        labels.duration
+      )
+    }
+    return props.filter(p => !!p);
+  }
+
+  /* -------------------------------------------- */
 
     /*  Form Submission                             */
     /* -------------------------------------------- */
@@ -886,7 +1029,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
     activateListeners(html) {
         super.activateListeners(html);
 		
-		html.find('.removewoundbutton').click(event => {
+		html.find('.removewoundbutton').click(async event => {
 		   //update the actor
 		   let newwound = parseFloat(this.actor.data.data.attributes.maxwounds.value) - 1;
 		   let newtext = "";
@@ -904,12 +1047,22 @@ export class DarkSheet extends ActorSheet5eCharacter {
 			   case "wound8": this.actor.update({'data.flags.darksheet-wounds.wound8': newtext,'data.attributes.maxwounds.value': newwound,'data.flags.darksheet-wounds.wound8treated.value': newcheck,}); break;
 			   case "wound9": this.actor.update({'data.flags.darksheet-wounds.wound9': newtext,'data.attributes.maxwounds.value': newwound,'data.flags.darksheet-wounds.wound9treated.value': newcheck,}); break;
 			   case "wound10": this.actor.update({'data.flags.darksheet-wounds.wound10': newtext,'data.attributes.maxwounds.value': newwound,'data.flags.darksheet-wounds.wound10treated.value': newcheck,}); break;
+			   case "wound11": this.actor.update({'data.flags.darksheet-wounds.wound11': newtext,'data.attributes.maxwounds.value': newwound,'data.flags.darksheet-wounds.wound11treated.value': newcheck,}); break;
+			   case "wound12": this.actor.update({'data.flags.darksheet-wounds.wound12': newtext,'data.attributes.maxwounds.value': newwound,'data.flags.darksheet-wounds.wound12treated.value': newcheck,}); break;
+			   case "wound13": this.actor.update({'data.flags.darksheet-wounds.wound13': newtext,'data.attributes.maxwounds.value': newwound,'data.flags.darksheet-wounds.wound13treated.value': newcheck,}); break;
+			   case "wound14": this.actor.update({'data.flags.darksheet-wounds.wound14': newtext,'data.attributes.maxwounds.value': newwound,'data.flags.darksheet-wounds.wound14treated.value': newcheck,}); break;
+			   case "wound15": this.actor.update({'data.flags.darksheet-wounds.wound15': newtext,'data.attributes.maxwounds.value': newwound,'data.flags.darksheet-wounds.wound15treated.value': newcheck,}); break;
+			   case "wound16": this.actor.update({'data.flags.darksheet-wounds.wound16': newtext,'data.attributes.maxwounds.value': newwound,'data.flags.darksheet-wounds.wound16treated.value': newcheck,}); break;
+			   case "wound17": this.actor.update({'data.flags.darksheet-wounds.wound17': newtext,'data.attributes.maxwounds.value': newwound,'data.flags.darksheet-wounds.wound17treated.value': newcheck,}); break;
+			   case "wound18": this.actor.update({'data.flags.darksheet-wounds.wound18': newtext,'data.attributes.maxwounds.value': newwound,'data.flags.darksheet-wounds.wound18treated.value': newcheck,}); break;
+			   case "wound19": this.actor.update({'data.flags.darksheet-wounds.wound19': newtext,'data.attributes.maxwounds.value': newwound,'data.flags.darksheet-wounds.wound19treated.value': newcheck,}); break;
+			   case "wound20": this.actor.update({'data.flags.darksheet-wounds.wound20': newtext,'data.attributes.maxwounds.value': newwound,'data.flags.darksheet-wounds.wound20treated.value': newcheck,}); break;
 		   }
 		})
-		html.find('.addwoundbutton').click(event => {
+		html.find('.addwoundbutton').click(async event => {
             event.preventDefault();
-			if(this.actor.data.data.attributes.maxwounds.value >= 10){
-				ui.notifications.warn("Darksheet | You can not have more than 10 wounds.");
+			if(this.actor.data.data.attributes.maxwounds.value >= 20){
+				ui.notifications.warn("Darksheet | You can not have more than 20 wounds.");
 
 			}
 			else{
@@ -919,7 +1072,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 				});
 			}
         });
-        html.find('.exhaustioncalc').click(event => {
+        html.find('.exhaustioncalc').click(async event => {
             event.preventDefault();
             let newexhaustion = 0;
             let temp = this.actor.data.data.attributes.temp;
@@ -1000,7 +1153,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
         })();
         /*END RICH TEXT EDITOR CUSTOM CSS END*/
         /*LOOK FOR AMMODIE*/
-        html.find('.applybutton').click(event => {
+        html.find('.applybutton').click(async event => {
             event.preventDefault();
             this.actor.update({
                 'data.color.custom.color': $('input[name="data.color.custom.color"]').val(),
@@ -1009,16 +1162,16 @@ export class DarkSheet extends ActorSheet5eCharacter {
             this.render();
         });
 
-        html.find('.darksheetbuttonplus').click(event => {
+        html.find('.darksheetbuttonplus').click(async event => {
             event.preventDefault();
             const itemID = event.currentTarget.closest('.item').dataset.itemId;
             let darkitem = this.actor.getEmbeddedEntity('OwnedItem', itemID);
             let name = darkitem.name;
-            let notches = darkitem.flags.darksheet.item.notches;
-            let fragility = darkitem.flags.darksheet.item.fragility;
-            let maxnotches = darkitem.flags.darksheet.item.maxnotches;
+            let notches = darkitem.data.flags.darksheet.item.notches;
+            let fragility = darkitem.data.flags.darksheet.item.fragility;
+            let maxnotches = darkitem.data.flags.darksheet.item.maxnotches;
             let basenotchdamage;
-            let temper = darkitem.flags.darksheet.item.temper;
+            let temper = darkitem.data.flags.darksheet.item.temper;
             if (temper === "" || temper === undefined) {
                 temper = 1;
             } else if (temper === "Pure") {
@@ -1045,12 +1198,12 @@ export class DarkSheet extends ActorSheet5eCharacter {
                     fragility = 999;
                 } else if (fragility === "custom") {
                     fragility = maxnotches;
-                } else if (notches >= parseInt(darkitem.flags.darksheet.item.fragility) && game.settings.get('darksheet', 'disablefragility') == false) {
+                } else if (notches >= parseInt(darkitem.data.flags.darksheet.item.fragility) && game.settings.get('darksheet', 'disablefragility') == false) {
 
                     if (game.settings.get('darksheet', 'destroyshatter')) {
                         let newname = "[Shattered] " + darkitem.name;
-                        this.actor.updateEmbeddedEntity('OwnedItem', {
-                            _id: darkitem._id,
+                        this.actor.updateEmbeddedEntity('Item', {
+                            _id: darkitem.data._id,
                             'name': newname
                         });
                     } else {
@@ -1085,7 +1238,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 
             }
             //VALUE CALCULATION==========================================
-            let quality = darkitem.flags.darksheet.item.quality;
+            let quality = darkitem.data.flags.darksheet.item.quality;
             if (quality === undefined || quality === "") {
                 quality = "pristine";
             }
@@ -1096,13 +1249,13 @@ export class DarkSheet extends ActorSheet5eCharacter {
             } else if (notches >= 1 && quality === "pristine") {
                 quality = "worn";
             }
-            this.actor.updateEmbeddedEntity('OwnedItem', {
-                _id: darkitem._id,
+            this.actor.updateEmbeddedEntity('Item', {
+                _id: darkitem.data._id,
                 'flags.darksheet.item.quality': quality
             });
 
             if (darkitem.type === "equipment") { //ARMOR CALCULATION==========================================
-                let AC = darkitem.data.armor.value;
+                let AC = darkitem.data.data.armor.value;
                 if (Number.isInteger(notches)) {
                     let newAC = AC - 1;
                     if (newAC <= 0) {
@@ -1114,20 +1267,20 @@ export class DarkSheet extends ActorSheet5eCharacter {
                     if (newAC >= basenotchdamage) {
                         newAC = basenotchdamage
                     }
-                    this.actor.updateEmbeddedEntity('OwnedItem', {
-                        _id: darkitem._id,
+                    this.actor.updateEmbeddedEntity('Item', {
+                        _id: darkitem.data._id,
                         'data.armor.value': newAC
                     });
-                    this.actor.updateEmbeddedEntity('OwnedItem', {
-                        _id: darkitem._id,
+                    this.actor.updateEmbeddedEntity('Item', {
+                        _id: darkitem.data._id,
                         'data.damage.basenotchdamage': basenotchdamage
                     });
                     if (newAC <= 1) { //SHATTER IF AC 1 OR SLOWER
                         if (game.settings.get('darksheet', 'shatterwhen1') && game.settings.get('darksheet', 'disablefragility') == false && quality === "scarred") {
                             if (game.settings.get('darksheet', 'destroyshatter')) {
                                 let newname = "[Shattered] " + darkitem.name;
-                                this.actor.updateEmbeddedEntity('OwnedItem', {
-                                    _id: darkitem._id,
+                                this.actor.updateEmbeddedEntity('Item', {
+                                    _id: darkitem.data._id,
                                     'name': newname
                                 });
                             } else {
@@ -1138,8 +1291,8 @@ export class DarkSheet extends ActorSheet5eCharacter {
                 }
             }
             if (darkitem.type === "tool") {
-                this.actor.updateEmbeddedEntity('OwnedItem', {
-                    _id: darkitem._id,
+                this.actor.updateEmbeddedEntity('Item', {
+                    _id: darkitem.data._id,
                     'data.notchpen': notches
                 });
             }
@@ -1147,7 +1300,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
                 let updatedamage;
                 //DAMAGE CALCULATION PLUS++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
                 if (Number.isInteger(notches)) {
-                    let damage1 = darkitem.data.damage.parts[0][0];
+                    let damage1 = darkitem.data.data.damage.parts[0][0];
                     //			console.log(damage1);
                     let dicenumber = damage1.charAt(0); //2
                     let d = damage1.charAt(1); //d 
@@ -1155,19 +1308,20 @@ export class DarkSheet extends ActorSheet5eCharacter {
                     let mod = " + @mod";
 
                     let weapondamage;
-                    if (darkitem.data.damage.currentweapondamage) {
-                        weapondamage = darkitem.data.damage.currentweapondamage;
+                    if (darkitem.data.data.damage.currentweapondamage) {
+                        weapondamage = darkitem.data.data.damage.currentweapondamage;
                     } else {
                         weapondamage = dicenumber + d + damage; //"2d6 "
                     }
                     //			console.log("Darksheet-Dev:" + dicenumber, d, damage);
                     //			console.log("Darksheet-Dev:" +weapondamage);
-
-                    let baseweapondamage = darkitem.data.damage.baseweapondamage;
-                    if (darkitem.data.damage.baseweapondamage === undefined) {
+					if(weapondamage[weapondamage.length -1] == " ")
+					weapondamage = weapondamage.substring(0, weapondamage.length -1);
+                    let baseweapondamage = darkitem.data.data.damage.baseweapondamage;
+                    if (baseweapondamage === "") {
                         baseweapondamage = weapondamage;
-                        this.actor.updateEmbeddedEntity('OwnedItem', {
-                            _id: darkitem._id,
+                        this.actor.updateEmbeddedEntity('Item', {
+                            _id: darkitem.data._id,
                             'data.damage.baseweapondamage': baseweapondamage
                         });
                     }
@@ -1175,55 +1329,55 @@ export class DarkSheet extends ActorSheet5eCharacter {
                     //WEAPONDAMAGE  PLUS++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
                     switch (weapondamage) {
                         //CASES FOR 2 DAMAGE DICE
-                        case "2d20 ":
-                            weapondamage = "1d20 + 1d12 ";
+                        case "2d20":
+                            weapondamage = "1d20 + 1d12";
                             break;
-                        case "1d20 + 1d12 ":
-                            weapondamage = "2d12 ";
+                        case "1d20 + 1d12":
+                            weapondamage = "2d12";
                             break;
-                        case "2d12 ":
-                            weapondamage = "1d12 + 1d10 ";
+                        case "2d12":
+                            weapondamage = "1d12 + 1d10";
                             break;
-                        case "1d12 + 1d10 ":
-                            weapondamage = "2d10 ";
+                        case "1d12 + 1d10":
+                            weapondamage = "2d10";
                             break;
-                        case "2d10 ":
-                            weapondamage = "1d10 + 1d6 ";
+                        case "2d10":
+                            weapondamage = "1d10 + 1d6";
                             break;
-                        case "1d10 + 1d6 ":
-                            weapondamage = "2d6 ";
+                        case "1d10 + 1d6":
+                            weapondamage = "2d6";
                             break;
-                        case "2d6 ":
-                            weapondamage = "1d6 + 1d4 ";
+                        case "2d6":
+                            weapondamage = "1d6 + 1d4";
                             break;
-                        case "1d6 + 1d4 ":
-                            weapondamage = "2d4 ";
-                            this.actor.updateEmbeddedEntity('OwnedItem', {
-                                _id: darkitem._id,
+                        case "1d6 + 1d4":
+                            weapondamage = "2d4";
+                            this.actor.updateEmbeddedEntity('Item', {
+                                _id: darkitem.data._id,
                                 'data.damage.basenotchdamage': notches
                             });
                             break;
-                        case "2d4 ":
-                            weapondamage = "1d4 + 1 ";
+                        case "2d4":
+                            weapondamage = "1d4 + 1";
                             break;
-                        case "1d4 + 1 ":
-                            weapondamage = "2 ";
-                            this.actor.updateEmbeddedEntity('OwnedItem', {
-                                _id: darkitem._id,
+                        case "1d4 + 1":
+                            weapondamage = "2";
+                            this.actor.updateEmbeddedEntity('Item', {
+                                _id: darkitem.data._id,
                                 'data.damage.basenotchdamage': notches
                             });
                             break;
-                        case "2 ":
-                            weapondamage = "(1) ";
-                            this.actor.updateEmbeddedEntity('OwnedItem', {
-                                _id: darkitem._id,
+                        case "2":
+                            weapondamage = "(1)";
+                            this.actor.updateEmbeddedEntity('Item', {
+                                _id: darkitem.data._id,
                                 'data.damage.basenotchdamage': notches
                             });
                             if (game.settings.get('darksheet', 'shatterwhen1') && game.settings.get('darksheet', 'disablefragility') == false && quality === "scarred") {
                                 if (game.settings.get('darksheet', 'destroyshatter')) {
                                     let newname = "[Shattered] " + darkitem.name;
-                                    this.actor.updateEmbeddedEntity('OwnedItem', {
-                                        _id: darkitem._id,
+                                    this.actor.updateEmbeddedEntity('Item', {
+                                        _id: darkitem.data._id,
                                         'name': newname
                                     });
                                 } else {
@@ -1232,36 +1386,36 @@ export class DarkSheet extends ActorSheet5eCharacter {
                             }
                             break;
                             //CASES FOR single dice damage
-                        case "1d20 ":
-                            weapondamage = "1d12 ";
+                        case "1d20":
+                            weapondamage = "1d12";
                             break;
-                        case "1d12 ":
-                            weapondamage = "1d10 ";
+                        case "1d12":
+                            weapondamage = "1d10";
                             break;
-                        case "1d10 ":
-                            weapondamage = "1d8 ";
+                        case "1d10":
+                            weapondamage = "1d8";
                             break;
-                        case "1d8 ":
-                            weapondamage = "1d6 ";
+                        case "1d8":
+                            weapondamage = "1d6";
                             break;
-                        case "1d6 ":
-                            weapondamage = "1d4 ";
-                            this.actor.updateEmbeddedEntity('OwnedItem', {
-                                _id: darkitem._id,
+                        case "1d6":
+                            weapondamage = "1d4";
+                            this.actor.updateEmbeddedEntity('Item', {
+                                _id: darkitem.data._id,
                                 'data.damage.basenotchdamage': notches
                             });
                             break;
-                        case "1d4 ":
-                            weapondamage = "1 ";
-                            this.actor.updateEmbeddedEntity('OwnedItem', {
-                                _id: darkitem._id,
+                        case "1d4":
+                            weapondamage = "1";
+                            this.actor.updateEmbeddedEntity('Item', {
+                                _id: darkitem.data._id,
                                 'data.damage.basenotchdamage': notches
                             });
                             if (game.settings.get('darksheet', 'shatterwhen1') && game.settings.get('darksheet', 'disablefragility') == false && quality === "scarred") {
                                 if (game.settings.get('darksheet', 'destroyshatter')) {
                                     let newname = "[Shattered] " + darkitem.name;
-                                    this.actor.updateEmbeddedEntity('OwnedItem', {
-                                        _id: darkitem._id,
+                                    this.actor.updateEmbeddedEntity('Item', {
+                                        _id: darkitem.data._id,
                                         'name': newname
                                     });
                                 } else {
@@ -1273,38 +1427,38 @@ export class DarkSheet extends ActorSheet5eCharacter {
                             // code block
                     }
                     updatedamage = weapondamage + mod;
-                    const parts = duplicate(darkitem.data.damage.parts);
+                    const parts = duplicate(darkitem.data.data.damage.parts);
                     parts[0][0] = updatedamage;
-                    this.actor.updateEmbeddedEntity('OwnedItem', {
-                        _id: darkitem._id,
+                    this.actor.updateEmbeddedEntity('Item', {
+                        _id: darkitem.data._id,
                         'data.damage.parts': parts
                     });
                     this.render();
 
                     //UPDATE WEAPON DAMAGE ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-                    this.actor.updateEmbeddedEntity('OwnedItem', {
-                        _id: darkitem._id,
+                    this.actor.updateEmbeddedEntity('Item', {
+                        _id: darkitem.data._id,
                         'data.damage.currentweapondamage': weapondamage
                     });
-                    this.actor.updateEmbeddedEntity('OwnedItem', {
-                        _id: darkitem._id,
+                    this.actor.updateEmbeddedEntity('Item', {
+                        _id: darkitem.data._id,
                         'data.damage.basenotchdamage': basenotchdamage
                     });
 
                 }
             }
-            this.actor.updateEmbeddedEntity('OwnedItem', {
-                _id: darkitem._id,
+            this.actor.updateEmbeddedEntity('Item', {
+                _id: darkitem.data._id,
                 'flags.darksheet.item.notches': notches
             });
             this.render();
         });
-        html.find('.darksheetbutton-').click(event => {
+        html.find('.darksheetbutton-').click(async event => {
             event.preventDefault();
             const itemID = event.currentTarget.closest('.item').dataset.itemId;
             let darkitem = this.actor.getEmbeddedEntity('OwnedItem', itemID);
-            let basenotchdamage = darkitem.data.damage.basenotchdamage;
-            let notches = darkitem.flags.darksheet.item.notches;
+            let basenotchdamage = darkitem.data.data.damage.basenotchdamage;
+            let notches = darkitem.data.flags.darksheet.item.notches;
             let newnotches = notches - 1;
             let updatedamage;
             if (notches === undefined) {
@@ -1316,12 +1470,12 @@ export class DarkSheet extends ActorSheet5eCharacter {
             if (darkitem.name.includes("[Shattered]")) {
                 ui.notifications.warn("This item is [Shattered], you need to rename it first...");
             } else {
-                this.actor.updateEmbeddedEntity('OwnedItem', {
-                    _id: darkitem._id,
+                this.actor.updateEmbeddedEntity('Item', {
+                    _id: darkitem.data._id,
                     'flags.darksheet.item.notches': newnotches
                 });
                 if (darkitem.type === "equipment") { //ARMOR CALCULATION==========================================
-                    let AC = darkitem.data.armor.value;
+                    let AC = darkitem.data.data.armor.value;
                     let newAC = AC;
                     if (notches > basenotchdamage) { //IF NOTCHES AREN'T SMALLER THAN THE BASENOTCHES
                     } else {
@@ -1330,12 +1484,12 @@ export class DarkSheet extends ActorSheet5eCharacter {
                     if (newAC >= basenotchdamage) {
                         newAC = basenotchdamage
                     }
-                    this.actor.updateEmbeddedEntity('OwnedItem', {
-                        _id: darkitem._id,
+                    this.actor.updateEmbeddedEntity('Item', {
+                        _id: darkitem.data._id,
                         'data.armor.value': newAC
                     });
-                    this.actor.updateEmbeddedEntity('OwnedItem', {
-                        _id: darkitem._id,
+                    this.actor.updateEmbeddedEntity('Item', {
+                        _id: darkitem.data._id,
                         'data.damage.basenotchdamage': basenotchdamage
                     });
                 }
@@ -1343,33 +1497,33 @@ export class DarkSheet extends ActorSheet5eCharacter {
                     if (basenotchdamage === undefined || basenotchdamage === "") {
                         basenotchdamage = newnotches;
                     }
-                    this.actor.updateEmbeddedEntity('OwnedItem', {
-                        _id: darkitem._id,
+                    this.actor.updateEmbeddedEntity('Item', {
+                        _id: darkitem.data._id,
                         'data.notchpen': newnotches
                     });
                 }
                 //DAMAGE CALCULATION MINUS-------------------------------------------------------------------
                 if (darkitem.type === "weapon") {
-                    let damage1 = darkitem.data.damage.parts[0][0];
+                    let damage1 = darkitem.data.data.damage.parts[0][0];
                     //			console.log(damage1);
                     let dicenumber = damage1.charAt(0); //2
                     let d = damage1.charAt(1); //d 
                     let damage = damage1.charAt(2) + damage1.charAt(3); //6
                     let mod = " + @mod";
                     let weapondamage;
-                    if (darkitem.data.damage.currentweapondamage) {
-                        weapondamage = darkitem.data.damage.currentweapondamage;
+                    if (darkitem.data.data.damage.currentweapondamage) {
+                        weapondamage = darkitem.data.data.damage.currentweapondamage;
                     } else {
                         weapondamage = dicenumber + d + damage; //"2d6 "
                     }
                     //			console.log("Darksheet-Dev:" + dicenumber, d, damage);
                     //			console.log("Darksheet-Dev:" +weapondamage);
 
-                    let baseweapondamage = darkitem.data.damage.baseweapondamage;
-                    if (darkitem.data.damage.baseweapondamage === undefined) {
+                    let baseweapondamage = darkitem.data.data.damage.baseweapondamage;
+                    if (darkitem.data.data.damage.baseweapondamage === undefined) {
                         baseweapondamage = weapondamage;
-                        this.actor.updateEmbeddedEntity('OwnedItem', {
-                            _id: darkitem._id,
+                        this.actor.updateEmbeddedEntity('Item', {
+                            _id: darkitem.data._id,
                             'data.damage.baseweapondamage': baseweapondamage
                         });
                     }
@@ -1380,71 +1534,71 @@ export class DarkSheet extends ActorSheet5eCharacter {
                     } else {
                         switch (weapondamage) {
                             //CASES FOR 2 DAMAGE DICE
-                            case "2 ":
-                                weapondamage = "1d4 + 1 ";
+                            case "2":
+                                weapondamage = "1d4 + 1";
                                 break;
-                            case "1d4 + 1 ":
-                                weapondamage = "2d4 ";
+                            case "1d4 + 1":
+                                weapondamage = "2d4";
                                 break;
-                            case "2d4 ":
-                                weapondamage = "1d6 + 1d4 ";
+                            case "2d4":
+                                weapondamage = "1d6 + 1d4";
                                 break;
-                            case "1d6 + 1d4 ":
-                                weapondamage = "2d6 ";
+                            case "1d6 + 1d4":
+                                weapondamage = "2d6";
                                 break;
-                            case "2d6 ":
-                                weapondamage = "1d8 + 1d6 ";
+                            case "2d6":
+                                weapondamage = "1d8 + 1d6";
                                 break;
-                            case "1d8 + 1d6 ":
-                                weapondamage = "2d8 ";
+                            case "1d8 + 1d6":
+                                weapondamage = "2d8";
                                 break;
-                            case "2d8 ":
-                                weapondamage = "1d10 + 1d8 ";
+                            case "2d8":
+                                weapondamage = "1d10 + 1d8";
                                 break;
-                            case "1d10 + 1d8 ":
-                                weapondamage = "2d10 ";
+                            case "1d10 + 1d8":
+                                weapondamage = "2d10";
                                 break;
-                            case "2d10 ":
-                                weapondamage = "1d12 + 1d10 ";
+                            case "2d10":
+                                weapondamage = "1d12 + 1d10";
                                 break;
-                            case "1d12 + 1d10 ":
-                                weapondamage = "2d12 ";
+                            case "1d12 + 1d10":
+                                weapondamage = "2d12";
                                 break;
-                            case "2d12 ":
-                                weapondamage = "1d20 + 1d12 ";
+                            case "2d12":
+                                weapondamage = "1d20 + 1d12";
                                 break;
                             case "1d20 + 1d12":
                                 weapondamage = "2d20";
                                 break;
                                 //CASES FOR SINGLE DAMAGEDICE
-                            case "1 ":
-                                weapondamage = "1d4 ";
+                            case "1":
+                                weapondamage = "1d4";
                                 break;
-                            case "(1) ":
-                                weapondamage = "2 ";
+                            case "(1)":
+                                weapondamage = "2";
                                 break;
-                            case "1d4 ":
-                                weapondamage = "1d6 ";
+                            case "1d4":
+                                weapondamage = "1d6";
                                 break;
-                            case "1d6 ":
-                                weapondamage = "1d8 ";
+                            case "1d6":
+                                weapondamage = "1d8";
                                 break;
-                            case "1d8 ":
-                                weapondamage = "1d10 ";
+                            case "1d8":
+                                weapondamage = "1d10";
                                 break;
-                            case "1d10 ":
-                                weapondamage = "1d12 ";
+                            case "1d10":
+                                weapondamage = "1d12";
                                 break;
-                            case "1d12 ":
-                                weapondamage = "1d20 ";
+                            case "1d12":
+                                weapondamage = "1d20";
                                 break;
                             default:
-                                if(darkitem.data.damage.baseweapondamage) weapondamage = darkitem.data.damage.baseweapondamage;
+                                if(darkitem.data.data.damage.baseweapondamage) weapondamage = darkitem.data.data.damage.baseweapondamage;
                                 break;
                         }
                     }
                     updatedamage = weapondamage + mod;
-                    const parts = duplicate(darkitem.data.damage.parts);
+                    const parts = duplicate(darkitem.data.data.damage.parts);
                     parts[0][0] = updatedamage;
                     if (newnotches <= 0) {
                         basenotchdamage = "";
@@ -1453,36 +1607,36 @@ export class DarkSheet extends ActorSheet5eCharacter {
                         newnotches = notches
                     }
                     //NOTCH CALCULATION MINUS-------------------------------------------------------------------
-                    this.actor.updateEmbeddedEntity('OwnedItem', {
-                        _id: darkitem._id,
+                    this.actor.updateEmbeddedEntity('Item', {
+                        _id: darkitem.data._id,
                         'data.damage.basenotchdamage': basenotchdamage
                     });
-                    this.actor.updateEmbeddedEntity('OwnedItem', {
-                        _id: darkitem._id,
+                    this.actor.updateEmbeddedEntity('Item', {
+                        _id: darkitem.data._id,
                         'data.damage.parts': parts
                     });
-                    this.actor.updateEmbeddedEntity('OwnedItem', {
-                        _id: darkitem._id,
+                    this.actor.updateEmbeddedEntity('Item', {
+                        _id: darkitem.data._id,
                         'data.damage.currentweapondamage': weapondamage
                     }); //Weapon Damage On Name
                 }
             }
             this.render();
         });
-        html.find('.ammodice').click(event => {
+        html.find('.ammodice').click(async event => {
             event.preventDefault(); // Rolling table, from best to worst
             const rollings = ['d12', 'd10', 'd8', 'd6', 'd4', 'd2', '1', '']; // Getting item
-            let item = this.actor.getOwnedItem(Number($(event.currentTarget).parents('[data-item-id]').attr("data-item-id")));
+            let item = this.actor.items.get(($(event.currentTarget).parents('[data-item-id]').attr("data-item-id")));
             // Seeting and creating chatMessage
             const itemID = event.currentTarget.closest('.item').dataset.itemId;
             let darkitem = this.actor.getEmbeddedEntity('OwnedItem', itemID);
-            let title = `<header><h3>${this.actor.data.name} rolls ${this.actor.data.data.attributes.adress} ammodice for ${darkitem.name}<h3></header>`;
+            let title = `<header><h3>${this.actor.data.name} rolls ${this.actor.data.data.attributes.adress} ammodie for ${darkitem.name}<h3></header>`;
             let roll = new Roll('@ammodie', {
-                ammodie: darkitem.flags.darksheet.item.ammodie
+                ammodie: darkitem.data.flags.darksheet.item.ammodie
             }).roll();
             let rollWhisper = null;
             let rollMode = game.settings.get("core", "rollMode");
-            let currentdie = darkitem.flags.darksheet.item.ammodie;
+            let currentdie = darkitem.data.flags.darksheet.item.ammodie;
             if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperRecipients("GM")
             roll.toMessage({
                 speaker: ChatMessage.getSpeaker({
@@ -1508,26 +1662,38 @@ export class DarkSheet extends ActorSheet5eCharacter {
                 } else {
                     newammodie = "";
                 }
-                this.actor.updateEmbeddedEntity('OwnedItem', {
-                    _id: darkitem._id,
+                this.actor.updateEmbeddedEntity('Item', {
+                    _id: darkitem.data._id,
                     'flags.darksheet.item.ammodie': newammodie
                 });
                 this.render();
             }
         });
-        html.find('.randomnotch').click(event => {
+        html.find('.randomnotch').click(async event => {
             let array = this.actor.items.filter(i => i.type !== "feat" && i.type !== "class" && i.type !== "spell");
             let numberino = 0;
             let randomItem = array[Math.floor(Math.random(numberino) * array.length)];
             let randomID = randomItem.id;
             let darkitem = this.actor.getEmbeddedEntity('OwnedItem', randomID);
             let name = darkitem.name;
-            let notches = darkitem.flags.darksheet.item.notches;
-            let fragility = darkitem.flags.darksheet.item.fragility;
-            let maxnotches = darkitem.flags.darksheet.item.maxnotches;
+			
+			let notches = 0;
+			let fragility = "";
+			let maxnotches = "";
+			let temper = "";
+			let quality = "";
+			
+			if(darkitem.data.flags.darksheet != undefined){
+				if(darkitem.data.flags.darksheet.item.notches != undefined) notches = darkitem.data.flags.darksheet.item.notches;
+				if(darkitem.data.flags.darksheet.item.fragility != undefined) fragility = darkitem.data.flags.darksheet.item.fragility;
+				if(darkitem.data.flags.darksheet.item.maxnotches != undefined) maxnotches = darkitem.data.flags.darksheet.item.maxnotches;
+				if(darkitem.data.flags.darksheet.item.temper != undefined) temper = darkitem.data.flags.darksheet.item.temper;
+				if(darkitem.data.flags.darksheet.item.quality != undefined) quality = darkitem.data.flags.darksheet.item.quality;
+			}
+
             let basenotchdamage;
 
-            let temper = darkitem.flags.darksheet.item.temper;
+
             if (temper === "" || temper === undefined) {
                 temper = 1;
             } else if (temper === "Pure") {
@@ -1554,12 +1720,12 @@ export class DarkSheet extends ActorSheet5eCharacter {
                     fragility = 999;
                 } else if (fragility === "custom") {
                     fragility = maxnotches;
-                } else if (notches >= parseInt(darkitem.flags.darksheet.item.fragility) && game.settings.get('darksheet', 'disablefragility') == false) {
+                } else if (notches >= fragility && game.settings.get('darksheet', 'disablefragility') == false) {
 
                     if (game.settings.get('darksheet', 'destroyshatter')) {
                         let newname = "[Shattered] " + darkitem.name;
-                        this.actor.updateEmbeddedEntity('OwnedItem', {
-                            _id: darkitem._id,
+                        this.actor.updateEmbeddedEntity('Item', {
+                            _id: darkitem.data._id,
                             'name': newname
                         });
                     } else {
@@ -1594,7 +1760,6 @@ export class DarkSheet extends ActorSheet5eCharacter {
 
             }
             //VALUE CALCULATION==========================================
-            let quality = darkitem.flags.darksheet.item.quality;
             if (quality === undefined || quality === "") {
                 quality = "pristine";
             }
@@ -1605,13 +1770,13 @@ export class DarkSheet extends ActorSheet5eCharacter {
             } else if (notches >= 1 && quality === "pristine") {
                 quality = "worn";
             }
-            this.actor.updateEmbeddedEntity('OwnedItem', {
-                _id: darkitem._id,
+            this.actor.updateEmbeddedEntity('Item', {
+                _id: darkitem.data._id,
                 'flags.darksheet.item.quality': quality
             });
 
-            if (darkitem.type === "equipment") { //ARMOR CALCULATION==========================================
-                let AC = darkitem.data.armor.value;
+            if (darkitem.type == "equipment") { //ARMOR CALCULATION==========================================
+                let AC = darkitem.data.data.armor.value;
                 if (Number.isInteger(notches)) {
                     let newAC = AC - 1;
                     if (newAC <= 0) {
@@ -1623,20 +1788,20 @@ export class DarkSheet extends ActorSheet5eCharacter {
                     if (newAC >= basenotchdamage) {
                         newAC = basenotchdamage
                     }
-                    this.actor.updateEmbeddedEntity('OwnedItem', {
-                        _id: darkitem._id,
+                    this.actor.updateEmbeddedEntity('Item', {
+                        _id: darkitem.data._id,
                         'data.armor.value': newAC
                     });
-                    this.actor.updateEmbeddedEntity('OwnedItem', {
-                        _id: darkitem._id,
+                    this.actor.updateEmbeddedEntity('Item', {
+                        _id: darkitem.data._id,
                         'data.damage.basenotchdamage': basenotchdamage
                     });
                     if (newAC <= 1) { //SHATTER IF AC 1 OR SLOWER
                         if (game.settings.get('darksheet', 'shatterwhen1') && game.settings.get('darksheet', 'disablefragility') == false && quality === "scarred") {
                             if (game.settings.get('darksheet', 'destroyshatter')) {
                                 let newname = "[Shattered] " + darkitem.name;
-                                this.actor.updateEmbeddedEntity('OwnedItem', {
-                                    _id: darkitem._id,
+                                this.actor.updateEmbeddedEntity('Item', {
+                                    _id: darkitem.data._id,
                                     'name': newname
                                 });
                             } else {
@@ -1647,8 +1812,8 @@ export class DarkSheet extends ActorSheet5eCharacter {
                 }
             }
             if (darkitem.type === "tool") {
-                this.actor.updateEmbeddedEntity('OwnedItem', {
-                    _id: darkitem._id,
+                this.actor.updateEmbeddedEntity('Item', {
+                    _id: darkitem.data._id,
                     'data.notchpen': notches
                 });
             }
@@ -1656,7 +1821,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
                 let updatedamage;
                 //DAMAGE CALCULATION PLUS++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
                 if (Number.isInteger(notches)) {
-                    let damage1 = darkitem.data.damage.parts[0][0];
+                    let damage1 = darkitem.data.data.damage.parts[0][0];
                     //			console.log(damage1);
                     let dicenumber = damage1.charAt(0); //2
                     let d = damage1.charAt(1); //d 
@@ -1664,19 +1829,19 @@ export class DarkSheet extends ActorSheet5eCharacter {
                     let mod = " + @mod";
 
                     let weapondamage;
-                    if (darkitem.data.damage.currentweapondamage) {
-                        weapondamage = darkitem.data.damage.currentweapondamage;
+                    if (darkitem.data.data.damage.currentweapondamage) {
+                        weapondamage = darkitem.data.data.damage.currentweapondamage;
                     } else {
                         weapondamage = dicenumber + d + damage; //"2d6 "
                     }
                     //			console.log("Darksheet-Dev:" + dicenumber, d, damage);
                     //			console.log("Darksheet-Dev:" +weapondamage);
 
-                    let baseweapondamage = darkitem.data.damage.baseweapondamage;
-                    if (darkitem.data.damage.baseweapondamage === undefined) {
+                    let baseweapondamage = darkitem.data.data.damage.baseweapondamage;
+                    if (baseweapondamage === "") {
                         baseweapondamage = weapondamage;
-                        this.actor.updateEmbeddedEntity('OwnedItem', {
-                            _id: darkitem._id,
+                        this.actor.updateEmbeddedEntity('Item', {
+                            _id: darkitem.data._id,
                             'data.damage.baseweapondamage': baseweapondamage
                         });
                     }
@@ -1684,55 +1849,55 @@ export class DarkSheet extends ActorSheet5eCharacter {
                     //WEAPONDAMAGE  PLUS++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
                     switch (weapondamage) {
                         //CASES FOR 2 DAMAGE DICE
-                        case "2d20 ":
-                            weapondamage = "1d20 + 1d12 ";
+                        case "2d20":
+                            weapondamage = "1d20 + 1d12";
                             break;
-                        case "1d20 + 1d12 ":
-                            weapondamage = "2d12 ";
+                        case "1d20 + 1d12":
+                            weapondamage = "2d12";
                             break;
-                        case "2d12 ":
-                            weapondamage = "1d12 + 1d10 ";
+                        case "2d12":
+                            weapondamage = "1d12 + 1d10";
                             break;
-                        case "1d12 + 1d10 ":
-                            weapondamage = "2d10 ";
+                        case "1d12 + 1d10":
+                            weapondamage = "2d10";
                             break;
-                        case "2d10 ":
-                            weapondamage = "1d10 + 1d6 ";
+                        case "2d10":
+                            weapondamage = "1d10 + 1d6";
                             break;
-                        case "1d10 + 1d6 ":
-                            weapondamage = "2d6 ";
+                        case "1d10 + 1d6":
+                            weapondamage = "2d6";
                             break;
-                        case "2d6 ":
-                            weapondamage = "1d6 + 1d4 ";
+                        case "2d6":
+                            weapondamage = "1d6 + 1d4";
                             break;
-                        case "1d6 + 1d4 ":
-                            weapondamage = "2d4 ";
-                            this.actor.updateEmbeddedEntity('OwnedItem', {
-                                _id: darkitem._id,
+                        case "1d6 + 1d4":
+                            weapondamage = "2d4";
+                            this.actor.updateEmbeddedEntity('Item', {
+                                _id: darkitem.data._id,
                                 'data.damage.basenotchdamage': notches
                             });
                             break;
-                        case "2d4 ":
-                            weapondamage = "1d4 + 1 ";
+                        case "2d4":
+                            weapondamage = "1d4 + 1";
                             break;
-                        case "1d4 + 1 ":
-                            weapondamage = "2 ";
-                            this.actor.updateEmbeddedEntity('OwnedItem', {
-                                _id: darkitem._id,
+                        case "1d4 + 1":
+                            weapondamage = "2";
+                            this.actor.updateEmbeddedEntity('Item', {
+                                _id: darkitem.data._id,
                                 'data.damage.basenotchdamage': notches
                             });
                             break;
-                        case "2 ":
-                            weapondamage = "(1) ";
-                            this.actor.updateEmbeddedEntity('OwnedItem', {
-                                _id: darkitem._id,
+                        case "2":
+                            weapondamage = "(1)";
+                            this.actor.updateEmbeddedEntity('Item', {
+                                _id: darkitem.data._id,
                                 'data.damage.basenotchdamage': notches
                             });
                             if (game.settings.get('darksheet', 'shatterwhen1') && game.settings.get('darksheet', 'disablefragility') == false && quality === "scarred") {
                                 if (game.settings.get('darksheet', 'destroyshatter')) {
                                     let newname = "[Shattered] " + darkitem.name;
-                                    this.actor.updateEmbeddedEntity('OwnedItem', {
-                                        _id: darkitem._id,
+                                    this.actor.updateEmbeddedEntity('Item', {
+                                        _id: darkitem.data._id,
                                         'name': newname
                                     });
                                 } else {
@@ -1741,36 +1906,36 @@ export class DarkSheet extends ActorSheet5eCharacter {
                             }
                             break;
                             //CASES FOR single dice damage
-                        case "1d20 ":
-                            weapondamage = "1d12 ";
+                        case "1d20":
+                            weapondamage = "1d12";
                             break;
-                        case "1d12 ":
-                            weapondamage = "1d10 ";
+                        case "1d12":
+                            weapondamage = "1d10";
                             break;
-                        case "1d10 ":
-                            weapondamage = "1d8 ";
+                        case "1d10":
+                            weapondamage = "1d8";
                             break;
-                        case "1d8 ":
-                            weapondamage = "1d6 ";
+                        case "1d8":
+                            weapondamage = "1d6";
                             break;
-                        case "1d6 ":
-                            weapondamage = "1d4 ";
-                            this.actor.updateEmbeddedEntity('OwnedItem', {
-                                _id: darkitem._id,
+                        case "1d6":
+                            weapondamage = "1d4";
+                            this.actor.updateEmbeddedEntity('Item', {
+                                _id: darkitem.data._id,
                                 'data.damage.basenotchdamage': notches
                             });
                             break;
-                        case "1d4 ":
-                            weapondamage = "1 ";
-                            this.actor.updateEmbeddedEntity('OwnedItem', {
-                                _id: darkitem._id,
+                        case "1d4":
+                            weapondamage = "1";
+                            this.actor.updateEmbeddedEntity('Item', {
+                                _id: darkitem.data._id,
                                 'data.damage.basenotchdamage': notches
                             });
                             if (game.settings.get('darksheet', 'shatterwhen1') && game.settings.get('darksheet', 'disablefragility') == false && quality === "scarred") {
                                 if (game.settings.get('darksheet', 'destroyshatter')) {
                                     let newname = "[Shattered] " + darkitem.name;
-                                    this.actor.updateEmbeddedEntity('OwnedItem', {
-                                        _id: darkitem._id,
+                                    this.actor.updateEmbeddedEntity('Item', {
+                                        _id: darkitem.data._id,
                                         'name': newname
                                     });
                                 } else {
@@ -1782,86 +1947,133 @@ export class DarkSheet extends ActorSheet5eCharacter {
                             // code block
                     }
                     updatedamage = weapondamage + mod;
-                    const parts = duplicate(darkitem.data.damage.parts);
+                    const parts = duplicate(darkitem.data.data.damage.parts);
                     parts[0][0] = updatedamage;
-                    this.actor.updateEmbeddedEntity('OwnedItem', {
-                        _id: darkitem._id,
+                    this.actor.updateEmbeddedEntity('Item', {
+                        _id: darkitem.data._id,
                         'data.damage.parts': parts
                     });
                     this.render();
 
                     //UPDATE WEAPON DAMAGE ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-                    this.actor.updateEmbeddedEntity('OwnedItem', {
-                        _id: darkitem._id,
+                    this.actor.updateEmbeddedEntity('Item', {
+                        _id: darkitem.data._id,
                         'data.damage.currentweapondamage': weapondamage
                     });
-                    this.actor.updateEmbeddedEntity('OwnedItem', {
-                        _id: darkitem._id,
+                    this.actor.updateEmbeddedEntity('Item', {
+                        _id: darkitem.data._id,
                         'data.damage.basenotchdamage': basenotchdamage
                     });
 
                 }
             }
-            this.actor.updateEmbeddedEntity('OwnedItem', {
-                _id: darkitem._id,
+            this.actor.updateEmbeddedEntity('Item', {
+                _id: darkitem.data._id,
                 'flags.darksheet.item.notches': notches
             });
 			ui.notifications.notify("Your item " + darkitem.name + " gained a notch, it now has a total of [" + notches + "] Notches.");
             this.render();
         });
         /*LOOK FOR Stresscheckbox*/
-        html.find('.stressroll').click(event => {
+        html.find('.stressroll').click(async event => {
             event.preventDefault();
-
-            // Rolling table, from best to worst
-            let table = game.tables.entities.find(t => t.data.name === "Afflictions");
-			if(table == undefined){
-				ui.notifications.warn("Darksheet | You need to import or create a 'Afflictions' Table to roll from");
+			if(!game.settings.get('darksheet', 'afflictionFromComp')){
+				// Rolling table, from best to worst
+				let table = game.tables.entities.find(t => t.data.name === "Afflictions");
+				if(table == undefined){
+					ui.notifications.warn("Darksheet | You need to import or create a 'Afflictions' Table to roll from");
+				}
+				else{table.draw();}
 			}
-            else{table.draw();}
+			else{
+				let afflictions = game.packs.get("darksheet.afflictions").index;
+				const rndInt = Math.floor(Math.random() * game.packs.get("darksheet.afflictions").index.size) - 1;
+				let ThisAffliction = game.packs.get("darksheet.afflictions").index.contents[rndInt];
+				let AfflictionID = game.packs.get("darksheet.afflictions").index.contents[rndInt]._id;
+				let AfflictionName = game.packs.get("darksheet.afflictions").index.contents[rndInt].name.replace("Affliction: ", "");
+				ChatMessage.create({
+					user: game.user._id,
+					content: "Gained an @Compendium[darksheet.afflictions."+AfflictionID+"]",
+					speaker: {
+						actor: this.actor._id,
+						token: this.actor.token,
+						alias: this.actor.name
+					},
+					sound: CONFIG.sounds.dice,
+					flags: {
+						darksheet: {
+							 outcome: 'bad'
+						}
+					}
+				});
+				//FIGURE OUT WHICH AFFLICTION TO Set
+				if(!this.actor.data.data.attributes.break1){
+					this.actor.update({
+                    'data.attributes.break1': true,
+					'data.attributes.affliction1.value': AfflictionName
+					});
+				}
+				else if(!this.actor.data.data.attributes.break2){
+					this.actor.update({
+                    'data.attributes.break2': true,
+					'data.attributes.affliction2.value': AfflictionName
+					});
+				}
+				else if(this.actor.data.data.attributes.break3){
+					this.actor.update({
+                    'data.attributes.break2': true,
+					'data.attributes.affliction2.value': AfflictionName
+					});
+				}
+				const itemData = await game.packs.get("darksheet.afflictions").index.get(AfflictionID);
+				this.actor.createEmbeddedDocuments("Item", [itemData]);	
+				//this.actor.items.document.createOwnedItem(itemData, {parent: this.actor});
+				//await this.actor.createOwnedItem(ThisAffliction);
+			}
+			
 			
         });
-        html.find('.darksheetbuttonHDplus').click(event => {
+        html.find('.darksheetbuttonHDplus').click(async event => {
             event.preventDefault();
             const itemID = event.currentTarget.closest('.item').dataset.itemId;
             let darkitem = this.actor.getEmbeddedEntity('OwnedItem', itemID);
-			console.log(darkitem);
-			let used = darkitem.data.hitDiceUsed + 1;
+			//console.log(darkitem);
+			let used = darkitem.data.data.hitDiceUsed + 1;
 			//INVALID VALUE CHECK
-			if(used > darkitem.data.levels){
-				used = darkitem.data.levels;
+			if(used > darkitem.data.data.levels){
+				used = darkitem.data.data.levels;
 			}
 			else if(used < 0){
 				used = 0;
 			}
-			this.actor.updateEmbeddedEntity('OwnedItem', {
-                                _id: darkitem._id,
-                                'data.hitDiceUsed': used
+			this.actor.updateEmbeddedEntity('Item', {
+            _id: darkitem.data._id,
+            'data.hitDiceUsed': used
             });
 			
         });
-        html.find('.darksheetbuttonHDmin').click(event => {
+        html.find('.darksheetbuttonHDmin').click(async event => {
             event.preventDefault();
             const itemID = event.currentTarget.closest('.item').dataset.itemId;
             let darkitem = this.actor.getEmbeddedEntity('OwnedItem', itemID);
 			console.log(darkitem);
-			let used = darkitem.data.hitDiceUsed - 1;
+			let used = darkitem.data.data.hitDiceUsed - 1;
 			
 			//INVALID VALUE CHECK
-			if(used > darkitem.data.levels){
-				used = darkitem.data.levels;
+			if(used > darkitem.data.data.levels){
+				used = darkitem.data.data.levels;
 			}
 			else if(used < 0){
 				used = 0;
 			}
 			
-			this.actor.updateEmbeddedEntity('OwnedItem', {
-                                _id: darkitem._id,
+			this.actor.updateEmbeddedEntity('Item', {
+                                _id: darkitem.data._id,
                                 'data.hitDiceUsed': used
             });
         });
 
-        html.find('.minusspellslot-spell1').click(event => {
+        html.find('.minusspellslot-spell1').click(async event => {
             event.preventDefault();
             let actor = this.actor.data.data.spells.spell1.value;
             if (actor >= 1) {
@@ -1871,7 +2083,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
                 });
             }
         });
-        html.find('.minusspellslot-spell2').click(event => {
+        html.find('.minusspellslot-spell2').click(async event => {
             event.preventDefault();
             let actor = this.actor.data.data.spells.spell2.value;
             if (actor >= 1) {
@@ -1881,7 +2093,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
                 });
             }
         });
-        html.find('.minusspellslot-spell3').click(event => {
+        html.find('.minusspellslot-spell3').click(async event => {
             event.preventDefault();
             let actor = this.actor.data.data.spells.spell3.value;
             if (actor >= 1) {
@@ -1891,7 +2103,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
                 });
             }
         });
-        html.find('.minusspellslot-spell4').click(event => {
+        html.find('.minusspellslot-spell4').click(async event => {
             event.preventDefault();
             let actor = this.actor.data.data.spells.spell4.value;
             if (actor >= 1) {
@@ -1901,7 +2113,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
                 });
             }
         });
-        html.find('.minusspellslot-spell5').click(event => {
+        html.find('.minusspellslot-spell5').click(async event => {
             event.preventDefault();
             let actor = this.actor.data.data.spells.spell5.value;
             if (actor >= 1) {
@@ -1911,7 +2123,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
                 });
             }
         });
-        html.find('.minusspellslot-spell6').click(event => {
+        html.find('.minusspellslot-spell6').click(async event => {
             event.preventDefault();
             let actor = this.actor.data.data.spells.spell2.value;
             if (actor >= 1) {
@@ -1921,7 +2133,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
                 });
             }
         });
-        html.find('.minusspellslot-spell7').click(event => {
+        html.find('.minusspellslot-spell7').click(async event => {
             event.preventDefault();
             let actor = this.actor.data.data.spells.spell7.value;
             if (actor >= 1) {
@@ -1931,7 +2143,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
                 });
             }
         });
-        html.find('.minusspellslot-spell8').click(event => {
+        html.find('.minusspellslot-spell8').click(async event => {
             event.preventDefault();
             let actor = this.actor.data.data.spells.spell8.value;
             if (actor >= 1) {
@@ -1941,7 +2153,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
                 });
             }
         });
-        html.find('.minusspellslot-spell9').click(event => {
+        html.find('.minusspellslot-spell9').click(async event => {
             event.preventDefault();
             let actor = this.actor.data.data.spells.spell9.value;
             if (actor >= 1) {
@@ -1952,7 +2164,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
             }
         });
         /*LOOK FOR BURNOUTDIE*/
-        html.find('.burnoutdie').click(event => {
+        html.find('.burnoutdie').click(async event => {
             event.preventDefault();
 
             // Rolling table, from best to worst
@@ -1963,6 +2175,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
             let table = game.tables.entities.find(t => t.data.name === "Burnout Consequence");
 			if(table == undefined){
 				ui.notifications.warn("Darksheet | You need to import or create a 'Burnout Consequence' Table to roll from");
+				return;
 			}
             // burnoutsettings
             let bsettings = this.actor.data.data.attributes.burnout.value
@@ -1984,12 +2197,16 @@ export class DarkSheet extends ActorSheet5eCharacter {
                 }
             }
             var burnoutARegion = rollings[regionmodz];
+
             let rollcon = burnoutARegion;
             let rollcona = "d" + rollcon
             let roll = new Roll(`${rollcona}`).roll();
-            const result = table.roll()
-
-
+            let result = await table.roll();
+			//NEW BURNOUT DIE
+			if(burnoutARegion == 4)
+				var newBurnOutDie = "";
+			else
+				var newBurnOutDie = "-> d" + rollings[regionmodz +1];
 
             if (burnoutdie === 0) {} else {
                 let content = `
@@ -2004,11 +2221,11 @@ export class DarkSheet extends ActorSheet5eCharacter {
 				<div class="dnd5e chat-card item-card" data-acor-id="${this.actor._id}">
 					<header class="card-header flexrow">
 						<img src="${this.actor.data.token.img}" title="" width="36" height="36" style="border: none;"/>
-						<h3>Burnoutdice(${rollcona}): </h3>
+						<h3>Burnoutdice(${rollcona}        html.find('.burnoutdie').click(async event => {${newBurnOutDie}): </h3>
 					<h3 style="color: #ff0000;text-shadow: 0 0 2px;">${roll.result}</h3>
 					</header>
 					</br>
-					<h3 style="color: #ff0000;text-shadow: 0 0 2px; text-align: center;">${result.results[0].text}</h3>
+					<h3 style="color: #ff0000;text-shadow: 0 0 2px; text-align: center;">${result.results[0].data.text}</h3>
 				</div>`;
                 let content3 = `
 				<div class="dnd5e chat-card item-card" data-acor-id="${this.actor._id}">
@@ -2080,7 +2297,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
             }
         });
         //AUTOMATIC EXHAUSTION CALCULATION
-        html.find('.exhaustioncalc').click(event => {
+        html.find('.exhaustioncalc').click(async event => {
             event.preventDefault();
             let newexhaustion = 0;
             let temp = this.actor.data.data.attributes.temp;
@@ -2135,7 +2352,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
             console.log("(DarkSheet): New Exhaustion: " + this.actor.data.data.attributes.newexhaustion);
             this.render();
         });
-        html.find('.staminacheck').click(event => {
+        html.find('.staminacheck').click(async event => {
             event.preventDefault();
             const roll = new Roll(`1d6`).roll();
             let content = `
@@ -2346,7 +2563,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
             this.render();
         });
 
-        html.find('.exhaustionstatus').click(event => {
+        html.find('.exhaustionstatus').click(async event => {
             event.preventDefault();
             let newexhaustion = 0;
             let temp = this.actor.data.data.attributes.temp;
@@ -2612,7 +2829,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
             }
         });
 
-        html.find('.deathsaveroll').click(event => {
+        html.find('.deathsaveroll').click(async event => {
             event.preventDefault();
             let result = ["You fail two death saving throws.", "You fail one death saving throw.", "No change.", "You regain 1 hit point."]
             let finalresult = 0;
@@ -2745,7 +2962,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
             this.render();
         });
         //Inspiration
-        html.find('.useInspiration').click(event => {
+        html.find('.useInspiration').click(async event => {
             event.preventDefault();
             let rollWhisper = null;
             let rollBlind = false;
@@ -2808,7 +3025,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 
         });
         //Hero Points
-        html.find('.useHeroPoint').click(event => {
+        html.find('.useHeroPoint').click(async event => {
             event.preventDefault();
             let rollWhisper = null;
             let rollBlind = false;
@@ -2884,15 +3101,19 @@ export class DarkSheet extends ActorSheet5eCharacter {
 
         });
         // LOOK FOR WOUNDROLL
-        html.find('.woundroll').click(event => {
+        html.find('.woundroll').click(async event => {
             event.preventDefault();
             let table = game.tables.entities.find(t => t.data.name === "Reopening Wounds");
             let wounds = this.actor.data.data.attributes.wounds.value;
+			if(wounds == 0){
+				ui.notifications.warn("You don't have any CLOSED wounds to reopen.");
+				return;
+			}
             let i = 0;
             let subtractVal = 0;
 			let woundstreated
 			let newcheck = false;
-			for(let i = 1; i < 10; i++){
+			for(let i = 1; i <= 20; i++){
 				if(document.getElementById(this.actor._id+"-woundcheck"+[i]).checked){
 					//let result = table.roll()
 					let roll = new Roll(`1d20`).roll().total;
@@ -3063,7 +3284,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
             this.render();
         });
 		
-        html.find('.treatwound').click(event => {
+        html.find('.treatwound').click(async event => {
             event.preventDefault();
             let table = game.tables.entities.find(t => t.data.name === "Treatwounds");
 			if(table == undefined){
@@ -3072,7 +3293,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 			else{
 				const result = table.roll()
 				let content = `
-						<h3 style="text-align: center;">${result.results[0].text}</h3>
+						<h3 style="text-align: center;">${result.results[0].data.text}</h3>
 					</div>`;
 				let rollWhisper = null;
 				let rollBlind = false;
@@ -3099,12 +3320,12 @@ export class DarkSheet extends ActorSheet5eCharacter {
 			}
         });
 
-        html.find('.gday').click(event => {
+        html.find('.gday').click(async event => {
             event.preventDefault();
             console.log("test");
         });
 
-        html.find('.healwound').click(event => {
+        html.find('.healwound').click(async event => {
             event.preventDefault();
             let conmod = this.actor.data.data.abilities.con.mod;
             let healtotal = 0;
@@ -3154,7 +3375,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
                 sound: CONFIG.sounds.dice
             });
         });
-        html.find('.criticalS').click(event => {
+        html.find('.criticalS').click(async event => {
             event.preventDefault();
             let table = game.tables.entities.find(t => t.data.name === "Critical Success Boons");
             let rollMode = game.settings.get("core", "rollMode");
@@ -3169,7 +3390,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 				const result = table.roll()
 				let content = `
 					<div class="dnd5e chat-ca rd item-card" data-acor-id="${this.actor._id}">
-						<h3 style="text-shadow: 0 0 1px; text-align: center;">${result.results[0].text}</h3>
+						<h3 style="text-shadow: 0 0 1px; text-align: center;">${result.results[0].data.text}</h3>
 					</div>`;
 
 				ChatMessage.create({
@@ -3186,7 +3407,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 				});
 			}
         });
-        html.find('.criticalF').click(event => {
+        html.find('.criticalF').click(async event => {
             event.preventDefault();
             let table = game.tables.entities.find(t => t.data.name === "Critical Failure Consequences");
             if(table == undefined){
@@ -3196,7 +3417,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 				const result = table.roll()
 				let content = `
 					<div class="dnd5e chat-card item-card" data-acor-id="${this.actor._id}">
-						<h3 style="text-shadow: 0 0 1px; text-align: center;">${result.results[0].text}</h3>
+						<h3 style="text-shadow: 0 0 1px; text-align: center;">${result.results[0].data.text}</h3>
 					</div>`;
 				let rollWhisper = null;
 				let rollBlind = false;
@@ -3222,7 +3443,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 				});
 			}
         });
-        html.find('.successatcost').click(event => {
+        html.find('.successatcost').click(async event => {
             event.preventDefault();
             let table = game.tables.entities.find(t => t.data.name === "Success at a Cost - Offerings");
 			if(table == undefined){
@@ -3232,7 +3453,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 				const result = table.roll()
 				let content = `
 					<div class="dnd5e chat-card item-card" data-acor-id="${this.actor._id}">
-						<h3 style="text-shadow: 0 0 0px; text-align: center;">${result.results[0].text}</h3>
+						<h3 style="text-shadow: 0 0 0px; text-align: center;">${result.results[0].data.text}</h3>
 					</div>`;
 				let rollWhisper = null;
 				let rollBlind = false;
@@ -3259,7 +3480,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 			}
         });
 
-        html.find('.hitdiceroll').click(event => {
+        html.find('.hitdiceroll').click(async event => {
             event.preventDefault();
             let hd = this.actor.data.data.attributes.hitdice.value;
             let conmod = this.actor.data.data.abilities.con.mod;
@@ -3305,19 +3526,19 @@ export class DarkSheet extends ActorSheet5eCharacter {
         });
 
         /*LOOK FOR DEFENSEROLL*/
-		html.find('.handy-ac').click(event => {
+		html.find('.handy-ac').click(async event => {
             event.preventDefault();
             let ac = this.actor.data.data.attributes.ac.value;
             let roll1 = new Roll(`d20`).roll().total;
             let roll2 = new Roll(`d20`).roll().total;
-            let rollResult = new Roll(`${roll1}+${ac}`).roll().total;
-            let rollResult2 = new Roll(`${roll2}+${ac}`).roll().total;
+            let rollResult = new Roll(`${roll1}`).roll().total + ac;
+            let rollResult2 = new Roll(`${roll2}`).roll().total + ac;
             if (game.settings.get('darksheet', 'smalldefense')) {
                 rollResult -= 10;
                 rollResult2 -= 10;
             }
             let wounds = this.actor.data.data.attributes.wounds.value;
-			let actorID = this.actor._id;
+			let actorID = this.actor.data._id;
             let content = `
 <div class="dnd5e chat-card item-card" data-acor-id="${this.actor._id}">
     <header class="card-header flexrow">
@@ -3331,7 +3552,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
                             <div class="dice-tooltip" style="display: none;">                                <div class="dice">
                                     <p class="part-formula">
                                         1d20 + ${ac}
-                                        <span class="part-total">${rollResult}</span>
+                                        
                                     </p>
                                     <ol class="dice-rolls">
                                         <li class="roll d20">${roll1}</li>
@@ -3342,7 +3563,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
                             <div class="dice-tooltip" style="display: none;">                                <div class="dice">
                                     <p class="part-formula">
                                         1d20 + ${ac}
-                                        <span class="part-total">${rollResult2}</span>
+                                        
                                     </p>
                                     <ol class="dice-rolls">
                                         <li class="roll d20">${roll2}</li>
@@ -3372,7 +3593,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
                             <div class="dice-tooltip" style="display: none;">                                <div class="dice">
                                     <p class="part-formula">
                                         1d20 + ${ac}
-                                        <span class="part-total">${rollResult}</span>
+                                        
                                     </p>
                                     <ol class="dice-rolls">
                                         <li class="roll d20">${roll1}</li>
@@ -3383,7 +3604,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
                             <div class="dice-tooltip" style="display: none;">                                <div class="dice">
                                     <p class="part-formula">
                                         1d20 + ${ac}
-                                        <span class="part-total">${rollResult2}</span>
+                                        
                                     </p>
                                     <ol class="dice-rolls">
                                         <li class="roll d20">${roll2}</li>
@@ -3416,7 +3637,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
                             <div class="dice-tooltip" style="display: none;">                                <div class="dice">
                                     <p class="part-formula">
                                         1d20 + ${ac}
-                                        <span class="part-total">${rollResult}</span>
+                                        
                                     </p>
                                     <ol class="dice-rolls">
                                         <li class="roll d20">${roll1}</li>
@@ -3427,7 +3648,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
                             <div class="dice-tooltip" style="display: none;">                                <div class="dice">
                                     <p class="part-formula">
                                         1d20 + ${ac}
-                                        <span class="part-total">${rollResult2}</span>
+                                        
                                     </p>
                                     <ol class="dice-rolls">
                                         <li class="roll d20">${roll2}</li>
@@ -3506,14 +3727,14 @@ export class DarkSheet extends ActorSheet5eCharacter {
         });
         /*END LOOK FOR DEFENSEROLL END*/
 		/*LOOK FOR SPELLATTACK*/
-		html.find('.spell-dc').click(event => {
+		html.find('.spell-dc').click(async event => {
             event.preventDefault();
             let ac = this.actor.data.data.attributes.spelldc;
             let roll1 = new Roll(`d20`).roll().total;
             let roll2 = new Roll(`d20`).roll().total;
             let rollResult = new Roll(`${roll1}+${ac}`).roll().total;
             let rollResult2 = new Roll(`${roll2}+${ac}`).roll().total;
-			let actorID = this.actor._id;
+			let actorID = this.actor.data._id;
             let content = `
 <div class="dnd5e chat-card item-card" data-acor-id="${this.actor._id}">
     <header class="card-header flexrow">
@@ -3527,7 +3748,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
                             <div class="dice-tooltip" style="display: none;">                                <div class="dice">
                                     <p class="part-formula">
                                         1d20 + ${ac}
-                                        <span class="part-total">${rollResult}</span>
+                                        
                                     </p>
                                     <ol class="dice-rolls">
                                         <li class="roll d20">${roll1}</li>
@@ -3538,7 +3759,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
                             <div class="dice-tooltip" style="display: none;">                                <div class="dice">
                                     <p class="part-formula">
                                         1d20 + ${ac}
-                                        <span class="part-total">${rollResult2}</span>
+                                        
                                     </p>
                                     <ol class="dice-rolls">
                                         <li class="roll d20">${roll2}</li>
@@ -3713,7 +3934,7 @@ Hooks.on(`ready`, () => {
 			let woundcount = 0;
 			let woundstreated = 0;
 			let actorID = sheet.actor.data._id;
-			for(let i = 1; i < 10; i++){
+			for(let i = 1; i <= 20; i++){
 					if(document.getElementById(actorID+"-wounddes"+[i]).value != "")
 					{
 						document.getElementById(actorID+"-woundtr"+[i]).style = ""
@@ -3723,7 +3944,7 @@ Hooks.on(`ready`, () => {
 					}
 					}
 			}
-			for(let i = 1; i < 10; i++){
+			for(let i = 1; i <= 20; i++){
 				if(document.getElementById(actorID+"-wounddes"+[i]).value == "" && maxwounds > woundcount)
 				{
 					document.getElementById(actorID+"-woundtr"+[i]).style = ""
@@ -3793,13 +4014,13 @@ Hooks.on(`ready`, () => {
 				  }
 			    if(game.settings.get('darksheet', 'nonpcattack') && actor.data.items[i].data.actionType === "mwak" || game.settings.get('darksheet', 'nonpcattack') && actor.data.items[i].data.actionType === "rwak" ){
                     if(actor.data.items[i].data.save.ability === ""){
-					actor.updateEmbeddedEntity('OwnedItem', {
+					actor.updateEmbeddedEntity('Item', {
                         _id: itemid,
                         "data.actionType": "util"
                     });
 					}
 					else{
-					actor.updateEmbeddedEntity('OwnedItem', {
+					actor.updateEmbeddedEntity('Item', {
                         _id: itemid,
                         "data.actionType": "save"
                     });
@@ -3820,4 +4041,147 @@ Hooks.on(`ready`, () => {
 		}
 		
 });
-Hooks.on("init", () => {CONFIG.debug.hooks = true})
+
+Hooks.on('createChatMessage', async (msg) => { //GM PUSHES SETTING
+	if(!game.user.isGM) return;
+	let HadTurn = [];
+	HadTurn = game.settings.get('darksheet','ActiveInitiativeHadTurn').split(",");
+	console.log("Chat Message Detected");
+	let message = msg.data.content;
+	let closestActorID = msg.data.flavor;
+	if(message.includes("gave his turn to")){
+		if(!HadTurn.includes(closestActorID)) HadTurn.push(closestActorID);
+		game.settings.set('darksheet','ActiveInitiativeHadTurn', HadTurn.toString());
+		game.combat.setInitiative(closestActorID, game.combat.combatants.get(closestActorID).data.initiative+1);
+		game.combat.setInitiative(closestActorID, game.combat.combatants.get(closestActorID).data.initiative-1);
+	}
+	msg.delete();
+});
+
+Hooks.on("renderCombatTracker", async function(_combatTracker, html) {
+
+	if(!game.settings.get('darksheet','activeInitiative')) return;
+	if(game.combat == undefined) return;
+	//ui.notifications.notify("Rendering Combat");
+	let HadTurn = [];
+	if(game.settings.get('darksheet','ActiveInitiativeHadTurn') != "")
+	HadTurn = game.settings.get('darksheet','ActiveInitiativeHadTurn').split(",");
+	let HasToHaveTurn = [];
+	
+	let toAppend = '<div id="TurnOfTurnDebug"> Turn: '+game.settings.get('darksheet','ActiveInitiativeHadTurn').split(",").length+'/'+game.combat.combatants.size+'</div>';
+	if(document.getElementById("TurnOfTurnDebug") == undefined)//DISPLAY REMAINING ACTORS
+	$("#combat-round").append(toAppend);
+	
+	for(let i = 0; i < document.getElementsByClassName("token-initiative").length; i++){
+		let closestActor = document.getElementsByClassName("token-initiative")[i].closest(".actor");
+		let closestActorTID = game.combat.combatants.get(closestActor.getAttribute("data-combatant-id")).id;
+		let compareIdTo;
+
+		if(closestActorTID == game.combat.current.combatantId){
+			//document.getElementsByClassName("token-initiative")[i].innerHTML = '';
+			continue;
+		}
+		
+		if(HadTurn.includes(closestActorTID)) {
+			document.getElementsByClassName("token-initiative")[i].innerHTML = 'DONE';
+			document.getElementsByClassName("token-initiative")[i].parentElement.children[0].style.setProperty("filter", "grayscale(100%)");//CHANGE COLOR OF TOKEN ONLY
+			if(game.user.isGM)
+			document.getElementsByClassName("token-initiative")[i].innerHTML = '<button class="AIButton AiButtonGM" id="GiveTurn">DONE</button>';
+			continue;
+		}
+	
+		if(!game.user.isGM && game.combat.combatants.get(game.combat.current.combatantId).actor != game.user.character)
+		{
+		continue;
+		}
+		document.getElementsByClassName("token-initiative")[i].innerHTML = '<button class="AIButton" id="GiveTurn">Turn</button>';
+
+
+	}
+	/* //DEBUG TOKEN ID
+	for(let i = 0; i < document.getElementsByClassName("token-name").length; i++){
+		document.getElementsByClassName("token-name")[i].children[0].textContent += " (" + document.getElementsByClassName("token-name")[i].parentElement.dataset.combatantId + ")";
+	}*/
+	
+	if(game.settings.get('darksheet', 'activeInitiativeDisplayTurns')){
+		if(game.combat.combatants.get(HadTurn[0]) != undefined ){
+			$("#combat-round").append('<div style="line-break: anywhere;max-height: 97px;overflow: auto;"id="HadTurnDebug">');
+			for(let h = 0; h < HadTurn.length; h ++){
+				$("#HadTurnDebug").append('<div style="line-break: anywhere;"id="HadTurnDebug">'+game.combat.combatants.get(HadTurn[h]).name+'</div>');
+				
+			}
+		}                 
+	}
+
+	function getPosition(elementToFind, arrayElements) {
+		var i;
+		for (i = 0; i < arrayElements.size; i += 1) {
+			if (game.combat.combatants.document.turns[i] === elementToFind) {
+				return i;
+			}
+		}
+		return null; //not found
+	}
+		
+	html.find('.AIButton').click(async event => {
+			event.preventDefault();
+			//ui.notifications.notify("Clicked Turn for " + game.combat.combatants.get(event.target.closest(".actor").getAttribute("data-combatant-id")).actor.name);
+			let closestActorID =  game.combat.combatants.get(event.target.closest(".actor").getAttribute("data-combatant-id")).id;
+			if(!HadTurn.includes(closestActorID))HadTurn.push(closestActorID);
+			if(game.user.isGM)
+			game.settings.set('darksheet','ActiveInitiativeHadTurn', HadTurn.toString());
+		
+			//console.log(HadTurn);
+			
+			let Test = getPosition(game.combat.combatants.get(closestActorID), game.combat.combatants);
+			if(game.combat.current.turn < Test){
+				for(let n = game.combat.current.turn; n < Test ; n ++){
+					await game.combat.nextTurn();
+				}
+			}
+			else if(game.combat.current.turn > Test){
+				for(let n = game.combat.current.turn; n > Test ; n --){
+					await game.combat.previousTurn();
+				}
+			}
+			
+			if(!game.user.isGM){//NON GM'S PUSH A MESSAGE
+                ChatMessage.create({
+                user: game.user._id,
+                content: game.user.name + " gave his turn to " + game.combat.combatants.get(event.target.closest(".actor").getAttribute("data-combatant-id")).name,
+				flavor: closestActorID,
+				blind: true,
+                })
+			}
+	});
+		
+	if(game.user.isGM){//REMOVING SOME CONTROLS FROM THE COMBATTRACKER
+		if(document.getElementsByClassName("combat-control")[4].text == ""){
+			if(HadTurn.length >= game.combat.combatants.size)
+			$( ".combat" ).append( '<a class="combat-control directory-footer flexrow" title="Next Round" data-control="nextRound" style="flex: 0.1;width: 100%;background: #0043ff4a;text-align: center;font-size: 20px;align-content: space-around;"><i class="fas fa-step-forward"></i></a>' );
+			if(document.getElementsByClassName("combat-control")[5].title == "Previous Turn")
+				document.getElementsByClassName("combat-control")[5].remove()
+			if(document.getElementsByClassName("combat-control")[6].title == "Next Turn");
+				document.getElementsByClassName("combat-control")[6].remove()
+		}
+	}
+	else{
+		if(document.getElementById("combat-controls") != undefined)
+		document.getElementById("combat-controls").remove()
+	}
+	if(!game.user.isGM)	return;
+	//NEW ROUND?
+	if(game.combat.current.round != game.combat.previous.round){
+		let LastTurnID = game.settings.get('darksheet','ActiveInitiativeHadTurn').split(",")[game.settings.get('darksheet','ActiveInitiativeHadTurn').split(",").length-1];
+		if(game.settings.get('darksheet','ActiveInitiativeHadTurn') == "") return;
+		game.settings.set('darksheet','ActiveInitiativeHadTurn', "");
+		if(game.combat.current.combatantId == LastTurnID){
+			await game.combat.nextTurn();
+			await  game.combat.previousTurn();
+		}
+		while(game.combat.current.combatantId != LastTurnID){//RESET TURN 
+			await game.combat.nextTurn();
+		}
+	}
+		
+});

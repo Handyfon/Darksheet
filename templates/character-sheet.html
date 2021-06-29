@@ -1,6 +1,6 @@
-<form class="{{cssClass}} flexcol {{data.attributes.color.value}} {{actor._id}}" style="{{#if data.attributes.color.saturation}}filter: saturate(1.5);{{/if}}{{#if data.attributes.color.saturation}}filter: saturate(1.5);{{/if}}{{#if data.attributes.color.highcontrast}}filter: contrast(1.5);{{/if}}{{#if data.attributes.color.brighter}}filter: brightness(1.2);{{/if}}{{#if data.attributes.isdead}}filter: grayscale(1);{{/if}}" autocomplete="off">
+<form class="{{cssClass}} flexcol {{data.attributes.color.value}} {{actor._id}}" style="filter:{{#if data.attributes.color.saturation}}saturate(1.5) {{/if}}{{#if data.attributes.color.saturation}}saturate(1.5) {{/if}}{{#if data.attributes.color.highcontrast}}contrast(1.5){{/if}}{{#if data.attributes.color.brighter}}brightness(1.2){{/if}};{{#if data.attributes.isdead}}filter: grayscale(1);{{/if}}" autocomplete="off">
     {{!-- Sheet Header --}}
-    <header class="sheet-header flexrow {{data.attributes.color.value}} {{actor._id}}">
+    <header class="sheet-header flexrow {{data.attributes.color.value}} {{actor._id}}" style="{{#if data.attributes.color.backgroundblurred}}backdrop-filter: blur(5px);{{/if}}">
 	<img class="profile" src="{{actor.img}}" title="{{actor._id}}" data-edit="img" />
 
         <section class="header-details flexrow {{data.attributes.color.value}} {{actor._id}}">
@@ -18,15 +18,14 @@
             </h1>
 
             <aside class="header-exp flexcol">
-                <div class="charlevel" style="justify-content: flex-end;">
+                <div class="charlevel" title="{{multiclassLabels}}">
                     <label>{{ localize "DND5E.Level" }} {{data.details.level}}</label>
                     <span class="levels">{{classLabels}}</span>
                 </div>
 
                 {{#unless disableExperience}}								 
                 <div class="experience flexrow">
-                    <input name="data.details.xp.value" type="text" value="{{data.details.xp.value}}"
-                           data-dtype="Number" placeholder="0"/>
+                    <input name="data.details.xp.value" type="text" value="{{data.details.xp.value}}"data-dtype="Number" placeholder="0"/>
                     <span class="sep">/</span>
                     <span class="max">{{data.details.xp.max}}</span>
                 </div>
@@ -58,7 +57,7 @@
 			{{else}}
 			{{/if}}
             {{!-- Character Summary --}}
-            <ul class="summary {{data.attributes.color.value}} {{this.actor.actor._id}}">
+            <ul class="flexrow summary {{data.attributes.color.value}} {{this.actor.actor._id}}">
                 <li>
                     <input type="text" name="data.details.race" value="{{data.details.race}}" placeholder="{{ localize 'DND5E.Race' }}"/>
                 </li>
@@ -90,8 +89,11 @@
                     </footer>
                 </li>
 
-                <li class="attribute">
-                    <h4 class="attribute-name box-title">{{ localize "DND5E.HitDice" }}</h4>
+                <li class="attribute hit-dice">
+                    <h4 class="attribute-name box-title">
+                        {{ localize "DND5E.HitDice" }}
+                        <a class="config-button" data-action="hit-dice" title="{{localize 'DND5E.HitDiceConfig'}}"><i class="fas fa-cog"></i></a>
+                    </h4>																								 
                     <div class="attribute-value multiple">
                         <label class="hit-dice">{{data.attributes.hd}} <span class="sep"> / </span> {{data.details.level}}</label>
                     </div>
@@ -102,12 +104,12 @@
                 </li>
 
                 <li class="attribute">
-                    <h4 class="attribute-name box-title rollable handy-ac darkcheck check" title="Click to roll for Active Defense.">{{ localize "DND5E.ArmorClass" }}</h4>
+                    <h4 class="attribute-name box-title rollable handy-ac darkcheck check {{data.attributes.color.value}} " title="Click to roll for Active Defense.">{{ localize "DND5E.ArmorClass" }}</h4>
                     <div class="attribute-value">
                         <input name="data.attributes.ac.value" type="number" value="{{data.attributes.ac.value}}" placeholder="10"/>																 
                     </div>
                     <footer class="attribute-footer">
-                        <label class="spell-dc check" title="Click to roll a Saving Attack." >{{localize "DND5E.SpellDC"}} {{data.attributes.spelldc}}</label>
+                        <label class="spell-dc check {{data.attributes.color.value}} " title="Click to roll a Saving Attack." >{{localize "DND5E.SpellDC"}} {{data.attributes.spelldc}}</label>
                     </footer>
                 </li>
                 <li class="attribute movement">
@@ -124,7 +126,7 @@
                 </li>
 
                 <li class="attribute initiative">
-                    <h4 class="attribute-name box-title rollable check" data-action="rollInitiative">{{ localize "DND5E.Initiative" }}</h4>
+                    <h4 class="attribute-name box-title rollable check {{data.attributes.color.value}} " data-action="rollInitiative">{{ localize "DND5E.Initiative" }}</h4>
                     <div class="attribute-value">
                         <span id="initiativevalue">{{numberFormat data.attributes.init.total decimals=0 sign=true}}</span>
                     </div>
@@ -139,18 +141,18 @@
     </header>
 
     {{!-- Character Sheet Navigation --}}
-    <nav class="sheet-navigation tabs {{data.attributes.color.value}} {{actor._id}}" data-group="primary">
+    <nav class="sheet-navigation tabs {{data.attributes.color.value}} {{actor._id}}" data-group="primary" style="{{#if data.attributes.color.backgroundblurred}}backdrop-filter: blur(5px);{{/if}}">
         <a class="item active" data-tab="attributes">{{ localize "DND5E.Attributes" }}</a>
         <a class="item" data-tab="inventory">{{ localize "DND5E.Inventory" }}</a>
         <a class="item" data-tab="features">{{ localize "DND5E.Features" }}</a>
         <a class="item" data-tab="spellbook">{{ localize "DND5E.Spellbook" }}</a>
         <a class="item" data-tab="effects">{{ localize "DND5E.Effects" }}</a>			   
         <a class="item" data-tab="biography">{{ localize "DND5E.Biography" }}</a>
-        <a class="item" data-tab="dd">DD</a>
+        <a class="item" data-tab="dd">Darker D.</a>
     </nav>
 
     {{!-- Character Sheet Body --}}
-    <section class="sheet-body {{data.attributes.color.value}} {{actor._id}}">
+    <section class="sheet-body {{data.attributes.color.value}} {{actor._id}}" style="{{#if data.attributes.color.backgroundblurred}}backdrop-filter: blur(5px);{{/if}}">
 
         <div class="tab attributes flexrow" data-group="primary" data-tab="attributes">
 
@@ -159,32 +161,33 @@
             {{#each data.abilities as |ability id|}}
                 <li class="{{data.attributes.color.value}} {{actor._id}} ability {{#if ability.proficient}}proficient{{/if}}" data-ability="{{id}}">
                     <h4 class="ability-name box-title rollable {{data.attributes.color.value}} {{actor._id}}">{{ability.label}}</h4>
-                    <input class="ability-score {{data.attributes.color.value}} {{actor._id}}" name="data.abilities.{{id}}.value" type="text" value="{{ability.value}}" data-dtype="Number" placeholder="10"/>
+                    <input class="ability-score {{data.attributes.color.value}} {{actor._id}}" name="data.abilities.{{id}}.value" type="number" value="{{ability.value}}" data-dtype="Number" placeholder="10"/>
                     <div class="ability-modifiers flexrow {{data.attributes.color.value}} {{actor._id}}">
-                        <span class="ability-mod {{data.attributes.color.value}} {{actor._id}}" title="Modifier">{{numberFormat ability.mod decimals=0 sign=true}}</span>
+                        <span class="ability-mod {{data.attributes.color.value}} {{actor._id}}"  title="{{ localize 'DND5E.Modifier' }}">{{numberFormat ability.mod decimals=0 sign=true}}</span>
                         <input type="hidden" name="data.abilities.{{id}}.proficient" value="{{ability.proficient}}" data-dtype="Number"/>
                         <a class="proficiency-toggle ability-proficiency" title="{{ localize 'DND5E.Proficiency' }}">{{{ability.icon}}}</a>
-                        <span class="ability-save" title="Saving Throw">{{numberFormat ability.save decimals=0 sign=true}}</span>
-                    </div>
+                        <span class="ability-save" title="{{ localize 'DND5E.SavingThrow' }}">{{numberFormat ability.save decimals=0 sign=true}}</span>                    </div>
                 </li>
             {{/each}}
             </ul>
 
             {{!-- Skills --}}
             <ul class="skills-list {{data.attributes.color.value}} {{actor._id}}">
-            {{#each data.skills as |skill s|}}
+            {{#each config.skills as |label s|}}
+            {{#with (lookup ../data.skills s) as |skill|}}
                 <li class="skill flexrow {{#if skill.value}}proficient{{/if}}" data-skill="{{s}}">
                     <input type="hidden" name="data.skills.{{s}}.value" value="{{skill.value}}" data-dtype="Number"/>
                     <a class="proficiency-toggle skill-proficiency" title="{{skill.hover}}">{{{skill.icon}}}</a>
-                    <h4 class="skill-name rollable">{{skill.label}}</h4>
+                    <h4 class="skill-name rollable">{{label}}</h4>
                     <span class="skill-ability">{{skill.ability}}</span>
                     <span class="skill-mod">{{numberFormat skill.total decimals=0 sign=true}}</span>
                     <span class="skill-passive">({{skill.passive}})</span>
                 </li>
+            {{/with}}
             {{/each}}
             </ul>
 
-            <section class="center-pane {{data.attributes.color.value}} {{actor._id}}">
+            <section class="flexcol center-pane {{data.attributes.color.value}} {{actor._id}}">
 
                 {{!-- Body Attributes --}}
                 <ul class="attributes flexrow">
@@ -195,16 +198,16 @@
                                    placeholder="{{res.placeholder}}" />
                         </h4>
                         <div class="attribute-value">
-                            <label class="recharge checkbox">
-                                {{ localize "DND5E.AbbreviationSR" }} <input name="data.resources.{{res.name}}.sr" type="checkbox" {{checked res.sr}}/>
+                            <label class="recharge checkbox flexcol">
+                                <span>{{ localize "DND5E.AbbreviationSR" }}</span><input name="data.resources.{{res.name}}.sr" type="checkbox" {{checked res.sr}}/>
                             </label>
 
-                            <input name="data.resources.{{res.name}}.value" type="number" value="{{res.value}}" placeholder="0"/>																	
+                            <input name="data.resources.{{res.name}}.value" type="number" value="{{res.value}}" placeholder="0"/>
                             <span class="sep"> / </span>
                             <input name="data.resources.{{res.name}}.max" type="number" value="{{res.max}}" placeholder="0"/>
 
-                            <label class="recharge checkbox">
-                                {{ localize "DND5E.AbbreviationLR" }} <input name="data.resources.{{res.name}}.lr" type="checkbox" {{checked res.lr}}/>
+                            <label class="recharge checkbox flexcol">
+                                <span>{{ localize "DND5E.AbbreviationLR" }}</span><input name="data.resources.{{res.name}}.lr" type="checkbox" {{checked res.lr}}/>
                             </label>
                         </div>
                     </li>
@@ -218,24 +221,24 @@
 						<label style="align-self: center;">{{actor.name}} is dead:</label>
 						<div class="revive">
 						<i style="font-size: 15px;" id="revive" style="color:green" id="reviveicon" class="fas fa-angle-double-up" name="data.attributes.isdead" data-dtype="Boolean" {{checked data.attributes.isdead}} title="Click to Revive this Character">
-						<input type="checkbox"class="ressourcecheckbox check" id="hidecheck" name="data.attributes.isdead" data-dtype="Boolean" {{checked data.attributes.isdead}}></input></i>
+						<input type="checkbox"class="ressourcecheckbox check {{data.attributes.color.value}} " id="hidecheck {{data.attributes.color.value}} " name="data.attributes.isdead" data-dtype="Boolean" {{checked data.attributes.isdead}}></input></i>
 						</div>
 						{{else}}
-                        <label class="rollable deathsaveroll darkcheck"><h4 class="deathsavelabel">{{ localize "DND5E.DeathSave" }}</h4></label>
+                        <label class="rollable deathsaveroll darkcheck {{data.attributes.color.value}} "><h4 class="deathsavelabel">{{ localize "DND5E.DeathSave" }}</h4></label>
                         <div class="counter-value">
                             <label class="deathcheckbox">
-                                <input class="ressourcecheckbox check" type="checkbox" type="Boolean" name="data.attributes.deathsave1.value" data-dtype="Boolean" {{checked data.attributes.deathsave1.value}} /><span></span></label>
+                                <input class="ressourcecheckbox check {{data.attributes.color.value}} " type="checkbox" type="Boolean" name="data.attributes.deathsave1.value" data-dtype="Boolean" {{checked data.attributes.deathsave1.value}} /><span></span></label>
                             <label class="deathcheckbox">														
-                                <input class="ressourcecheckbox check" type="checkbox" type="Boolean" name="data.attributes.deathsave2.value" title="@{deathsave_fail2}" data-dtype="Boolean" {{checked data.attributes.deathsave2.value}} /><span></span></label>
+                                <input class="ressourcecheckbox check {{data.attributes.color.value}} " type="checkbox" type="Boolean" name="data.attributes.deathsave2.value" title="@{deathsave_fail2}" data-dtype="Boolean" {{checked data.attributes.deathsave2.value}} /><span></span></label>
                             <label class="deathcheckbox">
-                                <input class="ressourcecheckbox check" type="checkbox" type="Boolean" name="data.attributes.deathsave3.value" title="@{deathsave_fail3}" data-dtype="Boolean" {{checked data.attributes.deathsave3.value}} /><span></span></label>
+                                <input class="ressourcecheckbox check {{data.attributes.color.value}} " type="checkbox" type="Boolean" name="data.attributes.deathsave3.value" title="@{deathsave_fail3}" data-dtype="Boolean" {{checked data.attributes.deathsave3.value}} /><span></span></label>
                         </div>
 						{{/if}}
 					
                     </div>
                     <div class="counter flexrow">
 
-                        <h4 title="Push explanation to chat" class="exhaustionstatus rollable darkcheck">{{ localize "DND5E.Exhaustion" }}</h4>
+                        <h4 title="Push explanation to chat" class="exhaustionstatus rollable darkcheck {{data.attributes.color.value}} ">{{ localize "DND5E.Exhaustion" }}</h4>
                         <div class="status-value">
 
 
@@ -256,7 +259,7 @@
                 <div class="counters flexrow">
 
                     <div class="counter flexrow" style="flex: 2;">
-                        <h4 title="Click to roll for reopened wounds" class="deathsavelabel woundroll rollable darkcheck" style="flex: 1;">Closed Wounds</h4>
+                        <div title="Click to roll for reopened wounds" class="deathsavelabel woundroll rollable darkcheck {{data.attributes.color.value}} " style="flex: 1;">Closed Wounds</div>
                         <div class="attribute-value multiple" style="text-align: center;text-align: -webkit-match-parent;">
                             <input name="data.attributes.wounds.value" type="text" value="{{data.attributes.wounds.value}}" {{#if game.user.isGM}}{{else}}disabled{{/if}}>
                             <span class="sep"> / </span>
@@ -265,20 +268,20 @@
                     </div>
 					{{#if noheropoints}}
                     <div class="counter flexrow">
-                        <h4 style="flex: 0;" title="Use 1 Inspiration" class="rollable useInspiration darkcheck">Inspiration</h4>
+                        <h4 style="flex: 0;" title="Use 1 Inspiration" class="rollable useInspiration darkcheck {{data.attributes.color.value}} ">Inspiration</h4>
                         <div class="status-value">
                             <input style="margin-left: 10px;" type="number" min="0" max="3" class="inspirationpoints points" name="data.attributes.inspirations.value" value="{{data.attributes.inspirations.value}}" placeholder="0"/>
 						</div>
 					</div>	
 					{{else}}
 					<div class="counter flexrow">
-                        <h4 title="Use 1 Hero Point" class="rollable useHeroPoint darkcheck">Hero Points</h4>
+                        <h4 title="Use 1 Hero Point" class="rollable useHeroPoint darkcheck {{data.attributes.color.value}} ">Hero Points</h4>
                         <div class="status-value">
                             <input type="number" min="0" max="3" class="heropoints points" name="data.attributes.heropoints.value" value="{{data.attributes.heropoints.value}}" placeholder="0"/>
                         </div>
 					</div>
 					<div class="counter flexrow">
-                        <h4 title="Use 1 Inspiration" class="rollable useInspiration darkcheck">Inspiration</h4>
+                        <h4 title="Use 1 Inspiration" class="rollable useInspiration darkcheck {{data.attributes.color.value}} ">Inspiration</h4>
                         <div class="status-value">
                             <input type="number" min="0" max="3" class="inspirationpoints points" name="data.attributes.inspirations.value" value="{{data.attributes.inspirations.value}}" placeholder="0"/>
                         </div>
@@ -304,6 +307,16 @@
 						<tr id="{{actor._id}}-woundtr8" style="display:none;"><td><input type="text" id="{{actor._id}}-wounddes8" name="data.flags.darksheet-wounds.wound8" value="{{data.flags.darksheet-wounds.wound8}}" placeholder="Where is this wound?"></td><td><input class="woundcheckbox" id="{{actor._id}}-woundcheck8" type="checkbox" name="data.flags.darksheet-wounds.wound8treated.value" data-dtype="Boolean" {{checked data.flags.darksheet-wounds.wound8treated.value}}/></td><td><input class="removewoundbutton" type="button" id="wound8"value="X"></td><td>{{#unless data.flags.darksheet-wounds.wound8treated.value}}<label class="exhaustiontip">+1 Exh.</label>{{/unless}}</td></th></tr>
 						<tr id="{{actor._id}}-woundtr9" style="display:none;"><td><input type="text" id="{{actor._id}}-wounddes9" name="data.flags.darksheet-wounds.wound9" value="{{data.flags.darksheet-wounds.wound9}}" placeholder="Where is this wound?"></td><td><input class="woundcheckbox" id="{{actor._id}}-woundcheck9" type="checkbox" name="data.flags.darksheet-wounds.wound9treated.value" data-dtype="Boolean" {{checked data.flags.darksheet-wounds.wound9treated.value}}/></td><td><input class="removewoundbutton" type="button" id="wound9"value="X"></td><td>{{#unless data.flags.darksheet-wounds.wound9treated.value}}<label class="exhaustiontip">+1 Exh.</label>{{/unless}}</td></th></tr>
 						<tr id="{{actor._id}}-woundtr10" style="display:none;"><td><input type="text" id="{{actor._id}}-wounddes10" name="data.flags.darksheet-wounds.wound10" value="{{data.flags.darksheet-wounds.wound10}}" placeholder="Where is this wound?"></td><td><input class="woundcheckbox" id="{{actor._id}}-woundcheck10" type="checkbox" name="data.flags.darksheet-wounds.wound10treated.value" data-dtype="Boolean" {{checked data.flags.darksheet-wounds.wound10treated.value}}/></td><td><input class="removewoundbutton" type="button" id="wound10"value="X"></td><td>{{#unless data.flags.darksheet-wounds.wound10treated.value}}<label class="exhaustiontip">+1 Exh.</label>{{/unless}}</td></th></tr>
+						<tr id="{{actor._id}}-woundtr11" style="display:none;"><td><input type="text" id="{{actor._id}}-wounddes11" name="data.flags.darksheet-wounds.wound11" value="{{data.flags.darksheet-wounds.wound11}}" placeholder="Where is this wound?"></td><td><input class="woundcheckbox" id="{{actor._id}}-woundcheck11" type="checkbox" name="data.flags.darksheet-wounds.wound11treated.value" data-dtype="Boolean" {{checked data.flags.darksheet-wounds.wound11treated.value}}/></td><td><input class="removewoundbutton" type="button" id="wound11"value="X"></td><td>{{#unless data.flags.darksheet-wounds.wound11treated.value}}<label class="exhaustiontip">+1 Exh.</label>{{/unless}}</td></th></tr>
+						<tr id="{{actor._id}}-woundtr12" style="display:none;"><td><input type="text" id="{{actor._id}}-wounddes12" name="data.flags.darksheet-wounds.wound12" value="{{data.flags.darksheet-wounds.wound12}}" placeholder="Where is this wound?"></td><td><input class="woundcheckbox" id="{{actor._id}}-woundcheck12" type="checkbox" name="data.flags.darksheet-wounds.wound12treated.value" data-dtype="Boolean" {{checked data.flags.darksheet-wounds.wound12treated.value}}/></td><td><input class="removewoundbutton" type="button" id="wound12"value="X"></td><td>{{#unless data.flags.darksheet-wounds.wound12treated.value}}<label class="exhaustiontip">+1 Exh.</label>{{/unless}}</td></th></tr>
+						<tr id="{{actor._id}}-woundtr13" style="display:none;"><td><input type="text" id="{{actor._id}}-wounddes13" name="data.flags.darksheet-wounds.wound13" value="{{data.flags.darksheet-wounds.wound13}}" placeholder="Where is this wound?"></td><td><input class="woundcheckbox" id="{{actor._id}}-woundcheck13" type="checkbox" name="data.flags.darksheet-wounds.wound13treated.value" data-dtype="Boolean" {{checked data.flags.darksheet-wounds.wound13treated.value}}/></td><td><input class="removewoundbutton" type="button" id="wound13"value="X"></td><td>{{#unless data.flags.darksheet-wounds.wound13treated.value}}<label class="exhaustiontip">+1 Exh.</label>{{/unless}}</td></th></tr>
+						<tr id="{{actor._id}}-woundtr14" style="display:none;"><td><input type="text" id="{{actor._id}}-wounddes14" name="data.flags.darksheet-wounds.wound14" value="{{data.flags.darksheet-wounds.wound14}}" placeholder="Where is this wound?"></td><td><input class="woundcheckbox" id="{{actor._id}}-woundcheck14" type="checkbox" name="data.flags.darksheet-wounds.wound14treated.value" data-dtype="Boolean" {{checked data.flags.darksheet-wounds.wound14treated.value}}/></td><td><input class="removewoundbutton" type="button" id="wound14"value="X"></td><td>{{#unless data.flags.darksheet-wounds.wound14treated.value}}<label class="exhaustiontip">+1 Exh.</label>{{/unless}}</td></th></tr>
+						<tr id="{{actor._id}}-woundtr15" style="display:none;"><td><input type="text" id="{{actor._id}}-wounddes15" name="data.flags.darksheet-wounds.wound15" value="{{data.flags.darksheet-wounds.wound15}}" placeholder="Where is this wound?"></td><td><input class="woundcheckbox" id="{{actor._id}}-woundcheck15" type="checkbox" name="data.flags.darksheet-wounds.wound15treated.value" data-dtype="Boolean" {{checked data.flags.darksheet-wounds.wound15treated.value}}/></td><td><input class="removewoundbutton" type="button" id="wound15"value="X"></td><td>{{#unless data.flags.darksheet-wounds.wound15treated.value}}<label class="exhaustiontip">+1 Exh.</label>{{/unless}}</td></th></tr>
+						<tr id="{{actor._id}}-woundtr16" style="display:none;"><td><input type="text" id="{{actor._id}}-wounddes16" name="data.flags.darksheet-wounds.wound16" value="{{data.flags.darksheet-wounds.wound16}}" placeholder="Where is this wound?"></td><td><input class="woundcheckbox" id="{{actor._id}}-woundcheck16" type="checkbox" name="data.flags.darksheet-wounds.wound16treated.value" data-dtype="Boolean" {{checked data.flags.darksheet-wounds.wound16treated.value}}/></td><td><input class="removewoundbutton" type="button" id="wound16"value="X"></td><td>{{#unless data.flags.darksheet-wounds.wound16treated.value}}<label class="exhaustiontip">+1 Exh.</label>{{/unless}}</td></th></tr>
+						<tr id="{{actor._id}}-woundtr17" style="display:none;"><td><input type="text" id="{{actor._id}}-wounddes17" name="data.flags.darksheet-wounds.wound17" value="{{data.flags.darksheet-wounds.wound17}}" placeholder="Where is this wound?"></td><td><input class="woundcheckbox" id="{{actor._id}}-woundcheck17" type="checkbox" name="data.flags.darksheet-wounds.wound17treated.value" data-dtype="Boolean" {{checked data.flags.darksheet-wounds.wound17treated.value}}/></td><td><input class="removewoundbutton" type="button" id="wound17"value="X"></td><td>{{#unless data.flags.darksheet-wounds.wound17treated.value}}<label class="exhaustiontip">+1 Exh.</label>{{/unless}}</td></th></tr>
+						<tr id="{{actor._id}}-woundtr18" style="display:none;"><td><input type="text" id="{{actor._id}}-wounddes18" name="data.flags.darksheet-wounds.wound18" value="{{data.flags.darksheet-wounds.wound18}}" placeholder="Where is this wound?"></td><td><input class="woundcheckbox" id="{{actor._id}}-woundcheck18" type="checkbox" name="data.flags.darksheet-wounds.wound18treated.value" data-dtype="Boolean" {{checked data.flags.darksheet-wounds.wound18treated.value}}/></td><td><input class="removewoundbutton" type="button" id="wound18"value="X"></td><td>{{#unless data.flags.darksheet-wounds.wound18treated.value}}<label class="exhaustiontip">+1 Exh.</label>{{/unless}}</td></th></tr>
+						<tr id="{{actor._id}}-woundtr19" style="display:none;"><td><input type="text" id="{{actor._id}}-wounddes19" name="data.flags.darksheet-wounds.wound19" value="{{data.flags.darksheet-wounds.wound19}}" placeholder="Where is this wound?"></td><td><input class="woundcheckbox" id="{{actor._id}}-woundcheck19" type="checkbox" name="data.flags.darksheet-wounds.wound19treated.value" data-dtype="Boolean" {{checked data.flags.darksheet-wounds.wound19treated.value}}/></td><td><input class="removewoundbutton" type="button" id="wound19"value="X"></td><td>{{#unless data.flags.darksheet-wounds.wound19treated.value}}<label class="exhaustiontip">+1 Exh.</label>{{/unless}}</td></th></tr>
+						<tr id="{{actor._id}}-woundtr20" style="display:none;"><td><input type="text" id="{{actor._id}}-wounddes20" name="data.flags.darksheet-wounds.wound20" value="{{data.flags.darksheet-wounds.wound20}}" placeholder="Where is this wound?"></td><td><input class="woundcheckbox" id="{{actor._id}}-woundcheck20" type="checkbox" name="data.flags.darksheet-wounds.wound20treated.value" data-dtype="Boolean" {{checked data.flags.darksheet-wounds.wound20treated.value}}/></td><td><input class="removewoundbutton" type="button" id="wound20"value="X"></td><td>{{#unless data.flags.darksheet-wounds.wound20treated.value}}<label class="exhaustiontip">+1 Exh.</label>{{/unless}}</td></th></tr>
 						</table>
 						<script>
 						function addwound(){
@@ -434,9 +447,9 @@
         {{!-- DD Tab --}}
         <div class="tab dd ddfulltab flexcol" data-group="primary" data-tab="dd">
 		<div style="flex: 0;">
-			<label class="conditionbutton check" title="Conditions" style="margin-top: 25px; padding: 2px 6px;">&#9877;<input type="checkbox"class="ressourcecheckbox check" style="display:none;" id="hidecheck" name="data.attributes.conditions.value" data-dtype="Boolean" {{checked data.attributes.conditions.value}}><span></span></input></label>
+			<label class="conditionbutton check {{data.attributes.color.value}} " title="Conditions" style="margin-top: 25px; padding: 2px 6px;">&#9877;<input type="checkbox"class="ressourcecheckbox check {{data.attributes.color.value}} " style="display:none;" id="hidecheck {{data.attributes.color.value}} " name="data.attributes.conditions.value" data-dtype="Boolean" {{checked data.attributes.conditions.value}}><span></span></input></label>
 			{{#unless hidesettings}}
-			<label class="conditionbutton check" title="Settings" style="padding: 2px 3px;">&#9881;<input type="checkbox"class="ressourcecheckbox check" style="display:none;" id="hidecheck2" name="data.attributes.settingsdisplay.value" data-dtype="Boolean" {{checked data.attributes.settingsdisplay.value}}><span></span></input></label>
+			<label class="conditionbutton check {{data.attributes.color.value}} " title="Settings" style="padding: 2px 3px;">&#9881;<input type="checkbox"class="ressourcecheckbox check {{data.attributes.color.value}} " style="display:none;" id="hidecheck2" name="data.attributes.settingsdisplay.value" data-dtype="Boolean" {{checked data.attributes.settingsdisplay.value}}><span></span></input></label>
 			{{/unless}}
 		</div>
 		{{#unless hidesettings}}
@@ -458,26 +471,27 @@
 					<input class="inventoryslots" style="width: 30px;height: 15px;border: 1px solid #233a54;margin-left: 5px;" name="data.attributes.inventoryslots" type="text" value="{{data.attributes.inventoryslots}}" data-dtype="{{data.attributes.inventoryslots}}" placeholder="18" />
 					<div class="counter-value">
 					</div>
-					<label style="margin-left: 5px;">Automatic Burnout Consequence:</label><label class="bloodiedcheckbox"><input style="margin-top: -4px;" class="ressourcecheckbox check" type="checkbox" type="Boolean" name="data.attributes.burnoutc.value" data-dtype="Boolean" {{checked data.attributes.burnoutc.value}}/><span></span></label>
+					<label style="margin-left: 5px;">Automatic Burnout Consequence:</label><label class="bloodiedcheckbox"><input style="margin-top: -4px;" class="ressourcecheckbox check {{data.attributes.color.value}} " type="checkbox" type="Boolean" name="data.attributes.burnoutc.value" data-dtype="Boolean" {{checked data.attributes.burnoutc.value}}/><span></span></label>
 					<label style="margin-left: 5px;">Show Title</label>
 					<label class="titlecheckbox" style="margin-right: 20px;">
 					<input style="position: absolute; margin-top: -5px;" type="checkbox" type="Boolean" name="data.attributes.titlesetting" data-dtype="Boolean" {{checked data.attributes.titlesetting}}/><span></span></label>
 					<label style="margin-left: 10px;">Address:</label>
 					<select class="hitdice {{data.attributes.adress}}" name="data.attributes.adress" data-type="String">
 						{{#select data.attributes.adress}}
-						<option selected="selected" value="its"></option>
-						<option value="his">his</option>
+						<option selected="selected" value="his" selected>his</option>
 						<option value="her">her</option>
+						<option value="its">its</option>
 						{{/select}}
 					</select>
 					<label style="margin-left: 5px;">Automatic Exhaustion 
-					</label><label class="bloodiedcheckbox"><input style="margin-top: -4px;" class="ressourcecheckbox check" type="checkbox" type="Boolean" name="data.attributes.automaticexhaust" data-dtype="Boolean" {{checked data.attributes.automaticexhaust}}/><span></span></label>
+					</label><label class="bloodiedcheckbox"><input style="margin-top: -4px;" class="ressourcecheckbox check {{data.attributes.color.value}} " type="checkbox" type="Boolean" name="data.attributes.automaticexhaust" data-dtype="Boolean" {{checked data.attributes.automaticexhaust}}/><span></span></label>
 				</span>
 				<h4  class="settingsheader" style="margin-top: 10px;">Character Customization</h4>
 				<span style="display: inline-flex;"class="settingsoption">
 				</br><label>Character Sheet Color:</label>
 					<select class="hitdice {{data.attributes.color.value}} {{actor._id}}" name="data.attributes.color.value" data-type="String">
 						{{#select data.attributes.color.value}}
+						<option value="">None</option>
 						<option value="blue">blue</option>
 						<option value="green">green</option>
 						<option value="red">red</option>
@@ -511,25 +525,31 @@
 					<input class="inventoryslots" style="width: 30px;height: 15px;border: 1px solid #233a54;margin-left: 5px;" name="data.attributes.fontsize.value" type="text" value="{{data.attributes.fontsize.value}}" placeholder="13" />
 					<input style="display:none" type="checkbox" type="Boolean" name="data.attributes.color.custom" data-dtype="Boolean" {{checked data.attributes.color.custom}}/>
 					{{#if data.attributes.color.custom}}
-					<span style="display: inline-flex;"class="settingsoption">
-					<label>Background-Url:</label>
-					<input type="text" title="Put in a url for your background picture" class="biotextflex" name="data.color.custom.url" value="{{data.color.custom.url}}" placeholder="url-to-picture" required>
-					</span>
-				</span>
-				<span style="display: inline-flex;"class="settingsoption">
-					<label>Color</label>
-					<input class="colorpicker" style="width: fit-content;border-bottom: 1px dashed white;background: #00000026;" type="text" title="Put in a color (hex)" name="data.color.custom.color" value="{{data.color.custom.color}}" placeholder="#474a5dfc" data-dtype="String"/>
-					<input class="colorinput" type="color" value="{{data.color.custom.color}}" data-edit="data.color.custom.color"/>
-					<label>Text-Color</label>
-					<input class="colorpicker" style="width: fit-content;border-bottom: 1px dashed white;background: #00000026;" type="text" title="Put in a color (hex)" name="data.color.custom.textcolor" value="{{data.color.custom.textcolor}}" placeholder="#474a5dfc" data-dtype="String"/>
-					<input class="colorinput" type="color" value="{{data.color.custom.textcolor}}" data-edit="data.color.custom.textcolor"/>
-					<label class="applybutton" style="border:solid 1px white; margin-left: 5px;" class="colorpicker">Apply</label>
-			</span>
+						<span style="display: inline-flex;"class="settingsoption">
+							<label>Background-Url:</label>
+							<input type="text" title="Put in a url for your background picture" class="biotextflex" name="data.color.custom.url" value="{{data.color.custom.url}}" placeholder="url-to-picture" required>
+						</span>
+						</span>
+						<span style="display: inline-flex;"class="settingsoption">
+							<label>Color</label>
+							<input class="colorpicker" style="width: fit-content;border-bottom: 1px dashed white;background: #00000026;" type="text" title="Put in a color (hex)" name="data.color.custom.color" value="{{data.color.custom.color}}" placeholder="#474a5dfc" data-dtype="String"/>
+							<input class="colorinput" type="color" value="{{data.color.custom.color}}" data-edit="data.color.custom.color"/>
+							<label>Back-Color</label>
+							<input class="colorpicker" style="width: fit-content;border-bottom: 1px dashed white;background: #00000026;" type="text" title="Put in a color (hex)" name="data.color.custom.backcolor" value="{{data.color.custom.backcolor}}" placeholder="#474a5dfc" data-dtype="String"/>
+							<input class="colorinput" type="color" value="{{data.color.custom.backcolor}}" data-edit="data.color.custom.backcolor"/>
+							<label>Text-Color</label>
+							<input class="colorpicker" style="width: fit-content;border-bottom: 1px dashed white;background: #00000026;" type="text" title="Put in a color (hex)" name="data.color.custom.textcolor" value="{{data.color.custom.textcolor}}" placeholder="#474a5dfc" data-dtype="String"/>
+							<input class="colorinput" type="color" value="{{data.color.custom.textcolor}}" data-edit="data.color.custom.textcolor"/>
+						</span>
 					{{/if}}
 				</span>
 				</span>
 				<h4  class="settingsheader" style="margin-top: 10px;">Additional Customization:</h4>
 				<span style="display: inline-flex;"class="settingsoption">
+					<label style="margin-left: 5px;">Background Blurred</label>
+						<label class="titlecheckbox" style="margin-right: 20px;">
+						<input style="position: absolute; margin-top: -5px;"type="checkbox" type="Boolean" name="data.attributes.color.backgroundblurred" data-dtype="Boolean" {{checked data.attributes.color.backgroundblurred}}/><span></span></label>
+					</span>
 					<label style="margin-left: 5px;">High Contrast</label>
 						<label class="titlecheckbox" style="margin-right: 20px;">
 						<input style="position: absolute; margin-top: -5px;" type="checkbox" type="Boolean" name="data.attributes.color.highcontrast" data-dtype="Boolean" {{checked data.attributes.color.highcontrast}}/><span></span></label>
@@ -550,7 +570,7 @@
 				font-size: {{data.attributes.fontsize.value}}px !important;
 			}
 			form.editable.flexcol.custom.{{actor._id}}{
-			background-color: {{data.color.custom.color}};
+			background: {{data.color.custom.backcolor}} !important;
 			color: {{data.color.custom.textcolor}};
 			background: linear-gradient( rgba(132, 132, 132, 0.11), rgb(0, 0, 0) ), url({{data.color.custom.url}});
 			background-size: cover;
@@ -675,15 +695,15 @@
     <h4 class="darksheetheader {{data.attributes.color.value}} {{actor._id}}">Food</h4>
     <div>
         <label class="foodcheckbox">
-            <input class="ressourcecheckbox check" type="checkbox" name="data.attributes.food.value" data-dtype="Boolean" {{checked data.attributes.food.value}}/><span></span></label>
+            <input class="ressourcecheckbox check {{data.attributes.color.value}} " type="checkbox" name="data.attributes.food.value" data-dtype="Boolean" {{checked data.attributes.food.value}}/><span></span></label>
         <label class="foodcheckbox">
-            <input class="ressourcecheckbox check" type="checkbox" name="data.attributes.food2.value" data-dtype="Boolean" {{checked data.attributes.food2.value}}/><span></span></label>
+            <input class="ressourcecheckbox check {{data.attributes.color.value}} " type="checkbox" name="data.attributes.food2.value" data-dtype="Boolean" {{checked data.attributes.food2.value}}/><span></span></label>
         <label class="foodcheckbox">
-            <input class="ressourcecheckbox check" type="checkbox" name="data.attributes.food3.value" data-dtype="Boolean" {{checked data.attributes.food3.value}}/><span></span></label>
+            <input class="ressourcecheckbox check {{data.attributes.color.value}} " type="checkbox" name="data.attributes.food3.value" data-dtype="Boolean" {{checked data.attributes.food3.value}}/><span></span></label>
         <label class="foodcheckbox">
-            <input class="ressourcecheckbox check" type="checkbox" name="data.attributes.food4.value" data-dtype="Boolean" {{checked data.attributes.food4.value}}/><span></span></label>
+            <input class="ressourcecheckbox check {{data.attributes.color.value}} " type="checkbox" name="data.attributes.food4.value" data-dtype="Boolean" {{checked data.attributes.food4.value}}/><span></span></label>
         <label class="foodcheckbox">
-            <input class="ressourcecheckbox check" type="checkbox" type="radio" name="data.attributes.food5.value" data-dtype="Boolean" {{checked data.attributes.food5.value}}/><span></span></label>
+            <input class="ressourcecheckbox check {{data.attributes.color.value}} " type="checkbox" type="radio" name="data.attributes.food5.value" data-dtype="Boolean" {{checked data.attributes.food5.value}}/><span></span></label>
     </div>
     <select class="saturationbox" id="sel" name="data.attributes.saturation.value" data-type="String" >
         {{#select data.attributes.saturation.value}}
@@ -701,15 +721,15 @@
 		<h4 class="darksheetheader {{data.attributes.color.value}} {{actor._id}}">Waterskin</h4>
 		<div>
 			<label class="watercheckbox {{data.attributes.color.value}} {{actor._id}}">
-				<input class="ressourcecheckbox check" type="checkbox" name="data.attributes.waterskin.value" title="@{waterskin1}" data-dtype="Boolean" {{checked data.attributes.waterskin.value}}/><span></span></label>
+				<input class="ressourcecheckbox check {{data.attributes.color.value}} " type="checkbox" name="data.attributes.waterskin.value" title="@{waterskin1}" data-dtype="Boolean" {{checked data.attributes.waterskin.value}}/><span></span></label>
 			<label class="watercheckbox {{data.attributes.color.value}} {{actor._id}}">
-				<input class="ressourcecheckbox check" type="checkbox" name="data.attributes.waterskin2.value" title="@{waterskin2}" data-dtype="Boolean" {{checked data.attributes.waterskin2.value}}/><span></span></label>
+				<input class="ressourcecheckbox check {{data.attributes.color.value}} " type="checkbox" name="data.attributes.waterskin2.value" title="@{waterskin2}" data-dtype="Boolean" {{checked data.attributes.waterskin2.value}}/><span></span></label>
 			<label class="watercheckbox {{data.attributes.color.value}} {{actor._id}}">
-				<input class="ressourcecheckbox check" type="checkbox" name="data.attributes.waterskin3.value" title="@{waterskin3}" data-dtype="Boolean" {{checked data.attributes.waterskin3.value}}/><span></span></label>
+				<input class="ressourcecheckbox check {{data.attributes.color.value}} " type="checkbox" name="data.attributes.waterskin3.value" title="@{waterskin3}" data-dtype="Boolean" {{checked data.attributes.waterskin3.value}}/><span></span></label>
 			<label class="watercheckbox {{data.attributes.color.value}} {{actor._id}}">
-				<input class="ressourcecheckbox check" type="checkbox" name="data.attributes.waterskin4.value" title="@{waterskin4}" data-dtype="Boolean" {{checked data.attributes.waterskin4.value}}/><span></span></label>
+				<input class="ressourcecheckbox check {{data.attributes.color.value}} " type="checkbox" name="data.attributes.waterskin4.value" title="@{waterskin4}" data-dtype="Boolean" {{checked data.attributes.waterskin4.value}}/><span></span></label>
 			<label class="watercheckbox {{data.attributes.color.value}} {{actor._id}}">
-				<input class="ressourcecheckbox check" type="checkbox" type="radio" name="data.attributes.waterskin5.value" title="@{waterskin5}" data-dtype="Boolean" {{checked data.attributes.waterskin5.value}}/><span></span></label>
+				<input class="ressourcecheckbox check {{data.attributes.color.value}} " type="checkbox" type="radio" name="data.attributes.waterskin5.value" title="@{waterskin5}" data-dtype="Boolean" {{checked data.attributes.waterskin5.value}}/><span></span></label>
 		</div>
 		<select class="saturationbox" name="data.attributes.thirst.value" data-type="String">
 			{{#select data.attributes.thirst.value}}
@@ -739,7 +759,7 @@
 			<option value="exbarely">Barely awake +1 exhaustion</option>
 			{{/select}}
 		</select>
-		<div style="margin-top: 9px;"><label class="dicelabel2 staminacheck rollable darkcheck check">Stamina Check</label></div>
+		<div style="margin-top: 9px;"><label class="dicelabel2 staminacheck rollable darkcheck check {{data.attributes.color.value}} ">Stamina Check</label></div>
 	</div>
 	</div>
 	<div class="section1 flexrow">
@@ -760,12 +780,12 @@
 				<span class="settingsoption exhaustioncalc">
 					<label class="rollable exhaustioncalc">Calculate Exhaustion:</label>
 						<input type="text" class="exhaustionpoints" name="data.attributes.newexhaustion" readonly value="{{data.attributes.newexhaustion}}" placeholder="click" />
-					</br><label class="rollable exhaustionstatus check">Exhaustion Information</label>
+					</br><label class="rollable exhaustionstatus check {{data.attributes.color.value}} ">Exhaustion Information</label>
 				</span>
 			</div>
 		</div>
 		<div class="checks {{data.attributes.color.value}} {{actor._id}}">
-			<h3 class="stressroll rollable check" style="text-align: center;padding: 0;margin-top: 10px;">Stress & Afflictions</h3>
+			<h3 class="stressroll rollable check {{data.attributes.color.value}} " style="text-align: center;padding: 0;margin-top: 10px;">Stress & Afflictions</h3>
 			<div style="display: inline-flex;">
 				<div class="stress" style="width: 155px;padding-top: 15px;padding-right: 40px;">
 				Stress
@@ -776,7 +796,7 @@
 				<div class="breaks">
 					<div>
 						<div style="display: inline-flex;"><label class="stresscheckbox">
-							<input class="ressourcecheckbox check stresscheckbox" type="checkbox" name="data.attributes.break1" title="@{break}" data-dtype="Boolean" {{checked data.attributes.break1}}/><span></span></label> 
+							<input class="ressourcecheckbox check stresscheckbox" id="stressbreak1" type="checkbox" name="data.attributes.break1" title="@{break}" data-dtype="Boolean" {{checked data.attributes.break1}}/><span></span></label> 
 							{{#if data.attributes.break1}}<label class="afflictiontext" style="color: #ad0000;"><b>20</b></label>
 								<select class="hitdice {{data.attributes.color.value}} {{actor._id}} afflictionselection" name="data.attributes.affliction1.value" data-type="String">
 								{{#select data.attributes.affliction1.value}}
@@ -805,7 +825,7 @@
 							{{/if}}
 						</div>
 						</br><div style="display: inline-flex;"><label class="stresscheckbox">
-							<input class="ressourcecheckbox check stresscheckbox" type="checkbox" name="data.attributes.break2" title="@{break}" data-dtype="Boolean" {{checked data.attributes.break2}}/><span></span></label> 
+							<input class="ressourcecheckbox check stresscheckbox" id="stressbreak2" type="checkbox" name="data.attributes.break2" title="@{break}" data-dtype="Boolean" {{checked data.attributes.break2}}/><span></span></label> 
 							{{#if data.attributes.break2}}<label class="afflictiontext" style="color: #ad0000;"><b>30</b></label>
 								<select class="hitdice {{data.attributes.color.value}} {{actor._id}} afflictionselection" name="data.attributes.affliction2.value" data-type="String">
 								{{#select data.attributes.affliction2.value}}
@@ -834,7 +854,7 @@
 							{{/if}}
 						</div>
 						</br><div style="display: inline-flex;"><label class="stresscheckbox">
-							<input class="ressourcecheckbox check stresscheckbox" type="checkbox" name="data.attributes.break3" title="@{break}" data-dtype="Boolean" {{checked data.attributes.break3}}/><span></span></label> 
+							<input class="ressourcecheckbox check stresscheckbox" id="stressbreak3" type="checkbox" name="data.attributes.break3" title="@{break}" data-dtype="Boolean" {{checked data.attributes.break3}}/><span></span></label> 
 							{{#if data.attributes.break3}}<label class="afflictiontext" style="color: #ad0000;"><b>35</b></label>
 								<select class="hitdice {{data.attributes.color.value}} {{actor._id}} afflictionselection" name="data.attributes.affliction3.value" data-type="String">
 								{{#select data.attributes.affliction3.value}}
@@ -863,7 +883,7 @@
 							{{/if}}
 						</div>
 						</br><div style="display: inline-flex;"><label class="stresscheckbox">
-							<input class="ressourcecheckbox check" type="checkbox" name="data.attributes.break4" title="@{break4}" data-dtype="Boolean" {{checked data.attributes.break4}}/><span></span></label> 
+							<input class="ressourcecheckbox check {{data.attributes.color.value}} " type="checkbox" name="data.attributes.break4" title="@{break4}" data-dtype="Boolean" {{checked data.attributes.break4}}/><span></span></label> 
 							{{#if data.attributes.break4}}
 							<label class="afflictiontext" style="color: #ad0000;"> <b>40</b> Hit your Breaking Point </label>
 							{{else}}

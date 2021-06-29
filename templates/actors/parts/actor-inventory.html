@@ -64,28 +64,12 @@
 
     <ol class="item-list">
     {{#each section.items as |item iid|}}
-        <li class="item flexrow" data-item-id="{{item._id}}">
-			{{#if ../../disableitemquality}}
+		{{#if ../../disableitemquality}}
+		<li class="item flexrow  {{item.flags.darksheet.item.quality}}" data-item-id="{{item._id}}">
+		{{else}}
+        <li class="item flexrow  {{item.flags.darksheet.item.quality}}" data-item-id="{{item._id}}">
+		{{/if}}
             <div class="item-name flexrow rollable">
-                <div class="item-image" style="background-image: url({{item.img}})"></div>
-                <h4 >
-                    {{~#if item.isStack}}({{item.data.quantity}}) {{/if}}
-					{{#unless ../../disabletemper}}{{#if item.flags.darksheet.item.temper}} {{item.flags.darksheet.item.temper}} {{else}}<!--{{#if item.flags.darksheet.item.fragility}}<i>({{item.flags.darksheet.item.fragility}})</i>{{/if}}--> {{/if}}{{/unless}}
-						{{item.name~}} 
-						{{#unless ../../hidedamageac}}
-							{{#if item.data.damage.currentweapondamage}}
-								({{item.data.damage.currentweapondamage}})
-							{{/if}}
-							{{#if item.data.armor.value}}
-								({{item.data.armor.value}} AC)
-							{{/if}}
-						{{/unless}}
-					{{#if item.data.notchpen}} (Minus <b>{{item.data.notchpen}}</b> to checks) {{/if}}
-                    {{~#if item.data.attuned}} <i class="fas fa-sun attuned" title={{localize "DND5E.Attuned"}}></i>{{/if}}
-                </h4>
-            </div>
-			{{else}}
-            <div class="item-name flexrow rollable {{item.flags.darksheet.item.quality}}">
                 <div class="item-image" style="background-image: url({{item.img}})"></div>
                 <h4 class="{{item.flags.darksheet.item.quality}}">
                     {{~#if item.isStack}}({{item.data.quantity}}) {{/if}}
@@ -103,15 +87,15 @@
                     {{~#if item.data.attuned}} <i class="fas fa-sun attuned" title={{localize "DND5E.Attuned"}}></i>{{/if}}
                 </h4>
             </div>
-			{{/if}}
+
 
 
             {{#if ../../isCharacter}}
 			{{#unless ../../hideammodie}}
 			<div class="item-detail item-weight">
-                <div class="item-detail">
+                <div class="item-detail ammodice">
 				{{~#if flags.darksheet.item.ammodie}}
-                    <label id ="rollableammodice" class="rollable ammodice ammostyle check" style="padding:16px;">{{flags.darksheet.item.ammodie}}</label>
+                    <label id ="rollableammodice" class="rollable ammodice ammostyle check">{{flags.darksheet.item.ammodie}}</label>
 				{{/if}}
                 </div>
             </div>

@@ -1,71 +1,28 @@
 <form class="{{cssClass}} flexcol" autocomplete="off">
 
-    {{!-- Sheet Header --}}
-    <header class="sheet-header flexrow">
-        <img class="profile" src="{{actor.img}}" title="{{actor.name}}" data-edit="img"/>
-
-        <div class="header-details flexrow">
-            <h1 class="charname">
-                <input name="name" type="text" value="{{actor.name}}" placeholder="{{ localize 'DND5E.Name' }}"/>
-            </h1>
-			
-              <aside class="header-exp flexcol">
-                <div class="charlevel">
-                    <label>{{ localize "DND5E.Level" }} {{data.details.level}}</label>
-                    <span class="levels">{{classLabels}}</span>
-                </div>
-
-                {{#unless disableExperience}}
-                <div class="experience flexrow">
-                    <input name="data.details.xp.value" type="text" value="{{data.details.xp.value}}"
-                           data-dtype="Number" placeholder="0"/>
-                    <span class="sep">/</span>
-                    <span class="max">{{data.details.xp.max}}</span>
-                </div>
-                <div class="xpbar">
-                    <span class="bar" style="width: {{data.details.xp.pct}}%"></span>
-                </div>
-                {{/unless}}
-            </aside>
-
-            {{!-- Character Summary --}}
-            <ul class="summary">
-                <li>
-                    <input type="text" name="data.details.race" value="{{data.details.race}}" placeholder="{{ localize 'DND5E.Race' }}"/>
-                </li>
-                <li>
-                    <input type="text" name="data.details.background" value="{{data.details.background}}" placeholder="{{ localize 'DND5E.Background' }}"/>
-                </li>
-                <li>
-                    <input type="text" name="data.details.alignment" value="{{data.details.alignment}}" placeholder="{{ localize 'DND5E.Alignment' }}"/>
-                </li>
-                <li class="proficiency">
-                    <span>{{ localize "DND5E.Proficiency" }} {{numberFormat data.attributes.prof decimals=0 sign=true}}</span>
-                </li> 
-            </ul>
-
             {{!-- Header Attributes --}}
             <ul class="attributes flexrow">
                 <li class="attribute health">
                     <h4 class="attribute-name box-title">{{ localize "DND5E.Health" }}</h4>
                     <div class="attribute-value multiple">
-                        <input name="data.attributes.hp.value" type="text" value="{{data.attributes.hp.value}}"
-                               data-dtype="Number" placeholder="10"/>
+                        <input name="data.attributes.hp.value" type="text" value="{{data.attributes.hp.value}}"data-dtype="Number" placeholder="10"/>
                         <span class="sep"> / </span>
-                        <input name="data.attributes.hp.max" type="text" value="{{data.attributes.hp.max}}"
-                               data-dtype="Number" placeholder="10"/>
+                        <input name="data.attributes.hp.max" type="text" value="{{data.attributes.hp.max}}"data-dtype="Number" placeholder="10"/>
                     </div>
                     <footer class="attribute-footer">
                         <input name="data.attributes.hp.temp" type="text" class="temphp" placeholder="+Temp"
-                               value="{{data.attributes.hp.temp}}" data-dtype="{{data.attributes.hp.type}}"/>
+                               value="{{data.attributes.hp.temp}}" data-dtype="Number"/>
                         <input name="data.attributes.hp.tempmax" type="text" class="temphp" placeholder="+Max"
-                               value="{{data.attributes.hp.tempmax}}" data-dtype="{{data.attributes.hp.type}}"/>
+                               value="{{data.attributes.hp.tempmax}}" data-dtype="Number"/>
                     </footer>
                 </li>
 
-                <li class="attribute">
-                <li class="attribute">
-                    <h4 class="attribute-name box-title">{{ localize "DND5E.HitDice" }}</h4>
+                <li class="attribute hit-dice">
+									  
+                    <h4 class="attribute-name box-title">
+                        {{ localize "DND5E.HitDice" }}
+                        <a class="config-button" data-action="hit-dice" title="{{localize 'DND5E.HitDiceConfig'}}"><i class="fas fa-cog"></i></a>
+                    </h4>
                     <div class="attribute-value multiple">
                         <label class="hit-dice">{{data.attributes.hd}} <span class="sep"> / </span> {{data.details.level}}</label>
                     </div>
@@ -78,8 +35,7 @@
                 <li class="attribute">  
                     <h4 class="attribute-name box-title">{{ localize "DND5E.ArmorClass" }}</h4>
                     <div class="attribute-value">
-                        <input name="data.attributes.ac.value" type="text" value="{{data.attributes.ac.value}}"
-                               data-dtype="Number" placeholder="10"/>
+                        <input name="data.attributes.ac.value" type="number" value="{{data.attributes.ac.value}}"data-dtype="Number" placeholder="10"/>
                     </div>
                     <footer class="attribute-footer">
                         <span class="spell-dc">{{localize "DND5E.SpellDC"}} {{data.attributes.spelldc}}</span>
@@ -87,14 +43,15 @@
                 </li>
 
                 <li class="attribute">
-                    <h4 class="attribute-name box-title">{{ localize "DND5E.Speed" }}</h4>
+                    <h4 class="attribute-name box-title">
+                        {{ localize "DND5E.Movement" }}
+                        <a class="config-button" data-action="movement" title="{{localize 'DND5E.MovementConfig'}}"><i class="fas fa-cog"></i></a>
+                    </h4>
                     <div class="attribute-value">
-                        <input name="data.attributes.speed.value" type="text"
-                               value="{{data.attributes.speed.value}}" placeholder="0"/>
+                        <span>{{movement.primary}}</span>															
                     </div>
                     <footer class="attribute-footer">
-                        <input type="text" class="speed" name="data.attributes.speed.special"
-                               value="{{data.attributes.speed.special}}" placeholder="{{ localize 'DND5E.SpeedSpecial' }}"/>
+                        <span>{{movement.special}}</span>																								
                     </footer>
                 </li>
 

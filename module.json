@@ -2,7 +2,7 @@
 	"name": "darksheet",
 	"title": "darksheet 5e",
 	"description": "Darker Dungeons replacement for the default 5e actor sheet",
-	"version": "3.0.1",
+	"version": "3.2.0",
 	"author": "Handyfon#8390",
 	"esmodules": ["darksheet.js", "/js/character.js", "/js/base.js", "templates.js"],
 	"styles": ["css/darksheet.css"],
@@ -47,6 +47,6 @@
     "url": "https://github.com/Handyfon/FDarksheet/tree/master",
     "manifest": "https://raw.githubusercontent.com/Handyfon/Darksheet/master/module.json",
     "download": "https://github.com/Handyfon/Darksheet/raw/master/darksheet.zip",
-	"minimumCoreVersion": "0.6.0",
-	"compatibleCoreVersion": "0.7.9"
+	"minimumCoreVersion": "0.8.8",
+	"compatibleCoreVersion": "0.8.8"
 }
