@@ -13,7 +13,9 @@
     background: #151515 !important;
     color: #424242 !important;
 }
-
+aside.header-exp.flexcol {
+    height: 20px !important;
+}
 .removewoundbutton{
 	border: 1px solid #b5b3a4;
     border-radius: 2px;
