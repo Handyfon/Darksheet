@@ -4054,8 +4054,8 @@ Hooks.on('createChatMessage', async (msg) => { //GM PUSHES SETTING
 		game.settings.set('darksheet','ActiveInitiativeHadTurn', HadTurn.toString());
 		game.combat.setInitiative(closestActorID, game.combat.combatants.get(closestActorID).data.initiative+1);
 		game.combat.setInitiative(closestActorID, game.combat.combatants.get(closestActorID).data.initiative-1);
+		msg.delete();
 	}
-	msg.delete();
 });
 
 Hooks.on("renderCombatTracker", async function(_combatTracker, html) {
