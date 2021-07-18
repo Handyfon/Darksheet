@@ -1034,29 +1034,29 @@ export class DarkSheet extends ActorSheet5eCharacter {
 		   let newwound = parseFloat(this.actor.data.data.attributes.maxwounds.value) - 1;
 		   let newtext = "";
 		   let button = event.toElement.id;
-		   let target = 'data.flags.darksheet-wounds.'+ button;
+		   let target = 'data.attributes.darksheet-wounds.'+ button;
 		   let newcheck = false;
 		   switch(button){
-			   case "wound1": this.actor.update({'data.flags.darksheet-wounds.wound1': newtext,'data.attributes.maxwounds.value': newwound,'data.flags.darksheet-wounds.wound1treated.value': newcheck,}); break;
-			   case "wound2": this.actor.update({'data.flags.darksheet-wounds.wound2': newtext,'data.attributes.maxwounds.value': newwound,'data.flags.darksheet-wounds.wound2treated.value': newcheck,}); break;
-			   case "wound3": this.actor.update({'data.flags.darksheet-wounds.wound3': newtext,'data.attributes.maxwounds.value': newwound,'data.flags.darksheet-wounds.wound3treated.value': newcheck,}); break;
-			   case "wound4": this.actor.update({'data.flags.darksheet-wounds.wound4': newtext,'data.attributes.maxwounds.value': newwound,'data.flags.darksheet-wounds.wound4treated.value': newcheck,}); break;
-			   case "wound5": this.actor.update({'data.flags.darksheet-wounds.wound5': newtext,'data.attributes.maxwounds.value': newwound,'data.flags.darksheet-wounds.wound5treated.value': newcheck,}); break;
-			   case "wound6": this.actor.update({'data.flags.darksheet-wounds.wound6': newtext,'data.attributes.maxwounds.value': newwound,'data.flags.darksheet-wounds.wound61treated.value': newcheck,}); break;
-			   case "wound7": this.actor.update({'data.flags.darksheet-wounds.wound7': newtext,'data.attributes.maxwounds.value': newwound,'data.flags.darksheet-wounds.wound7treated.value': newcheck,}); break;
-			   case "wound8": this.actor.update({'data.flags.darksheet-wounds.wound8': newtext,'data.attributes.maxwounds.value': newwound,'data.flags.darksheet-wounds.wound8treated.value': newcheck,}); break;
-			   case "wound9": this.actor.update({'data.flags.darksheet-wounds.wound9': newtext,'data.attributes.maxwounds.value': newwound,'data.flags.darksheet-wounds.wound9treated.value': newcheck,}); break;
-			   case "wound10": this.actor.update({'data.flags.darksheet-wounds.wound10': newtext,'data.attributes.maxwounds.value': newwound,'data.flags.darksheet-wounds.wound10treated.value': newcheck,}); break;
-			   case "wound11": this.actor.update({'data.flags.darksheet-wounds.wound11': newtext,'data.attributes.maxwounds.value': newwound,'data.flags.darksheet-wounds.wound11treated.value': newcheck,}); break;
-			   case "wound12": this.actor.update({'data.flags.darksheet-wounds.wound12': newtext,'data.attributes.maxwounds.value': newwound,'data.flags.darksheet-wounds.wound12treated.value': newcheck,}); break;
-			   case "wound13": this.actor.update({'data.flags.darksheet-wounds.wound13': newtext,'data.attributes.maxwounds.value': newwound,'data.flags.darksheet-wounds.wound13treated.value': newcheck,}); break;
-			   case "wound14": this.actor.update({'data.flags.darksheet-wounds.wound14': newtext,'data.attributes.maxwounds.value': newwound,'data.flags.darksheet-wounds.wound14treated.value': newcheck,}); break;
-			   case "wound15": this.actor.update({'data.flags.darksheet-wounds.wound15': newtext,'data.attributes.maxwounds.value': newwound,'data.flags.darksheet-wounds.wound15treated.value': newcheck,}); break;
-			   case "wound16": this.actor.update({'data.flags.darksheet-wounds.wound16': newtext,'data.attributes.maxwounds.value': newwound,'data.flags.darksheet-wounds.wound16treated.value': newcheck,}); break;
-			   case "wound17": this.actor.update({'data.flags.darksheet-wounds.wound17': newtext,'data.attributes.maxwounds.value': newwound,'data.flags.darksheet-wounds.wound17treated.value': newcheck,}); break;
-			   case "wound18": this.actor.update({'data.flags.darksheet-wounds.wound18': newtext,'data.attributes.maxwounds.value': newwound,'data.flags.darksheet-wounds.wound18treated.value': newcheck,}); break;
-			   case "wound19": this.actor.update({'data.flags.darksheet-wounds.wound19': newtext,'data.attributes.maxwounds.value': newwound,'data.flags.darksheet-wounds.wound19treated.value': newcheck,}); break;
-			   case "wound20": this.actor.update({'data.flags.darksheet-wounds.wound20': newtext,'data.attributes.maxwounds.value': newwound,'data.flags.darksheet-wounds.wound20treated.value': newcheck,}); break;
+			   case "wound1": this.actor.update({'data.attributes.darksheet-wounds.wound1': newtext,'data.attributes.maxwounds.value': newwound,'data.attributes.darksheet-wounds.wound1treated.value': newcheck,}); break;
+			   case "wound2": this.actor.update({'data.attributes.darksheet-wounds.wound2': newtext,'data.attributes.maxwounds.value': newwound,'data.attributes.darksheet-wounds.wound2treated.value': newcheck,}); break;
+			   case "wound3": this.actor.update({'data.attributes.darksheet-wounds.wound3': newtext,'data.attributes.maxwounds.value': newwound,'data.attributes.darksheet-wounds.wound3treated.value': newcheck,}); break;
+			   case "wound4": this.actor.update({'data.attributes.darksheet-wounds.wound4': newtext,'data.attributes.maxwounds.value': newwound,'data.attributes.darksheet-wounds.wound4treated.value': newcheck,}); break;
+			   case "wound5": this.actor.update({'data.attributes.darksheet-wounds.wound5': newtext,'data.attributes.maxwounds.value': newwound,'data.attributes.darksheet-wounds.wound5treated.value': newcheck,}); break;
+			   case "wound6": this.actor.update({'data.attributes.darksheet-wounds.wound6': newtext,'data.attributes.maxwounds.value': newwound,'data.attributes.darksheet-wounds.wound61treated.value': newcheck,}); break;
+			   case "wound7": this.actor.update({'data.attributes.darksheet-wounds.wound7': newtext,'data.attributes.maxwounds.value': newwound,'data.attributes.darksheet-wounds.wound7treated.value': newcheck,}); break;
+			   case "wound8": this.actor.update({'data.attributes.darksheet-wounds.wound8': newtext,'data.attributes.maxwounds.value': newwound,'data.attributes.darksheet-wounds.wound8treated.value': newcheck,}); break;
+			   case "wound9": this.actor.update({'data.attributes.darksheet-wounds.wound9': newtext,'data.attributes.maxwounds.value': newwound,'data.attributes.darksheet-wounds.wound9treated.value': newcheck,}); break;
+			   case "wound10": this.actor.update({'data.attributes.darksheet-wounds.wound10': newtext,'data.attributes.maxwounds.value': newwound,'data.attributes.darksheet-wounds.wound10treated.value': newcheck,}); break;
+			   case "wound11": this.actor.update({'data.attributes.darksheet-wounds.wound11': newtext,'data.attributes.maxwounds.value': newwound,'data.attributes.darksheet-wounds.wound11treated.value': newcheck,}); break;
+			   case "wound12": this.actor.update({'data.attributes.darksheet-wounds.wound12': newtext,'data.attributes.maxwounds.value': newwound,'data.attributes.darksheet-wounds.wound12treated.value': newcheck,}); break;
+			   case "wound13": this.actor.update({'data.attributes.darksheet-wounds.wound13': newtext,'data.attributes.maxwounds.value': newwound,'data.attributes.darksheet-wounds.wound13treated.value': newcheck,}); break;
+			   case "wound14": this.actor.update({'data.attributes.darksheet-wounds.wound14': newtext,'data.attributes.maxwounds.value': newwound,'data.attributes.darksheet-wounds.wound14treated.value': newcheck,}); break;
+			   case "wound15": this.actor.update({'data.attributes.darksheet-wounds.wound15': newtext,'data.attributes.maxwounds.value': newwound,'data.attributes.darksheet-wounds.wound15treated.value': newcheck,}); break;
+			   case "wound16": this.actor.update({'data.attributes.darksheet-wounds.wound16': newtext,'data.attributes.maxwounds.value': newwound,'data.attributes.darksheet-wounds.wound16treated.value': newcheck,}); break;
+			   case "wound17": this.actor.update({'data.attributes.darksheet-wounds.wound17': newtext,'data.attributes.maxwounds.value': newwound,'data.attributes.darksheet-wounds.wound17treated.value': newcheck,}); break;
+			   case "wound18": this.actor.update({'data.attributes.darksheet-wounds.wound18': newtext,'data.attributes.maxwounds.value': newwound,'data.attributes.darksheet-wounds.wound18treated.value': newcheck,}); break;
+			   case "wound19": this.actor.update({'data.attributes.darksheet-wounds.wound19': newtext,'data.attributes.maxwounds.value': newwound,'data.attributes.darksheet-wounds.wound19treated.value': newcheck,}); break;
+			   case "wound20": this.actor.update({'data.attributes.darksheet-wounds.wound20': newtext,'data.attributes.maxwounds.value': newwound,'data.attributes.darksheet-wounds.wound20treated.value': newcheck,}); break;
 		   }
 		})
 		html.find('.addwoundbutton').click(async event => {
@@ -3171,16 +3171,27 @@ export class DarkSheet extends ActorSheet5eCharacter {
 							}
 						});
 					   switch(i){
-						   case 1: this.actor.update({'data.flags.darksheet-wounds.wound1treated.value': newcheck,}); break;
-						   case 2: this.actor.update({'data.flags.darksheet-wounds.wound2treated.value': newcheck,}); break;
-						   case 3: this.actor.update({'data.flags.darksheet-wounds.wound3treated.value': newcheck,}); break;
-						   case 4: this.actor.update({'data.flags.darksheet-wounds.wound4treated.value': newcheck,}); break;
-						   case 5: this.actor.update({'data.flags.darksheet-wounds.wound5treated.value': newcheck,}); break;
-						   case 6: this.actor.update({'data.flags.darksheet-wounds.wound61treated.value': newcheck,}); break;
-						   case 7: this.actor.update({'data.flags.darksheet-wounds.wound7treated.value': newcheck,}); break;
-						   case 8: this.actor.update({'data.flags.darksheet-wounds.wound8treated.value': newcheck,}); break;
-						   case 9: this.actor.update({'data.flags.darksheet-wounds.wound9treated.value': newcheck,}); break;
-						   case 10: this.actor.update({'data.flags.darksheet-wounds.wound10treated.value': newcheck,}); break;
+						   case 1: this.actor.update({'data.attributes.darksheet-wounds.wound1treated.value': newcheck,}); break;
+						   case 2: this.actor.update({'data.attributes.darksheet-wounds.wound2treated.value': newcheck,}); break;
+						   case 3: this.actor.update({'data.attributes.darksheet-wounds.wound3treated.value': newcheck,}); break;
+						   case 4: this.actor.update({'data.attributes.darksheet-wounds.wound4treated.value': newcheck,}); break;
+						   case 5: this.actor.update({'data.attributes.darksheet-wounds.wound5treated.value': newcheck,}); break;
+						   case 6: this.actor.update({'data.attributes.darksheet-wounds.wound61treated.value': newcheck,}); break;
+						   case 7: this.actor.update({'data.attributes.darksheet-wounds.wound7treated.value': newcheck,}); break;
+						   case 8: this.actor.update({'data.attributes.darksheet-wounds.wound8treated.value': newcheck,}); break;
+						   case 9: this.actor.update({'data.attributes.darksheet-wounds.wound9treated.value': newcheck,}); break;
+						   case 10: this.actor.update({'data.attributes.darksheet-wounds.wound10treated.value': newcheck,}); break;
+						   case 11: this.actor.update({'data.attributes.darksheet-wounds.wound11treated.value': newcheck,}); break;
+						   case 12: this.actor.update({'data.attributes.darksheet-wounds.wound12treated.value': newcheck,}); break;
+						   case 13: this.actor.update({'data.attributes.darksheet-wounds.wound13treated.value': newcheck,}); break;
+						   case 14: this.actor.update({'data.attributes.darksheet-wounds.wound14treated.value': newcheck,}); break;
+						   case 15: this.actor.update({'data.attributes.darksheet-wounds.wound15treated.value': newcheck,}); break;
+						   case 16: this.actor.update({'data.attributes.darksheet-wounds.wound16treated.value': newcheck,}); break;
+						   case 17: this.actor.update({'data.attributes.darksheet-wounds.wound17treated.value': newcheck,}); break;
+						   case 18: this.actor.update({'data.attributes.darksheet-wounds.wound18treated.value': newcheck,}); break;
+						   case 19: this.actor.update({'data.attributes.darksheet-wounds.wound19treated.value': newcheck,}); break;
+						   case 20: this.actor.update({'data.attributes.darksheet-wounds.wound20treated.value': newcheck,}); break;
+
 					   }
 					} else if (roll <= 8) {
 						ChatMessage.create({
@@ -3201,16 +3212,26 @@ export class DarkSheet extends ActorSheet5eCharacter {
 							}
 						});
 					   switch(i){
-						   case 1: this.actor.update({'data.flags.darksheet-wounds.wound1treated.value': newcheck,}); break;
-						   case 2: this.actor.update({'data.flags.darksheet-wounds.wound2treated.value': newcheck,}); break;
-						   case 3: this.actor.update({'data.flags.darksheet-wounds.wound3treated.value': newcheck,}); break;
-						   case 4: this.actor.update({'data.flags.darksheet-wounds.wound4treated.value': newcheck,}); break;
-						   case 5: this.actor.update({'data.flags.darksheet-wounds.wound5treated.value': newcheck,}); break;
-						   case 6: this.actor.update({'data.flags.darksheet-wounds.wound61treated.value': newcheck,}); break;
-						   case 7: this.actor.update({'data.flags.darksheet-wounds.wound7treated.value': newcheck,}); break;
-						   case 8: this.actor.update({'data.flags.darksheet-wounds.wound8treated.value': newcheck,}); break;
-						   case 9: this.actor.update({'data.flags.darksheet-wounds.wound9treated.value': newcheck,}); break;
-						   case 10: this.actor.update({'data.flags.darksheet-wounds.wound10treated.value': newcheck,}); break;
+						   case 1: this.actor.update({'data.attributes.darksheet-wounds.wound1treated.value': newcheck,}); break;
+						   case 2: this.actor.update({'data.attributes.darksheet-wounds.wound2treated.value': newcheck,}); break;
+						   case 3: this.actor.update({'data.attributes.darksheet-wounds.wound3treated.value': newcheck,}); break;
+						   case 4: this.actor.update({'data.attributes.darksheet-wounds.wound4treated.value': newcheck,}); break;
+						   case 5: this.actor.update({'data.attributes.darksheet-wounds.wound5treated.value': newcheck,}); break;
+						   case 6: this.actor.update({'data.attributes.darksheet-wounds.wound61treated.value': newcheck,}); break;
+						   case 7: this.actor.update({'data.attributes.darksheet-wounds.wound7treated.value': newcheck,}); break;
+						   case 8: this.actor.update({'data.attributes.darksheet-wounds.wound8treated.value': newcheck,}); break;
+						   case 9: this.actor.update({'data.attributes.darksheet-wounds.wound9treated.value': newcheck,}); break;
+						   case 10: this.actor.update({'data.attributes.darksheet-wounds.wound10treated.value': newcheck,}); break;
+						   case 11: this.actor.update({'data.attributes.darksheet-wounds.wound11treated.value': newcheck,}); break;
+						   case 12: this.actor.update({'data.attributes.darksheet-wounds.wound12treated.value': newcheck,}); break;
+						   case 13: this.actor.update({'data.attributes.darksheet-wounds.wound13treated.value': newcheck,}); break;
+						   case 14: this.actor.update({'data.attributes.darksheet-wounds.wound14treated.value': newcheck,}); break;
+						   case 15: this.actor.update({'data.attributes.darksheet-wounds.wound15treated.value': newcheck,}); break;
+						   case 16: this.actor.update({'data.attributes.darksheet-wounds.wound16treated.value': newcheck,}); break;
+						   case 17: this.actor.update({'data.attributes.darksheet-wounds.wound17treated.value': newcheck,}); break;
+						   case 18: this.actor.update({'data.attributes.darksheet-wounds.wound18treated.value': newcheck,}); break;
+						   case 19: this.actor.update({'data.attributes.darksheet-wounds.wound19treated.value': newcheck,}); break;
+						   case 20: this.actor.update({'data.attributes.darksheet-wounds.wound20treated.value': newcheck,}); break;
 					   }
 					} else {
 						ChatMessage.create({
