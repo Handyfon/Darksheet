@@ -2,7 +2,7 @@
 	"name": "darksheet",
 	"title": "darksheet 5e",
 	"description": "Darker Dungeons replacement for the default 5e actor sheet",
-	"version": "3.3.2",
+	"version": "3.3.3",
 	"author": "Handyfon#8390",
 	"esmodules": ["darksheet.js", "/js/character.js", "templates.js"],
 	"styles": ["css/darksheet.css"],

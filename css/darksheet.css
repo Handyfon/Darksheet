@@ -866,7 +866,6 @@ button#minus {
     transform: scale(0.8);
 }
 
-
 .titlecheckbox > input:checked {
     border: 1px solid #c7e5ff;
     padding: 10px;
@@ -891,7 +890,7 @@ button#minus {
     margin: 5px 5px 5px 0;
     padding-right: 5px;
     border-right: 2px groove #eeede0;
-    height: 240px;
+    height: 96%;
     overflow: auto;
 }
 /*CHECK SECTION ON THE DD TAB*/
