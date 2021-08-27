@@ -13,9 +13,7 @@
     background: #151515 !important;
     color: #424242 !important;
 }
-aside.header-exp.flexcol {
-    height: 20px !important;
-}
+
 .removewoundbutton{
 	border: 1px solid #b5b3a4;
     border-radius: 2px;
@@ -46,6 +44,7 @@ aside.header-exp.flexcol {
 .dnd5e.sheet.actor .encumbrance .encumbrance-label {
     color: #fff;
     background: #00000030;
+    border-radius: 2px;
 }
 label.dicelabel2.burnoutclick.burnoutdie.rollable {
     border: 1px solid #b5b3a4;
@@ -160,6 +159,7 @@ select#atitle {
     border: 1px groove;
     display: none;
 }
+
 label.randomnotch.rollable {
     border: 1px solid;
     text-shadow: 0 0 1px;
@@ -213,15 +213,14 @@ label.randomnotch.rollable {
     position: absolute !important;
 }
 button#plusHD {
-	position: relative;
+    position: relative;
     left: -4px;
-    bottom: 5px;
-
+    bottom: 2px;
 }
 button#minusHD {
     position: relative;
     left: -4px;
-    top: -4px;
+    top: -2px;
 }
 button#plusHD:after {
     content: "+";
@@ -290,8 +289,21 @@ button#minuspell {
     height: 16px !important;
     display: block !important;
     position: relative !important;
-    margin-left: -16px !important;
-    margin-bottom: -18px !important;
+    margin-left: -27px !important;
+    margin-bottom: -16px !important;
+}
+button#plusspell {
+    width: 7px !important;
+    height: 16px !important;
+    display: block !important;
+    /* position: relative !important; */
+    margin-left: -12px !important;
+    margin-bottom: -17px !important;
+    font-variant: all-petite-caps;
+}
+button#plusspell:hover {
+    background: #003e00 !important;
+    color: #1bff00 !important;
 }
 button#minuspell:hover {
     background: #552424 !important;
@@ -696,11 +708,20 @@ label#rollableammodice {
     text-transform: capitalize;
 }
 label#rollableammodice:hover {
-    background: #31313130;
-    color: white;
     filter: drop-shadow(0px 0px 2px black);
+    background-image: linear-gradient(#00ebff24, #151d4efc) !important;
+    border: 1px dashed #7170a9;
 }
-
+label#rollableammodice:hover {
+    background-image: linear-gradient(#151d4efc, #00ebff24) !important;
+}
+.ammostyle {
+    background-image: linear-gradient(#151d4efc, #00ebff24) !important;
+    border: 1px solid #7171a9;
+}
+.ammostyle:hover {
+    background-image: linear-gradient(#2d201d00, #474a5dfc) !important;
+}
 .box-title.rollable:hover {
     cursor: pointer;
 	background: #31313130;
@@ -712,15 +733,29 @@ label#rollableammodice:hover {
     display: table-cell;
     vertical-align: middle;
 }
-li.item.flexrow.worn {
-    background: #ffff5f30;
-}
 li.item.flexrow.well-worn {
-	background: #ff935f63;
 }
 li.item.flexrow.scarred {
-    background: #86393980;
-    color: #520000;
+}
+.item-image.true {
+	border-radius:36px;
+}
+h4.well-worn {
+    -webkit-text-stroke: 0.5px #000000;
+    color: #ff7600 !important;
+    border-left: #ff6500 solid 5px;
+    filter: contrast(0.5);
+}
+h4.worn {
+    color: #fff46b !important;
+    border-left: #fff46b solid 5px;
+	filter: contrast(0.5);
+}
+h4.scarred {
+    color: #ff0000 !important;
+    text-shadow: 0 0 2px;
+    border-left: solid 5px;
+	filter: contrast(0.5);
 }
 label.notchlabel:hover + button#minus{
 	visibility: visible !important;
@@ -899,8 +934,9 @@ label.check.dicelabel2.staminacheck.rollable:hover {
 }
 .dnd5e.sheet.actor .spellcasting-ability select {
     margin: 0;
-    flex: none;
-
+}
+label.spellburnoutcheck {
+    margin-left: 8px;
 }
 .window-app {
     display: flex;
@@ -1090,20 +1126,7 @@ form .form-header {
     width: 80px !important;
     position: relative;
 }
-.trainpointa.green {
-    width: 80px;
-    position: absolute;
-    margin-top: 9px;
-    margin-left: 55px;
-    text-align: center;
-}
-.trainpointa.red {
-    width: 80px;
-    position: absolute;
-    margin-top: 9px;
-    margin-left: 55px;
-    text-align: center;
-}
+
 .trainingcheckbox {
     height: 18px !important;
     margin: 0px !important;
@@ -1347,11 +1370,20 @@ margin-bottom: 3px !important;
 .trainpointa {
     border-radius: 0px !important;
 }
+.dnd5e.sheet.actor .spellcasting-ability label, .dnd5e.sheet.actor .spellcasting-ability span {
+    height: 24px;
+}
 .dnd5e.sheet.actor.character .sheet-header .summary .proficiency {
-    margin-left: 5%;
+    text-align: center;
+    padding-right: unset;
+    align-self: center;
+    height: 21px;
 }
 .dnd5e.sheet.actor .counters {
     place-items: center;
+}
+.dnd5e.sheet.actor .sheet-header .summary input, .dnd5e.sheet.actor .sheet-header .summary span {
+    height: 100%;
 }
 .deathcheckbox > input:checked {
     border: 1px solid #b84141;
@@ -1583,7 +1615,7 @@ margin-bottom: 3px !important;
 .foodcheckbox > input:checked + span::before {
     content: '\2714';
     display: block;
-    color: #000000;
+    color: #ffffff;
     position: absolute;
     margin-top: -5px;
     margin-left: -26px;

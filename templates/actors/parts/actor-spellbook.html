@@ -59,7 +59,10 @@
 		
        <div class="spell-slots {{data.attributes.color.value}}" id="spellrow">
             {{#if section.usesSlots}}
-			<button name="{{section.prop}}" onclick="return(this.name)" style="width: 7px;height: 16px;display: block;margin-top: 3px;position: fixed;margin-left: -3px;" class="minusspellslot-{{section.prop}}" type="button" id="minuspell"><p style="margin: 0;margin-top: -10px;margin-left: -2px;">-</p></button>
+			<div class="darksheet-spellslotbuttons">
+			<button name="{{section.prop}}" onclick="return(this.name)" class="minusspellslot-{{section.prop}}" type="button" id="minuspell"><p style="margin: 0;margin-top: -10px;margin-left: -2px;">-</p></button>
+			<button name="{{section.prop}}" onclick="return(this.name)" class="plusspellslot-{{section.prop}}" type="button" id="plusspell"><p style="margin: 0;margin-top: -10px;margin-left: -2px;">+</p></button>
+			</div>
 			<input type="text" name="data.spells.{{section.prop}}.value" value="{{section.uses}}" placeholder="0"
                    data-dtype="Number"/>
             <span class="sep"> / </span>

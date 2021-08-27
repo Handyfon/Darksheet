@@ -1214,7 +1214,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
                     let content = `
 						<div class="dnd5e chat-card item-card">
 							<header class="card-header flexrow">
-								<img src="${this.actor.data.token.img}" title="" width="36" height="36" style="border: none;"/> <h1>${this.actor.name}'s </h1>
+								<img src="${this.actor.data.token.img}" title="" width="36" height="36" style="border: none;"/> <h3>${this.actor.name}'s </h3>
 							</header>
 							<label style="font-size: 14px;">${name} just shattered</label>
 						</div>`;
@@ -1736,7 +1736,8 @@ export class DarkSheet extends ActorSheet5eCharacter {
                     let content = `
 						<div class="dnd5e chat-card item-card">
 							<header class="card-header flexrow">
-								<img src="${this.actor.data.token.img}" title="" width="36" height="36" style="border: none;"/> <h1>${this.actor.name}'s </h1>
+								<img src="${this.actor.data.token.img}" title="" width="36" height="36" style="border: none;"/> <h3>${this.actor.name}'s </h3>
+								</br>
 							</header>
 							<label style="font-size: 14px;">${name} just shattered</label>
 						</div>`;
@@ -2160,6 +2161,127 @@ export class DarkSheet extends ActorSheet5eCharacter {
                 actor -= 1;
                 this.actor.update({
                     'data.spells.spell9.value': actor
+                });
+            }
+        });
+		html.find('.minusspellslot-pact').click(async event => {
+            event.preventDefault();
+            let spellamount = this.actor.data.data.spells.pact.value;
+            if (spellamount > 0) {
+                spellamount -= 1;
+                this.actor.update({
+                    'data.spells.pact.value': spellamount
+                });
+            }
+        });
+		//============================================================================================PLUS
+        html.find('.plusspellslot-spell1').click(async event => {
+            event.preventDefault();
+            let maxamount = this.actor.data.data.spells.spell1.max;;
+            let spellamount = this.actor.data.data.spells.spell1.value;
+            if (spellamount < maxamount) {
+                spellamount += 1;
+                this.actor.update({
+                    'data.spells.spell1.value': spellamount
+                });
+            }
+        });
+        html.find('.plusspellslot-spell2').click(async event => {
+            event.preventDefault();
+            let maxamount = this.actor.data.data.spells.spell2.max;;
+            let spellamount = this.actor.data.data.spells.spell2.value;
+            if (spellamount < maxamount) {
+                spellamount += 1;
+                this.actor.update({
+                    'data.spells.spell2.value': spellamount
+                });
+            }
+        });
+        html.find('.plusspellslot-spell3').click(async event => {
+            event.preventDefault();
+            let maxamount = this.actor.data.data.spells.spell3.max;;
+            let spellamount = this.actor.data.data.spells.spell3.value;
+            if (spellamount < maxamount) {
+                spellamount += 1;
+                this.actor.update({
+                    'data.spells.spell3.value': spellamount
+                });
+            }
+        });
+        html.find('.plusspellslot-spell4').click(async event => {
+            event.preventDefault();
+            let maxamount = this.actor.data.data.spells.spell4.max;;
+            let spellamount = this.actor.data.data.spells.spell4.value;
+            if (spellamount < maxamount) {
+                spellamount += 1;
+                this.actor.update({
+                    'data.spells.spell4.value': spellamount
+                });
+            }
+        });
+        html.find('.plusspellslot-spell5').click(async event => {
+            event.preventDefault();
+            let maxamount = this.actor.data.data.spells.spell5.max;;
+            let spellamount = this.actor.data.data.spells.spell5.value;
+            if (spellamount < maxamount) {
+                spellamount += 1;
+                this.actor.update({
+                    'data.spells.spell5.value': spellamount
+                });
+            }
+        });
+        html.find('.plusspellslot-spell6').click(async event => {
+            event.preventDefault();
+            let maxamount = this.actor.data.data.spells.spell6.max;;
+            let spellamount = this.actor.data.data.spells.spell6.value;
+            if (spellamount < maxamount) {
+                spellamount += 1;
+                this.actor.update({
+                    'data.spells.spell6.value': spellamount
+                });
+            }
+        });
+        html.find('.plusspellslot-spell7').click(async event => {
+            event.preventDefault();
+            let maxamount = this.actor.data.data.spells.spell7.max;;
+            let spellamount = this.actor.data.data.spells.spell7.value;
+            if (spellamount < maxamount) {
+                spellamount += 1;
+                this.actor.update({
+                    'data.spells.spell7.value': spellamount
+                });
+            }
+        });
+        html.find('.plusspellslot-spell8').click(async event => {
+            event.preventDefault();
+            let maxamount = this.actor.data.data.spells.spell8.max;;
+            let spellamount = this.actor.data.data.spells.spell8.value;
+            if (spellamount < maxamount) {
+                spellamount += 1;
+                this.actor.update({
+                    'data.spells.spell8.value': spellamount
+                });
+            }
+        });
+        html.find('.plusspellslot-spell9').click(async event => {
+            event.preventDefault();
+            let maxamount = this.actor.data.data.spells.spell9.max;;
+            let spellamount = this.actor.data.data.spells.spell9.value;
+            if (spellamount < maxamount) {
+                spellamount += 1;
+                this.actor.update({
+                    'data.spells.spell9.value': spellamount
+                });
+            }
+        });
+        html.find('.plusspellslot-pact').click(async event => {
+            event.preventDefault();
+            let pactamount = this.actor.data.data.spells.pact.max;
+            let spellamount = this.actor.data.data.spells.pact.value;
+            if (spellamount < pactamount) {
+                spellamount += 1;
+                this.actor.update({
+                    'data.spells.pact.value': spellamount
                 });
             }
         });
@@ -3312,7 +3434,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 				ui.notifications.warn("Darksheet | You need to import or create a 'Treatwounds' Table to roll from");
 			}
 			else{
-				const result = table.roll()
+				const result = await table.roll()
 				let content = `
 						<h3 style="text-align: center;">${result.results[0].data.text}</h3>
 					</div>`;
@@ -3408,7 +3530,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 				ui.notifications.warn("Darksheet | You need to import or create a 'Critical Success Boons' Table to roll from");
 			}
 			else{
-				const result = table.roll()
+				const result = await table.roll();
 				let content = `
 					<div class="dnd5e chat-ca rd item-card" data-acor-id="${this.actor._id}">
 						<h3 style="text-shadow: 0 0 1px; text-align: center;">${result.results[0].data.text}</h3>
@@ -3435,7 +3557,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
 				ui.notifications.warn("Darksheet | You need to import or create a 'Critical Failure Consequences' Table to roll from");
 			}
 			else{
-				const result = table.roll()
+				const result = await table.roll();
 				let content = `
 					<div class="dnd5e chat-card item-card" data-acor-id="${this.actor._id}">
 						<h3 style="text-shadow: 0 0 1px; text-align: center;">${result.results[0].data.text}</h3>
@@ -3895,13 +4017,13 @@ Hooks.on('canvasReady', function() {
         Darkscreen.addChatControl();
         console.log("Darkscreen GM True");
     }
-    if (game.settings.get('darksheet', 'hideSRDCOMP')) {
+    /*if (game.settings.get('darksheet', 'hideSRDCOMP')) {
         game.packs.delete("dnd5e.items");
         //		game.packs.delete("dnd5e.classes");
         game.packs.delete("dnd5e.tradegoods");
         game.packs.delete("dnd5e.heroes");
         console.log("Darksheet || Packs deleted");
-    }
+    }*/
 });
 Hooks.on('createOwnedItem', (sheet, html, item) => {
 	console.log("test");

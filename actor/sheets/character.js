@@ -1,4 +1,4 @@
-import ActorSheet5e from "../../../../systems/dnd5e/module/actor/sheets/base.js";
+import ActorSheet5e from "./base.js";
 import Actor5e from "../../../../systems/dnd5e/module/actor/entity.js";
 
 /**
