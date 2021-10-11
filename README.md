@@ -1,3 +1,4 @@
+<b>SUPPORT: https://discord.gg/gs5hAgxBx3</b>
 <b>INSTALL INSTRUCTIONS:
 Use the manifest to install the module:<br/>
 Manifest: https://raw.githubusercontent.com/Handyfon/Darksheet/master/module.json<br/>
