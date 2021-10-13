@@ -1,5 +1,5 @@
 import {
-    ActorSheet5eCharacter
+    ActorSheet5eCharacterDark
 } from '../../../../modules/darksheet/actor/sheets/character.js';
 import { _getInitiativeFormula } from "./js/combat.js";
 //Load Templates
@@ -237,6 +237,138 @@ Hooks.once('init', function() {
     console.log("Darker Dungeons | Initializing Darker Dungeons for the D&D 5th Edition System\n", "_____________________________________________________________________________________________\n", "  ____                _                 ____                                                \n", " |  _ \\   __ _  _ __ | | __ ___  _ __  |  _ \\  _   _  _ __    __ _   ___   ___   _ __   ___ \n", " | | | | / _` || '__|| |/ // _ \| '__|  | | | || | | || '_ \\  / _` | / _ \\ / _ \\ | '_ \\ / __| \n", " | |_| || (_| || |   |   <|  __/| |    | |_| || |_| || | | || (_| ||  __/| (_) || | | |\\__ \\ \n", " |____/  \\__,_||_|   |_|\\_\\\\___||_|    |____/  \\__,_||_| |_| \\__, | \\___| \\___/ |_| |_||___/ \n", "                                                             |___/                          \n", "_____________________________________________________________________________________________");
     console.log();
 });
+
+async function rollBurnout(ActorToRollFor){
+// Rolling table, from best to worst
+            const rollings = ['12', '10', '8', '6', '4'];
+            // Value of the burnoutdice
+            let burnoutdie = ActorToRollFor.data.data.attributes.burnout.value;
+            // find the table
+            let table = game.tables.entities.find(t => t.data.name === "Burnout Consequence");
+			if(table == undefined){
+				ui.notifications.warn("Darksheet | You need to import or create a 'Burnout Consequence' Table to roll from");
+				return;
+			}
+            // burnoutsettings
+            let bsettings = ActorToRollFor.data.data.attributes.burnout.value
+            // magic region
+            var regionmod = parseInt(ActorToRollFor.data.data.attributes.regionmod.value, 10);
+            //console.log("Regionmod: "+regionmod);
+            // burnoutdice changed through region
+            if (regionmod < 0) {
+                var regionmodz = rollings.indexOf(ActorToRollFor.data.data.attributes.burnout.value) - parseInt(regionmod);
+                //console.log("Regionmodz step2 kleiner: "+regionmodz);
+                if (regionmodz >= 5) {
+                    regionmodz = 4;
+                }
+            } else {
+                var regionmodz = rollings.indexOf(ActorToRollFor.data.data.attributes.burnout.value) - parseInt(regionmod);
+                //console.log("Regionmodz step3 größer: "+regionmodz);
+                if (regionmodz <= 0) {
+                    regionmodz = 0;
+                }
+            }
+            var burnoutARegion = rollings[regionmodz];
+
+            let rollcon = burnoutARegion;
+            let rollcona = "d" + rollcon
+            let roll = new Roll(`${rollcona}`).roll();
+            let result = await table.roll();
+			//NEW BURNOUT DIE
+			if(burnoutARegion == 4)
+				var newBurnOutDie = "";
+			else
+				var newBurnOutDie = "-> d" + rollings[regionmodz +1];
+
+            if (burnoutdie === 0) {} else {
+                let content = `
+				<div class="dnd5e chat-card item-card" data-acor-id="${ActorToRollFor._id}">
+					<header class="card-header flexrow">
+						<img src="${ActorToRollFor.data.token.img}" title="" width="36" height="36" style="border: none;"/>
+						<h3>Burnoutdice(${rollcona}) - </h3>
+					<h3><div class="burnoutDiceChatValue">${roll.result}</div></h3>
+					</header>
+				</div>`;
+                let content2 = `
+				<div class="dnd5e chat-card item-card" data-acor-id="${ActorToRollFor._id}">
+					<header class="card-header flexrow">
+						<img src="${ActorToRollFor.data.token.img}" title="" width="36" height="36" style="border: none;"/>
+						<h3>Burnoutdice(${rollcona}) ${newBurnOutDie} - </h3>
+					<h3 style="color: #ff0000;text-shadow: 0 0 2px;"><div class="burnoutDiceChatValue">${roll.result}</div></h3>
+					</header>
+					</br>
+					<h3 style="color: #ff0000;text-shadow: 0 0 2px; text-align: center;">${result.results[0].data.text}</h3>
+				</div>`;
+                let content3 = `
+				<div class="dnd5e chat-card item-card" data-acor-id="${ActorToRollFor._id}">
+					<header class="card-header flexrow">
+						<img src="${ActorToRollFor.data.token.img}" title="" width="36" height="36" style="border: none;"/>
+						<h3>Burnoutdice(${rollcona}): </h3>
+					<h3 style="color: #ff0000;text-shadow: 0 0 2px;"><div class="burnoutDiceChatValue">${roll.result}</div></h3>
+					</header>
+				</div>`;
+                let rollWhisper = null;
+                let rollBlind = false;
+                let rollMode = game.settings.get("core", "rollMode");
+                if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperRecipients("GM")
+                if (rollMode === "blindroll") rollBlind = true;
+                if (roll.result <= 2) {
+                    if (bsettings) {
+                        ChatMessage.create({
+                            user: game.user._id,
+                            content: content2,
+                            speaker: {
+                                actor: ActorToRollFor._id,
+                                token: ActorToRollFor.token,
+                                alias: ActorToRollFor.name
+                            },
+
+                            sound: CONFIG.sounds.dice,
+                            flags: {
+                                darksheet: {
+                                    outcome: 'bad'
+                                }
+                            }
+                        });
+                    } else {
+                        ChatMessage.create({
+                            user: game.user._id,
+                            content: content3,
+                            speaker: {
+                                actor: ActorToRollFor._id,
+                                token: ActorToRollFor.token,
+                                alias: ActorToRollFor.name
+                            },
+
+                            sound: CONFIG.sounds.dice,
+                            flags: {
+                                darksheet: {
+                                    outcome: 'bad'
+                                }
+                            }
+                        });
+                    }
+                    // Lower burnoutdie rank
+                    const new_burnoutdie = rollings.indexOf(ActorToRollFor.data.data.attributes.burnout.value) + 1;
+                    if (new_burnoutdie < rollings.length) {
+					    ActorToRollFor.update({'data.attributes.burnout.value': rollings[new_burnoutdie]});
+                    }
+                    this.render();
+                } else {
+                    ChatMessage.create({
+                        user: game.user._id,
+                        content: content,
+                        speaker: {
+                            actor: ActorToRollFor._id,
+                            token: ActorToRollFor.token,
+                            alias: ActorToRollFor.name
+                        },
+                        sound: CONFIG.sounds.dice
+                    });
+                }
+            }
+}
+
 //on Update Actor check for status
 Hooks.on('updateActor', (actor, updates, options, userId) => {
 	if(actor.data.type!="character") return;
@@ -490,148 +622,6 @@ Hooks.on('preUpdateToken', async (scene, sceneId, updates, tokenData) => {
         "data.status.isExhaustion5": updates.effects.includes(exhaustion5),
     });
 
-});
-
-Hooks.on('createChatMessage', (userId) => {
-console.log("Chat Message Detected");
-
-let message = userId.data.content;
-let actor = game.actors.getName(userId.data.speaker.alias);
-let spellburnout = false;
-let iscantrip = false;
-let onlyonce = false;
-if(message.includes("<span>Cantrip</span>")){
-iscantrip = true;
-}
-else if(message.includes("<span>V") || message.includes("<span>M") || message.includes("<span>S") || message.includes("slots")){
-spellburnout = true;
-}
-else{return;}
-if(game.user.character === undefined){
-	return;
-}
-else if(iscantrip == false && spellburnout == true && actor.data.data.attributes.autmomaticburnout && game.user.character.data._id === actor.data._id || iscantrip == true && game.settings.get('darksheet', 'savecantrips') === false && actor.data.data.attributes.autmomaticburnout && game.user.character.data._id === actor.data._id ){
-// Rolling table, from best to worst
-            const rollings = ['12', '10', '8', '6', '4'];
-            // Value of the burnoutdice
-            let burnoutdie = actor.data.data.attributes.burnout.value;
-            // find the table
-            let table = game.tables.entities.find(t => t.data.name === "Burnout Consequence");
-            // burnoutsettings
-            let bsettings = actor.data.data.attributes.burnout.value
-            // magic region
-            var regionmod = parseInt(actor.data.data.attributes.regionmod.value, 10);
-            //console.log("Regionmod: "+regionmod);
-            // burnoutdice changed through region
-            if (regionmod < 0) {
-                var regionmodz = rollings.indexOf(actor.data.data.attributes.burnout.value) - parseInt(regionmod);
-                //console.log("Regionmodz step2 kleiner: "+regionmodz);
-                if (regionmodz >= 5) {
-                    regionmodz = 4;
-                }
-            } else {
-                var regionmodz = rollings.indexOf(actor.data.data.attributes.burnout.value) - parseInt(regionmod);
-                //console.log("Regionmodz step3 größer: "+regionmodz);
-                if (regionmodz <= 0) {
-                    regionmodz = 0;
-                }
-            }
-            var burnoutARegion = rollings[regionmodz];
-            let rollcon = burnoutARegion;
-            let rollcona = "d" + rollcon
-            let roll = new Roll(`${rollcona}`).roll();
-            const result = table.roll()
-
-
-
-            if (burnoutdie === 0) {} else {
-                let content = `
-				<div class="dnd5e chat-card item-card" data-acor-id="${actor._id}">
-					<header class="card-header flexrow">
-						<img src="${actor.data.token.img}" title="" width="36" height="36" style="border: none;"/>
-						<h3>Burnoutdice(${rollcona}): </h3>
-					<h3>${roll.result}</h3>
-					</header>
-				</div>`;
-                let content2 = `
-				<div class="dnd5e chat-card item-card" data-acor-id="${actor._id}">
-					<header class="card-header flexrow">
-						<img src="${actor.data.token.img}" title="" width="36" height="36" style="border: none;"/>
-						<h3>Burnoutdice(${rollcona}): </h3>
-					<h3 style="color: #ff0000;text-shadow: 0 0 2px;">${roll.result}</h3>
-					</header>
-					</br>
-					<h3 style="color: #ff0000;text-shadow: 0 0 2px; text-align: center;">${result.results[0].data.text}</h3>
-				</div>`;
-                let content3 = `
-				<div class="dnd5e chat-card item-card" data-acor-id="${actor._id}">
-					<header class="card-header flexrow">
-						<img src="${actor.data.token.img}" title="" width="36" height="36" style="border: none;"/>
-						<h3>Burnoutdice(${rollcona}): </h3>
-					<h3 style="color: #ff0000;text-shadow: 0 0 2px;">${roll.result}</h3>
-					</header>
-				</div>`;
-                let rollWhisper = null;
-                let rollBlind = false;
-                let rollMode = game.settings.get("core", "rollMode");
-                if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperRecipients("GM")
-                if (rollMode === "blindroll") rollBlind = true;
-                if (roll.result <= 2) {
-                    if (bsettings) {
-                        ChatMessage.create({
-                            user: game.user._id,
-                            content: content2,
-                            speaker: {
-                                actor: actor._id,
-                                token: actor.token,
-                                alias: actor.name
-                            },
-
-                            sound: CONFIG.sounds.dice,
-                            flags: {
-                                darksheet: {
-                                    outcome: 'bad'
-                                }
-                            }
-                        });
-                    } else {
-                        ChatMessage.create({
-                            user: game.user._id,
-                            content: content3,
-                            speaker: {
-                                actor: actor._id,
-                                token: actor.token,
-                                alias: actor.name
-                            },
-
-                            sound: CONFIG.sounds.dice,
-                            flags: {
-                                darksheet: {
-                                    outcome: 'bad'
-                                }
-                            }
-                        });
-                    }
-                    // Lower burnoutdie rank
-                    const new_burnoutdie = rollings.indexOf(actor.data.data.attributes.burnout.value) + 1;
-                    if (new_burnoutdie < rollings.length) {
-						actor.update({'data.attributes.burnout.value': new_burnoutdie});
-                    }
-                    actor.render();
-                } else {
-                    ChatMessage.create({
-                        user: game.user._id,
-                        content: content,
-                        speaker: {
-                            actor: actor._id,
-                            token: actor.token,
-                            alias: actor.name
-                        },
-                        sound: CONFIG.sounds.dice
-                    });
-                }
-            }
-	}
 });
 
 Hooks.on('createToken', async (scene, sceneId, tokenData, options, userId) => {
@@ -984,7 +974,7 @@ export class ItemSheet5e extends ItemSheet {
         }
     }
 }
-export class DarkSheet extends ActorSheet5eCharacter {
+export class DarkSheet extends ActorSheet5eCharacterDark {
     get template() {
         return 'modules/darksheet/templates/character-sheet.html';
     }
@@ -1165,7 +1155,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
         html.find('.darksheetbuttonplus').click(async event => {
             event.preventDefault();
             const itemID = event.currentTarget.closest('.item').dataset.itemId;
-            let darkitem = this.actor.getEmbeddedEntity('OwnedItem', itemID);
+            let darkitem = this.actor.items.get(itemID);
             let name = darkitem.name;
             let notches = darkitem.data.flags.darksheet.item.notches;
             let fragility = darkitem.data.flags.darksheet.item.fragility;
@@ -1256,20 +1246,25 @@ export class DarkSheet extends ActorSheet5eCharacter {
 
             if (darkitem.type === "equipment") { //ARMOR CALCULATION==========================================
                 let AC = darkitem.data.data.armor.value;
+				let newBaseAC = 0;
+				if(darkitem.data.data.basearmor != null)
+					newBaseAC = darkitem.data.data.basearmor.value;
+				if(newBaseAC == 0){
+					newBaseAC = AC;
+				}
                 if (Number.isInteger(notches)) {
                     let newAC = AC - 1;
                     if (newAC <= 0) {
                         newAC = 0
                     };
-                    if (Math.floor(notches) === 1) {
-                        basenotchdamage = AC;
-                    }
                     if (newAC >= basenotchdamage) {
                         newAC = basenotchdamage
                     }
+
                     this.actor.updateEmbeddedEntity('Item', {
                         _id: darkitem.data._id,
-                        'data.armor.value': newAC
+                        'data.armor.value': newAC,
+						'data.basearmor.value': newBaseAC
                     });
                     this.actor.updateEmbeddedEntity('Item', {
                         _id: darkitem.data._id,
@@ -1456,7 +1451,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
         html.find('.darksheetbutton-').click(async event => {
             event.preventDefault();
             const itemID = event.currentTarget.closest('.item').dataset.itemId;
-            let darkitem = this.actor.getEmbeddedEntity('OwnedItem', itemID);
+            let darkitem = this.actor.items.get(itemID);
             let basenotchdamage = darkitem.data.data.damage.basenotchdamage;
             let notches = darkitem.data.flags.darksheet.item.notches;
             let newnotches = notches - 1;
@@ -1476,21 +1471,22 @@ export class DarkSheet extends ActorSheet5eCharacter {
                 });
                 if (darkitem.type === "equipment") { //ARMOR CALCULATION==========================================
                     let AC = darkitem.data.data.armor.value;
-                    let newAC = AC;
-                    if (notches > basenotchdamage) { //IF NOTCHES AREN'T SMALLER THAN THE BASENOTCHES
-                    } else {
-                        newAC++;
-                    }
-                    if (newAC >= basenotchdamage) {
-                        newAC = basenotchdamage
+					let BaseAC = 0;
+					if(darkitem.data.data.basearmor != null)
+						BaseAC = darkitem.data.data.basearmor.value;
+					if(BaseAC == 0){
+						BaseAC = AC;
+					}
+                    if (AC < BaseAC) { //IF AC SMALLER THEN BASE AC
+						AC++;
+                    } else{
+						AC = BaseAC;
                     }
                     this.actor.updateEmbeddedEntity('Item', {
                         _id: darkitem.data._id,
-                        'data.armor.value': newAC
-                    });
-                    this.actor.updateEmbeddedEntity('Item', {
-                        _id: darkitem.data._id,
-                        'data.damage.basenotchdamage': basenotchdamage
+                        'data.damage.basenotchdamage': basenotchdamage,
+                        'data.armor.value': AC,
+						'data.basearmor.value': BaseAC
                     });
                 }
                 if (darkitem.type === "tool") {
@@ -1629,7 +1625,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
             let item = this.actor.items.get(($(event.currentTarget).parents('[data-item-id]').attr("data-item-id")));
             // Seeting and creating chatMessage
             const itemID = event.currentTarget.closest('.item').dataset.itemId;
-            let darkitem = this.actor.getEmbeddedEntity('OwnedItem', itemID);
+            let darkitem = this.actor.items.get(itemID);
             let title = `<header><h3>${this.actor.data.name} rolls ${this.actor.data.data.attributes.adress} ammodie for ${darkitem.name}<h3></header>`;
             let roll = new Roll('@ammodie', {
                 ammodie: darkitem.data.flags.darksheet.item.ammodie
@@ -2037,7 +2033,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
         html.find('.darksheetbuttonHDplus').click(async event => {
             event.preventDefault();
             const itemID = event.currentTarget.closest('.item').dataset.itemId;
-            let darkitem = this.actor.getEmbeddedEntity('OwnedItem', itemID);
+            let darkitem = this.actor.items.get(itemID);
 			//console.log(darkitem);
 			let used = darkitem.data.data.hitDiceUsed + 1;
 			//INVALID VALUE CHECK
@@ -2056,7 +2052,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
         html.find('.darksheetbuttonHDmin').click(async event => {
             event.preventDefault();
             const itemID = event.currentTarget.closest('.item').dataset.itemId;
-            let darkitem = this.actor.getEmbeddedEntity('OwnedItem', itemID);
+            let darkitem = this.actor.items.get(itemID);
 			console.log(darkitem);
 			let used = darkitem.data.data.hitDiceUsed - 1;
 			
@@ -2288,135 +2284,7 @@ export class DarkSheet extends ActorSheet5eCharacter {
         /*LOOK FOR BURNOUTDIE*/
         html.find('.burnoutdie').click(async event => {
             event.preventDefault();
-
-            // Rolling table, from best to worst
-            const rollings = ['12', '10', '8', '6', '4'];
-            // Value of the burnoutdice
-            let burnoutdie = this.actor.data.data.attributes.burnout.value;
-            // find the table
-            let table = game.tables.entities.find(t => t.data.name === "Burnout Consequence");
-			if(table == undefined){
-				ui.notifications.warn("Darksheet | You need to import or create a 'Burnout Consequence' Table to roll from");
-				return;
-			}
-            // burnoutsettings
-            let bsettings = this.actor.data.data.attributes.burnout.value
-            // magic region
-            var regionmod = parseInt(this.actor.data.data.attributes.regionmod.value, 10);
-            //console.log("Regionmod: "+regionmod);
-            // burnoutdice changed through region
-            if (regionmod < 0) {
-                var regionmodz = rollings.indexOf(this.actor.data.data.attributes.burnout.value) - parseInt(regionmod);
-                //console.log("Regionmodz step2 kleiner: "+regionmodz);
-                if (regionmodz >= 5) {
-                    regionmodz = 4;
-                }
-            } else {
-                var regionmodz = rollings.indexOf(this.actor.data.data.attributes.burnout.value) - parseInt(regionmod);
-                //console.log("Regionmodz step3 größer: "+regionmodz);
-                if (regionmodz <= 0) {
-                    regionmodz = 0;
-                }
-            }
-            var burnoutARegion = rollings[regionmodz];
-
-            let rollcon = burnoutARegion;
-            let rollcona = "d" + rollcon
-            let roll = new Roll(`${rollcona}`).roll();
-            let result = await table.roll();
-			//NEW BURNOUT DIE
-			if(burnoutARegion == 4)
-				var newBurnOutDie = "";
-			else
-				var newBurnOutDie = "-> d" + rollings[regionmodz +1];
-
-            if (burnoutdie === 0) {} else {
-                let content = `
-				<div class="dnd5e chat-card item-card" data-acor-id="${this.actor._id}">
-					<header class="card-header flexrow">
-						<img src="${this.actor.data.token.img}" title="" width="36" height="36" style="border: none;"/>
-						<h3>Burnoutdice(${rollcona}): </h3>
-					<h3>${roll.result}</h3>
-					</header>
-				</div>`;
-                let content2 = `
-				<div class="dnd5e chat-card item-card" data-acor-id="${this.actor._id}">
-					<header class="card-header flexrow">
-						<img src="${this.actor.data.token.img}" title="" width="36" height="36" style="border: none;"/>
-						<h3>Burnoutdice(${rollcona}        html.find('.burnoutdie').click(async event => {${newBurnOutDie}): </h3>
-					<h3 style="color: #ff0000;text-shadow: 0 0 2px;">${roll.result}</h3>
-					</header>
-					</br>
-					<h3 style="color: #ff0000;text-shadow: 0 0 2px; text-align: center;">${result.results[0].data.text}</h3>
-				</div>`;
-                let content3 = `
-				<div class="dnd5e chat-card item-card" data-acor-id="${this.actor._id}">
-					<header class="card-header flexrow">
-						<img src="${this.actor.data.token.img}" title="" width="36" height="36" style="border: none;"/>
-						<h3>Burnoutdice(${rollcona}): </h3>
-					<h3 style="color: #ff0000;text-shadow: 0 0 2px;">${roll.result}</h3>
-					</header>
-				</div>`;
-                let rollWhisper = null;
-                let rollBlind = false;
-                let rollMode = game.settings.get("core", "rollMode");
-                if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperRecipients("GM")
-                if (rollMode === "blindroll") rollBlind = true;
-                if (roll.result <= 2) {
-                    if (bsettings) {
-                        ChatMessage.create({
-                            user: game.user._id,
-                            content: content2,
-                            speaker: {
-                                actor: this.actor._id,
-                                token: this.actor.token,
-                                alias: this.actor.name
-                            },
-
-                            sound: CONFIG.sounds.dice,
-                            flags: {
-                                darksheet: {
-                                    outcome: 'bad'
-                                }
-                            }
-                        });
-                    } else {
-                        ChatMessage.create({
-                            user: game.user._id,
-                            content: content3,
-                            speaker: {
-                                actor: this.actor._id,
-                                token: this.actor.token,
-                                alias: this.actor.name
-                            },
-
-                            sound: CONFIG.sounds.dice,
-                            flags: {
-                                darksheet: {
-                                    outcome: 'bad'
-                                }
-                            }
-                        });
-                    }
-                    // Lower burnoutdie rank
-                    const new_burnoutdie = rollings.indexOf(this.actor.data.data.attributes.burnout.value) + 1;
-                    if (new_burnoutdie < rollings.length) {
-					    this.actor.update({'data.attributes.burnout.value': rollings[new_burnoutdie]});
-                    }
-                    this.render();
-                } else {
-                    ChatMessage.create({
-                        user: game.user._id,
-                        content: content,
-                        speaker: {
-                            actor: this.actor._id,
-                            token: this.actor.token,
-                            alias: this.actor.name
-                        },
-                        sound: CONFIG.sounds.dice
-                    });
-                }
-            }
+			rollBurnout(this.actor);
         });
         //AUTOMATIC EXHAUSTION CALCULATION
         html.find('.exhaustioncalc').click(async event => {
@@ -3955,8 +3823,8 @@ class Darkscreen {
             const chatControlLeftNode = chatControlLeft.firstElementChild;
             const number = 4;
             tableNode = document.createElement("label");
-            tableNode.innerHTML = `<i id="DarkScreen-button" class="fas fa-book-dead DarkScreen-button" style="text-shadow: 0 0 1px black;"></i>`;
-            tableNode.onclick = Darkscreen.initializeDarkscreen;
+            tableNode.innerHTML = `<i id="DarkScreen-button" class="fas fa-book-dead DarkScreen-button" style="text-shadow: 0 0 1px black; color:grey;" title="[Darkscreen] disabled until v0.9"></i>`;
+            //tableNode.onclick = Darkscreen.initializeDarkscreen;
             chatControlLeft.insertBefore(tableNode, chatControlLeftNode);
         }
     }
@@ -4017,13 +3885,12 @@ Hooks.on('canvasReady', function() {
         Darkscreen.addChatControl();
         console.log("Darkscreen GM True");
     }
-    /*if (game.settings.get('darksheet', 'hideSRDCOMP')) {
-        game.packs.delete("dnd5e.items");
-        //		game.packs.delete("dnd5e.classes");
-        game.packs.delete("dnd5e.tradegoods");
-        game.packs.delete("dnd5e.heroes");
-        console.log("Darksheet || Packs deleted");
-    }*/
+    if (game.settings.get('darksheet', 'hideSRDCOMP')) {
+		document.querySelector('[data-pack="dnd5e.items"]').style.display = "none"
+		document.querySelector('[data-pack="dnd5e.tradegoods"]').style.display = "none"
+		document.querySelector('[data-pack="dnd5e.heroes"]').style.display = "none"
+        console.log("Darksheet || SRD Packs are hidden");
+    }
 });
 Hooks.on('createOwnedItem', (sheet, html, item) => {
 	console.log("test");
@@ -4145,18 +4012,18 @@ Hooks.on(`ready`, () => {
 			var i;
 			let mod;
 			
-			for(i = 0; i < actor.data.items.length; i++){
-			   itemid = actor.data.items[i]._id;
-			   if(actor.data.items[i].type === "weapon"){
-				  mod = actor.data.items[i].data.ability;
+			for(i = 0; i < actor.data.items._source.length; i++){
+			   itemid = actor.data.items._source[i]._id;
+			   if(actor.data.items._source[i].type === "weapon"){
+				  mod = actor.data.items._source[i].data.ability;
 				  if(mod === "str"){
 					  DAC = strmod + profmod;
 				  }
 				  else if(mod === "dex"){
 					  DAC = dexmod + profmod;
 				  }
-			    if(game.settings.get('darksheet', 'nonpcattack') && actor.data.items[i].data.actionType === "mwak" || game.settings.get('darksheet', 'nonpcattack') && actor.data.items[i].data.actionType === "rwak" ){
-                    if(actor.data.items[i].data.save.ability === ""){
+			    if(game.settings.get('darksheet', 'nonpcattack') && actor.data.items._source[i].data.actionType === "mwak" || game.settings.get('darksheet', 'nonpcattack') && actor.data.items._source[i].data.actionType === "rwak" ){
+                    if(actor.data.items._source[i].data.save.ability === ""){
 					actor.updateEmbeddedEntity('Item', {
                         _id: itemid,
                         "data.actionType": "util"
@@ -4168,7 +4035,7 @@ Hooks.on(`ready`, () => {
                         "data.actionType": "save"
                     });
 					}
-					console.log("Darksheet | Attack " + actor.data.items[i].name +" from " + actor.data.name +" is now Util")
+					console.log("Darksheet | Attack " + actor.data.items._source[i].name +" from " + actor.data.name +" is now Util")
 				}
 			   }
 			}
@@ -4178,10 +4045,71 @@ Hooks.on(`ready`, () => {
 				  else{
 					  DAC +=22;
 			}
+			console.log("Active Defense DC: "+DAC);
 			html.find('[class="tab active"]').before(`<label style="margin-left: 2.5px;font-weight: bold;">Attack DC: ${DAC}</label>`);
 			});
 		console.log("Darksheet | BetterNPCActor5eSheet detected and enabled.");
 		}
+
+			Hooks.on('renderActorSheet5eNPC', (sheet, html) => {
+			console.log("Loading NPC, adding Attack DC...");
+			let actor = sheet.object;
+			let DAC = 0;
+			var profmod = actor.data.data.attributes.prof;
+			var dexmod = actor.data.data.abilities.dex.mod;
+			var strmod = actor.data.data.abilities.str.mod;
+			let inventory = actor.data.items;
+			let itemid;
+			var i;
+			let mod;
+			
+			for(i = 0; i < actor.data.items._source.length; i++){
+			   itemid = actor.data.items._source[i]._id;
+			   if(actor.data.items._source[i].type === "weapon"){
+				  mod = actor.data.items._source[i].data.ability;
+				  if(mod === "str"){
+					  DAC = strmod + profmod;
+				  }
+				  else if(mod === "dex"){
+					  DAC = dexmod + profmod;
+				  }
+			    if(game.settings.get('darksheet', 'nonpcattack') && actor.data.items._source[i].data.actionType === "mwak" || game.settings.get('darksheet', 'nonpcattack') && actor.data.items._source[i].data.actionType === "rwak" ){
+                    if(actor.data.items._source[i].data.save.ability === ""){
+					actor.updateEmbeddedEntity('Item', {
+                        _id: itemid,
+                        "data.actionType": "util"
+                    });
+					}
+					else{
+					actor.updateEmbeddedEntity('Item', {
+                        _id: itemid,
+                        "data.actionType": "save"
+                    });
+					}
+					console.log("Darksheet | Attack " + actor.data.items._source[i].name +" from " + actor.data.name +" is now Util")
+				}
+			   }
+			}
+			if(game.settings.get('darksheet', 'smalldefense')){
+					  DAC +=12;
+				  }
+				  else{
+					  DAC +=22;
+			}
+			console.log("Active Defense DC: "+DAC);
+			html.find('[class="attribute movement"]').before(`<li class="attribute armor">
+                    <h4 class="attribute-name box-title">
+                        Attack DC
+                    </h4>
+                    <div class="attribute-value attributable" data-property="attributes.ac">
+                        <span>${DAC}</span>
+                    </div>
+                    <footer class="attribute-footer">
+                        <span></span>
+                    </footer>
+                </li>`);
+			});
+		console.log("Darksheet | BetterNPCActor5eSheet detected and enabled.");
 		
 });
 
@@ -4198,6 +4126,28 @@ Hooks.on('createChatMessage', async (msg) => { //GM PUSHES SETTING
 		game.combat.setInitiative(closestActorID, game.combat.combatants.get(closestActorID).data.initiative+1);
 		game.combat.setInitiative(closestActorID, game.combat.combatants.get(closestActorID).data.initiative-1);
 		msg.delete();
+	}
+});
+Hooks.on('createChatMessage', (userId) => {
+console.log("Chat Message Detected");
+
+let message = userId.data.content;
+let actor = game.actors.getName(userId.data.speaker.alias);
+let spellburnout = false;
+let iscantrip = false;
+let onlyonce = false;
+
+if(message.includes("<span>Cantrip</span>")){
+iscantrip = true;
+}
+if(message.includes("<span>V") || message.includes("<span>M") || message.includes("<span>S") || message.includes("slots")){
+spellburnout = true;
+}
+else{return;}
+
+if(iscantrip == false && spellburnout == true && actor.data.data.attributes.autmomaticburnout && game.user.character.data._id === actor.data._id || iscantrip == true && game.settings.get('darksheet', 'savecantrips') === false && actor.data.data.attributes.autmomaticburnout && game.user.character.data._id === actor.data._id ){
+	console.log("[Darksheet] Rolling automatic burnout for " + actor.name);
+	rollBurnout(game.actors.get(userId.data.speaker.actor));
 	}
 });
 

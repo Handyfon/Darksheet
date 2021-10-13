@@ -1,3 +1,8 @@
+a.config-button.darkconfigbutton {
+    font-size: 10px !important;
+    top: -29px !important;
+    right: 3px !important;
+}
 .AIButton {
     background: #0000ff52;
     border-radius: 5px;
@@ -195,11 +200,6 @@ label.randomnotch.rollable {
     border: unset;
 }
 
-.DSC-window {
-  min-width: 665px;
-    border: unset;
-    background: transparent;
-}
 .hdbuttons {
     margin-left: 3px;
 }
@@ -1911,15 +1911,20 @@ margin-top:15px;
     border: groove 2px #603b60;
     flex: 3.5;
 }
+button#berechnen {
+    color: white;
+}
 .notification {
     visibility: visible;
 }
+
 .check {
     border: 1px solid #b5b3a4;
     border-radius: 2px;
     background: rgba(0, 0, 0, 0.05);
     padding: 0 3px;
     margin: 0 3px;
+    max-width: 95px;
 }
 .check:hover {
     background: #b5b3a4;
@@ -1938,3 +1943,19 @@ margin-top:15px;
     border-bottom: 0;
     border-right: 0;
 } 
+
+/*DARKSCREEN 1.0*/
+label.darkScreenNavigationButton:active {
+    background: #670064 !important;
+}
+label.darkScreenNavigationButton:hover {
+    background: #0007de;
+    color: #ffffff;
+}
+label.darkScreenNavigationButton {
+    padding: 5px 10px 5px 10px;
+    background: #000363;
+    color: white;
+    border-radius: 5px;
+    border: #000363 1px solid;
+}

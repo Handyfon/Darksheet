@@ -1,8 +1,9 @@
 <form class="{{cssClass}} flexcol {{data.attributes.color.value}} {{actor._id}}" style="filter:{{#if data.attributes.color.saturation}}saturate(1.5) {{/if}}{{#if data.attributes.color.saturation}}saturate(1.5) {{/if}}{{#if data.attributes.color.highcontrast}}contrast(1.5){{/if}}{{#if data.attributes.color.brighter}}brightness(1.2){{/if}};{{#if data.attributes.isdead}}filter: grayscale(1);{{/if}}" autocomplete="off">
     {{!-- Sheet Header --}}
     <header class="sheet-header flexrow {{data.attributes.color.value}} {{actor._id}}" style="{{#if data.attributes.color.backgroundblurred}}backdrop-filter: blur(5px);{{/if}}">
-	<img class="profile" src="{{actor.img}}" title="{{actor._id}}" data-edit="img" />
-
+    <img class="profile" src="{{actor.img}}" title="{{actor.name}}" data-edit="img"/>
+        <section class="header-details flexrow">
+            {{> "systems/dnd5e/templates/actors/parts/actor-warnings.html"}}
         <section class="header-details flexrow {{data.attributes.color.value}} {{actor._id}}">
 			<h1 class="charname">
 			{{#if data.attributes.titlesetting}}
@@ -68,8 +69,8 @@
                     <input type="text" name="data.details.alignment" value="{{data.details.alignment}}" placeholder="{{ localize 'DND5E.Alignment' }}"/>
                 </li>
                 <li class="proficiency">
-                    <span>{{ localize "DND5E.Proficiency" }} {{numberFormat data.attributes.prof decimals=0 sign=true}}</span>
-                </li> 
+                    <span>{{ localize "DND5E.Proficiency" }} {{labels.proficiency}}</span>
+                </li>
             </ul>
 
             {{!-- Header Attributes --}}
@@ -77,9 +78,9 @@
                 <li class="attribute health">
                     <h4 class="attribute-name box-title">{{ localize "DND5E.HitPoints" }}</h4>
                     <div class="attribute-value multiple">
-                        <input name="data.attributes.hp.value" type="text" value="{{data.attributes.hp.value}}" placeholder="10" data-dtype="Number"/>															 
+                        <input name="data.attributes.hp.value" type="text" value="{{data.attributes.hp.value}}" placeholder="10" data-dtype="Number"/>
                         <span class="sep"> / </span>
-                        <input name="data.attributes.hp.max" type="text" value="{{data.attributes.hp.max}}" placeholder="10" data-dtype="Number"/>										 
+                        <input name="data.attributes.hp.max" type="text" value="{{data.attributes.hp.max}}" placeholder="10" data-dtype="Number"/>
                     </div>
                     <footer class="attribute-footer">
                         <input name="data.attributes.hp.temp" type="text" class="temphp" placeholder="+{{ localize 'DND5E.Temp' }}"
@@ -103,10 +104,14 @@
                     </footer>
                 </li>
 
-                <li class="attribute">
-                    <h4 class="attribute-name box-title rollable handy-ac darkcheck check {{data.attributes.color.value}} " title="Click to roll for Active Defense.">{{ localize "DND5E.ArmorClass" }}</h4>
-                    <div class="attribute-value">
-                        <input name="data.attributes.ac.value" type="number" value="{{data.attributes.ac.value}}" placeholder="10"/>																 
+                <li class="attribute armor">
+                    <h4 class="attribute-name box-title rollable handy-ac darkcheck check {{data.attributes.color.value}} " title="Click to roll for Active Defense.">
+					{{ localize "DND5E.ArmorClass" }}
+					</h4>
+                    <div class="attribute-value attributable" data-property="attributes.ac">
+                        <span>{{data.attributes.ac.value}}</span>		
+					<a class="config-button darkconfigbutton" data-action="armor" title="{{localize 'DND5E.ArmorConfig'}}"><i class="fas fa-cog"></i></a>
+						
                     </div>
                     <footer class="attribute-footer">
                         <label class="spell-dc check {{data.attributes.color.value}} " title="Click to roll a Saving Attack." >{{localize "DND5E.SpellDC"}} {{data.attributes.spelldc}}</label>

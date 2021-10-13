@@ -1,19 +1,20 @@
 <div class="inventory-filters flexrow">
     {{#unless isNPC}}
-    <ol class="currency flexrow">						 
+    <ol class="currency flexrow">
         <h3>
             {{localize "DND5E.Currency"}}
-            <a class="currency-convert rollable" data-action="convertCurrency" title="Convert Currency">
+            <a class="currency-convert rollable" data-action="convertCurrency" title="{{localize 'DND5E.CurrencyConvert'}}">
                 <i class="fas fa-coins"></i>
             </a>
         </h3>
         {{#each data.currency as |v k|}}
-        <label class="denomination {{k}}">{{ lookup ../config.currencies k }}</label>
-        <input type="text" id="currency{{k}}" name="data.currency.{{k}}" value="{{v}}" data-dtype="Number"/>
+        <label class="denomination {{k}}">{{ lookup ../labels.currencies k }}</label>
+        <input type="text" name="data.currency.{{k}}" value="{{v}}" data-dtype="Number"/>
         {{/each}}
-
     </ol>
-{{#unless ../../hidenotches}}<label class="randomnotch rollable">Random Notch</label>{{/unless}}												
+    {{/unless}}
+	
+{{#unless ../../hidenotches}}<label class="randomnotch rollable">Random Notch</label>{{/unless}}		
     {{#unless isVehicle}}
     <ul class="filter-list flexrow" data-filter="inventory">				 
         <li class="filter-item" data-filter="action">{{localize "DND5E.Action"}}</li>
@@ -21,8 +22,7 @@
         <li class="filter-item" data-filter="reaction">{{localize "DND5E.Reaction"}}</li>
         <li class="filter-item" data-filter="equipped">{{localize "DND5E.Equipped"}}</li>
     </ul>
-    {{/unless}}
-    {{/unless}}
+    {{/unless}}	
 </div>
 
 <ol class="items-list inventory-list {{data.attributes.color.value}}">

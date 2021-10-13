@@ -79,12 +79,20 @@
 
             {{!-- Armor Class --}}
             <div class="form-group">
-                <label>{{ localize "DND5E.ArmorClass" }}</label>
+                <label>Current {{ localize "DND5E.ArmorClass" }}</label>
                 <div class="form-fields">
                    <input type="text" name="data.armor.value" value="{{data.armor.value}}" data-dtype="Number"/>
                 </div>
             </div>
-
+            {{#if data.basearmor.value}}
+            <div class="form-group">
+                <label>Base Armor Class</label>
+                <div class="form-fields">
+                   <input type="text" name="data.basearmor.value" value="{{data.basearmor.value}}" data-dtype="Number"/>
+                </div>
+            </div>
+			{{/if}}
+			
             {{#unless isMountable}}
             {{!-- Dexterity Modifier --}}
             <div class="form-group">
