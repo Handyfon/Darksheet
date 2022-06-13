@@ -1,23 +1,24 @@
 <!DOCTYPE html>
 <html id="darkscreen">
+
 <div class="buttonbar">
-
 	<label class="darkScreenNavigationButton" onclick="loadPage(1)">Home</label>
-	<label class="darkScreenNavigationButton">Journey</label>
-	<label class="darkScreenNavigationButton">Smith</label>
-
+	<!--<label class="darkScreenNavigationButton" onclick="loadPage(2)">Journey</label>-->
+	<label class="darkScreenNavigationButton" onclick="loadPage(3)">Smith</label>
 </div>
 <script>
+loadPage(1);
 function loadPage(page){
-	if(page == 1)
-	$('#content').load('/modules/darksheet/templates/page_1.html');
+	if(page == 1)$('#content').load('/modules/darksheet/templates/page1.html');
+	if(page == 2)$('#content').load('/modules/darksheet/templates/page2.html');
+	if(page == 3)$('#content').load('/modules/darksheet/templates/page3.html');
 }
 
 </script>
 <form class="{{cssClass}} flexcol" autocomplete="off" style="margin-top: 10px;">
 	<section class="sheet-body">
 	<div id="wrapper">
-		<div id="content">
+		<div id="content" style="display:flex; flex-direction:column;">
 		</div>
 	</div>
 	</section>

@@ -480,17 +480,10 @@
 					<label class="titlecheckbox" style="margin-right: 20px;">
 					<input style="position: absolute; margin-top: -5px;" type="checkbox" type="Boolean" name="data.attributes.titlesetting" data-dtype="Boolean" {{checked data.attributes.titlesetting}}/><span></span></label>
 					<label style="margin-left: 10px;">Address:</label>
-					<select class="hitdice {{data.attributes.adress}}" name="data.attributes.adress" data-type="String">
-						{{#select data.attributes.adress}}
-						<option selected="selected" value="his" selected>his</option>
-						<option value="her">her</option>
-						<option value="its">its</option>
-						{{/select}}
-					</select>
 					<label style="margin-left: 5px;">Automatic Exhaustion 
 					</label><label class="bloodiedcheckbox"><input style="margin-top: -4px;" class="ressourcecheckbox check {{data.attributes.color.value}} " type="checkbox" type="Boolean" name="data.attributes.automaticexhaust" data-dtype="Boolean" {{checked data.attributes.automaticexhaust}}/><span></span></label>
 				</span>
-				<h4  class="settingsheader" style="margin-top: 10px;">Character Customization</h4>
+				<div class="darkercc"><h4  class="settingsheader" style="margin-top: 10px;">Character Customization</h4>
 				<span style="display: inline-flex;"class="settingsoption">
 				</br><label>Character Sheet Color:</label>
 					<select class="hitdice {{data.attributes.color.value}} {{actor._id}}" name="data.attributes.color.value" data-type="String">
@@ -565,6 +558,8 @@
 						<input style="position: absolute; margin-top: -5px;"type="checkbox" type="Boolean" name="data.attributes.color.saturation" data-dtype="Boolean" {{checked data.attributes.color.saturation}}/><span></span></label>
 					</span>
 				</div>
+				<p class="darkCCX" onclick="window.open(`https://foundryvtt.com/packages/darksheet-style`)">Get the styling addon for more options!</p>
+			</div>
 			{{else}}
 			{{/if}}
 		{{/unless}}

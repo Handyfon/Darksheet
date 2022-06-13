@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html id="darkscreen">
+<h1 class="darkscreenHeader">Item Cost-Calculator</h1>
+<style>
+input:disabled {
+    border: none;
+    color: var(--color-text-dark-secondary);
+    text-align: center;
+}
+input.darksheet-button {
+    background: #666666;
+    color: white;
+    border: #666666;
+    padding: 5px;
+}
+input#itemvalue {
+    border-radius: 0px;
+    background: #ffded9;
+}
+</style>
+<div style="text-align: center;">
+<h2>Item Value</h2>
+                <input class="darkscreeninput" type="number" id="itemvalue" name="itemvalue" value="{{itemvalue}}"> GP <input type="button" class="darksheet-button"onclick="forge(this.value);" value="Calculate"></br>
+                 </br>
+               <div style="display:flex; border-top: solid 1px black;place-content: center;">
+                <p style="margin-right:5px;">Remove a Notch</p><input disabled="true" class="darkscreeninput" id="removeanotch" name="removeanotch" type="String"  value="" placeholder="10% item value">
+              </div>
+               <div style="border-top: solid 1px black;height: 168%;">
+                <h3 style="text-align:center">Tempering Costs</h3>
+                  <table style="border: 1px groove black" id="myTable">
+                    <tr>
+                      <th>Quality</th>
+                      <th>Cost(GP)</th>
+                      <th>Time</th>
+                      <th>Tempered Value</th>
+                    </tr>
+                    <tr>
+                      <td>Pure</td>
+                      <td><input disabled="true" class="darkscreeninput" id="pure" name="pure" type="String" value="" placeholder="Base Value x2"></td>
+                      <td>3 Days</td>
+                      <td><input disabled="true" class="darkscreeninput" id="pureprice" name="pureprice" type="String" value="" placeholder="Base Value x3"></td>
+                    </tr>
+                    <tr>
+                      <td>Royal</td>
+                      <td><input disabled="true" class="darkscreeninput" id="royal" name="royal" type="String" value="" placeholder="Base Value x4"></td>
+                      <td>1 Week</td>
+                      <td><input disabled="true" class="darkscreeninput" id="royalprice" name="royalprice"type="String" value="" placeholder="Base Value x6"></td>
+                    </tr>
+                    <tr>
+                      <td>Astral</td>
+                      <td><input disabled="true" class="darkscreeninput" id="astral" name="astral" type="String" value="" placeholder="Base Value x8"></td>
+                      <td>2 Weeks</td>
+                      <td><input disabled="true" class="darkscreeninput" id="astralprice" name="astralprice" type="String" value="" placeholder="Base Value x12"></td>
+                    </tr>
+                  </table>
+                  <h3 style="text-align:center">Item Restoration</h3>
+                 <blockquote><i>Item quality can be restored by an appropriate crafts-man. This usually requires 1 week per grade, though rare or delicate items may take longer.</i></blockquote>
+                  <table style="border: 1px groove black" id="myTable">
+                    <tr>
+                      <th>Quality</th>
+                      <th>Cost(GP)</th>
+
+                    </tr>
+                    <tr>
+                      <td>Worn to Pristine</td>
+                      <td><input disabled="true" class="darkscreeninput" id="worntopris" name="worntopris" type="String" value="" placeholder="50%"></td>
+                    </tr>
+                    <tr>
+                      <td>Well-Worn to Worn</td>
+                      <td><input disabled="true" class="darkscreeninput" id="wellworntoworn" name="wellworntoworn" type="String" value="" placeholder="30%"></td>
+                    </tr>
+                    <tr>
+                      <td>Scarred to Well-Worn</td>
+                      <td><input disabled="true" class="darkscreeninput" id="scarredtowellworn" name="scarredtowellworn" type="String" value="" placeholder="10%"></td>
+                    </tr>
+                  </table>
+              </div>
+<script>
+	function forge(gold){
+	itemvalue = document.getElementById("itemvalue").value;
+	document.getElementById("removeanotch").value = itemvalue * 0.1;
+	document.getElementById("pure").value = itemvalue * 2;
+	document.getElementById("pureprice").value = itemvalue * 3;
+	document.getElementById("royal").value = itemvalue * 4;
+	document.getElementById("royalprice").value = itemvalue * 6;
+	document.getElementById("astral").value = itemvalue * 8;
+	document.getElementById("astralprice").value = itemvalue * 12;
+	document.getElementById("worntopris").value = itemvalue * 0.5;
+	document.getElementById("wellworntoworn").value = itemvalue * 0.3;
+	document.getElementById("scarredtowellworn").value = itemvalue * 0.1;
+	//darkscreenUpdate();
+	}
+	function darkscreenUpdate(){
+	}	
+</script>
+</html>

@@ -1,7 +1,25 @@
+.DDdiceicon{
+	font-size: 17px;
+    margin-right: 3px;
+}
+.darkercc {
+    display: none;
+}
+p.darkCCX {
+    margin: 0.5em 0;
+    background: #d4d2c6;
+    padding: 5px;
+    text-align: center;
+    border: 1px groove;
+    color: grey;
+}
 a.config-button.darkconfigbutton {
     font-size: 10px !important;
     top: -29px !important;
     right: 3px !important;
+}
+label.conditionbutton.check {
+    margin-left: 2px;
 }
 .AIButton {
     background: #0000ff52;
@@ -127,10 +145,11 @@ input.exhaustionpoints {
 }
 .settings {
     padding: 15px;
-    margin: 30px;
+    margin: 26px;
     margin-top: 0px;
     margin-bottom: 14px;
-    border: 5px solid;
+    border: 1px;
+    border-style: inset;
 }
 ol.currency.flexrow {
     padding: 5px !important;
@@ -164,12 +183,19 @@ select#atitle {
     border: 1px groove;
     display: none;
 }
-
+label.randomnotch.rollable:hover {
+	background: #b5b3a4;
+    color: white;
+}
+label.randomnotch.rollable {
+    background: #cbc9be;
+    color: #4b4a44;
+    border-color: #b5b3a4 !important;
+}
 label.randomnotch.rollable {
     border: 1px solid;
-    text-shadow: 0 0 1px;
     left: 5px;
-    margin-top: 42px;
+    margin-top: 31px;
     position: absolute;
     margin-left: 8px;
     padding: 3px;
@@ -184,15 +210,6 @@ label.randomnotch.rollable {
     max-width: 100% !important;
 }
 
-.darksheet-button{
-	background: #131e2c !important;
-    color: #b5b1d4 !important;
-}
-.darksheet-button:hover {
-    box-shadow: 0px 4px 16px;
-    border: 1px solid black;
-    background: linear-gradient(0deg, #2f343e, #364558) !important;
-}
 .darksheet-button:active{
     color: white !important;
     background: linear-gradient(0deg, #364558, #2f343e) !important;
@@ -220,7 +237,7 @@ button#plusHD {
 button#minusHD {
     position: relative;
     left: -4px;
-    top: -2px;
+    top: -6px;
 }
 button#plusHD:after {
     content: "+";
@@ -233,16 +250,6 @@ button#minusHD:after {
     margin-left: -3px;
     margin-top: -14px;
     position: absolute;
-}
-button#minusHD:hover {
-    visibility: visible !important;
-    background-color: #243b55 !important;
-    color: #5e9ed4 !important;
-}
-button#plusHD:hover {
-    visibility: visible !important;
-    background-color: #243b55 !important;
-    color: #d45e6f !important;
 }
 option:disabled {
     color: gray;
@@ -289,7 +296,7 @@ button#minuspell {
     height: 16px !important;
     display: block !important;
     position: relative !important;
-    margin-left: -27px !important;
+    margin-left: -30px !important;
     margin-bottom: -16px !important;
 }
 button#plusspell {
@@ -297,17 +304,9 @@ button#plusspell {
     height: 16px !important;
     display: block !important;
     /* position: relative !important; */
-    margin-left: -12px !important;
+    margin-left: -15px !important;
     margin-bottom: -17px !important;
     font-variant: all-petite-caps;
-}
-button#plusspell:hover {
-    background: #003e00 !important;
-    color: #1bff00 !important;
-}
-button#minuspell:hover {
-    background: #552424 !important;
-    color: black !important;
 }
 input#fname {
     background: #d9dad6;
@@ -356,11 +355,6 @@ body {
     margin: 0;
 }
 
-#wrapper {
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 80em;
-}
 #container {
     float: left;
     width: 100%;
@@ -707,21 +701,7 @@ label#rollableammodice {
     font-weight: bolder;
     text-transform: capitalize;
 }
-label#rollableammodice:hover {
-    filter: drop-shadow(0px 0px 2px black);
-    background-image: linear-gradient(#00ebff24, #151d4efc) !important;
-    border: 1px dashed #7170a9;
-}
-label#rollableammodice:hover {
-    background-image: linear-gradient(#151d4efc, #00ebff24) !important;
-}
-.ammostyle {
-    background-image: linear-gradient(#151d4efc, #00ebff24) !important;
-    border: 1px solid #7171a9;
-}
-.ammostyle:hover {
-    background-image: linear-gradient(#2d201d00, #474a5dfc) !important;
-}
+
 .box-title.rollable:hover {
     cursor: pointer;
 	background: #31313130;
@@ -1917,14 +1897,9 @@ button#berechnen {
 .notification {
     visibility: visible;
 }
-
 .check {
     border: 1px solid #b5b3a4;
-    border-radius: 2px;
     background: rgba(0, 0, 0, 0.05);
-    padding: 0 3px;
-    margin: 0 3px;
-    max-width: 95px;
 }
 .check:hover {
     background: #b5b3a4;
@@ -1946,16 +1921,38 @@ button#berechnen {
 
 /*DARKSCREEN 1.0*/
 label.darkScreenNavigationButton:active {
-    background: #670064 !important;
+    background: black !important;
 }
 label.darkScreenNavigationButton:hover {
-    background: #0007de;
+    background: #383838;
     color: #ffffff;
 }
 label.darkScreenNavigationButton {
     padding: 5px 10px 5px 10px;
-    background: #000363;
+    background: #282828;
     color: white;
     border-radius: 5px;
-    border: #000363 1px solid;
+    border: #282828 1px solid;
+}
+h3.settingsheader {
+    text-align: center;
+    background: #cfcfc3;
+    font-weight: bold;
+}
+.darkscreenframe {
+    display: flex;
+    min-height: 900px;
+}
+.DSC-window{
+	height: 1000px;
+}
+.darkscreenHeader {
+    text-align: center;
+    background: #282828;
+    color: white;
+    border-color: white;
+}
+.buttonbar {
+    background: #282828;
+    border-radius: 200px;
 }

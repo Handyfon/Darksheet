@@ -104,12 +104,11 @@
                 <div class="item-detail spell-uses">Uses {{item.data.uses.value}} / {{item.data.uses.max}}</div>
                 {{/if}}
             </div>
-
-            <div class="spell-comps">
+            <!--<div class="spell-comps">
                 {{#each labels.components}}
                 <span class="spell-component {{this}}">{{this}}</span>
                 {{/each}}
-            </div>
+            </div>-->
             <div class="spell-school{{data.attributes.color.value}}">{{labels.school}}</div>
             <div class="spell-action{{data.attributes.color.value}}">{{labels.activation}}</div>
             <div class="spell-target{{data.attributes.color.value}}" title="{{localize 'DND5E.Range'}}: {{labels.range}}">
