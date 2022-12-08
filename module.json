@@ -1,53 +1,56 @@
 {
-	"name": "darksheet",
-	"title": "darksheet 5e",
-	"description": "Darker Dungeons replacement for the default 5e actor sheet",
-	"version": "10.1",
-	"author": "Handyfon#1802",
-	"esmodules": ["darksheet.js", "templates.js"],
-	"styles": ["css/darksheet.css"],
-	"systems": ["dnd5e"],
-	"packs": [
-		{
-			"name": "darkerdungeons",
-			"label": "Darkrolltables",
-			"system": "dnd5e",
-			"path": "./packs/darkerdungeons.db",
-			"entity": "RollTable"
-		},
-		{
-			"name": "darkitems",
-			"label": "Darkitems",
-			"system": "dnd5e",
-			"path": "./packs/darkitems.db",
-			"entity": "Item" 
-		},
-		{
-			"name": "darkmacros",
-			"label": "Darksheet Macros",
-			"system": "dnd5e",
-			"path": "./packs/darksheet-macros.db",
-			"entity": "Macro" 
-		},
-		{
-			"name": "afflictions",
-			"label": "Afflictions",
-			"system": "dnd5e",
-			"path": "./packs/afflictions.db",
-			"entity": "Item" 
-		},
-		{
-			"name": "abstractrewards",
-			"label": "Abstract Rewards",
-			"system": "dnd5e",
-			"path": "./packs/abstract-rewards.db",
-			"entity": "Item" 
-		}
-	],
-	 "socket": true,
-    "url": "https://github.com/Handyfon/FDarksheet/tree/master",
-    "manifest": "https://raw.githubusercontent.com/Handyfon/Darksheet/master/module.json",
-    "download": "https://github.com/Handyfon/Darksheet/raw/master/darksheet.zip",
-	"minimumCoreVersion": "10",
-	"compatibleCoreVersion": "10"
+  "title": "darksheet 5e",
+  "description": "Darker Dungeons replacement for the default 5e actor sheet",
+  "version": "10.1.1",
+  "esmodules": [
+    "darksheet.js",
+    "templates.js"
+  ],
+  "styles": [
+    "css/darksheet.css"
+  ],
+  "packs": [
+    {
+      "name": "darkerdungeons",
+      "label": "Darkrolltables",
+      "system": "dnd5e",
+      "path": "packs/darkerdungeons.db",
+      "type": "RollTable",
+      "private": false,
+      "flags": {}
+    },
+    {
+      "name": "afflictions",
+      "label": "Afflictions",
+      "system": "dnd5e",
+      "path": "packs/afflictions.db",
+      "type": "Item",
+      "private": false,
+      "flags": {}
+    }
+  ],
+  "socket": true,
+  "url": "https://github.com/Handyfon/FDarksheet/tree/master",
+  "manifest": "https://raw.githubusercontent.com/Handyfon/Darksheet/master/module.json",
+  "download": "https://github.com/Handyfon/Darksheet/raw/master/darksheet.zip",
+  "id": "darksheet",
+  "authors": [
+    {
+      "name": "Handyfon#1802",
+      "flags": {}
+    }
+  ],
+  "relationships": {
+    "systems": [
+      {
+        "id": "dnd5e",
+        "type": "system",
+        "compatibility": {}
+      }
+    ]
+  },
+  "compatibility": {
+    "minimum": "10",
+    "verified": "10"
+  }
 }
