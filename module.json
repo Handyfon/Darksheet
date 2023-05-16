@@ -1,20 +1,20 @@
 {
-  "title": "darksheet 5e",
-  "description": "Darker Dungeons replacement for the default 5e actor sheet",
-  "version": "10.1.1",
+  "title": "darksheet",
+  "description": "DarkDND",
+  "version": "10.1",
   "esmodules": [
-    "darksheet.js",
-    "templates.js"
+    "darksheet.js"
   ],
   "styles": [
-    "css/darksheet.css"
+    "css/darksheet.css",
+    "css/darkStyle.css"
   ],
   "packs": [
     {
-      "name": "darkerdungeons",
-      "label": "Darkrolltables",
+      "name": "darkrolltables",
+      "label": "DarkRollTables",
       "system": "dnd5e",
-      "path": "packs/darkerdungeons.db",
+      "path": "packs/darkrolltables.db",
       "type": "RollTable",
       "private": false,
       "flags": {}
@@ -25,6 +25,15 @@
       "system": "dnd5e",
       "path": "packs/afflictions.db",
       "type": "Item",
+      "private": false,
+      "flags": {}
+    },
+	{
+      "name": "darksheet-macros",
+      "label": "Darksheet Macros",
+      "system": "dnd5e",
+      "path": "packs/darksheet-macros.db",
+      "type": "Macro",
       "private": false,
       "flags": {}
     }

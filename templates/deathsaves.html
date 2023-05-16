@@ -1,0 +1,19 @@
+<div class="status flexrow death-saves" style="flex: 2;margin-right: 4px;">
+    <label class="rollable deathsaveroll darkcheck">
+        <h4 class="deathsavelabel" style="font-weight: bold;">{{ localize "DND5E.DeathSave" }}</h4>
+    </label>
+    <div class="counter-value">
+        <label class="deathcheckbox">
+            <input class="ressourcecheckbox check" type="checkbox" type="Boolean" name="flags.darksheet.attributes.deathsave1.value" data-dtype="Boolean" {{checked actor.flags.darksheet.attributes.deathsave1.value}} />
+        <span></span>
+        </label>
+        <label class="deathcheckbox">
+            <input class="ressourcecheckbox check" type="checkbox" type="Boolean" name="flags.darksheet.attributes.deathsave2.value" title="@{deathsave_fail2}" data-dtype="Boolean" {{checked actor.flags.darksheet.attributes.deathsave2.value}} />
+            <span></span>
+        </label>
+        <label class="deathcheckbox">
+            <input class="ressourcecheckbox check" type="checkbox" type="Boolean" name="flags.darksheet.attributes.deathsave3.value" title="@{deathsave_fail3}" data-dtype="Boolean" {{checked actor.flags.darksheet.attributes.deathsave3.value}} />
+            <span></span>
+        </label>
+    </div>
+</div>

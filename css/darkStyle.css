@@ -1,0 +1,77 @@
+.darkneeds {
+    background: #000000cf;
+    color: white;
+}
+.foodcheckbox > input:checked {
+    background: #7a7971;
+    filter: unset;
+    border: solid 1px;
+    border-color: black;
+}
+.foodcheckbox > input:checked + span::before {
+    color: white;
+}
+.watercheckbox > input:checked {
+    background: #7a7971;
+    filter: unset;
+    border: solid 1px;
+    border-color: black;
+}
+.watercheckbox > input:checked + span::before {
+    color: white;
+}
+
+.item-detail.item-ammodieLabel {
+    height: 22px;
+    flex: 0 0 50px !important;
+    background: #00000014;
+    margin: 0 5px 0 5px;
+}
+.item-detail.item-weight.item-ammodieLabel:hover {
+    background: #00000036;
+    color: white;
+}
+input.maxSlotsInput {
+    width: 22px;
+    height: 11px !important;
+    color: #EEE !important;
+    text-shadow: 0 0 5px #000;
+}
+.dnd5e.sheet.actor .encumbrance .arrow-up {
+    border-bottom: 4px solid #fff;
+}
+.dnd5e.sheet.actor .encumbrance .arrow-down {
+    border-top: 4px solid #fff;
+}
+span.encumbrance-bar {
+    max-width: 100%;
+}
+.notchButton {
+    width: 0px;
+    height: 14px;
+    margin-top: -2px;
+}
+.notchButton label {
+    margin-top: -15px;
+    margin-left: -4px;
+    height: 0px;
+    display: block;
+}
+li.item.flexrow.worn .item-name.flexrow.rollable {
+    color: #787800;
+}
+li.item.flexrow.worn {
+    background: #c9b90024;
+}
+li.item.flexrow.well-worn .item-name.flexrow.rollable {
+    color: #8b4d00;
+}
+li.item.flexrow.well-worn {
+    background: #ad60003d;
+}
+li.item.flexrow.scarred .item-name.flexrow.rollable {
+    color: #760000;
+}
+li.item.flexrow.scarred {
+    background: #ad00003d;
+}

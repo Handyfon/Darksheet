@@ -1,1311 +1,51 @@
-.DDdiceicon{
-	font-size: 17px;
-    margin-right: 3px;
+i.chatIcon {
+    flex: 0.12;
+    font-size: 25px;
+    margin-top: 5px;
 }
-.darkercc {
-    display: none;
-}
-p.darkCCX {
-    margin: 0.5em 0;
-    background: #d4d2c6;
-    padding: 5px;
-    text-align: center;
-    border: 1px groove;
-    color: grey;
-}
-a.config-button.darkconfigbutton {
-    font-size: 10px !important;
-    top: -29px !important;
-    right: 3px !important;
-}
-label.conditionbutton.check {
-    margin-left: 2px;
-}
-.AIButton {
-    background: #0000ff52;
-    border-radius: 5px;
-    border: 1px solid white;
-    flex: 0.5;
-    text-align: -webkit-center;
-}
-#combat li.combatant .token-initiative {
-    flex: 0 0 76px;
-    text-align: center;
-}
-.AiButtonGM {
-    background: #151515 !important;
-    color: #424242 !important;
-}
-
-.removewoundbutton{
-	border: 1px solid #b5b3a4;
-    border-radius: 2px;
-    background: rgba(0, 0, 0, 0.05);
-    padding: 0 3px;
-    margin: 0 3px;
-	width: 25px;
-    height: 25px;
-}
-.removewoundbutton:hover{
-    background: #b5b3a4;
-    color: white;
-}
-.woundrollmessage{
-	border: 1px solid #b5b3a4;
-    border-radius: 2px;
-    background: rgba(0, 0, 0, 0.05);
-    padding: 0 3px;
-    margin: 0 3px;
-}
-.dnd5e.sheet.item .sheet-body .item-properties .form-group {
-    margin: 0;
-    margin-bottom: 0;
-    padding-bottom: 0;
-    padding-top: 2px;
-    margin: 6px;
-}
-.dnd5e.sheet.actor .encumbrance .encumbrance-label {
-    color: #fff;
-    background: #00000030;
-    border-radius: 2px;
-}
-label.dicelabel2.burnoutclick.burnoutdie.rollable {
-    border: 1px solid #b5b3a4;
-    border-radius: 2px;
-    background: rgba(0, 0, 0, 0.05);
-    padding: 0 3px;
-    margin: 0 3px;
-}
-.biotitle{
-    padding: 5px;
-}
-.details.flexrow.biotitle {
-    margin: 10px;
-    margin-top: 0;
-    margin-bottom: 0;
-}
-.dnd5e.sheet select {
-    cursor: pointer;
-    background: #ceccc1;
-}
-.dnd5e.sheet select:hover {
-    background: #b5b3a4;
-}
-.biotextflextitle{
-	height: 30px !important;
-}
-input.biotextflextitle:hover {
-    border: 1px solid #9a9991 !important;
-    box-shadow: 0 0 2px #b5b3a4 !important;
-    transition: 0.1s;
-}
-input.biotextflextitle:focus {
-    border: 0 !important;
-    border-bottom: solid 1px black !important;
-    box-shadow: 0 0 8px #b5b3a4 !important;
-    transition: 0.3s;
-    border: 1px solid #9a9991 !important;
-    background: #cdcbc0 !important;
-    color: white;
-}
-select.hitrice {
-    margin-top: 3px;
-    margin-left: 6px;
-}
-label.exhaustiontip {
-    border-radius: 5px;
-    padding: 5px 5px;
-}
-table#woundlistid {
-    text-align: center;
-}
-.addwoundbutton {
-    text-align: center;
-    font-size: 20px;
-    border: 1px solid #b5b3a4;
-    border-radius: 2px;
-    background: rgba(0, 0, 0, 0.05);
-    padding: 0 3px;
-    margin: 0 3px;
-}
-.addwoundbutton:hover {
-    background: #0000004a !important;
-    color: white;
-    border: 1px solid;
-}
-input.exhaustionpoints {
-    width: 80%;
-}
-.ddchecks {
-    margin: 35px;
-    margin-top: 20px;
-    margin-right: 25px;
-    margin-left: 25px;
-    width: 93.5% !important;
-}
-.settings {
-    padding: 15px;
-    margin: 26px;
-    margin-top: 0px;
-    margin-bottom: 14px;
-    border: 1px;
-    border-style: inset;
-}
-ol.currency.flexrow {
-    padding: 5px !important;
-}
-.counters.flexrow {
-    padding: 5px !important;
-}
-.dnd5e.sheet.actor.character .sheet-header .charlevel {
-    flex: 0 0 20px;
-    height: 20px;
-    font-size: 24px;
-    position: absolute;
-    color: #7a7971;
-    top: 48px;
-    right: 3px;
-    white-space: nowrap;
-}
-.tabbedchatlog .item {
-    height: 26px;
-}
-input.bio {
-	flex: 4 !important;
-}
-label.biolabel {
-    flex: 2;
-}
-select#atitle {
-    flex: 2.6;
-}
-.form-group.inactive.woundsection {
-    border: 1px groove;
-    display: none;
-}
-label.randomnotch.rollable:hover {
-	background: #b5b3a4;
-    color: white;
-}
-label.randomnotch.rollable {
-    background: #cbc9be;
-    color: #4b4a44;
-    border-color: #b5b3a4 !important;
-}
-label.randomnotch.rollable {
-    border: 1px solid;
-    left: 5px;
-    margin-top: 31px;
-    position: absolute;
-    margin-left: 8px;
+span.rollable.darkDnD_AS {
+    border-radius: 4px;
     padding: 3px;
-    width: 169px;
-    text-align: center;
-}
-.fa-book-dead:before {
-    content: "\f6b7";
-    margin-right: 5px;
-}
-.dnd5e.sheet.actor.character .biography {
-    max-width: 100% !important;
-}
-
-.darksheet-button:active{
-    color: white !important;
-    background: linear-gradient(0deg, #364558, #2f343e) !important;
-    transition: 0s;
-    border: unset;
-}
-
-.hdbuttons {
-    margin-left: 3px;
-}
-
-.darkframe{
-    border: 5px solid black !important;
-    width: 100% !important;
-    height: 94% !important;
-    max-width: 83vw !important;
-    margin-top: 29px !important;
-    position: absolute !important;
-}
-button#plusHD {
-    position: relative;
-    left: -4px;
-    bottom: 2px;
-}
-button#minusHD {
-    position: relative;
-    left: -4px;
-    top: -6px;
-}
-button#plusHD:after {
-    content: "+";
-	margin-left: -4.3px;
-    margin-top: -14px;
-    position: absolute;
-}
-button#minusHD:after {
-    content: "-";
-    margin-left: -3px;
-    margin-top: -14px;
-    position: absolute;
-}
-option:disabled {
-    color: gray;
-}
-.item-detail.item-hitDiceUsed {
-    height: 33px;
-}
-/*BOOK CSS START*/
-/* Style the tab */
-.encounterdescription {
-    background: #c7c7c7;
-    min-width: -webkit-fill-available;
-    min-height: 1px;
-}
-
-.dnd5e.sheet.actor .sheet-header .summary {
-    height: 40px !important;
-}
-.mess.settings {
-    max-height: 650px;
-    min-height: 650px;
-}
-ul.summary.trainingssummary {
-    text-align: center;
-    /* position: absolute; */
-    right: 20%;
-    /* bottom: 75%; */
-    /* margin-top: 12% !important; */
-}
-.dnd5e.sheet .sheet-header .summary li {
-    text-align: center;
-}
-.questbutton{
-width: 200px;
-}
-.dnd5e.sheet .sheet-navigation .item {
-    margin: 0 15px !important;
-}
-h3.dayheader {
-    color: #b5b1d4 !important;
-}
-button#minuspell {
-    width: 7px !important;
-    height: 16px !important;
-    display: block !important;
-    position: relative !important;
-    margin-left: -30px !important;
-    margin-bottom: -16px !important;
-}
-button#plusspell {
-    width: 7px !important;
-    height: 16px !important;
-    display: block !important;
-    /* position: relative !important; */
-    margin-left: -15px !important;
-    margin-bottom: -17px !important;
-    font-variant: all-petite-caps;
-}
-input#fname {
-    background: #d9dad6;
-    border: 1px groove black;
-}
-input#itemvalue {
-    width: 150px;
-}
-.flexday{
-    background: #d2d2d2;
-    display: flex;
-    color: #243b55;
-}
-.dayheader{
-  text-align:center;
-  background:black;
-  color:white;
-}
-/* Change background color of buttons on hover */
-.tab button:hover {
-  background-color: #ddd;
-}
-
-/* Create an active/current tablink class */
-.tab button.active {
-  background-color: #ccc;
-}
-
-.tool{
-  background:lightgray;
-  color:black;
-}
-.tool:hover{
-   background:gray;
-}
-
-*,
-:before,
-:after {
-    box-sizing: border-box;
-}
-
-body {
-    background-color: #1d1f20;
-    color: #e5e5e5;
-    margin: 0;
-}
-
-#container {
-    float: left;
-    width: 100%;
-}
-
-
-
-/*** OPEN BOOK ***/
-.open-book {
-    background: #fff;
-    box-shadow: rgba(0,0,0,0.5) 0 1em 3em;
-    color: #000;
-    padding: 2em;
-}
-
-.open-book * {
-    position: relative;
-}
-
-/* Highlight */
-.open-book *::-moz-selection {
-    background: rgba(222,255,0,0.75);
-}
-
-.open-book *::selection {
-    background: rgba(222,255,0,0.75);
-}
-
-/* Header/Footer */
-.open-book header {
-    padding-bottom: 1em;
-}
-
-.open-book header *,
-.open-book footer * {
-    font: 700 1em/1.25 'Playfair Display', sans-serif;
-    letter-spacing: 0.125em;
-    margin: 0;
-}
-
-.open-book header * {
-    text-transform: uppercase;
-}
-
-.open-book footer {
-    padding-top: 1em;
-}
-
-.open-book footer #page-numbers {
-    display: none;
-    list-style: none;
-    padding: 0;
-    text-align: left;
-}
-
-.open-book footer #page-numbers > li:last-child {
-    text-align: right;
-}
-
-/* Chapter Title */
-.open-book .chapter-title {
-    background: ;
-    background-size: 0.5em 0.5em;
-    font: 700 7vw/1.25 'Playfair Display', sans-serif;
-    letter-spacing: 0.125em;
-    margin: 0 0 1em 0;
-    padding: 1em 0;
-    position: relative;
-    text-align: center;
-    text-transform: uppercase;
-}
-
-.open-book .chapter-title:before,
-.open-book .chapter-title:after {
-    border: solid 0 #000;
-    border-width: 0.05em 0;
-    bottom: calc((0.125em / 2) * 3);
-    content: '';
-    height: 0.15em;
-    position: absolute;
-    width: calc(50% - (1em / 2));
-}
-
-.open-book .chapter-title:before {
-    left: 0;
-}
-
-.open-book .chapter-title:after {
-    right: 0;
-}
-
-/* Body Copy */
-.open-book article {
-    line-height: 1.5;
-}
-
-.open-book article *:not(.chapter-title):not(hr):not(dl) {
-    margin: 0 auto;
-    max-width: 31em;
-}
-
-.open-book article p {
-    text-indent: 2em;
-}
-
-.open-book .chapter-title + p:first-of-type {
-    text-indent: 0;
-}
-
-.open-book .chapter-title + p:first-of-type:first-letter {
-    float: left;
-    font: 700 3em/0.65 'Playfair Display', sans-serif;
-    padding: 0.15em 0.05em 0 0;
-    text-transform: uppercase;
-}
-
-.open-book article > ul,
-.open-book article > ol {
-    padding-left: 3em;
-}
-
-.open-book article > ul ul {
-    padding-left: 1em;
-}
-
-.open-book a {
-   
-    background-size: auto 0.5em;
-    color: rgba(0,0,0,0.5);
-    text-decoration: none;
-}
-
-.open-book sup {
-    color: #cc0000;
-    font-family: 'Rock Salt', cursive;
-    left: 0;
-    margin-top: -1em!important;
-    max-width: 100%!important;
-    position: absolute;
-    text-align: center;
-    width: 100%;
-}
-
-.open-book mark {
-    background: linear-gradient(to bottom, rgba(222,255,0,1) 0%,rgba(222,255,0,0.5) 60%,rgba(222,255,0,1) 100%);
-}
-
-.open-book mark.pink {
-    background: linear-gradient(to bottom, rgba(255,69,190,1) 0%,rgba(255,107,203,0.5) 60%,rgba(255,107,203,1) 100%);
-}
-
-.open-book mark.blue {
-    background: linear-gradient(to bottom, rgba(73,179,255,1) 0%,rgba(107,193,255,0.5) 60%,rgba(107,193,255,1) 100%);
-}
-
-.open-book mark.green {
-    background: linear-gradient(to bottom, rgba(67,226,15,1) 0%,rgba(39,229,54,0.5) 60%,rgba(39,229,54,1) 100%);
-}
-
-.open-book mark.orange {
-    background: linear-gradient(to bottom, rgba(255,134,9,1) 0%,rgba(255,177,34,0.5) 60%,rgba(255,177,34,1) 100%);
-}
-
-.open-book hr {
-    background-color: #000;
-    border: 0;
-    height: 2px;
-    margin: 1em 0;
-}
-
-.open-book dl {
-    border: solid 0 #ccc;
-    border-width: 0.0625em 0;
-    break-inside: avoid-column;
-    margin: 1em auto;
-    padding: 1em 0;
-}
-
-
-
-/*** MEDIA QUERIES ***/
-@media only screen and ( min-width: 50em ) {
-
-    .open-book {
-        margin: 1em;
-        position: relative;
-    }
-
-    .open-book:before {
-        background-color: #8B4513;
-        border-radius: 0.25em;
-        bottom: -1em;
-        content: '';
-        left: -1em;
-        position: absolute;
-        right: -1em;
-        top: -1em;
-        z-index: -1;
-    }
-
-	.open-book:after {
-		background: linear-gradient(to right, transparent 0%,rgba(0,0,0,0.2) 46%,rgba(0,0,0,0.5) 49%,rgba(0,0,0,0.6) 50%,rgba(0,0,0,0.5) 51%,rgba(0,0,0,0.2) 52%,transparent 100%);
-		bottom: -1em;
-		content: '';
-		left: 50%;
-		position: absolute;
-		top: -1em;
-		transform: translate(-50%,0);
-		width: 4em;
-		height: 100%;
-		margin-top: 16px;
-		z-index: 0;
-	}
-
-    .open-book > * {
-        column-count: 2;
-        column-gap: 6em;
-        position: relative;
-        z-index: 1;
-    }
-
-    /* Header/Footer */
-    .open-book header:before,
-    .open-book header:after,
-    .open-book footer:before,
-    .open-book footer:after {
-        background: #fff;
-        border-radius: 25%;
-        content: '';
-        height: 2em;
-        position: absolute;
-        z-index: -1;
-        width: calc(50% + 2em);
-    }
-
-    .open-book header:before,
-    .open-book footer:before,
-    .open-book footer:after {
-        border-top-left-radius: 0;
-    }
-
-    .open-book header:after,
-    .open-book footer:before,
-    .open-book footer:after {
-        border-top-right-radius: 0;
-    }
-
-    .open-book header:before,
-    .open-book header:after,
-    .open-book footer:after {
-        border-bottom-right-radius: 0;
-    }
-
-    .open-book header:before,
-    .open-book header:after,
-    .open-book footer:before {
-        border-bottom-left-radius: 0;
-    }
-
-    .open-book header:before,
-    .open-book header:after {
-        top: -2.65em;
-    }
-
-    .open-book header:before,
-    .open-book footer:before {
-        right: 50%;
-    }
-
-    .open-book header:before {
-        transform: rotate(-2deg);
-    }
-
-    .open-book header:after,
-    .open-book footer:after {
-        left: 50%;
-    }
-
-    .open-book header:after {
-        transform: rotate(2deg);
-    }
-
-    .open-book footer:before,
-    .open-book footer:after {
-        bottom: -2.65em;
-    }
-
-    .open-book footer:before {
-        transform: rotate(2deg);
-    }
-
-    .open-book footer:after {
-        transform: rotate(-2deg);
-    }
-
-    .open-book header > *:last-child,
-    .open-book footer > *:last-child {
-        text-align: right;
-    }
-
-    .open-book footer #page-numbers {
-        display: block;
-    }
-
-    /* Chapter Title */
-    .open-book .chapter-title {
-    }
-
-    .open-book .chapter-title:before,
-    .open-book .chapter-title:after {
-        height: 0.125em;
-    }
-
-    /* Body Copy */
-    .open-book article p {
-        text-indent: 3em;
-    }
-
-    .open-book article > ul,
-    .open-book article > ol {
-        padding-left: 4em;
-    }
-
-}
-/*BOOK CSS END*/
-
-/*Inventory Wear and Tear*/
-.item-name.flexrow.rollable.well-worn {
-	background: #ff935f63;
-}
-.item-name.flexrow.rollable.worn {
-    background: #ffff5f30;
-}
-.item-name.flexrow.rollable.scarred {
-    background: #86393980 !important;
-    color: #520000 !important;
-}
-label#rollableammodice {
-    display: inline-grid;
-    padding: 6px;
-    padding-left: 15px;
-    padding-right: 15px;
-    border-radius: 0px;
-    font-weight: bolder;
-    text-transform: capitalize;
-}
-
-.box-title.rollable:hover {
-    cursor: pointer;
-	background: #31313130;
-    color: white !important;
-	filter: drop-shadow(0px 0px 2px #0000008a);
-}
-.item-detail.ammodice {
-    height: 24px;
-    display: table-cell;
-    vertical-align: middle;
-}
-li.item.flexrow.well-worn {
-}
-li.item.flexrow.scarred {
-}
-.item-image.true {
-	border-radius:36px;
-}
-h4.well-worn {
-    -webkit-text-stroke: 0.5px #000000;
-    color: #ff7600 !important;
-    border-left: #ff6500 solid 5px;
-    filter: contrast(0.5);
-}
-h4.worn {
-    color: #fff46b !important;
-    border-left: #fff46b solid 5px;
-	filter: contrast(0.5);
-}
-h4.scarred {
-    color: #ff0000 !important;
-    text-shadow: 0 0 2px;
-    border-left: solid 5px;
-	filter: contrast(0.5);
-}
-label.notchlabel:hover + button#minus{
-	visibility: visible !important;
-}
-label.notchlabel:hover + button#minus + button#plus{
-	visibility: visible !important;
-}
-button#minus:hover {
-    visibility: visible !important;
-    background-color: #7a7971;
-    color: #ffffff !important;
-}
-button#plus:hover {
-    visibility: visible !important;
-    background-color: #7a7971;
-    color: #ffffff !important;
-}
-button#plus {
-    width: 5px;
-    visibility: hidden;
-    position: inherit;
-    margin: 0;
-    top: 0px;
-    left: -40px;
-    height: 20px;
-    position: relative;
-    align-self: center;
-    /* background-image: linear-gradient(#474a5dfc, #243b5500) !important; */
-}
-button#plus:after {
-    content: "+";
-    margin-left: -3.2px;
-    margin-top: -14px;
-    position: absolute;
-}
-button#minus:after {
-    content: "-";
-    margin-left: -2px;
-    margin-top: -14px;
-    position: absolute;
-}
-button#minus {
-    width: 5px;
-    visibility: hidden;
-    margin-left: 5px;
-    position: relative;
-    height: 20px;
-    align-self: center;
-    top: 0px;
-    left: -62px;
-    height: 20px;
-    /* background-image: linear-gradient(#474a5dfc, #243b5500) !important; */
-}
-.ammostyle {
-    padding: 7px 15px;
-    padding-top: 4px;
-    padding-bottom: 4px;
-    border: solid 1px;
-    width: max-content;
-    height: max-content;
-}
-
-.item-detail.item-weight.notches {
-    display: -webkit-box;
-}
-.spell-mats {
-    line-height: 15px;
-    align-self: center;
-    flex: 0 0 152px;
-    font-size: 12px;
-    color: #7a7971;
-    text-align: center;
-    border-right: 1px solid #c9c7b8;
-}
-.spell-mathead {
-    flex: 0 0 150px;
-    font-size: 12px;
-    color: #7a7971;
-    text-align: center;
-    border-right: 1px solid #c9c7b8;
-}
-.titlecheckbox{
-    display: inline-flex;
-    cursor: pointer;
-    position: relative;
-	margin-top:2px;
-	width: 10px !important;
-	height: 10px !important;
-}
-.titlecheckbox{
-	margin-bottom: 3px !important;
-}
-.titlecheckbox > input {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    -o-appearance: none;
-    appearance: none;
-    outline: none;
-    transition-duration: 0.2s;
-    border-style: solid;
-    border-width: 1px;
-    cursor: pointer;
-    width: 10px !important;
-    height: 10px !important;
-    border-bottom-style: dotted;
-    border-top-style: dotted;
-    padding: 10px;
-    transform: scale(0.8);
-}
-
-.titlecheckbox > input:checked {
-    border: 1px solid #c7e5ff;
-    padding: 10px;
-}
-.titlecheckbox > input:checked + span::before {
-    content: '\2713';
-    display: block;
-    position: absolute;
-    margin-top: -4px;
-    margin-left: 6px;
-    font-size: 15px;
-}
-.dnd5e.sheet .editor {
-    height: unset;
-}
-
-.biosections {
-    padding: 10px;
-}
-.dnd5e.sheet.item .sheet-body .item-properties {
-    flex: 0 0 200px;
-    margin: 5px 5px 5px 0;
-    padding-right: 5px;
-    border-right: 2px groove #eeede0;
-    height: 96%;
-    overflow: auto;
-}
-/*CHECK SECTION ON THE DD TAB*/
-
-label.successatcost.rollable.check:hover {
-    cursor: pointer;
-}
-label.criticalF.rollable.check:hover {
-    cursor: pointer;
-}
-label.criticalS.rollable.check:hover {
-    cursor: pointer;
-}
-label.treatwound.rollable.check:hover {
-    cursor: pointer;
-}
-label.healwound.rollable.check:hover{
-    cursor: pointer;
-}
-label.check.dicelabel2.staminacheck.rollable:hover {
-    cursor: pointer;
-}
-/*CHECK SECTION END*/
-.cost {
-	text-align: center;
-    font-size: 15px;
-}
-.free {
-    text-align: center;
-    font-size: 15px;
-}
-.critfailh2{
-	text-align: center;
-}
-.critsuccessh2{
-	text-align: center;
-}
-.successatcH2{
-	text-align: center;
-}
-.dnd5e.sheet.actor .spellcasting-ability select {
-    margin: 0;
-}
-label.spellburnoutcheck {
-    margin-left: 8px;
-}
-.window-app {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
-    position: absolute;
-    padding: 0;
-    z-index: 100;
-
-}
-.dnd5e.sheet.actor .inventory-list .item .item-name .item-image {
-    height: 30px;
-}
-.dnd5e.sheet.item {
-    min-height: 450px;
-    min-width: 600px;
-}
-.tox.tox-tinymce {
-    height: 880px;
-}
-.better-npc-sheet input[type=text] {
-    border: none;
-}
-
-
-.notification.error{
-visibility:hidden;
-}
-
-
-
-
-
-#calendar {
-    z-index: 0 !important;
-}
-
-
-
-
-.dnd5e.sheet.actor.character {
-    min-width: 772px !important;
-    min-height: 736px;
-}
-.tab.spellbook.flexcol.active {
+    border:1px;
     border-style: groove;
-    border-right: 0;
-    border-left: 0;
-    border-bottom: 0;
+    background: #ff5e0026;
 }
-.dnd5e.sheet.actor .inventory-list .item .item-name .item-image {
-    flex: 0 0 30px;
-    margin-right: 5px;
+span.rollable.darkDnD_AS:hover {
+    text-shadow: 0 0 8px var(--color-shadow-primary);
+    color: red;
+    border-color: red;
 }
-.window-app .window-header {
-    flex: 0 0 30px;
-    padding: 0 8px;
-    line-height: 30px;
-    border-bottom: 1px solid black;
+h4.dice-total.darkChatResult {
+    flex: 0.5;
 }
-
-#trait-selector .trait-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.dnd5e.sheet.actor .inventory-list .item-price {
-    flex: 0 0 100px;
-    font-size: 10px;
-}
-
-.dmgBtn-container-br button {
-	border-radius: 0;
-}
-
-
-.dnd5e.sheet.actor .inventory-list .inventory-header h3 {
-    margin: 0 -5px 0 0;
-    padding-left: 5px;
-    font-size: 13px;
-    font-weight: bold;
-}
-.dnd5e.sheet.actor .inventory-list .item .item-name h4 {
-    margin: 0;
-    line-height: 15px;
-    padding: 6px;
-    margin: auto;
-}
-
-.sidebar-tab .directory-footer button {
-    margin: 0 3px;
-}
-
-li.folder.collapsed > .folder-header {
-	
-}
-
-
-.lmrtfy-actor-avatars input:checked + label img {
-    transform: scale(0.9);
-}
-.lmrtfy-actor-avatars {
-    justify-content: center;
-    margin-top: 10px !important;
-    margin-bottom: -5px !important;
-}
-
-
-
-.select-all, .deselect-all {
-    border-radius: 10px;
-    flex: 1;
-}
-
-.dnd5e.sheet.actor.character .encumbrance .encumbrance-bar {
-    border: 1px solid #000000;
-}
-.encumbrance-bar{ 
-max-width: 100%;
-}
-
-
-form .form-group label {
-    line-height: 24px;
-}
-
-form .form-group, form .form-group-stacked {
-    clear: both;
-    display: flex;
-    flex-direction: row;
-    padding: 10px;
-    flex-wrap: wrap;
-    margin: 3px 0;
-}
-form .form-header {
-    margin: 0;
-    font-weight: bold;
-}
-
-.dnd5e.sheet.actor .traits .inactive {
-    opacity: 42%;
-}
-.dnd5e.sheet.actor .traits {
-    margin: 0 0px;
-}
-
-.fa-dice-d20:before {
-    content: "\f6cf";
-}
-.red-full .damage-type {
-    text-align: center;
-    font-size: 12px;
-}
-
-.dice-roll .dice-total {
-    flex: 1;
-    font-size: 20px;
-    font-weight: bold;
-}
-.red-dual .dice-row .dual-left {
-    float: left;
-    width: 50%;
-    display: inline;
-}
-.red-dual .dice-row .dual-right {
-    float: right;
-    width: 50%;
-    display: inline;
-}
-.red-dual .dice-row {
-    clear: both;
-}
-
-.dnd5e.chat-card .card-header img {
-    flex: 0 0 36px;
-    margin-right: 5px;
-    margin-top: 4px;
-}
-.dnd5e.chat-card .card-header h3 {
-    flex: inherit;
-}
-.dnd5e.chat-card .card-header {
-    align-items: center;
-}
-.trainpointa {
-    width: 80px !important;
-    position: relative;
-}
-
-.trainingcheckbox {
-    height: 18px !important;
-    margin: 0px !important;
-    margin-top: 11px !important;
-    display: unset !important;
-}
-.trainingcheckbox1 {
-    height: 18px !important;
-    margin-right: 0px !important;
-    display: unset !important;
-}
-.statuses .status .status-value {
-	text-align: center;
-}
-
-.trainingslabel {
-    margin-right: 10px;
-    text-align: right;
-    margin-top: 5px;
-    font-size: 25px;
-}
-.spentlable {
-    margin-right: 10px;
-    margin-left: 10px;
-    text-align: right;
-    margin-top: 5px;
-    font-size: 25px;
-}
-.trainingssummary{
-	border-bottom: 0px !important;
-}
-.dnd5e input[type="text"], .dnd5e select {
-    height: calc(100% - 2px);
-    border: 1px solid #7a7971;
-}
-
-.dnd5e.sheet.actor .ability-scores {
-    margin-left: 5px;
-}
-
-.dnd5e.sheet .window-content {
-    padding: 5px !important;
-    font-size: 13px;
-}
-.dnd5e.sheet .sheet-header img.profile {
-    flex: 0 0 100px;
-    height: 100px;
-    object-fit: cover;
-    border: none;
-}
-.dnd5e input[type="text"], .dnd5e select {
-    height: calc(100% - 2px);
-    border: 1px solid #7a7971;
-}
-
-.form .notes {
-    font-size: 12px;
-    margin: 4px 0;
-}
-
-.dnd5e .form-group label {
-    flex: auto;
-    font-weight: bold;
-}
-
-.dnd5e.sheet.actor ul.skills-list {
-    flex: 0 0 192px;
-    list-style: none;
-    margin: 5px 5px 0;
-    padding: 2px 2px 0;
-    border: 2px #424856;
-    border-radius: 3px;
-}
-
-.dnd5e.actor .inventory-list .item .item-quality, .dnd5e.actor .inventory-list .item .item-weight {
-    font-size: 12px;
-    text-align: center;
-    border-right: 1px solid #CCC;
-}
-.item-detail{
-width: 58px;
-}
-.app.sheet .editor-content {
-    min-height: 111px;
-    padding: 5px;
-    overflow-y: auto;
-}
-.dicelabel{
-	margin-top: -7px;
-}
-.dicebox1{
-	margin-top: -7px;
-	width:40px;
-}
-.dicebox2{
-	margin-top: -6px;
-}
-.level{
-	font-size: 35px !important;
-    margin-top: 10px;
-}
-
-.dnd5e.sheet.actor.character .sheet-header .charlevel .xpbar .bar {
-    height: 4px;
-    margin: 1px;
+.tab.dd.flexcol.active {
     display: block;
-    border: 1px solid #000;
-    border-radius: 2px;
 }
-.dnd5e.sheet.actor.character .sheet-header .charlevel {
-    flex: 0 0 180px;
-    padding: 0 5px 2px;
-    margin-top: -15px;
-}
-.stressbox {
-    margin-right: 0px !important;
-    text-align: center;
-    width: 80px;
-    font-weight: bold;
-}
-.saturationbox{
-	margin-top: 7px;
-}
-.trainingpoints{
-	margin-top: 8px;
-    margin-left: 8px;
-}
-.dnd5e.actor .statuses .status {
-    border-right: 0px;
-}
-.dnd5e.actor .statuses {
-    flex-wrap: unset !important;
-}
-.exhaustionbox {
-    display: inline-flex;
-    cursor: pointer;
-    position: relative;
-	margin-top:2px;
-	width: 20px;
-	height: 20px;
-}
-.exhaustionbox{
-margin-top: 6px;
-}
-.exhaustionbox > input {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    -o-appearance: none;
-    appearance: none;
-    outline: none;
-    transition-duration: 0.2s;
-    border-style: solid;
-    border-width: 1px;
-    cursor: pointer;
-    width: 20px;
-    height: 20px;
-    border-bottom-style: dotted;
-    border-top-style: dotted;
-}
-
-.exhaustionbox > input:checked {
-    border: 1px solid #b84141;
-}
-
-.exhaustionbox > input:checked + span::before {
-    content: '\1F480';
-    display: block;
-    position: absolute;
-    margin-top: -1px;
-	margin-left: 4.5px;
-    padding-bottom: 5px;
-}
-
-.fatecheckbox {
-    display: inline-flex;
-    cursor: pointer;
-    position: relative;
-	margin-top:2px;
-	width: 20px;
-	height: 20px;
-}
-.fatecheckbox{
-margin-bottom: 3px !important;
-}
-.fatepoints{
-    width: 40px;
-	margin-top: 5px;
-    position: relative;
-    margin-left: -20px;
-    text-align: center;
-	
-}
-.points {
-    width: 40px !important;
-    margin: -12px !important;
-    color: #b5b1d4 !important text-align: center !important;
-    border-radius: unset !important;
+.allparts {
+    border: 1px groove white;
     text-align: center !important;
+    display: inline-block;
+    flex: 1;
+    margin: 5px;
 }
-
+.darkPartContainer {
+    display: flex;
+}
+.darkneeds {
+    flex: 0;
+    border-bottom: 1px solid;
+    width: 181px;
+    text-align: center;
+}
+h4.darksheetheader {
+    font-weight: bold;
+    font-size: 16px;
+    background: #0000001a;
+}
+.darkselect {
+    background: #00000014 !important;
+    width: 100%;
+}
 .ressourcecheckbox {
     width: 17px;
     height: 17px;
@@ -1315,19 +55,15 @@ margin-bottom: 3px !important;
     margin-right: 0 !important;
     margin-left: 0 !important;
 }
-.deathcheckbox {
+.foodcheckbox {
     display: inline-flex;
     cursor: pointer;
     position: relative;
-	margin-top:2px;
-	width: 20px;
-	height: 20px;
+    margin-top:2px;
+    width: 20px;
+    height: 20px;
 }
-.deathcheckbox{
-margin-bottom: 3px !important;
-}
-
-.deathcheckbox > input {
+.foodcheckbox > input {
     -webkit-appearance: none;
     -moz-appearance: none;
     -o-appearance: none;
@@ -1343,160 +79,27 @@ margin-bottom: 3px !important;
     border-top-style: dotted;
     padding: 10px;
 }
-.activecondition{
-	text-shadow: 0 0 2px black;
-}
-.trainpointa {
-    border-radius: 0px !important;
-}
-.dnd5e.sheet.actor .spellcasting-ability label, .dnd5e.sheet.actor .spellcasting-ability span {
-    height: 24px;
-}
-.dnd5e.sheet.actor.character .sheet-header .summary .proficiency {
-    text-align: center;
-    padding-right: unset;
-    align-self: center;
-    height: 21px;
-}
-.dnd5e.sheet.actor .counters {
-    place-items: center;
-}
-.dnd5e.sheet.actor .sheet-header .summary input, .dnd5e.sheet.actor .sheet-header .summary span {
-    height: 100%;
-}
-.deathcheckbox > input:checked {
-    border: 1px solid #b84141;
+
+.foodcheckbox > input:checked {
     padding: 10px;
 }
-.counter-value {
-    text-align-last: center;
-}
-.attribute-value.multiple {
-    text-align-last: center;
-}
-.deathcheckbox > input:checked + span::before {
-    content: '\1F480';
+
+.foodcheckbox > input:checked + span::before {
+    content: '\2714';
     display: block;
     position: absolute;
-    margin-top: 4px;
-    margin-left: -20px;
-}
-label.rollable.deathsaveroll.darkcheck {
-    height: 23px;
-    align-self: flex-end;
-}
-.deathsavelabel {
-    font-family: inherit !important;
-    font-weight: bold;
-    font-size: 13px;
-    color: #4b4a44;
-}
-.dnd5e.sheet.item .sheet-header img.profile {
-    border: 0px solid #000;
-}
-.dnd5e.sheet.actor .inventory-list .item .item-name .item-image:hover {
-    border: 1px transparent groove;
-}
-.bloodiedcheckbox {
-    display: inline-flex;
-    cursor: pointer;
-    position: relative;
-	margin-top:2px;
-	width: 10px !important;
-	height: 10px !important;
-}
-.bloodiedcheckbox{
-margin-bottom: 3px !important;
-}
-.bloodiedcheckbox > input {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    -o-appearance: none;
-    appearance: none;
-    outline: none;
-    transition-duration: 0.2s;
-    border-style: solid;
-    border-width: 1px;
-    cursor: pointer;
-    width: 10px !important;
-    height: 10px !important;
-    border-bottom-style: dotted;
-    border-top-style: dotted;
+    margin-top: -5px;
+    margin-left: -26px;
+    padding-bottom: 5px;
     padding: 10px;
-	transform: scale(0.8);
-}
-.bloodiedcheckbox > input:checked {
-    border: 1px solid #b84141;
-    padding: 10px;
-}
-.bloodiedcheckbox > input:checked + span::before {
-    content: '\2713';
-    display: block;
-    position: absolute;
-    margin-top: -4px;
-    margin-left: -17px;
-    font-size: 15px;
-}
-
-input.ressourcecheckbox.spellburn {
-    flex: 0;
-    background: inherit;
-    background: #ffffff57;
-    background-size: 22px;
-    background-position-x: center;
-}
-
-.spellburnoutcheck{
-margin-bottom: 3px !important;
-}
-.spellburnoutcheck > input {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    -o-appearance: none;
-    appearance: none;
-    outline: none;
-    transition-duration: 0.2s;
-    border-style: solid;
-    border-width: 1px;
-    cursor: pointer;
-    width: 10px !important;
-    height: 10px !important;
-    border-bottom-style: dotted;
-    border-top-style: dotted;
-    padding: 10px;
-	transform: scale(0.8);
-}
-.spellburnoutcheck > input:checked {
-    border: 1px solid #b84141;
-    padding: 10px;
-}
-.spellburnoutcheck > input:checked + span::before {
-    content: '\1F525';
-    display: block;
-    position: absolute;
-    margin-top: 1px;
-    margin-left: 3px;
-    font-size: 15px;
-    transform: rotateZ(15deg) scale3d(1.2, 1.2, 1.2);
-    filter: invert(1);
-}
-
-.dnd5e .form-header {
-    margin: 0 0 0.25em 0;
-    padding: 0 2px;
-
-    font-size: 20px;
-    font-size: 24px;
-    border-top: 2px groove #eeede0;
-    border-bottom: 2px groove #eeede0;
 }
 .watercheckbox {
     display: inline-flex;
     cursor: pointer;
     position: relative;
-	margin-top:2px;
-	width: 20px;
-	height: 20px;
+    margin-top:2px;
+    width: 20px;
+    height: 20px;
 }
 
 .watercheckbox > input {
@@ -1513,7 +116,7 @@ margin-bottom: 3px !important;
     height: 20px;
     border-bottom-style: dotted;
     border-top-style: dotted;
-	padding: 10px;
+    padding: 10px;
 }
 .watercheckbox.green > input {
     -webkit-appearance: none;
@@ -1549,9 +152,8 @@ margin-bottom: 3px !important;
 }
 .watercheckbox > input:checked {
     border: 1px solid #4182b8;
-	padding: 10px;
+    padding: 10px;
 }
-
 .watercheckbox > input:checked + span::before {
     content: '\2714';
     display: block;
@@ -1561,53 +163,40 @@ margin-bottom: 3px !important;
     padding-bottom: 5px;
     padding: 10px;
 }
-.foodcheckbox {
-    display: inline-flex;
-    cursor: pointer;
-    position: relative;
-	margin-top:2px;
-	width: 20px;
-	height: 20px;
+.part4 {
+    flex: 0.3;
+    height: fit-content;
 }
-.foodcheckbox > input {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    -o-appearance: none;
-    appearance: none;
-    outline: none;
-    transition-duration: 0.2s;
-    border-style: solid;
-    border-width: 1px;
-    cursor: pointer;
-    width: 20px;
-    height: 20px;
-    border-bottom-style: dotted;
-    border-top-style: dotted;
-	padding: 10px;
+.part5 {
+    width: 522px;
 }
-
-.foodcheckbox > input:checked {
-    border: 1px solid #41B883;
-	padding: 10px;
+.stress {
+    border-right: 1px solid;
 }
-
-.foodcheckbox > input:checked + span::before {
-    content: '\2714';
-    display: block;
-    color: #ffffff;
-    position: absolute;
-    margin-top: -5px;
-    margin-left: -26px;
-    padding-bottom: 5px;
-    padding: 10px;
+.breaks {
+    text-align: -webkit-left;
 }
-
+.afflictionselection {
+    margin-top: 4px;
+    margin-left: 5px;
+}
+.counter-value {
+    flex: 0.212;
+}
+label.darkCheck {
+    padding: 5px;
+    background: #00000026;
+    border-radius: 3px;
+}
+.checks {
+    height: 60px;
+}
 .stresscheckbox {
     display: inline-flex;
     cursor: pointer;
     position: relative;
-	width: 20px;
-	height: 20px;
+    width: 20px;
+    height: 20px;
 }
 
 
@@ -1648,23 +237,19 @@ label.afflictiontext {
     margin-top: 7px;
     margin-left: 3px;
 }
-select.hitdice.afflictionselection{
-    margin-left: 5px;
-    margin-top: 4px;
-    height: 20px;
-    align-items: flex-end;
-}
-.trainingscheckbox {
+.deathcheckbox {
     display: inline-flex;
     cursor: pointer;
     position: relative;
-	margin-top:2px;
-	width: 20px;
-	height: 20px;
-	transform: scale(0.8);
+    margin-top:2px;
+    width: 20px;
+    height: 20px;
+}
+.deathcheckbox{
+    margin-bottom: 3px !important;
 }
 
-.trainingscheckbox > input {
+.deathcheckbox > input {
     -webkit-appearance: none;
     -moz-appearance: none;
     -o-appearance: none;
@@ -1678,281 +263,225 @@ select.hitdice.afflictionselection{
     height: 20px;
     border-bottom-style: dotted;
     border-top-style: dotted;
-	padding: 10px;
-}
-
-.trainingscheckbox > input:checked {
-    border: 1px solid #d4cf14;
     padding: 10px;
 }
 
-.trainingscheckbox > input:checked + span::before {
-	content: '\2699';
+.dnd5e.sheet.actor .inventory-filters {
     display: block;
-    position: absolute;
-    margin-top: -11px;
-    margin-left: -29px;
+}
+
+label.treatwound.rollable.check:hover {
+    cursor: pointer;
+}
+label.healwound.rollable.check:hover{
+    cursor: pointer;
+}
+.form-group.inactive.woundsection {
+    border: 1px groove;
+    display: none;
+}
+.addwoundbutton {
+    text-align: center;
     font-size: 20px;
-    padding-bottom: 5px;
-    padding: 10px;
-}
-.tox .tox-toolbar, .tox .tox-toolbar__overflow, .tox .tox-toolbar__primary {
-    display: flex;
-    flex: 0 0 auto;
-    flex-shrink: 0;
-    flex-wrap: wrap;
-    padding: 0 0;
-}
-
-.bio{
-	width: auto !important;
-    height: 16px !important;
-
-}
-.dnd5e.sheet.item .sheet-body .tab {
-    padding: 0 5px;
-}
-.editor-edit {
-    font-size: 1.25em;
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    border: 1px solid #44475a;
-    border-radius: 4px;
-    padding: 1px 2px;
-    display: block !important;
-}
-.biosection{
-	display: block;
-    padding: 5px;
-    width: 50%;
-    text-align: center;
-    justify-content: space-evenly;
-}
-.bioh2 {
-    /* border: solid 1px #ffffff; */
-    margin-top: 10px;
-	border: solid 1px black;
-}
-.details{
-    border-bottom: 1px dashed;
-}
-input.bio {
-    height: 15px !important;
-}
-input.bio:hover {
-    border: 1px solid #9a9991 !important;
-    box-shadow: 0 0 2px #b5b3a4 !important;
-    transition: 0.1s;
-}
-input.bio:focus {
-    border: 0 !important;
-    border-bottom: solid 1px black !important;
-    box-shadow: 0 0 8px #b5b3a4 !important;
-    transition: 0.3s;
-    border: 1px solid #9a9991 !important;
-    background: #cdcbc0 !important;
-    color: white;
-}
-input.biotextflex {
-    height: 15px !important;
-}
-input.biotextflex :break{
-	word-wrap: break-word !important;
-    word-break: break-all !important;
-}
-input.biotextflex:hover {
-    border: 1px solid #9a9991 !important;
-    box-shadow: 0 0 2px #b5b3a4 !important;
-    transition: 0.1s;
-}
-input.biotextflex:focus {
-    border: 0 !important;
-    border-bottom: solid 1px black !important;
-    box-shadow: 0 0 8px #b5b3a4 !important;
-    transition: 0.3s;
-    border: 1px solid #9a9991 !important;
-    background: #cdcbc0 !important;
-    color: white;
-}
-/*PROFICIENCY GREEN*/
-/*DD TAB*/
-.ddfulltab{
-display: inline
-}
-.allparts {
-    display: inline-block;
-    padding: 13px;
-    padding-top: 0px;
-    margin-left: 25px;
-    margin-right: 25px;
-    width: 33%;
-}
-.part1 {
-    border: groove 2px #22473b;
-    border-image-repeat: initial;
-}
-.part1.black {
-	border-style: solid;
-    border-width: 1px;
-}
-.part2{
-	border: groove 2px #1e2777;
-}
-.part2.black{
-	border-style: solid;
-    border-width: 1px;
-}
-.part3{
-	border: groove 2px #614e2a;
-}
-.part3.black{
-	border-style: solid;
-    border-width: 1px
-}
-.part4 {
-    border: groove 2px #727584;
-    padding: 15px;
-    margin-left: 0;
-    flex: 1;
-    width: 33%;
-}
-label.dicelabel2.staminacheck.rollable.darkcheck {
-    padding: 5px;
-}
-.burnoutclick {
-    margin: 0px 50px 0px 50px;
-    text-align: center;
-    border: 1px solid black;
-}
-.burnoutandexhaustion{
-text-align:center;
-margin-top:15px;
-}
-
-.darksheetheader{
-  font-size:20px;
-  text-align:center;
-}
-.exhaustionbox{
-    width: min-content;
-}
-.conditionbutton {
-    border: 1px solid #5f5e5e;
-    position: absolute;
-    width: 26px;
-    text-align: center;
-    left: 0;
-}
-.conditionbutton:hover {
-    border: solid 1px #b5b3a4 important;
-}
-.section0{
-	margin: 0 25px 20px 25px;
-    padding: 20px;
-    border: groove 2px #1d2f46;
-	justify-content: space-evenly;
-	transition-duration: 0.2s;
-}
-
-.section1 {
-	margin-top: 20px;
-    display: flex;
-    text-align: center;
-    justify-content: space-evenly;
-}
-.section1.flexrow {
-    margin-right: 25px;
-    margin-left: 25px;
-}
-.section2 {
-    margin: 10px 30px 0px 24px;
-    height: 120px;
-    padding: 20px;
-    text-align: center;
-    border: groove 2px #5e6069;
-}
-.section3 {
-	margin-top: 20px;
-    display: flex;
-    text-align: center;
-    justify-content: space-evenly;
-}
-
-.messagecards{
-	padding: 10px;
-	padding-bottom: 0;
-	padding-top: 0;
-}
-.checks {
-    padding-bottom: 10px;
-    padding-top: 0px;
-    width: 650px;
-    border: groove 2px #603b60;
-    flex: 3.5;
-}
-button#berechnen {
-    color: white;
-}
-.notification {
-    visibility: visible;
-}
-.check {
     border: 1px solid #b5b3a4;
+    border-radius: 2px;
     background: rgba(0, 0, 0, 0.05);
+    padding: 0 3px;
+    margin: 0 3px;
 }
-.check:hover {
+.addwoundbutton:hover {
+    background: #b5b3a3;
+    color: white !important;
+}
+.removewoundbutton{
+	border: 1px solid #b5b3a4;
+    border-radius: 2px;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 0 3px;
+    margin: 0 3px;
+	width: 25px;
+    height: 25px;
+}
+.removewoundbutton:hover{
     background: #b5b3a4;
     color: white;
 }
-
-.inventoryslots{
-    width: 30px;
-    height: 20px;
+.woundrollmessage{
+	border: 1px solid #b5b3a4;
+    border-radius: 2px;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 0 3px;
+    margin: 0 3px;
 }
-.breaks{
-	text-align-last: left;
-    border-width: 1px;
-    border-style: solid;
-    border-top: 0;
-    border-bottom: 0;
-    border-right: 0;
-} 
-
-/*DARKSCREEN 1.0*/
-label.darkScreenNavigationButton:active {
-    background: black !important;
-}
-label.darkScreenNavigationButton:hover {
-    background: #383838;
-    color: #ffffff;
-}
-label.darkScreenNavigationButton {
-    padding: 5px 10px 5px 10px;
-    background: #282828;
-    color: white;
-    border-radius: 5px;
-    border: #282828 1px solid;
-}
-h3.settingsheader {
+table#woundlistid {
     text-align: center;
-    background: #cfcfc3;
-    font-weight: bold;
 }
-.darkscreenframe {
-    display: flex;
-    min-height: 900px;
+.oldWoundsColspan {
+    padding: 0;
+    border-top: 1px solid black;
+    background: #b5b3a39c;
+    color: inherit;
 }
-.DSC-window{
-	height: 1000px;
+td.oldWoundsColspan:hover {
+    background: #b5b3a3;
+    color: white !important;
 }
-.darkscreenHeader {
-    text-align: center;
-    background: #282828;
+tr#oldwoundtr {
+    background: #b5b3a31f;
+}
+.healWoundButton {
+    left: -24.5px;
+    top: -7px;
+    pointer-events: none;
+    font-size: 15px;
+    position: relative;
+    width: 0px;
+    height: 0px;
+}
+.deleteWoundButton {
+    left: -21px;
+    top: -7px;
+    pointer-events: none;
+    font-size: 15px;
+    position: relative;
+    width: 0px;
+    height: 0px;
+}
+h4.attribute-name.box-title.rollable.darksheet_AC {
+    border: 1px solid #b5b3a4;
+    border-radius: 2px;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 0 3px;
+    margin: 0 3px;
+}
+h4.attribute-name.box-title.rollable.darksheet_AC:hover {
+    background: #b5b3a4;
     color: white;
-    border-color: white;
+    text-shadow: none;
 }
-.buttonbar {
-    background: #282828;
-    border-radius: 200px;
+
+span.rollable.darksheet_AS {
+    border: 1px solid #b5b3a4;
+    border-radius: 2px;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 0 3px;
+    margin: 0 3px;
+}
+span.rollable.darksheet_AS:hover {
+    background: #b5b3a4;
+    color: white;
+    text-shadow: none;
+}
+label.dicelabel2.burnoutclick.burnoutdie.rollable {
+    border: 1px solid #b5b3a4;
+    border-radius: 2px;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 0 3px;
+    margin: 0 3px;
+}
+label.dicelabel2.burnoutclick.burnoutdie.rollable:hover {
+    background: #b5b3a4;
+    color: white;
+    text-shadow: none;
+}
+.randomnotch.rollable {
+    border: 1px solid #b5b3a4;
+    border-radius: 2px;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 0 3px;
+    margin: 0 3px;
+    width: 50px;
+    margin-left: 0 !important;
+    flex: 0 0 85px !important;
+    height: 22px;
+    margin-right: 11px;
+    text-align-last: center;
+}
+.randomnotch.rollable:hover{
+    background: #b5b3a4;
+    color: white !important;
+    text-shadow: none;
+}
+.staminaCheck {
+    padding: 5px;
+    border: 1px solid #b5b3a4;
+    border-radius: 2px;
+    background: rgba(0, 0, 0, 0.05);
+    margin: 0 3px;
+    margin-bottom: 3px;
+}
+.staminaCheck:hover {
+    background: #b5b3a4;
+    color: white;
+    text-shadow: none;
+}
+.woundroll:hover{
+    background: #b5b3a4;
+    color: white !important;
+    text-shadow: none;
+    text-align: center;
+}
+.woundroll:hover::before {
+    content: "Reopen ";
+  }
+.woundInformation {
+    font-size: 20px;
+    color: grey;
+}
+.darksheetNegativeMessage{
+    color:red;
+}
+.darksheetNegativeMessage header div h3 {
+    color: #830000 !important;
+}
+.darksheetPositiveMessage{
+    color:green;
+}
+.darksheetPositiveMessage header div h3 {
+    color: #008307 !important;
+}
+.darkRoll{
+    color:black;
+}
+.darkRollRed{
+    color:red;
+}
+.darkRollGreen{
+    color:green;
+}
+span.flavor-text {
+    padding: 5px;
+    padding-top: 0px;
+}
+.dnd5e.sheet.item .sheet-body .item-properties {
+    flex: 0 0 180px;
+}
+.dnd5e.sheet.item .sheet-body .item-properties .form-group input {
+    text-align: right;
+    text-align: center;
+    border-bottom: 1px solid grey;
+}
+select.hitdice.white {
+    border: unset;
+    border-bottom: 1px solid #00000045;
+    background: #ffffff40;
+}
+.item-properties .form-group {
+    border: unset !important;
+}
+.dnd5e.sheet.item .sheet-body .item-properties .form-group input {
+    text-align: right;
+    text-align: center;
+    border-bottom: 1px solid #00000045;
+    background: #fffdfd47;
+}
+.dice-roll.red-dual.darksheetRoll {
+    display: grid;
+    grid-template-columns: 240px;
+}
+.form-group.woundsection.woundS1 {
+    max-height: 20px;
+}
+.form-group.woundsection {
+    align-items: inherit;
 }

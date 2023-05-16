@@ -1,0 +1,218 @@
+<div class="tab dd flexcol" data-group="primary" data-tab="dd">
+    <!--<input type="text" name="flags.darksheet.test" value="{{actor.flags.darksheet.test}}">-->
+    <div class="darkPartContainer">
+            <div class="part1 {{actor._id}} allparts">
+                <h4 class="darksheetheader {{actor._id}}">Food</h4>
+                    <div>
+                        <label class="foodcheckbox">
+                            <input class="ressourcecheckbox check" type="checkbox" name="flags.darksheet.attributes.food.value" data-dtype="Boolean" {{checked actor.flags.darksheet.attributes.food.value}}/><span></span></label>
+                        <label class="foodcheckbox">
+                            <input class="ressourcecheckbox check" type="checkbox" name="flags.darksheet.attributes.food2.value" data-dtype="Boolean" {{checked actor.flags.darksheet.attributes.food2.value}}/><span></span></label>
+                        <label class="foodcheckbox">
+                            <input class="ressourcecheckbox check" type="checkbox" name="flags.darksheet.attributes.food3.value" data-dtype="Boolean" {{checked actor.flags.darksheet.attributes.food3.value}}/><span></span></label>
+                        <label class="foodcheckbox">
+                            <input class="ressourcecheckbox check" type="checkbox" name="flags.darksheet.attributes.food4.value" data-dtype="Boolean" {{checked actor.flags.darksheet.attributes.food4.value}}/><span></span></label>
+                        <label class="foodcheckbox">
+                            <input class="ressourcecheckbox check" type="checkbox" type="radio" name="flags.darksheet.attributes.food5.value" data-dtype="Boolean" {{checked actor.flags.darksheet.attributes.food5.value}}/><span></span></label>
+                    </div>
+                    <select class="darkselect" id="sel" name="flags.darksheet.attributes.saturation" data-type="String" >
+                        {{#select actor.flags.darksheet.attributes.saturation}}
+                        <option value="foodstuffed">Stuffed -1 exhaustion</option>
+                        <option value="foodwellfed">Well-fed</option>
+                        <option value="foodok">Ok</option>
+                        <option value="foodpekish">Pekish</option>
+                        <option value="foodhungry">Hungry</option>
+                        <option value="foodravenous">Ravenous +1 exhaustion</option>
+                        <option value="foodstarving">Starving +1 exhaustion</option>
+                        {{/select}}
+                    </select>
+            </div>
+            <div class="part2 {{actor._id}} allparts">
+                    <h4 class="darksheetheader {{actor._id}}">Waterskin</h4>
+                    <div>
+                        <label class="watercheckbox {{actor._id}}">
+                            <input class="ressourcecheckbox check" type="checkbox" name="flags.darksheet.attributes.waterskin.value" title="@{waterskin1}" data-dtype="Boolean" {{checked actor.flags.darksheet.attributes.waterskin.value}}/><span></span></label>
+                        <label class="watercheckbox {{actor._id}}">
+                            <input class="ressourcecheckbox check" type="checkbox" name="flags.darksheet.attributes.waterskin2.value" title="@{waterskin2}" data-dtype="Boolean" {{checked actor.flags.darksheet.attributes.waterskin2.value}}/><span></span></label>
+                        <label class="watercheckbox {{actor._id}}">
+                            <input class="ressourcecheckbox check" type="checkbox" name="flags.darksheet.attributes.waterskin3.value" title="@{waterskin3}" data-dtype="Boolean" {{checked actor.flags.darksheet.attributes.waterskin3.value}}/><span></span></label>
+                        <label class="watercheckbox {{actor._id}}">
+                            <input class="ressourcecheckbox check" type="checkbox" name="flags.darksheet.attributes.waterskin4.value" title="@{waterskin4}" data-dtype="Boolean" {{checked actor.flags.darksheet.attributes.waterskin4.value}}/><span></span></label>
+                        <label class="watercheckbox {{actor._id}}">
+                            <input class="ressourcecheckbox check" type="checkbox" type="radio" name="flags.darksheet.attributes.waterskin5.value" title="@{waterskin5}" data-dtype="Boolean" {{checked actor.flags.darksheet.attributes.waterskin5.value}}/><span></span></label>
+                    </div>
+                    <select class="darkselect" name="flags.darksheet.attributes.thirst" data-type="String">
+                        {{#select actor.flags.darksheet.attributes.thirst}}
+                        <option value="wquenched">Quenched -1 exhaustion</option>
+                        <option value="wrefreshed">Refreshed</option>
+                        <option value="wok">Ok</option>
+                        <option value="wparched">Parched</option>
+                        <option value="wthirsty">Thirsty</option>
+                        <option value="wdry">Dry +1 exhaustion</option>
+                        <option value="wdehydrated">Dehydrated +1 exhaustion</option>
+                        {{/select}}
+                    </select>
+                </div>
+            <div class="part3 {{actor._id}} allparts">
+                    <h4 class="darksheetheader {{actor._id}}">Fatigue</h4>
+                    <div class="staminaCheck">
+                        <label class="dicelabel2 staminacheck rollable darkcheck check">Stamina Check</label>
+                    </div>
+                    <select class="darkselect" name="flags.darksheet.attributes.fatigue" data-type="String">
+                        {{#select actor.flags.darksheet.attributes.fatigue}}
+                        <option value="exenegised">Energised -1 exhaustion</option>
+                        <option value="exwell">Well-rested</option>
+                        <option value="exok">Ok</option>
+                        <option value="extired">Tired</option>
+                        <option value="exsleepy">Sleepy</option>
+                        <option value="exvsleepy">Very sleepy +1 exhaustion</option>
+                        <option value="exbarely">Barely awake +1 exhaustion</option>
+                        {{/select}}
+                    </select>
+            </div>
+    </div>
+    <div class="darkPartContainer">
+        <div class="part4 {{actor._id}} allparts">
+            <h4 class="darksheetheader  {{actor._id}}">Temperature</h4>
+            <select class="exhaustionbox" name="flags.darksheet.attributes.temp" data-type="String" style="width: 163px;" {{#if globalRegMagic}}disabled{{/if}}>
+            {{#select actor.flags.darksheet.attributes.temp}}
+            <option value="exenegised">Perfect -1 Exhaustion</option>
+            <option value="exwell">Comfortable</option>
+            <option value="exok">Ok</option>
+            <option value="extired">Noticeable</option>
+            <option value="exsleepy">Uncomfortable</option>
+            <option value="exvsleepy">Overwhelming +1 exhaustion</option>
+            <option value="exbarely">Unbearable +1 exhaustion</option>
+            {{/select}}
+            </select>
+        </div>
+        <div class="part5 {{actor._id}} allparts">
+        <h4 class="darksheetheader  {{actor._id}}">Stress & Afflictions</h4>
+        <div style="display: inline-flex;">
+            <div class="stress" style="width: 155px;padding-right: 40px;">
+                <h4 class="darksheetheader  {{actor._id}}">Stress</h4>
+                <div class="attribute-value">
+                    <input name="flags.darksheet.attributes.stress.value" type="text" value="{{actor.flags.darksheet.attributes.stress.value}}" placeholder="0" style="border-style: double;border-width: 1px;border: groove;height: 50px;width: 50px;font-size: 20px;"/>
+                </div>
+            </div>
+            <div class="breaks">
+                <div>
+                    <div style="display: inline-flex;"><label class="stresscheckbox">
+                        <input class="ressourcecheckbox check stresscheckbox" id="stressbreak1" type="checkbox" name="flags.darksheet.attributes.break1" title="@{break}" data-dtype="Boolean" {{checked actor.flags.darksheet.attributes.break1}}/><span></span></label>
+                        {{#if actor.flags.darksheet.attributes.break1}}<label class="afflictiontext" style="color: #ad0000;"><b>20</b></label>
+                        <select class="hitdice  {{actor._id}} afflictionselection" name="flags.darksheet.attributes.affliction1.value" data-type="String">
+                            {{#select actor.flags.darksheet.attributes.affliction1.value}}
+                            <option value="Fearful">Fearful</option>
+                            <option value="Lethargic">Lethargic</option>
+                            <option value="Masochistic">Masochistic</option>
+                            <option value="Irrational">Irrational</option>
+                            <option value="Paranoid">Paranoid</option>
+                            <option value="Selfish">Selfish</option>
+                            <option value="Panic">Panic</option>
+                            <option value="Hopelessness">Hopelessness</option>
+                            <option value="Mania">Mania</option>
+                            <option value="Anxiety">Anxiety</option>
+                            <option value="Hypochondria">Hypochondria</option>
+                            <option value="Narcissistic">Narcissistic</option>
+                            <option value="Powerful">Powerful</option>
+                            <option value="Focused">Focused</option>
+                            <option value="Stalwart">Stalwart</option>
+                            <option value="Acute">Acute</option>
+                            <option value="Perceptive">Perceptive</option>
+                            <option value="Courageous">Courageous</option>
+                            {{/select}}
+                        </select>
+                        {{else}}
+                        <label class="afflictiontext"><b>20</b> Gain a new Affliction</label>
+                        {{/if}}
+                    </div>
+                    </br><div style="display: inline-flex;"><label class="stresscheckbox">
+                    <input class="ressourcecheckbox check stresscheckbox" id="stressbreak2" type="checkbox" name="flags.darksheet.attributes.break2" title="@{break}" data-dtype="Boolean" {{checked actor.flags.darksheet.attributes.break2}}/><span></span></label>
+                    {{#if actor.flags.darksheet.attributes.break2}}<label class="afflictiontext" style="color: #ad0000;"><b>30</b></label>
+                    <select class="hitdice  {{actor._id}} afflictionselection" name="flags.darksheet.attributes.affliction2.value" data-type="String">
+                        {{#select actor.flags.darksheet.attributes.affliction2.value}}
+                        <option value="Lethargic">Lethargic</option>
+                        <option value="Masochistic">Masochistic</option>
+                        <option value="Irrational">Irrational</option>
+                        <option value="Paranoid">Paranoid</option>
+                        <option value="Selfish">Selfish</option>
+                        <option value="Panic">Panic</option>
+                        <option value="Hopelessness">Hopelessness</option>
+                        <option value="Mania">Mania</option>
+                        <option value="Anxiety">Anxiety</option>
+                        <option value="Hypochondria">Hypochondria</option>
+                        <option value="Narcissistic">Narcissistic</option>
+                        <option value="Powerful">Powerful</option>
+                        <option value="Focused">Focused</option>
+                        <option value="Stalwart">Stalwart</option>
+                        <option value="Acute">Acute</option>
+                        <option value="Perceptive">Perceptive</option>
+                        <option value="Courageous">Courageous</option>
+                        {{/select}}
+                    </select>
+                    {{else}}
+                    <label class="afflictiontext"><b>30</b> Gain a new Affliction</label>
+                    {{/if}}
+                </div>
+                    </br><div style="display: inline-flex;"><label class="stresscheckbox">
+                    <input class="ressourcecheckbox check stresscheckbox" id="stressbreak3" type="checkbox" name="flags.darksheet.attributes.break3" title="@{break}" data-dtype="Boolean" {{checked actor.flags.darksheet.attributes.break3}}/><span></span></label>
+                    {{#if actor.flags.darksheet.attributes.break3}}<label class="afflictiontext" style="color: #ad0000;"><b>35</b></label>
+                    <select class="hitdice  {{actor._id}} afflictionselection" name="flags.darksheet.attributes.affliction3.value" data-type="String">
+                        {{#select actor.flags.darksheet.attributes.affliction3.value}}
+                        <option value="Fearful">Fearful</option>
+                        <option value="Lethargic">Lethargic</option>
+                        <option value="Masochistic">Masochistic</option>
+                        <option value="Irrational">Irrational</option>
+                        <option value="Paranoid">Paranoid</option>
+                        <option value="Selfish">Selfish</option>
+                        <option value="Panic">Panic</option>
+                        <option value="Hopelessness">Hopelessness</option>
+                        <option value="Mania">Mania</option>
+                        <option value="Anxiety">Anxiety</option>
+                        <option value="Hypochondria">Hypochondria</option>
+                        <option value="Narcissistic">Narcissistic</option>
+                        <option value="Powerful">Powerful</option>
+                        <option value="Focused">Focused</option>
+                        <option value="Stalwart">Stalwart</option>
+                        <option value="Acute">Acute</option>
+                        <option value="Perceptive">Perceptive</option>
+                        <option value="Courageous">Courageous</option>
+                        {{/select}}
+                    </select>
+                    {{else}}
+                    <label class="afflictiontext"><b>35</b> Gain a new Affliction</label>
+                    {{/if}}
+                </div>
+                    </br><div style="display: inline-flex;"><label class="stresscheckbox">
+                    <input class="ressourcecheckbox check stresscheckbox" id="stressbreak4" type="checkbox" name="flags.darksheet.attributes.break4" title="@{break}" data-dtype="Boolean" {{checked actor.flags.darksheet.attributes.break4}}/><span></span></label>
+                    {{#if actor.flags.darksheet.attributes.break4}}
+                    <label class="afflictiontext" style="color: #ad0000;"> <b>40</b> Hit your Breaking Point </label>
+                    {{else}}
+                    <label class="afflictiontext"> <b>40</b> Hit your Breaking Point </label>
+                    {{/if}}
+                </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    {{#unless hidechecks}}
+    <div class="darkPartContainer">
+        <div class="part6 {{actor._id}} allparts">
+            <h4 class="darksheetheader {{actor._id}}">Checks</h4>
+            <div class="checks  {{actor._id}} ddchecks">
+                <div class="section3" style="margin-left: 113px;margin-right: 113px;">
+                    <label class="darkCheck rollable tableCheck {{actor._id}}" draggable="true" tableCheck="Critical Success Boon">Critical Success</label>
+                    <label class="darkCheck rollable tableCheck {{actor._id}}" draggable="true" tableCheck="Critical Failure Consequence">Critical Failure</label>
+                    <label class="darkCheck rollable tableCheck {{actor._id}}" draggable="true" tableCheck="Success at a Cost - Offerings">Success at a Cost</label>
+                    </label></label></label></label>
+                </div></br>
+                <div class="section3" style="margin-left: 113px;margin-right: 113px; margin-top: 0;">
+                    <label class="darkCheck rollable rollHealWounds" actorid="{{actor._id}}" draggable="true" tableCheck="">Heal Wounds (LR)</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{/unless}}
+</div>
