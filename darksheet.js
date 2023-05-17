@@ -273,7 +273,7 @@ async function addWoundsToSheet(sheet, html, data){
             // EDIT WOUND
             _woundlist[ev.currentTarget.name].location = ev.target.value;
           
-            await actor.setFlag('darksheet', 'woundlist', woundlist);
+            await actor.setFlag('darksheet', 'woundlist', woundlist, { diff: true });
             await document.activeElement.blur();
         });
           
@@ -285,7 +285,7 @@ async function addWoundsToSheet(sheet, html, data){
           
             _woundlist[ev.currentTarget.name].treated = ev.target.checked;
           
-            await actor.setFlag('darksheet', 'woundlist', woundlist);
+            await actor.setFlag('darksheet', 'woundlist', woundlist, { diff: true });
             await document.activeElement.blur();
         });
           
@@ -371,7 +371,7 @@ async function rollReopenWounds(actor) {
           wound.healed = false;
           wound.treated = false;
           wound.hitDieLost = true;
-          await actor.setFlag('darksheet', 'woundlist', woundlist);
+          await actor.setFlag('darksheet', 'woundlist', woundlist, { diff: true });
           reopenedWounds.push(i);
           createRollMessage(actor, "Wound-Reopen: "+wound.location, roll, null, roll.total, null, "1d20", 'fa-regular fa-face-head-bandage', effect, "darksheetNegativeMessage");
         }
@@ -379,7 +379,7 @@ async function rollReopenWounds(actor) {
           effect = "The wound reopens (no longer treated).";
           wound.healed = false;
           wound.treated = false;
-          await actor.setFlag('darksheet', 'woundlist', woundlist);
+          await actor.setFlag('darksheet', 'woundlist', woundlist, { diff: true });
           reopenedWounds.push(i);
           createRollMessage(actor, "Wound-Reopen: "+wound.location, roll, null, roll.total, null, "1d20", 'fa-regular fa-face-head-bandage', effect, "darksheetNegativeMessage");
         }
@@ -406,7 +406,7 @@ async function rollHealingWounds(actor){
           healedWounds.push(i);
           wound.healed = true;
           wound.healedDate = Date.now();
-          await actor.setFlag('darksheet', 'woundlist', woundlist);
+          await actor.setFlag('darksheet', 'woundlist', woundlist, { diff: true });
           style = "darksheetPositiveMessage";
           flavorText = "Wound is healed.";
         }
@@ -435,7 +435,7 @@ async function addWoundToCharacter(actor){
 
     woundlist.push(wound);
 
-    await actor.setFlag('darksheet', 'woundlist', woundlist);
+    await actor.setFlag('darksheet', 'woundlist', woundlist, { diff: true });
 }
 
 async function getTimeStamp(){
@@ -794,7 +794,7 @@ async function darkSheetSetup(app, html, data) {
                 'flags.darksheet.attributes.thirst': waterValues[waterIndex],
                 'flags.darksheet.attributes.fatigue': fatigueValues[fatigueIndex],
                 'flags.darksheet.attributes.exhaustion': newExhaustion
-                });
+                }, { diff: true });
             }
         })
         html.find('.darksheet_AS').click(async (event) => {
@@ -1471,13 +1471,127 @@ async function removeNotchFromItem(item) {
         }
     }
 }
+
 //public functions
 window.Darksheet = class Darksheet{
 	static async RollBurnout(PlayerName){
 	}
     static async RollBurnout(PlayerName){
 	}
+    static changeCharacterRole(characterName, role){
+        const character = game.actors.find((actor) => actor.name === characterName);
+        if (character) {
+            character.update({ 'flags.darksheet.currentRole': role }, { diff: true });
+        }
+    }
+    static changeBarAttribute(characterName, attributeToChange, value){
+        console.log("Called changeBarAttribute: " + characterName + " " + attributeToChange + " " + value);
+        const character = game.actors.find((actor) => actor.name === characterName);
+        if (character) {
+            character.setFlag('darksheet', attributeToChange.split('darksheet.')[1], value, { diff: true });
+        }
+    }
+
+    static _darkscreen;
 }
+
+
+//DARKSCREEN
+class Darkscreen {
+    static addChatControl() {
+        const chatControlLeft = document.getElementsByClassName("chat-control-icon")[0];
+        let tableNode = document.getElementById("DarkScreen-button");
+
+        if (chatControlLeft && !tableNode) {
+            const chatControlLeftNode = chatControlLeft.firstElementChild;
+            const number = 4;
+            tableNode = document.createElement("label");
+            tableNode.innerHTML = `<i id="DarkScreen-button" class="fas fa-book-dead DarkScreen-button" style="text-shadow: 0 0 1px black; color:white;" title="[Darkscreen] disabled until v0.9"></i>`;
+            tableNode.onclick = Darkscreen.initializeDarkscreen;
+            chatControlLeft.insertBefore(tableNode, chatControlLeftNode);
+        }
+    }
+    static initializeDarkscreen() {
+        if (this.dsc === undefined) {
+            this.dsc = new DSC();
+        }
+        this.dsc.openDialog();
+
+    }
+}
+Hooks.on('renderApplication', (app, html, options) => {
+    if(app.title == "Darker Dungeons - Gamemaster Screen 2.0")
+    Darksheet._darkscreen = app;
+});
+Hooks.on('closeApplication', (app, html, options) => {
+    if(app.title == "Darker Dungeons - Gamemaster Screen 2.0")
+    Darksheet._darkscreen = null;
+});
+Hooks.on('updateActor', (actor, updateData) => {
+    if(Darksheet._darkscreen && Darksheet._darkscreen.rendered){
+        Darksheet._darkscreen.render(true);
+    }
+});
+
+class DSC extends Application {
+    constructor(options = {}) {
+        super(options);
+    }
+    openDialog() {
+        //LOAD TEMPLATE DATA
+        let $dialog = $('.DSC-window');
+        if ($dialog.length > 0) {
+            $dialog.remove();
+            return;
+        }
+        const templateData = {
+            data: []
+        };
+        templateData.data = super.getData();
+        templateData.title = "Darker Dungeons - Gamemaster Screen";
+
+        if(game.world.flags.darksheet != undefined)
+            templateData.data.screenData = game.world.flags.darksheet.darkscreen;
+        //LOAD DATA
+
+        const templatePath = "modules/darksheet/templates/darkscreen.html";
+        DSC.renderMenu(templatePath, templateData);
+
+    }
+    static renderMenu(path, data) {
+        const dialogOptions = {
+            width: 1200,
+			heigth: 1200,
+            classes: ['DSC-window resizable']
+        };
+        dialogOptions.resizable = true;
+        renderTemplate(path, data).then(dlg => {
+            new Dialog({
+                title: game.i18n.localize('Darker Dungeons - Gamemaster Screen 2.0'),
+                content: dlg,
+                buttons: {}
+            }, dialogOptions).render(true);
+        });
+    }
+}
+Hooks.on('canvasReady', function() {
+    if (game.user.isGM) {
+        Darkscreen.addChatControl();
+        console.log("Darkscreen GM True");
+
+        //ADD FLAGS IF NEEDED
+        if(game.world.flags.darksheet == undefined){
+            game.world.flags.darksheet = {};
+        }
+        if(game.world.flags.darksheet.darkscreen == undefined){
+            game.world.flags.darksheet.darkscreen = {};
+        }
+        if(game.world.flags.darksheet.darkscreen.lastpage == undefined)
+        {
+            game.world.flags.darksheet.darkscreen.lastpage = "party"
+        }
+    }
+});
 
 const itemBulk = {
     'Abacus': 1,

@@ -7,6 +7,7 @@
   ],
   "styles": [
     "css/darksheet.css",
+    "css/darkscreen.css",
     "css/darkStyle.css"
   ],
   "packs": [
