@@ -40,7 +40,7 @@
     height: 100%;
     background: #5E5E5E;
     padding: 0px 8px;
-    margin: -25px -8px;
+    /* margin: -25px -8px; */
     min-height: 600px;
     max-height: 100vh;
     height: var(--app-height, 60vh);
@@ -48,16 +48,17 @@
 .DarkScreenToolBar {
     background: #2b2b2b;
     color: white;
-    margin: 0px -8px;
-    font-size: 25px;
-    padding: 0px 8px;
-    height: 35px;
+    margin: 0px -16px;
+    font-size: 20px;
+    /* padding: 0px 8px; */
+    /* height: 35px; */
     margin-bottom: 25px;
+    padding: 5px;
 }
 .darkCharacterPartyCharacterBOTTOM {
     height: 130px;
     background: #00000069;
-    border-radius: 0px 0px 15px 15px;
+    border-radius: 0px 0px 30px 30px;
     display: flex;
 }
 .darkCharacterPartyCharacter {
@@ -308,4 +309,25 @@ p.darkSoon {
 #sel option[value="exvsleepy"],
 #sel option[value="exbarely"]{
   color: red;
+}
+.DarkScreenPartyTable tbody tr td {
+    background: #444444;
+}
+label.refreshDarkscreen {
+    background: #00006e;
+    padding: 2px 5px 2px 5px;
+    border-radius: 5px;
+    /* border: 1px solid; */
+    font-size: 20px;
+}
+label.refreshDarkscreen:hover {
+    background: #9a9aff70;
+    border: 1px solid;
+    font-size: 22px;
+}
+img.darkCharacterPartyCharacterIMAGE:hover {
+    filter: drop-shadow(2px 4px 6px black);
+    transform: scale(1.1);
+    transition: 0.1s;
+    background: none;
 }

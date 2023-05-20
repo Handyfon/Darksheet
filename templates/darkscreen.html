@@ -1,4 +1,4 @@
-<div class="DarkScreenHeader">Darker Dungeons Game Master Screen</div>
+<div class="DarkScreenHeader">Darker Dungeons Game Master Screen <label class="refreshDarkscreen" onclick="Darksheet.darkScreenReload()"><i class="fa-duotone fa-rotate"></i></label></div>
 <div class="DarkScreenNavBar">
   <a id="partyLink" class="darkScreenNav" onclick="navigateTo('party')">Party</a>
   <a id="journeyLink" class="darkScreenNav" onclick="navigateTo('journey')">Journey</a>
@@ -7,9 +7,9 @@
   <a id="dreadLink" class="darkScreenNav" onclick="navigateTo('dread')">Dread</a>
   <a id="webReferenceLink" class="darkScreenNav" onclick="navigateTo('web-reference')">Grimoire</a>
 </div>
-<div class="DarkScreenToolBar">Test</div>
 <div class="DarkScreenContent">
   <div id="partyContent" style="display: none;">
+    <div class="DarkScreenToolBar"><input type="checkbox" id="darkScreenOnlinePlayerCheckbox" name="darkScreenOnlinePlayerCheckbox" onchange="changeOnlineSetting(this.checked);"><label class="darkScreenOnlinePlayerCheckboxLabel">Only show online</label></div>
     <table class="DarkScreenPartyTable">
     </table>
   </div>
@@ -43,11 +43,11 @@
     </style>
 </div>
 </div>
-
 <script>
     function onLoad(){
         navigateTo(game.world.flags.darksheet.darkscreen.lastpage);
         loadDarkActors();
+        loadDarkScreenSettings();
     }
     function navigateTo(page) {
     // Get the DarkScreenContent div elements
@@ -98,7 +98,20 @@
         // Get all game actors
         const actors = game.actors._source;
         // Loop through the actors
+        const onlineActorSheetIds = [];
+        let partyOnline = await game.settings.get('darksheet', 'darkScreenPartyDisplay');
+        if(partyOnline){
+            for (const user of game.users) {
+                if (user.active && user.character) {
+                    onlineActorSheetIds.push(user.character.id);
+                }
+            }
+        }
         actors.forEach(async a => {
+            if(partyOnline){
+                if(!onlineActorSheetIds.includes(a._id)) return;
+            }
+            console.log("TEST");
             let currentSlots = 0;
             const actor = game.actors.get(a._id);
             actor.items.forEach(function(item) {
@@ -108,11 +121,11 @@
             actor.currentSlots = currentSlots;
             actor.foodvalue = ['food', 'food2', 'food3', 'food4', 'food5'].reduce((acc, attr) => actor?.flags?.darksheet?.attributes?.[attr]?.value === true ? acc + 1 : acc, 0);
             actor.watervalue = ['waterskin', 'waterskin2', 'waterskin3', 'waterskin4', 'waterskin5'].reduce((acc, attr) => actor?.flags?.darksheet?.attributes?.[attr]?.value === true ? acc + 1 : acc, 0);
-            let wounds = actor.flags.darksheet.woundlist.length;
+            let wounds = actor.flags.darksheet?.woundlist?.length ?? 0;
             let treated = 0;
-            if(actor.flags.darksheet.woundlist.length > 0){
+            if(wounds > 0){
                 actor.flags.darksheet.woundlist.forEach(element => {
-                    if(element.treated || element.healed)
+                    if(element.healed)
                         wounds--;
                     if(element.treated && !element.healed)
                         treated++;
@@ -127,7 +140,6 @@
             // Check if the actor has the "flags.darksheet" property and is of type "character"
             if (actor.flags && actor.flags.darksheet && actor.type == 'character') {
                 let itemDataTemplate = await renderTemplate("modules/darksheet/templates/characterpartytemplate.html", actor);
-                console.log(actor.name);
 
                 // Create a new element to hold the rendered template content
                 const templateElement = document.createElement("div");
@@ -174,4 +186,11 @@
         });
     }
     onLoad();
+    async function loadDarkScreenSettings(){
+        $("#darkScreenOnlinePlayerCheckbox")[0].checked = await game.settings.get('darksheet', 'darkScreenPartyDisplay');
+    }
+    async function changeOnlineSetting(value){
+        await game.settings.set('darksheet', 'darkScreenPartyDisplay',value);
+        Darksheet.darkScreenReload();
+    }
 </script>

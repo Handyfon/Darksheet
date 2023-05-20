@@ -315,6 +315,7 @@ label.healwound.rollable.check:hover{
 }
 table#woundlistid {
     text-align: center;
+    height: fit-content;
 }
 .oldWoundsColspan {
     padding: 0;
@@ -484,4 +485,9 @@ select.hitdice.white {
 }
 .form-group.woundsection {
     align-items: inherit;
+    height: fit-content !important;
+    flex: none;
+}
+.DSC-window section.window-content {
+    background: #595959 !important;
 }

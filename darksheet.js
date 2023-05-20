@@ -155,6 +155,14 @@ Hooks.once('init', function() {
     	default: false,
     	type: Boolean,
     });*/
+    game.settings.register('darksheet', 'darkScreenPartyDisplay', {
+    	name: 'Online Character Filter',
+    	hint: 'Displays only the online characters in the party view',
+    	scope: 'world',
+    	config: true,
+    	default: false,
+    	type: Boolean,
+    });
 });
 
 Hooks.once('init', () => {
@@ -165,6 +173,7 @@ Hooks.once('init', () => {
 });
 
 Hooks.on(`renderActorSheet`, (app, html, data) => {
+    if (app.actor.type != 'character')return;
     const element = document.querySelector('a.item.active');
     if (element) {
     element.focus();
@@ -1491,7 +1500,10 @@ window.Darksheet = class Darksheet{
             character.setFlag('darksheet', attributeToChange.split('darksheet.')[1], value, { diff: true });
         }
     }
-
+    static darkScreenReload(){
+        this._darkscreen.render(true);
+        ui.notifications.notify("Reloaded Darkscreen");
+    }
     static _darkscreen;
 }
 

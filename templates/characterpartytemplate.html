@@ -21,7 +21,7 @@
     </div>
     </div>
 </div>
-    <img class="darkCharacterPartyCharacterIMAGE" src="{{img}}">
+    <img class="darkCharacterPartyCharacterIMAGE" src="{{img}}" id="{{_id}}" onclick="game.actors.get(this.id).sheet.render(true)">
         
     </img>
 </div>
@@ -75,7 +75,7 @@
                 <div class="darkscreenBarBack darktinybar">
                     <div class="darkscreenBarValue darkScreenTinyBar" style="background:#0D4678;width: calc(({{watervalue}}/5)*100%)"></div>
                 </div>
-                <select class="darkscreenTinySelect {{flags.darksheet.attributes.thirst}}" id="sel" name="flags.darksheet.attributes.saturation" data-type="String" >
+                <select class="darkscreenTinySelect {{flags.darksheet.attributes.thirst}}" id="sel" name="flags.darksheet.attributes.thirst" data-type="String" onchange="Darksheet.changeBarAttribute('{{name}}', this.name, this.value)">
                     {{#select flags.darksheet.attributes.thirst}}
                     <option value="wquenched">Quenched -1 exhaustion</option>
                     <option value="wrefreshed">Refreshed</option>
@@ -91,7 +91,7 @@
         <div class="darkscreenBarcontainerR">
             <a>Fatigue</a>
             <div class="darkscreenPlayerAttributesR">
-                <select class="darkscreenTinySelect {{flags.darksheet.attributes.fatigue}}" id="sel" name="flags.darksheet.attributes.saturation" data-type="String"  style="margin-top: 5px;">
+                <select class="darkscreenTinySelect {{flags.darksheet.attributes.fatigue}}" id="sel" name="flags.darksheet.attributes.fatigue" data-type="String"  style="margin-top: 5px;" onchange="Darksheet.changeBarAttribute('{{name}}', this.name, this.value)">
                     {{#select flags.darksheet.attributes.fatigue}}
                     <option value="exenegised">Energised -1 exhaustion</option>
                     <option value="exwell">Well-rested</option>
