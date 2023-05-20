@@ -899,8 +899,8 @@ async function rollAmmodie(event, actor){
 async function rollBurnout(actor){
     let burnoutDie = actor.flags.darksheet.attributes.burnout.value;
     let newBurnoutDie = burnoutDie;
-    let burnoutArray = ["12","10","8","6","4"];
-    let regionDict ={ 3: "Serene", 2: "Calm", 0: "Normal", "-1": "Unstable", "-2": "", "-3": "Chaotic" };
+    let burnoutArray = ["12","10","8","6","4","4"];
+    let regionDict ={ "3": "Serene", "2": "Calm", "1": "Stable", "0": "Normal", "-1": "Unstable", "-2": "Wild", "-3": "Chaotic" };
 
     let roll1 = await new Roll("1d"+burnoutDie).roll({async: true});
     let rollResult = roll1._total;    
@@ -910,7 +910,7 @@ async function rollBurnout(actor){
     {
         if(burnoutDie != "4"){
             newBurnoutDie = burnoutArray[burnoutArray.indexOf(burnoutDie)+1];
-            change = " -> d"+newBurnoutDie;
+            change = '<i class="fa-solid fa-arrow-right"></i> d' + newBurnoutDie;
         }
         negative = "darksheetNegativeMessage";
     }
@@ -930,7 +930,7 @@ async function rollBurnout(actor){
         }
     }
     var regionDice = burnoutArray[regionMod];
-    let regiontext = regionDict[actor.flags.darksheet.attributes.regionmod.value] + " [d"+regionDice+"] ";
+    let regiontext = regionDict[""+actor.flags.darksheet.attributes.regionmod.value] + " [d"+regionDice+"] ";
     if(regionMod == burnoutArray.indexOf(burnoutDie)){//IF NO CHANGE TROUGH REGION MOD
         regiontext = '';
     }
