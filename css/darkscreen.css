@@ -247,69 +247,6 @@ p.darkSoon {
     text-align: center;
 }
 
-.darkscreenTinySelect.wquenched,
-.darkscreenTinySelect.wrefreshed, 
-.darkscreenTinySelect.foodstuffed,
-.darkscreenTinySelect.foodwellfed, 
-.darkscreenTinySelect.exenegised, 
-.darkscreenTinySelect.exwell
-{
-  background: rgb(0, 46, 0);
-  color: green;
-}
-
-#sel.darkscreenTinySelect.wok,
-#sel.darkscreenTinySelect.wparched,
-#sel.darkscreenTinySelect.wthirsty,
-#sel.darkscreenTinySelect.foodok,
-#sel.darkscreenTinySelect.foodpekish,
-#sel.darkscreenTinySelect.foodhungry,
-#sel.darkscreenTinySelect.exok,
-#sel.darkscreenTinySelect.extired,
-#sel.darkscreenTinySelect.exsleepy{
-    background: rgb(51, 51, 0);
-    color: yellow;
-}
-
-#sel.darkscreenTinySelect.wdry,
-#sel.darkscreenTinySelect.wdehydrated,
-#sel.darkscreenTinySelect.foodravenous,
-#sel.darkscreenTinySelect.foodstarving,
-#sel.darkscreenTinySelect.exvsleepy,
-#sel.darkscreenTinySelect.exbarely{
-    background: rgb(71, 0, 0);
-    color: red;
-}
-
-#sel [value="wquenched"],
-#sel option[value="wrefreshed"],
-#sel option[value="foodstuffed"],
-#sel option[value="foodwellfed"],
-#sel option[value="exenegised"],
-#sel option[value="exwell"]{
-  color: green;
-}
-
-#sel option[value="wok"],
-#sel option[value="wparched"],
-#sel option[value="wthirsty"],
-#sel option[value="foodok"],
-#sel option[value="foodpekish"],
-#sel option[value="foodhungry"],
-#sel option[value="exok"],
-#sel option[value="extired"],
-#sel option[value="exsleepy"]{
- color:yellow
-}
-
-#sel option[value="wdry"],
-#sel option[value="wdehydrated"],
-#sel option[value="foodravenous"],
-#sel option[value="foodstarving"],
-#sel option[value="exvsleepy"],
-#sel option[value="exbarely"]{
-  color: red;
-}
 .DarkScreenPartyTable tbody tr td {
     background: #444444;
 }
@@ -331,3 +268,5 @@ img.darkCharacterPartyCharacterIMAGE:hover {
     transition: 0.1s;
     background: none;
 }
+
+

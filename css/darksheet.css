@@ -38,14 +38,11 @@ h4.dice-total.darkChatResult {
     text-align: center;
 }
 h4.darksheetheader {
+    font-family: 'Roboto';
     font-weight: bold;
-    font-size: 16px;
-    background: #0000001a;
+    padding-left: 5px;
 }
-.darkselect {
-    background: #00000014 !important;
-    width: 100%;
-}
+
 .ressourcecheckbox {
     width: 17px;
     height: 17px;
@@ -187,6 +184,8 @@ label.darkCheck {
     padding: 5px;
     background: #00000026;
     border-radius: 3px;
+    margin: 5px;
+    line-height: 30px;
 }
 .checks {
     height: 60px;
@@ -373,36 +372,37 @@ span.rollable.darksheet_AS:hover {
     color: white;
     text-shadow: none;
 }
-label.dicelabel2.burnoutclick.burnoutdie.rollable {
-    border: 1px solid #b5b3a4;
-    border-radius: 2px;
-    background: rgba(0, 0, 0, 0.05);
-    padding: 0 3px;
-    margin: 0 3px;
+.ddspellburnout {
+    display: flex;
 }
-label.dicelabel2.burnoutclick.burnoutdie.rollable:hover {
-    background: #b5b3a4;
+.ability.rollable.darksheet_AS {
+    background: #00000059;
+}
+.ability.rollable.darksheet_AS:hover {
+    background: #00000094;
+    cursor: pointer;
+}
+option.ddValueGood {
+    background: #006c00;
     color: white;
-    text-shadow: none;
+}
+option.ddValueBad {
+    background: #6c0000;
+    color: white;
 }
 .randomnotch.rollable {
-    border: 1px solid #b5b3a4;
-    border-radius: 2px;
-    background: rgba(0, 0, 0, 0.05);
-    padding: 0 3px;
-    margin: 0 3px;
-    width: 50px;
-    margin-left: 0 !important;
-    flex: 0 0 85px !important;
-    height: 22px;
+    height: 27px;
     margin-right: 11px;
     text-align-last: center;
+    flex: 1;
+    border: 1px solid var(--dnd5e-color-gold);
+    background: var(--dnd5e-color-parchment);
+    box-shadow: 0 0 6px var(--dnd5e-shadow-15);
+    border-radius: 4px;
+    width: 30px;
+    color: var(--color-text-dark-5);
 }
-.randomnotch.rollable:hover{
-    background: #b5b3a4;
-    color: white !important;
-    text-shadow: none;
-}
+
 .staminaCheck {
     padding: 5px;
     border: 1px solid #b5b3a4;
@@ -490,4 +490,40 @@ select.hitdice.white {
 }
 .DSC-window section.window-content {
     background: #595959 !important;
+}
+.dnd5e2.sheet.actor.character .sheet-body .sidebar .card .stats .top .ac{
+    cursor: pointer;
+}
+.dnd5e2.sheet.actor.character .sheet-body .sidebar .card .stats .top .ac:hover::after {
+    content: '\f522'; /* Unicode for dice-d6 icon from Font Awesome */
+    font-family: 'Font Awesome 6 Free'; /* Ensure this matches the Font Awesome version you're using */
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+i.chatIcon {
+    margin-bottom: -50px;
+}
+button.rollable.button {
+    color: var(--color-text-dark-primary);
+    flex: 1;
+    display: inline-flex;
+}
+button.addwoundbutton{
+    color: var(--color-text-dark-primary);
+    flex:1;
+    display: inline-flex;
+}
+.pills-group.woundsection.woundS1 {
+    display: flex;
+}
+
+#woundtr td input {
+    background: var(--dnd5e-background-card);
+}
+.section3 {
+    display: contents;
+}
+.darkselect {
+    border: unset;
 }

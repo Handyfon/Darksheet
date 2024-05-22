@@ -1,20 +1,30 @@
-import  { applications } from "../../../../systems/dnd5e/dnd5e.mjs"
+import {
+    applications
+} from "../../../../systems/dnd5e/dnd5e.mjs"
 
 let activateDDTab = false;
 
 //Register Sheet
 Hooks.once('init', function() {
-   //console.log("Darker DnD | Initializing Darker Dungeons for the D&D 5th Edition System\n", "_____________________________________________________________________________________________\n", "  ____                _                 ____                                                \n", " |  _ \\   __ _  _ __ | | __ ___  _ __  |  _ \\  _   _  _ __    __ _   ___   ___   _ __   ___ \n", " | | | | / _` || '__|| |/ // _ \| '__|  | | | || | | || '_ \\  / _` | / _ \\ / _ \\ | '_ \\ / __| \n", " | |_| || (_| || |   |   <|  __/| |    | |_| || |_| || | | || (_| ||  __/| (_) || | | |\\__ \\ \n", " |____/  \\__,_||_|   |_|\\_\\\\___||_|    |____/  \\__,_||_| |_| \\__, | \\___| \\___/ |_| |_||___/ \n", "                                                             |___/                          \n", "_____________________________________________________________________________________________");
+    //console.log("Darker DnD | Initializing Darker Dungeons for the D&D 5th Edition System\n", "_____________________________________________________________________________________________\n", "  ____                _                 ____                                                \n", " |  _ \\   __ _  _ __ | | __ ___  _ __  |  _ \\  _   _  _ __    __ _   ___   ___   _ __   ___ \n", " | | | | / _` || '__|| |/ // _ \| '__|  | | | || | | || '_ \\  / _` | / _ \\ / _ \\ | '_ \\ / __| \n", " | |_| || (_| || |   |   <|  __/| |    | |_| || |_| || | | || (_| ||  __/| (_) || | | |\\__ \\ \n", " |____/  \\__,_||_|   |_|\\_\\\\___||_|    |____/  \\__,_||_| |_| \\__, | \\___| \\___/ |_| |_||___/ \n", "                                                             |___/                          \n", "_____________________________________________________________________________________________");
     /*Actors.registerSheet('dnd5e', darksheet, {
         types: ['character']
     });*/
     game.settings.register('darksheet', 'slotbasedinventory', {
-    	name: 'Inventory Slot System',
-    	hint: 'When enabled, the inventory will use a slot-based system instead of a weight-based system.',
-    	scope: 'world',
-    	config: true,
-    	default: true,
-    	type: Boolean,
+        name: 'Inventory Slot System',
+        hint: 'When enabled, the inventory will use a slot-based system instead of a weight-based system.',
+        scope: 'world',
+        config: true,
+        default: true,
+        type: Boolean,
+    });
+    game.settings.register('darksheet', 'equippedDontUseSlots', {
+        name: 'Equipped Item Behaviour',
+        hint: 'When enabled, equipped items dont count towards your carry capacity.',
+        scope: 'world',
+        config: true,
+        default: true,
+        type: Boolean,
     });
     /*game.settings.register('darksheet', 'ActiveInitiativeHadTurn', { //ACTIVE INITIATIVE
     	name: 'Saved Active Initiative Value',
@@ -40,46 +50,62 @@ Hooks.once('init', function() {
     	default: true,
     	type: Boolean,
     });*/
+    game.settings.register('darksheet', 'automaticSlots', {
+        name: 'Automatic Slot Calculation',
+        hint: 'When enabled, tries to automatically add slots to items in inventory by using a db.',
+        scope: 'world',
+        config: true,
+        default: true,
+        type: Boolean,
+    });
+    game.settings.register('darksheet', 'automaticFragility', {
+        name: 'Automatic Item Fragility',
+        hint: 'When enabled, tries to automatically add delicate and sturdy fragility to items in inventory by using a db.',
+        scope: 'world',
+        config: true,
+        default: true,
+        type: Boolean,
+    });
     game.settings.register('darksheet', 'savecantrips', {
-    	name: 'Variant Rule: Safe Cantrips',
-    	hint: 'Disables the use of the d12 burnout die for cantrips when enabled.',
-    	scope: 'world',
-    	config: true,
-    	default: false,
-    	type: Boolean,
+        name: 'Variant Rule: Safe Cantrips',
+        hint: 'Disables the use of the d12 burnout die for cantrips when enabled.',
+        scope: 'world',
+        config: true,
+        default: false,
+        type: Boolean,
     });
     game.settings.register('darksheet', 'hidenotches', {
-    	name: 'Hide Notches',
-    	hint: 'When enabled, the notches on inventory items and item sheets are hidden.',
-    	scope: 'world',
-    	config: true,
-    	default: false,
-    	type: Boolean,
+        name: 'Hide Notches',
+        hint: 'When enabled, the notches on inventory items and item sheets are hidden.',
+        scope: 'world',
+        config: true,
+        default: false,
+        type: Boolean,
     });
     game.settings.register('darksheet', 'disableItemDamage', {
-    	name: 'Disable item Damage',
-    	hint: 'Turns off the display of information for item damage, fragility, and condition in the inventory.',
-    	scope: 'world',
-    	config: true,
-    	default: false,
-    	type: Boolean,
+        name: 'Disable item Damage',
+        hint: 'Turns off the display of information for item damage, fragility, and condition in the inventory.',
+        scope: 'world',
+        config: true,
+        default: false,
+        type: Boolean,
     });
     game.settings.register('darksheet', 'hideammodie', { //TODO hideammodie Setting
-    	name: 'Hide Ammunition Die',
-    	hint: 'When enabled, the ammunition die section is hidden from player inventories and item sheets.',
-    	scope: 'world',
-    	config: true,
-    	default: false,
-    	type: Boolean,
+        name: 'Hide Ammunition Die',
+        hint: 'When enabled, the ammunition die section is hidden from player inventories and item sheets.',
+        scope: 'world',
+        config: true,
+        default: false,
+        type: Boolean,
     });
 
     game.settings.register('darksheet', 'hidechecks', {
-    	name: 'Hide "Checks" Section from Character Sheets',
-    	hint: 'When enabled, the "checks" section is hidden from all character sheets.',
-    	scope: 'world',
-    	config: true,
-    	default: false,
-    	type: Boolean,
+        name: 'Hide "Checks" Section from Character Sheets',
+        hint: 'When enabled, the "checks" section is hidden from all character sheets.',
+        scope: 'world',
+        config: true,
+        default: false,
+        type: Boolean,
     });
     /*game.settings.register('darksheet', 'nonpcattack', {//TODO NPCATTACK setting
     	name: 'Disable NPC Attacks',
@@ -90,36 +116,36 @@ Hooks.once('init', function() {
     	type: Boolean,
     });*/
     game.settings.register('darksheet', 'smalldefense', {
-    	name: 'Variant Rule: Small Defense',
-    	hint: 'When enabled, smaller modifiers are used while playing with Active Defense. Defense Rolls: When you make a defense roll, roll a d20 and add your AC minus 10. The opposing DC is 12 plus the attackers normal attack bonus.',
-    	scope: 'world',
-    	config: true,
-    	default: false,
-    	type: Boolean,
+        name: 'Variant Rule: Small Defense',
+        hint: 'When enabled, smaller modifiers are used while playing with Active Defense. Defense Rolls: When you make a defense roll, roll a d20 and add your AC minus 10. The opposing DC is 12 plus the attackers normal attack bonus.',
+        scope: 'world',
+        config: true,
+        default: false,
+        type: Boolean,
     });
     game.settings.register('darksheet', 'destroyshatter', {
-    	name: 'Shattered Items Do Not Destroy',
-    	hint: 'When enabled, shattered items with [Shattered] in their name are kept instead of being deleted.',
-    	scope: 'world',
-    	config: true,
-    	default: false,
-    	type: Boolean,
+        name: 'Shattered Items Do Not Destroy',
+        hint: 'When enabled, shattered items with [Shattered] in their name are kept instead of being deleted.',
+        scope: 'world',
+        config: true,
+        default: false,
+        type: Boolean,
     });
     game.settings.register('darksheet', 'shatterwhen1', {
-    	name: '[Houserule] Shatter When 1',
-    	hint: 'When enabled, items shatter when they reach 1 AC or 1 damage regardless of fragility.',
-    	scope: 'world',
-    	config: true,
-    	default: false,
-    	type: Boolean,
+        name: '[Houserule] Shatter When 1',
+        hint: 'When enabled, items shatter when they reach 1 AC or 1 damage regardless of fragility.',
+        scope: 'world',
+        config: true,
+        default: false,
+        type: Boolean,
     });
     game.settings.register('darksheet', 'disableWoundSystem', {
-    	name: 'Disable Wound System',
-    	hint: 'Disables wounds and prevents them to be rendered on the sheet.',
-    	scope: 'world',
-    	config: true,
-    	default: false,
-    	type: Boolean,
+        name: 'Disable Wound System',
+        hint: 'Disables wounds and prevents them to be rendered on the sheet.',
+        scope: 'world',
+        config: true,
+        default: false,
+        type: Boolean,
     });
     /*
     game.settings.register('darksheet', 'silverstandard', { //TODO silverstandard setting
@@ -156,12 +182,12 @@ Hooks.once('init', function() {
     	type: Boolean,
     });*/
     game.settings.register('darksheet', 'darkScreenPartyDisplay', {
-    	name: 'Online Character Filter',
-    	hint: 'Displays only the online characters in the party view',
-    	scope: 'world',
-    	config: true,
-    	default: false,
-    	type: Boolean,
+        name: 'Online Character Filter',
+        hint: 'Displays only the online characters in the party view',
+        scope: 'world',
+        config: true,
+        default: false,
+        type: Boolean,
     });
 });
 
@@ -173,24 +199,24 @@ Hooks.once('init', () => {
 });
 
 Hooks.on(`renderActorSheet`, (app, html, data) => {
-    if (app.actor.type != 'character')return;
+    if (app.actor.type != 'character') return;
     const element = document.querySelector('a.item.active');
     if (element) {
-    element.focus();
+        element.focus();
     }
     //This way to reactivate the tab is inspired by Ethck's 5e Downtime Tracking Module
-    addDarkSheetTab(app, html, data).then(function () {
+    addDarkSheetTab(app, html, data).then(function() {
         if (app.activateDDTab) {
             app._tabs[0].activate("dd");
         }
     });
     darkSheetSetup(app, html, data);
-    if(!game.settings.get('darksheet', 'disableWoundSystem')){
+    if (!game.settings.get('darksheet', 'disableWoundSystem')) {
         addWoundsToSheet(app, html, data);
     }
     setTimeout(() => {
-         // Blur the active element after reload
-         document.activeElement.blur();
+        // Blur the active element after reload
+        document.activeElement.blur();
     }, 0);
 });
 
@@ -200,13 +226,13 @@ Hooks.on(`renderItemSheet`, (app, html, data) => {
 });
 
 Hooks.on('preCreateChatMessage', (app, html, data) => {
-   //console.log("Chat Message Detected");
+    //console.log("Chat Message Detected");
     let actor = game.actors.get(app.speaker.actor);
     let item = actor.items.get($(app.content).attr("data-item-id"));
     let spellburnout = false;
     let iscantrip = false;
 
-    if(item == null) return;
+    if (item == null) return;
 
     if (item.system.level == 0) {
         iscantrip = true;
@@ -218,46 +244,50 @@ Hooks.on('preCreateChatMessage', (app, html, data) => {
     }
 
     if (!iscantrip && spellburnout && actor.flags.darksheet.attributes.autmomaticburnout && app.user.id === game.user.id || iscantrip && !game.settings.get('darksheet', 'savecantrips') && actor.flags.darksheet.attributes.autmomaticburnout && app.user.id === game.user.id) {
-       //console.log("[Darksheet] Rolling automatic burnout for " + actor.name);
+        //console.log("[Darksheet] Rolling automatic burnout for " + actor.name);
         rollBurnout(actor);
     }
 });
 
-async function loadItemData(app, html, data){
-    if(data.itemType == "Spell" || data.itemType == "Feature") return; //DISABLE SPELL AND FEATURES
+async function loadItemData(app, html, data) {
+    if (data.itemType == "Spell" || data.itemType == "Feature") return; //DISABLE SPELL AND FEATURES
     let itemDataTemplate = await renderTemplate("modules/darksheet/templates/itemdata.html", data);
 
     const firstElement = html.find('.properties-header').first();
     if (firstElement.length > 0) {
         firstElement.prepend(itemDataTemplate);
-    }else{
+    } else {
         html.find('.item-properties').append(itemDataTemplate);
     }
 }
 
-async function addWoundsToSheet(sheet, html, data){
+async function addWoundsToSheet(sheet, html, data) {
 
     let actor = sheet.actor;
     let woundlist = actor.flags.darksheet.woundlist;
     //console.log(actor.flags.darksheet);
-    
-    if(html.find("woundsection").count == 2) return;
 
-    if(actor.flags.darksheet.woundlist == undefined){
-        await actor.update({'flags.darksheet.woundlist': []});
+    if (html.find("woundsection").count == 2) return;
+
+    if (actor.flags.darksheet.woundlist == undefined) {
+        await actor.update({
+            'flags.darksheet.woundlist': []
+        });
     }
-    if(actor.flags.darksheet.displayOldWounds == undefined){
-        await actor.update({'flags.darksheet.displayOldWounds': false});
+    if (actor.flags.darksheet.displayOldWounds == undefined) {
+        await actor.update({
+            'flags.darksheet.displayOldWounds': false
+        });
     }
 
     //RENDER WOUNDS
     var woundBarDiv = document.createElement("div");
-    woundBarDiv.classList.add("form-group", "woundsection", "woundS1");
-    woundBarDiv.innerHTML = '<label title="Click to roll for reopened wounds" class="deathsavelabel woundroll rollReopenWounds rollable" actorid="'+actor.id+'">Wounds</label><i class="fas fa-plus addwoundbutton" id="addwound" actorID="'+sheet.actor.id+'"></i>';
-    
+    woundBarDiv.classList.add("pills-group", "woundsection", "woundS1");
+    woundBarDiv.innerHTML = '<button type="button" class="rollable button" title="Click to roll for reopened wounds" class="deathsavelabel woundroll rollReopenWounds rollable" actorid="' + actor.id + '">Reopen Wounds</button><button type="button" class="rollable button addwoundbutton" id="addwound" actorID="' + sheet.actor.id + '"><i class="fas fa-plus"></i> Add Wound</button>';
+
     let woundTable = await renderTemplate("modules/darksheet/templates/wounds.html", data);
-    
-    let countersSection = html.find(".counters");
+
+    let countersSection = html.find(".main-content").find(".tab-body").find(".details").find(".right").find(".flexrow");
     countersSection.after(woundTable);
     countersSection.after(woundBarDiv);
 
@@ -267,37 +297,41 @@ async function addWoundsToSheet(sheet, html, data){
         let wound = woundlist[count];
         let label = wound.treated == false ? '<label class="exhaustiontip">+1 Exh.</label>' : '';
         let treated = wound.treated == true ? 'checked' : '';
-        
-        if(!wound.healed)
-            await woundList.append('<tr id="woundtr"><td><input type="text" id="wounddes'+count+'" name="'+count+'" value="'+wound.location+'" placeholder="Where is this wound?"></td><td><input class="woundcheckbox" name="'+count+'" id="woundcheck'+count+'" type="checkbox" data-dtype="Boolean" '+treated+'/></td><td><input class="removewoundbutton" name="'+count+'" type="button" id="wound1"value=""><i class="fa-light fa-bandage healWoundButton"></i></td><td>'+label+'</td></th></tr>');
-        
+
+        if (!wound.healed)
+            await woundList.append('<tr id="woundtr"><td><input type="text" id="wounddes' + count + '" name="' + count + '" value="' + wound.location + '" placeholder="Where is this wound?"></td><td><input class="woundcheckbox" name="' + count + '" id="woundcheck' + count + '" type="checkbox" data-dtype="Boolean" ' + treated + '/></td><td><input class="removewoundbutton" name="' + count + '" type="button" id="wound1"value=""><i class="fa-light fa-bandage healWoundButton"></i></td><td>' + label + '</td></th></tr>');
+
         woundList.find("#wounddes" + count).on("change", async (ev) => {
             ev.preventDefault();
             // Handle the input change event
             //console.log("Input value changed:", ev.target.value);
             let actor = game.actors.get(ev.currentTarget.closest(".woundlist").getAttribute("actorid"));
-          
+
             let _woundlist = actor.flags.darksheet.woundlist ? actor.flags.darksheet.woundlist : [];
-          
+
             // EDIT WOUND
             _woundlist[ev.currentTarget.name].location = ev.target.value;
-          
-            await actor.setFlag('darksheet', 'woundlist', woundlist, { diff: true });
+
+            await actor.setFlag('darksheet', 'woundlist', woundlist, {
+                diff: true
+            });
             await document.activeElement.blur();
         });
-          
+
         woundList.find("#woundcheck" + count).on("change", async (ev) => {
             ev.preventDefault();
             let actor = game.actors.get(ev.currentTarget.closest(".woundlist").getAttribute("actorid"));
-          
+
             let _woundlist = actor.flags.darksheet.woundlist ? actor.flags.darksheet.woundlist : [];
-          
+
             _woundlist[ev.currentTarget.name].treated = ev.target.checked;
-          
-            await actor.setFlag('darksheet', 'woundlist', woundlist, { diff: true });
+
+            await actor.setFlag('darksheet', 'woundlist', woundlist, {
+                diff: true
+            });
             await document.activeElement.blur();
         });
-          
+
         woundList.find(".removewoundbutton[name='" + count + "']").on("click", async (ev) => {
             ev.preventDefault();
             let actor = game.actors.get(ev.currentTarget.closest(".woundlist").getAttribute("actorid"));
@@ -307,46 +341,51 @@ async function addWoundsToSheet(sheet, html, data){
             getTimeStamp().then((timestamp) => {
                 _woundlist[ev.currentTarget.name].healedDate = timestamp;
             });
-            await actor.update({ 'flags.darksheet.woundlist': woundlist });
+            await actor.update({
+                'flags.darksheet.woundlist': woundlist
+            });
             await document.activeElement.blur();
         });
     }
-    if(actor.flags.darksheet.displayOldWounds){
-        await woundList.append('<tr id="oldwounds" actorid="'+actor.id+'"><td colspan="4" class="oldWoundsColspan"><label class="oldWoundsLabel">Old Wounds</label><i class="fas fa-angle-down" style="margin-top: -8px; font-size:14px; padding:5px"></i></td></tr>');
+    if (actor.flags.darksheet.displayOldWounds) {
+        await woundList.append('<tr id="oldwounds" actorid="' + actor.id + '"><td colspan="4" class="oldWoundsColspan"><label class="oldWoundsLabel">Old Wounds</label><i class="fas fa-angle-down" style="margin-top: -8px; font-size:14px; padding:5px"></i></td></tr>');
 
         for (let count = 0; count < woundlist.length; count++) {
             let wound = woundlist[count];
             let label = wound.treated == true ? '<label class="exhaustiontip">+1 Exh.</label>' : '';
             let treated = wound.treated == true ? 'checked' : '';
-            
-            if(wound.healed){
-                
-                let datesInfo = "Gained: "+wound.gainedDate + " | Healed: "+wound.healedDate;
 
-                let _wound = await html.find(".woundlist").append('<tr id="oldwoundtr"><td><input type="text" id="wounddes'+count+'" name="'+count+'" value="'+wound.location+'" disabled placeholder="Where is this wound?"></td><td style="color:grey;">Healed</td><td><input class="removewoundbutton" name="'+count+'" type="button" id="wound1"value=""><i class="fa-solid fa-x deleteWoundButton"></i></td><td><a title="'+datesInfo+'"><i class="fa-regular fa-square-info woundInformation"></a></i></td></th></tr>');
-            
+            if (wound.healed) {
+
+                let datesInfo = "Gained: " + wound.gainedDate + " | Healed: " + wound.healedDate;
+
+                let _wound = await html.find(".woundlist").append('<tr id="oldwoundtr"><td><input type="text" id="wounddes' + count + '" name="' + count + '" value="' + wound.location + '" disabled placeholder="Where is this wound?"></td><td style="color:grey;">Healed</td><td><input class="removewoundbutton" name="' + count + '" type="button" id="wound1"value=""><i class="fa-solid fa-x deleteWoundButton"></i></td><td><a title="' + datesInfo + '"><i class="fa-regular fa-square-info woundInformation"></a></i></td></th></tr>');
+
                 html.find(".removewoundbutton[name='" + count + "']").on("click", async (ev) => {
                     ev.preventDefault();
                     // Handle the deletion event
                     let actor = game.actors.get(ev.currentTarget.closest(".woundlist").getAttribute("actorid"));
                     let _woundlist = actor.flags.darksheet.woundlist ? actor.flags.darksheet.woundlist : [];
-                    
+
                     // REMOVE WOUND
                     _woundlist.splice(ev.currentTarget.name, 1);
-                    await actor.update({ 'flags.darksheet.woundlist': woundlist });
+                    await actor.update({
+                        'flags.darksheet.woundlist': woundlist
+                    });
                     document.activeElement.blur();
                 });
             }
-            
+
         }
-    }
-    else{
-        await html.find(".woundlist").append('<tr id="oldwounds" actorid="'+actor.id+'"><td colspan="4" class="oldWoundsColspan"><label class="oldWoundsLabel">Old Wounds</label><i class="fas fa-angle-up" style="margin-top: -8px; font-size:14px; padding:5px"></i></td></tr>');
+    } else {
+        await html.find(".woundlist").append('<tr id="oldwounds" actorid="' + actor.id + '"><td colspan="4" class="oldWoundsColspan"><label class="oldWoundsLabel">Old Wounds</label><i class="fas fa-angle-up" style="margin-top: -8px; font-size:14px; padding:5px"></i></td></tr>');
     }
     html.find('#oldwounds').click((ev) => {
         ev.preventDefault();
         let actor = game.actors.get(ev.currentTarget.getAttribute("actorid"));
-        actor.update({"flags.darksheet.displayOldWounds": !actor.flags.darksheet.displayOldWounds});
+        actor.update({
+            "flags.darksheet.displayOldWounds": !actor.flags.darksheet.displayOldWounds
+        });
     });
     html.find('.addwoundbutton').click((ev) => {
         ev.preventDefault();
@@ -370,37 +409,41 @@ async function rollReopenWounds(actor) {
     let reopenedWounds = [];
 
     for (let i = 0; i < woundlist.length; i++) {
-      let wound = woundlist[i];
-      if (!wound.healed && wound.treated) {
-        let roll = await new Roll("1d20").evaluate({async:true});
-        let effect = "";
-        
-        if (roll.total == 1) {
-          effect = "The wound reopens and you lose a hit die (no longer treated).";
-          wound.healed = false;
-          wound.treated = false;
-          wound.hitDieLost = true;
-          await actor.setFlag('darksheet', 'woundlist', woundlist, { diff: true });
-          reopenedWounds.push(i);
-          createRollMessage(actor, "Wound-Reopen: "+wound.location, roll, null, roll.total, null, "1d20", 'fa-regular fa-face-head-bandage', effect, "darksheetNegativeMessage");
+        let wound = woundlist[i];
+        if (!wound.healed && wound.treated) {
+            let roll = await new Roll("1d20").evaluate({
+                async: true
+            });
+            let effect = "";
+
+            if (roll.total == 1) {
+                effect = "The wound reopens and you lose a hit die (no longer treated).";
+                wound.healed = false;
+                wound.treated = false;
+                wound.hitDieLost = true;
+                await actor.setFlag('darksheet', 'woundlist', woundlist, {
+                    diff: true
+                });
+                reopenedWounds.push(i);
+                createRollMessage(actor, "Wound-Reopen: " + wound.location, roll, null, roll.total, null, "1d20", 'fa-regular fa-face-head-bandage', effect, "darksheetNegativeMessage");
+            } else if (roll.total >= 2 && roll.total <= 8) {
+                effect = "The wound reopens (no longer treated).";
+                wound.healed = false;
+                wound.treated = false;
+                await actor.setFlag('darksheet', 'woundlist', woundlist, {
+                    diff: true
+                });
+                reopenedWounds.push(i);
+                createRollMessage(actor, "Wound-Reopen: " + wound.location, roll, null, roll.total, null, "1d20", 'fa-regular fa-face-head-bandage', effect, "darksheetNegativeMessage");
+            } else if (roll.total >= 9 && roll.total <= 20) {
+                effect = "The wound remains closed.";
+                createRollMessage(actor, "Wound-Reopen: " + wound.location, roll, null, roll.total, null, "1d20", 'fa-regular fa-face-head-bandage', effect);
+            }
         }
-        else if (roll.total >= 2 && roll.total <= 8) {
-          effect = "The wound reopens (no longer treated).";
-          wound.healed = false;
-          wound.treated = false;
-          await actor.setFlag('darksheet', 'woundlist', woundlist, { diff: true });
-          reopenedWounds.push(i);
-          createRollMessage(actor, "Wound-Reopen: "+wound.location, roll, null, roll.total, null, "1d20", 'fa-regular fa-face-head-bandage', effect, "darksheetNegativeMessage");
-        }
-        else if (roll.total >= 9 && roll.total <= 20) {
-          effect = "The wound remains closed.";
-          createRollMessage(actor, "Wound-Reopen: "+wound.location, roll, null, roll.total, null, "1d20", 'fa-regular fa-face-head-bandage', effect);
-        }
-      }
     }
 }
 
-async function rollHealingWounds(actor){
+async function rollHealingWounds(actor) {
     let woundlist = actor.getFlag('darksheet', 'woundlist');
 
     let healedWounds = [];
@@ -408,29 +451,32 @@ async function rollHealingWounds(actor){
     let style = "";
     let flavorText = "";
     for (let i = 0; i < woundlist.length; i++) {
-      let wound = woundlist[i];
-      if (!wound.healed) {
-        let roll = await new Roll("1d20").evaluate({async:true});
-        if (roll.total + actor.data.data.skills.med.total >= 15) {
-          healedWounds.push(i);
-          wound.healed = true;
-          wound.healedDate = Date.now();
-          await actor.setFlag('darksheet', 'woundlist', woundlist, { diff: true });
-          style = "darksheetPositiveMessage";
-          flavorText = "Wound is healed.";
-        }
-        else {
-          failedHealingChecks.push(i);
-          style = "darksheetNegativeMessage";
-          flavorText = "Is not fully healed yet.";
-        }
-        
-        createRollMessage(actor, "Healing Wounds: "+wound.location, roll, null, roll.total, null, "1d20 + CON (Medicine) Mod", 'fa-regular fa-bandage', flavorText, style);
-      }
-    }
-  }
+        let wound = woundlist[i];
+        if (!wound.healed) {
+            let roll = await new Roll("1d20").evaluate({
+                async: true
+            });
+            if (roll.total + actor.data.data.skills.med.total >= 15) {
+                healedWounds.push(i);
+                wound.healed = true;
+                wound.healedDate = Date.now();
+                await actor.setFlag('darksheet', 'woundlist', woundlist, {
+                    diff: true
+                });
+                style = "darksheetPositiveMessage";
+                flavorText = "Wound is healed.";
+            } else {
+                failedHealingChecks.push(i);
+                style = "darksheetNegativeMessage";
+                flavorText = "Is not fully healed yet.";
+            }
 
-async function addWoundToCharacter(actor){
+            createRollMessage(actor, "Healing Wounds: " + wound.location, roll, null, roll.total, null, "1d20 + CON (Medicine) Mod", 'fa-regular fa-bandage', flavorText, style);
+        }
+    }
+}
+
+async function addWoundToCharacter(actor) {
     let woundlisttext;
     let woundlist = actor.flags.darksheet.woundlist ? actor.flags.darksheet.woundlist : [];
 
@@ -440,14 +486,22 @@ async function addWoundToCharacter(actor){
     });
 
     //ADD WOUND
-    let wound = {location:"", treated:false, healed:false, gainedDate:date, healedDate:''}
+    let wound = {
+        location: "",
+        treated: false,
+        healed: false,
+        gainedDate: date,
+        healedDate: ''
+    }
 
     woundlist.push(wound);
 
-    await actor.setFlag('darksheet', 'woundlist', woundlist, { diff: true });
+    await actor.setFlag('darksheet', 'woundlist', woundlist, {
+        diff: true
+    });
 }
 
-async function getTimeStamp(){
+async function getTimeStamp() {
     const currentDate = new Date();
 
     // Get the date components
@@ -469,8 +523,8 @@ async function getTimeStamp(){
 async function addDarkSheetTab(app, html, data) {
     //ADD NEW DD TAB
 
-    let test = html.find(".sheet-navigation").append('<a class="item" data-tab="dd">DD</a>');
-    let sheet = html.find(".sheet-body");
+    let test = html.find(".tabs").append('<a class="item control" data-group="primary" data-tab="dd" data-tooltip="Darker Dungeons" aria-label="Darker Dungeons"><i class="fas fa-skull"></i></a>');
+    let sheet = html.find(".tab-body");
     let hideChecks = game.settings.get("darksheet", "hidechecks");
     data.hidechecks = hideChecks;
     let darkSheetTabHTML = await renderTemplate("modules/darksheet/templates/Tab_DD.html", data);
@@ -491,404 +545,470 @@ async function addDarkSheetTab(app, html, data) {
 
 async function darkSheetSetup(app, html, data) {
 
-        let actor = game.actors.contents.find((a) => a._id === data.actor._id);
-        if (actor === undefined) {
+    let actor = game.actors.contents.find((a) => a._id === data.actor._id);
+    if (actor === undefined) {
+        return;
+    }
+
+    let saveCantrips = game.settings.get('darksheet', 'savecantrips');
+    data.savecantrips = saveCantrips;
+
+    //SET UP SHEET BY SETTING CLASSES
+    //DEATH SAVES
+    const deathSaves = html.find('.death-saves');
+    deathSaves.find('.counter-value').children().first().remove();
+    deathSaves.find('.counter-value').children().first().remove();
+    deathSaves.children().first()
+        .removeAttr('data-action')
+        .addClass('tableCheck')
+        .attr('tableCheck', 'Death Saving Throw');
+    //ACTIVE INITIATIVE
+    let armorclass = html[0].getElementsByClassName("attribute-name box-title")[2];
+    if (armorclass == undefined) //NEW SHEET
+        armorclass = html[0].getElementsByClassName("ac")[0];
+    armorclass.classList.add("rollable", "darksheet_AC");
+    armorclass.classList.add("darksheet_AC");
+    let primaryCastingAbility = data.actor.system.attributes.spellcasting;
+
+    // Find the specific spellcasting card div where the data-ability attribute matches the primaryCastingAbility.
+    let spellcastingCard = Array.from(document.querySelectorAll('.spellcasting.card.primary'))
+        .find(card => card.getAttribute('data-ability') === primaryCastingAbility);
+
+    //ACTIVE SAVES
+    if (spellcastingCard) {
+        let abilitySpan = spellcastingCard.querySelector('.ability');
+        abilitySpan.classList.add("rollable", "darksheet_AS");
+    }
+    //SPELL BURNOUT
+    let spellFilters = html.find(".spellcasting-ability");
+    let spellBurn = await renderTemplate("modules/darksheet/templates/spellburnout.html", data);
+    spellFilters.append(spellBurn);
+    //DEATHSAVES
+    /*//Deactivate OLD
+    html.find(".death-saves").remove();
+    let sheet = html.find(".counters");
+    let DeathSaves = await renderTemplate("modules/darksheet/templates/deathsaves.html", data);
+    sheet.prepend(DeathSaves);*/
+
+    //region INVENTORY
+    if (!game.settings.get("darksheet", "hidenotches")) {
+        const randomNotch = document.createElement("button");
+        randomNotch.classList.add("randomnotch", "rollable", "button");
+        randomNotch.type = "button";
+        randomNotch.textContent = "Random Notch";
+        const currencyElement = html[0].querySelector(".currency");
+        currencyElement.insertBefore(randomNotch, currencyElement.firstChild);
+    }
+    //ADD HEADER ATTRIBUTES
+    let currentSlots = 0;
+
+    actor.items.forEach(function(item) {
+        // Ensure that item.flags.darksheet?.item?.slots and item.system.quantity are defined, otherwise use 0
+        const slots = item.flags?.darksheet?.item?.slots ?? 0;
+        const quantity = item.system?.quantity ?? 0;
+
+        if (!(game.settings.get('darksheet', 'equippedDontUseSlots') && item.system.equipped)) {
+            currentSlots += slots * quantity;
+        }
+
+    });
+
+    let maxSlots = 18;
+    let percentage = 0;
+    let STRBONUS = actor.system.abilities.str.value * Math.max(1, Math.min(actor.system.attributes.encumbrance.mod, 8));
+
+    if (actor.flags.darksheet && actor.flags.darksheet.attributes) {
+        switch (actor.system.traits.size) {
+            case "tiny":
+                maxSlots = 6;
+                break;
+            case "sm":
+                maxSlots = 14;
+                break;
+            case "med":
+                maxSlots = 18;
+                break;
+            case "lg":
+                maxSlots = 22;
+                break;
+            case "huge":
+                maxSlots = 30;
+                break;
+            case "grg":
+                maxSlots = 46;
+                break;
+            default:
+                maxSlots = 18;
+                break;
+        }
+
+        maxSlots += STRBONUS;
+    }
+    percentage = (currentSlots / maxSlots) * 100;
+
+    if (game.settings.get('darksheet', 'slotbasedinventory')) { // IF SLOTS ARE ENABLED
+        //SET ENCUMBRANCE BAR
+        let encumbrance = html.find(".encumbrance").find(".meter");
+
+        const currentValue = encumbrance.find("div").find(".value")[0];
+        currentValue.textContent = parseFloat(currentSlots).toFixed(1);;
+        const maxValue = encumbrance.find("div").find(".max")[0];
+        maxValue.textContent = maxSlots + " Slots";
+        const multiplier = html.find(".encumbrance").find(".info").find(".multiplier").find(".value")[0];
+        multiplier.textContent = "x" + Math.max(1, Math.min(actor.system.attributes.encumbrance.mod, 8));
+
+        const size = html.find(".encumbrance").find(".info").find(".size");
+        size.find(".value")[0].textContent = "+" + (maxSlots - STRBONUS);
+        size.find(".label")[0].textContent = "Size-Slots";
+        size.appendTo(size.parent());
+
+        encumbrance[0].style = "--bar-percentage:" + Math.min(percentage, 101) + "%";
+        //SET BAR ARROWS
+        //REMOVE FIRST 2 Arrows
+        encumbrance[0].children[2].remove();
+        encumbrance[0].children[2].remove();
+        encumbrance[0].children[2].remove();
+        encumbrance[0].children[1].remove();
+    }
+
+    let inventoryList = html[0].getElementsByClassName("inventory-list")[0];
+
+    for (let i = 0; i < inventoryList.getElementsByClassName("items-header").length; i++) {
+
+        //SET WEIGHT TO SLOTS
+        if (game.settings.get('darksheet', 'slotbasedinventory'))
+            inventoryList.getElementsByClassName("items-header")[i].getElementsByClassName("item-weight")[0].innerHTML = "Slots";
+        let node = inventoryList.getElementsByClassName("items-header")[i].children[1];
+        if (!game.settings.get('darksheet', 'hidenotches')) {
+            //NOTCHES
+            let notchesHeader = document.createElement("div");
+            notchesHeader.classList.add("item-header", "item-weight", "item-notches");
+            notchesHeader.innerHTML = 'Notches';
+            inventoryList.getElementsByClassName("items-header")[i].insertBefore(notchesHeader, node);
+        }
+        //AMMODIE
+        if (!game.settings.get('darksheet', 'hideammodie')) {
+            let ammodieHeader = document.createElement("div");
+            ammodieHeader.classList.add("item-header", "item-weight", "item-ammodie");
+            ammodieHeader.innerHTML = 'Ammodie';
+            inventoryList.getElementsByClassName("items-header")[i].insertBefore(ammodieHeader, node);
+        }
+
+    }
+    //region INVENTORY
+    //DISPLAY ATTRIBUTES IN LIST
+    let automaticSlots = game.settings.get('darksheet', 'automaticSlots');
+    let automaticFragility = game.settings.get('darksheet', 'automaticFragility');
+    let updates = [];
+    for (let i = 0; i < inventoryList.getElementsByClassName("item").length; i++) {
+        //CREATE ELEMENTS
+        var _notches = document.createElement("div");
+        var _ammodie = document.createElement("div");
+        var _slots = document.createElement("div");
+        //ASSIGN CLASSES
+        if (!game.settings.get('darksheet', 'hidenotches')) _notches.classList.add("item-detail", "item-weight", "item-notches");
+        _ammodie.classList.add("item-detail", "item-weight", "item-ammodieLabel");
+        if (game.settings.get('darksheet', 'slotbasedinventory')) _slots.classList.add("item-detail", "item-weight", "item-slots");
+        //GET DATA
+        let item = inventoryList.getElementsByClassName("item")[i];
+        let _item = actor.items.find(i => i.id == item.dataset.itemId);
+        if (_item.flags.darksheet == undefined || automaticFragility && _item.flags.darksheet.item.fragility == "" || automaticSlots && _item.flags.darksheet.item.slots == null) {
+            //try find slot
+            let slot = 1;
+            let fragility = "";
+            for (const [itemName, bulkValue] of Object.entries(itemBulk)) {
+
+                if (_item.name.includes(itemName)) {
+                    // Handle slot assignment based on automaticSlots setting
+                    if (automaticSlots) {
+                        let slot = bulkValue;
+                        console.log(`Darksheet | ${_item.name} is assigned ${slot} slots.`);
+                    }
+
+                    // Check fragility based on automaticFragility setting
+                    if (automaticFragility) {
+                        if (isItemFragile(_item.name)) {
+                            console.log(`Darksheet | ${_item.name} is considered fragile.`);
+                            fragility = 1;
+                        } else {
+                            console.log(`Darksheet | ${_item.name} is not considered fragile.`);
+                            fragility = 10;
+                        }
+                        console.log(`Darksheet | ${_item.name} has a fragility rating of ${fragility}.`);
+                    }
+                    break;
+                }
+            }
+            updates.push({
+                "_id": _item.id,
+                "flags.darksheet.item.slots": slot,
+                "flags.darksheet.item.notches": null,
+                "flags.darksheet.item.quality": "",
+                "flags.darksheet.item.fragility": fragility,
+                "flags.darksheet.item.temper": "",
+                "flags.darksheet.item.ammodie": "",
+            });
+        }
+        let itemData = _item.flags.darksheet.item;
+        let product = itemData.slots * _item.system.quantity;
+        let usesSlots = (product % 1 === 0) ? product.toString() : product.toFixed(1);
+        //GET REFERENCE TO ITEM WEIGHT TO REMOVE IT LATER; BECAUSE IT SHARES THE CLASS WITH THE ADDED ELEMENTS
+        let itemWeight = item.getElementsByClassName("item-weight")[0];
+        let price = item.getElementsByClassName("item-price")[0];
+        //FILL WITH DATA
+        let minusNotchButton = document.createElement("button");
+        minusNotchButton.type = "button";
+        let plusNotchButton = document.createElement("button");
+        plusNotchButton.type = "button";
+        minusNotchButton.innerHTML = "<label>-</label>";
+        plusNotchButton.innerHTML = "<label>+</label>";
+
+        minusNotchButton.classList.add("darksheetbuttonMinus", "notchButton");
+        plusNotchButton.classList.add("darksheetbuttonPlus", "notchButton");
+
+        if (!game.settings.get('darksheet', 'hidenotches')) _notches.append(itemData?.notches > 0 ? minusNotchButton : "", itemData?.notches ?? " ", plusNotchButton);
+        _ammodie.innerHTML = itemData.ammodie !== undefined ? '<label class="ammodieLabel">' + itemData.ammodie + '</label>' : "";
+
+        if (game.settings.get('darksheet', 'slotbasedinventory')) _slots.innerHTML = itemData.slots !== undefined ? usesSlots : "";
+        //INSERT NOTCHES
+        if (!game.settings.get('darksheet', 'hidenotches')) item.insertBefore(_notches, price);
+        if (itemData.ammodie == "")
+            _ammodie.classList.remove("item-ammodieLabel");
+
+        if (!game.settings.get('darksheet', 'hideammodie')) item.insertBefore(_ammodie, price);
+
+        if (game.settings.get('darksheet', 'slotbasedinventory')) {
+            item.insertBefore(_slots, itemWeight);
+            itemWeight.remove();
+        }
+
+        if (!game.settings.get('darksheet', 'disableItemDamage')) {
+            //CHANGE DISPLAY NAME
+            let itemname = _item.name;
+            if (_item.flags.darksheet.item.temper) {
+                itemname = "[" + _item.flags.darksheet.item.temper + "] " + itemname;
+            }
+            if (_item.type == "weapon" && _item.system.damage.parts.length > 0) {
+                itemname += " (" + _item.system.damage.parts[0][0].split(" ")[0] + ")";
+            }
+            if (_item.type == "equipment" && _item.system.armor.value != 0) {
+                itemname += " (" + _item.system.armor.value + " AC)";
+            }
+            /*if(_item.flags.darksheet.item.fragility){
+            const notchOptions = {
+                1: 'Delicate',
+                2: 'Frail',
+                3: 'Basic',
+                5: 'Solid',
+                10: 'Sturdy',
+                15: 'Durable',
+                20: 'Very Sturdy',
+                50: 'Fabled',
+                100: 'Indestructible'
+            };
+            itemname =  "["+notchOptions[_item.flags.darksheet.item.fragility] + "] " + itemname;
+            }*/
+            if (_item.flags.darksheet.item.quality) {
+                let quality = _item.flags.darksheet.item.quality;
+                if (quality != "pristine")
+                    if (!itemname.includes("[Shattered]"))
+                        itemname = "[" + quality.charAt(0).toUpperCase() + quality.slice(1) + "] " + itemname;
+                item.classList.add(quality);
+
+            }
+            item.children[0].children[1].children[0].innerHTML = itemname;
+        }
+
+    }
+    actor.updateEmbeddedDocuments('Item', updates).then(() => {
+        console.log('Darksheet | Inventory updated successfully.');
+    }).catch(error => {
+        console.error('Darksheet | Failed to update inventory:', error);
+    });
+
+    //ADD LISTENERS
+    html.find('.darksheet_AC').click(async (event) => {
+        event.preventDefault();
+        let ac = actor.system.attributes.ac.value;
+        let roll1 = await new Roll("1d20").roll({
+            async: true
+        });
+        let roll2 = await new Roll("1d20").roll({
+            async: true
+        });
+        let rollResult = roll1._total + ac;
+        let rollResult2 = roll2._total + ac;
+        let rollformula = "1d20 + " + ac;
+
+        if (game.settings.get('darksheet', 'smalldefense')) {
+            rollResult = roll1._total + ac - 10;
+            rollResult2 = roll2._total + ac - 10;
+            rollformula = "1d20 + " + ac + " - 10";
+        }
+        /*if (game.settings.get('darksheet', 'smalldefense')) {
+            rollResult -= 10;
+            rollResult2 -= 10;
+        }*/
+        //let wounds = this.actor.system.attributes.wounds.value;
+        let actorID = actor.id;
+        let negative = "";
+        if (roll1.result == 1 || roll2.result == 1) {
+            negative = "darksheetNegativeMessage";
+        }
+        if (roll1.result == 20 || roll2.result == 20) {
+            negative = "darksheetPositiveMessage";
+        }
+
+        createRollMessage(actor, "Defense Roll", roll1, roll2, rollResult, rollResult2, rollformula, "fa-solid fa-shield", "", negative)
+    });
+    html.find('.burnoutclick').click(async (event) => {
+        event.preventDefault();
+        if (data.options.token?.actorLink === false) {
+            ui.notifications.warn("Darksheet | Unlinked tokens are not supported.");
             return;
         }
-        let saveCantrips = game.settings.get('darksheet', 'savecantrips');
-        data.savecantrips = saveCantrips;
-
-        //SET UP SHEET BY SETTING CLASSES
-            //DEATH SAVES
-            const deathSaves = html.find('.death-saves');
-            deathSaves.find('.counter-value').children().first().remove();
-            deathSaves.find('.counter-value').children().first().remove();
-            deathSaves.children().first()
-            .removeAttr('data-action')
-            .addClass('tableCheck')
-            .attr('tableCheck', 'Death Saving Throw');
-            //ACTIVE INITIATIVE
-            let armorclass = html[0].getElementsByClassName("attribute-name box-title")[2];
-            armorclass.classList.add("rollable", "darksheet_AC");
-            armorclass.classList.add("darksheet_AC");
-            //ACTIVE SAVES
-            html[0].getElementsByClassName("form-group spellcasting-ability")[0].getElementsByTagName('span')[0].classList.add("rollable");
-            html[0].getElementsByClassName("form-group spellcasting-ability")[0].getElementsByTagName('span')[0].classList.add("darksheet_AS");
-
-            //SPELL BURNOUT
-            let spellFilters = html.find(".spellcasting-ability");
-            let spellBurn = await renderTemplate("modules/darksheet/templates/spellburnout.html", data);
-            spellFilters.append(spellBurn);
-            //DEATHSAVES
-            /*//Deactivate OLD
-            html.find(".death-saves").remove();
-            let sheet = html.find(".counters");
-            let DeathSaves = await renderTemplate("modules/darksheet/templates/deathsaves.html", data);
-            sheet.prepend(DeathSaves);*/
-
-            //INVENTORY
-            if (!game.settings.get("darksheet", "hidenotches")) {
-                const randomNotch = document.createElement("label");
-                randomNotch.classList.add("randomnotch", "rollable");
-                randomNotch.textContent = "Random Notch";
-                const currencyElement = html[0].querySelector(".currency");
-                currencyElement.insertBefore(randomNotch, currencyElement.firstChild);
-            }
-            //ADD HEADER ATTRIBUTES
-            let currentSlots = 0;
-
-            actor.items.forEach(function(item) {
-                // code to execute for each item
-                currentSlots += item.flags.darksheet?.item?.slots ?? 0;
-            });
-            
-            let maxSlots = 0;
-            let bulk = 0;
-            let percentage = 0;
-            
-            if (actor.flags.darksheet && actor.flags.darksheet.attributes) {
-                if(actor.flags.darksheet.attributes.inventoryslots) maxSlots = actor.flags.darksheet.attributes.inventoryslots;
-                bulk = maxSlots + Math.floor(maxSlots/2);
-                percentage = (currentSlots / bulk) * 100;
-            }
-
-            if(game.settings.get('darksheet', 'slotbasedinventory')){ // IF SLOTS ARE ENABLED
-            //SET ENCUMBRANCE BAR
-            let encumbrance = html[0].getElementsByClassName("encumbrance")[0];
-
-            //SET BAR ARROWS
-            //REMOVE FIRST 2 Arrows
-            encumbrance.children[2].remove();
-            encumbrance.children[2].remove();
-            //SET OTHER 2 ARROWS TO PERCENTAGE OF maxslots/bulk
-            encumbrance.children[2].style.left = (maxSlots / bulk) * 100 + "%";
-            encumbrance.children[3].style.left = (maxSlots / bulk) * 100 + "%";
-            //SET BAR %
-            encumbrance.children[0].style.width = ""+percentage+"%";
-                //CHANGE COLOR OF BAR IF OVER 100%
-                if(currentSlots > maxSlots){
-                    encumbrance.children[0].style.background = "orangered";
-                    encumbrance.children[0].style.borderColor = "orange";
-                }
-                //SET BAR TEXT;
-                if(currentSlots > bulk){
-                    encumbrance.children[0].style.background = "darkred";
-                    encumbrance.children[0].style.borderColor = "red";
-                }
-                
-                encumbrance.children[1].innerText = currentSlots+" /";
-            let maxSlotsInput = document.createElement('input');
-            maxSlotsInput.type = "number";
-            maxSlotsInput.placeholder = "18";
-            maxSlotsInput.value = actor.flags.darksheet?.attributes?.inventoryslots ?? 18 + actor.system.abilities.str.value;
-            maxSlotsInput.tooltip = "Standard formular for medium creature: 18+STR"
-            maxSlotsInput.name = "flags.darksheet.attributes.inventoryslots";
-            maxSlotsInput.classList.add("maxSlotsInput");
-
-            encumbrance.children[1].append(maxSlotsInput);
-            encumbrance.children[1].append(" Slots");
-            }
-
-            let inventoryList = html[0].getElementsByClassName("inventory-list")[0];
-            
-            for (let i = 0; i < inventoryList.getElementsByClassName("items-header").length; i++) {
-
-                //SET WEIGHT TO SLOTS
-                if(game.settings.get('darksheet', 'slotbasedinventory'))
-                inventoryList.getElementsByClassName("items-header")[i].getElementsByClassName("item-weight")[0].innerHTML = "Slots";
-                let node = inventoryList.getElementsByClassName("items-header")[i].children[1];
-                if(!game.settings.get('darksheet', 'hidenotches')){
-                //NOTCHES
-                let notchesHeader = document.createElement("div");
-                notchesHeader.classList.add("item-detail", "item-weight", "item-notches");
-                notchesHeader.innerHTML = 'Notches';
-                inventoryList.getElementsByClassName("items-header")[i].insertBefore(notchesHeader, node);
-                }
-                //AMMODIE
-                let ammodieHeader = document.createElement("div");
-                ammodieHeader.classList.add("item-detail", "item-weight", "item-ammodie");
-                ammodieHeader.innerHTML = 'Ammodie';
-                inventoryList.getElementsByClassName("items-header")[i].insertBefore(ammodieHeader, node);
-
-            }
-            //DISPLAY ATTRIBUTES IN LIST
-            for (let i = 0; i < inventoryList.getElementsByClassName("item").length; i++) {
-                //CREATE ELEMENTS
-                var _notches = document.createElement("div");
-                var _ammodie = document.createElement("div");
-                var _slots = document.createElement("div");
-                //ASSIGN CLASSES
-                if(!game.settings.get('darksheet', 'hidenotches')) _notches.classList.add("item-detail", "item-weight", "item-notches");
-                _ammodie.classList.add("item-detail", "item-weight", "item-ammodieLabel");
-                if(game.settings.get('darksheet', 'slotbasedinventory')) _slots.classList.add("item-detail", "item-weight", "item-slots");
-                //GET DATA
-                let item = inventoryList.getElementsByClassName("item")[i];
-                let _item = actor.items.find(i=>i.id == item.dataset.itemId);
-                if (_item.flags.darksheet == undefined) {
-                    //try find slot
-                    let slot = 1;
-                    for (const [itemName, bulkValue] of Object.entries(itemBulk)) {
-
-                          if (_item.name.includes(itemName)) {
-                           //console.log(`Item ${item.name} has bulk value ${bulkValue}.`);
-                            slot = bulkValue
-                            break;
-                          }
-                    }
-                    await _item.update({
-                        'flags.darksheet.item.slots': slot,
-                        'flags.darksheet.item.notches':null,
-                        'flags.darksheet.item.quality':"",
-                        'flags.darksheet.item.fragility':"",
-                        'flags.darksheet.item.temper':"",
-                        'flags.darksheet.item.ammodie':"",
-                    });
-                }
-                let itemData = _item.flags.darksheet.item;
-
-                //GET REFERENCE TO ITEM WEIGHT TO REMOVE IT LATER; BECAUSE IT SHARES THE CLASS WITH THE ADDED ELEMENTS
-                let itemWeight = item.getElementsByClassName("item-weight")[0];
-
-                //FILL WITH DATA
-                let minusNotchButton = document.createElement("button");
-                minusNotchButton.type = "button";
-                let plusNotchButton = document.createElement("button");
-                plusNotchButton.type = "button";
-                minusNotchButton.innerHTML = "<label>-</label>";
-                plusNotchButton.innerHTML = "<label>+</label>";
-
-                minusNotchButton.classList.add("darksheetbuttonMinus", "notchButton");
-                plusNotchButton.classList.add("darksheetbuttonPlus", "notchButton");
-                
-                if(!game.settings.get('darksheet', 'hidenotches')) _notches.append(itemData?.notches > 0 ? minusNotchButton : "", itemData?.notches ?? " ", plusNotchButton);
-                _ammodie.innerHTML= itemData.ammodie !== undefined ? '<label class="ammodieLabel">'+itemData.ammodie+'</label>' : "";
-
-                if(game.settings.get('darksheet', 'slotbasedinventory')) _slots.innerHTML= itemData.slots !== undefined ? itemData.slots : "";
-                //INSERT NOTCHES
-                if(!game.settings.get('darksheet', 'hidenotches')) item.insertBefore(_notches, itemWeight);
-                if(itemData.ammodie == "")
-                _ammodie.classList.remove("item-ammodieLabel");
-                item.insertBefore(_ammodie, itemWeight);
-                if(game.settings.get('darksheet', 'slotbasedinventory')){
-                    item.insertBefore(_slots, itemWeight);
-                    itemWeight.remove();
-                }
-
-                if(!game.settings.get('darksheet', 'disableItemDamage')){
-                    //CHANGE DISPLAY NAME
-                    let itemname = _item.name;
-                    if(_item.flags.darksheet.item.temper){
-                        itemname = "["+ _item.flags.darksheet.item.temper + "] " + itemname;
-                    }
-                    if(_item.type == "weapon" && _item.system.damage.parts.length > 0){
-                        itemname += " (" +_item.system.damage.parts[0][0].split(" ")[0]+")";
-                    }
-                    if(_item.type == "equipment" && _item.system.armor.value != 0){
-                        itemname += " (" +_item.system.armor.value+" AC)";
-                    }
-                    /*if(_item.flags.darksheet.item.fragility){
-                    const notchOptions = {
-                        1: 'Delicate',
-                        2: 'Frail',
-                        3: 'Basic',
-                        5: 'Solid',
-                        10: 'Sturdy',
-                        15: 'Durable',
-                        20: 'Very Sturdy',
-                        50: 'Fabled',
-                        100: 'Indestructible'
-                    };
-                    itemname =  "["+notchOptions[_item.flags.darksheet.item.fragility] + "] " + itemname;
-                    }*/
-                    if(_item.flags.darksheet.item.quality){
-                        let quality = _item.flags.darksheet.item.quality;
-                        if(quality != "pristine")
-                        if(!itemname.includes("[Shattered]"))
-                            itemname =  "["+quality.charAt(0).toUpperCase() + quality.slice(1)+ "] " + itemname;
-                       item.classList.add(quality);
-
-                    }
-                    item.firstElementChild.querySelector('h4').textContent = itemname;
-                }
-            }
-            
-
-        //ADD LISTENERS
-        html.find('.darksheet_AC').click(async (event) => {
-            event.preventDefault();
-            let ac = actor.system.attributes.ac.value;
-            let roll1 = await new Roll("1d20").roll({async: true});
-            let roll2 = await new Roll("1d20").roll({async: true});
-            let rollResult = roll1._total + ac;
-            let rollResult2 = roll2._total + ac;
-            let rollformula = "1d20 + " + ac;
-
-            if( game.settings.get('darksheet', 'smalldefense')){
-                rollResult = roll1._total + ac -10;
-                rollResult2 = roll2._total + ac -10;
-                rollformula = "1d20 + " + ac + " - 10";
-            }
-            /*if (game.settings.get('darksheet', 'smalldefense')) {
-                rollResult -= 10;
-                rollResult2 -= 10;
-            }*/
-            //let wounds = this.actor.system.attributes.wounds.value;
-            let actorID = actor.id;
-            let negative = "";
-            if(roll1.result == 1 || roll2.result == 1){
-                negative = "darksheetNegativeMessage";
-            }
-            if(roll1.result == 20 || roll2.result == 20){
-                negative = "darksheetPositiveMessage";
-            }
-
-            createRollMessage(actor, "Defense Roll", roll1, roll2, rollResult, rollResult2, rollformula, "fa-solid fa-shield", "", negative)
+        await rollBurnout(actor);
+    });
+    html.find('.tableCheck').click(async (event) => {
+        event.preventDefault();
+        rollFromTable(event.target.getAttribute("tableCheck"));
+    });
+    html.find('.item-ammodieLabel').click(async (event) => {
+        event.preventDefault();
+        if (data.options.token?.actorLink === false) {
+            ui.notifications.warn("Darksheet | Unlinked tokens are not supported.");
+            return;
+        }
+        await rollAmmodie(event, actor);
+    });
+    html.find('.staminacheck').click(async event => {
+        event.preventDefault();
+        let roll = await new Roll("1d6").roll({
+            async: true
         });
-        html.find('.burnoutclick').click(async (event) => {
-            event.preventDefault();
-            if (data.options.token?.actorLink === false) {
-                ui.notifications.warn("Darksheet | Unlinked tokens are not supported.");
-                return;
-            }
-            await rollBurnout(actor);
-        });
-        html.find('.tableCheck').click(async (event) => {
-            event.preventDefault();
-            rollFromTable(event.target.getAttribute("tableCheck"));
-        });
-        html.find('.item-ammodieLabel').click(async (event) => {
-            event.preventDefault();
-            if (data.options.token?.actorLink === false) {
-                ui.notifications.warn("Darksheet | Unlinked tokens are not supported.");
-                return;
-            }
-            await rollAmmodie(event, actor);
-        });
-        html.find('.staminacheck').click(async event => {
-            event.preventDefault();
-            let roll = await new Roll("1d6").roll({ async: true });
-            // Roll outcome
-            let outcome;
-            let newExhaustion = data.actor.flags.darksheet.attributes.exhaustion; //TODO: EXHAUSTION CALCULATION BASED ON THE INDEXES
-          
-            const foodValues = ["foodstuffed", "foodwellfed", "foodok", "foodpekish", "foodhungry", "foodravenous", "foodstarving"];
-            const waterValues = ["wquenched", "wrefreshed", "wok", "wparched", "wthirsty", "wdry", "wdehydrated"];
-            const fatigueValues = ["exenegised", "exwell", "exok", "extired", "exsleepy", "exvsleepy", "exbarely"];
-          
-            let foodIndex = foodValues.indexOf(data.actor.flags.darksheet.attributes.saturation);
-            let waterIndex = waterValues.indexOf(data.actor.flags.darksheet.attributes.thirst);
-            let fatigueIndex = fatigueValues.indexOf(data.actor.flags.darksheet.attributes.fatigue);
-          
-            if (roll._total >= 1 && roll._total <= 2) {
-              outcome = "Hunger +1";
-              foodIndex += 1;
-            } else if (roll._total >= 3 && roll._total <= 4) {
-              outcome = "Thirst +1";
-              waterIndex += 1;
-            } else if (roll._total >= 5 && roll._total <= 6) {
-              outcome = "Fatigue +1";
-              fatigueIndex += 1;
-            }
-          
-            createRollMessage(data.actor, "Stamina Check", roll, null, roll._total, null, "1d6", "fa-regular fa-dice-d6", outcome);
-          
-            if (
-                foodValues[foodIndex] !== data.actor.flags.darksheet.attributes.saturation ||
-                waterValues[waterIndex] !== data.actor.flags.darksheet.attributes.thirst ||
-                fatigueValues[fatigueIndex] !== data.actor.flags.darksheet.attributes.fatigue ||
-                newExhaustion !== data.actor.flags.darksheet.attributes.exhaustion
-            ) {
+        // Roll outcome
+        let outcome;
+        let newExhaustion = data.actor.flags.darksheet.attributes.exhaustion; //TODO: EXHAUSTION CALCULATION BASED ON THE INDEXES
+
+        const foodValues = ["foodstuffed", "foodwellfed", "foodok", "foodpekish", "foodhungry", "foodravenous", "foodstarving"];
+        const waterValues = ["wquenched", "wrefreshed", "wok", "wparched", "wthirsty", "wdry", "wdehydrated"];
+        const fatigueValues = ["exenegised", "exwell", "exok", "extired", "exsleepy", "exvsleepy", "exbarely"];
+
+        let foodIndex = foodValues.indexOf(data.actor.flags.darksheet.attributes.saturation);
+        let waterIndex = waterValues.indexOf(data.actor.flags.darksheet.attributes.thirst);
+        let fatigueIndex = fatigueValues.indexOf(data.actor.flags.darksheet.attributes.fatigue);
+
+        if (roll._total >= 1 && roll._total <= 2) {
+            outcome = "Hunger +1";
+            foodIndex += 1;
+        } else if (roll._total >= 3 && roll._total <= 4) {
+            outcome = "Thirst +1";
+            waterIndex += 1;
+        } else if (roll._total >= 5 && roll._total <= 6) {
+            outcome = "Fatigue +1";
+            fatigueIndex += 1;
+        }
+
+        createRollMessage(data.actor, "Stamina Check", roll, null, roll._total, null, "1d6", "fa-regular fa-dice-d6", outcome);
+
+        if (
+            foodValues[foodIndex] !== data.actor.flags.darksheet.attributes.saturation ||
+            waterValues[waterIndex] !== data.actor.flags.darksheet.attributes.thirst ||
+            fatigueValues[fatigueIndex] !== data.actor.flags.darksheet.attributes.fatigue ||
+            newExhaustion !== data.actor.flags.darksheet.attributes.exhaustion
+        ) {
             await data.actor.update({
                 'flags.darksheet.attributes.saturation': foodValues[foodIndex],
                 'flags.darksheet.attributes.thirst': waterValues[waterIndex],
                 'flags.darksheet.attributes.fatigue': fatigueValues[fatigueIndex],
                 'flags.darksheet.attributes.exhaustion': newExhaustion
-                }, { diff: true });
-            }
-        })
-        html.find('.darksheet_AS').click(async (event) => {
-            event.preventDefault();
-            if (data.options.token?.actorLink === false) {
-                ui.notifications.warn("Darksheet | Unlinked tokens are not supported.");
-                return;
-            }
-            let ac = actor.system.attributes.ac.value;
-            let roll1 = await new Roll("1d20").roll({async: true});
-            let roll2 = await new Roll("1d20").roll({async: true});
-            let rollResult = roll1._total + ac;
-            let rollResult2 = roll2._total + ac;
-            let rollformula = "1d20 + " + ac;
-            /*if (game.settings.get('darksheet', 'smalldefense')) {
-                rollResult -= 10;
-                rollResult2 -= 10;
-            }*/
-            //let wounds = this.actor.system.attributes.wounds.value;
-            let actorID = actor.id;
-            let negative = "";
-            if(roll1.result == 1 || roll2.result == 1){
-                negative = "darksheetNegativeMessage";
-            }
-            if(roll1.result == 20 || roll2.result == 20){
-                negative = "darksheetPositiveMessage";
-            }
+            }, {
+                diff: true
+            });
+        }
+    })
+    html.find('.darksheet_AS').click(async (event) => {
+        event.preventDefault();
+        if (data.options.token?.actorLink === false) {
+            ui.notifications.warn("Darksheet | Unlinked tokens are not supported.");
+            return;
+        }
+        let ac = actor.system.attributes.ac.value;
+        let roll1 = await new Roll("1d20").evaluate()
+        let roll2 = await new Roll("1d20").evaluate()
+        let rollformula = "1d20 + " + ac;
+        /*if (game.settings.get('darksheet', 'smalldefense')) {
+            rollResult -= 10;
+            rollResult2 -= 10;
+        }*/
+        //let wounds = this.actor.system.attributes.wounds.value;
+        let actorID = actor.id;
+        let negative = "";
+        if (roll1.result == 1 || roll2.result == 1) {
+            negative = "darksheetNegativeMessage";
+        }
+        if (roll1.result == 20 || roll2.result == 20) {
+            negative = "darksheetPositiveMessage";
+        }
 
-            createRollMessage(actor, "Saving Attack", roll1, roll2, rollResult, rollResult2, rollformula, "fa-solid fa-hand-holding-magic", "", negative)
-        });
-        html.find('.darksheetbuttonPlus').click(async (event) => {
-            event.preventDefault();
-            if (data.options.token?.actorLink === false) {
-                ui.notifications.warn("Darksheet | This token is not linked to the actor. Notch wasn't added.");
-                return;
-            }
-            let item = data.actor.items.find(i => i.id == event.target.closest(".item").dataset.itemId);
-            await addNotchToItem(item);
-            ui.notifications.notify("Added a notch to "+ item.name);
-        });
-        html.find('.darksheetbuttonMinus').click(async (event) => {
-            event.preventDefault();
-            if (data.options.token?.actorLink === false) {
-                ui.notifications.warn("Darksheet | This token is not linked to the actor. Notch wasn't removed.");
-                return;
-            }
-            let item = data.actor.items.find(i => i.id == event.target.closest(".item").dataset.itemId);
-            await removeNotchFromItem(data.actor.items.find(i => i.id == event.target.closest(".item").dataset.itemId));
-            ui.notifications.notify("Removed a notch from "+ item.name);
-        });
-        html.find('.randomnotch').click(async event => {
-            event.preventDefault();
-            let array = data.actor.items.filter(i => i.type !== "feat" && i.type !== "class" && i.type !== "spell");
-            let numberino = 0;
-            let randomItem = array[Math.floor(Math.random(numberino) * array.length)];
-            let randomID = randomItem.id;
-            let querysel = '[data-item-id="'+randomID+'"]';
-            document.querySelectorAll(querysel)[0].getElementsByClassName("darksheetbuttonPlus")[0].click();
-        });
+        createRollMessage(actor, "Saving Attack", roll1, roll2, roll1.result, roll2.result, rollformula, "fa-solid fa-hand-holding-magic", "", negative)
+    });
+    html.find('.darksheetbuttonPlus').click(async (event) => {
+        event.preventDefault();
+        if (data.options.token?.actorLink === false) {
+            ui.notifications.warn("Darksheet | This token is not linked to the actor. Notch wasn't added.");
+            return;
+        }
+        let item = data.actor.items.find(i => i.id == event.target.closest(".item").dataset.itemId);
+        await addNotchToItem(item);
+        ui.notifications.notify("Added a notch to " + item.name);
+    });
+    html.find('.darksheetbuttonMinus').click(async (event) => {
+        event.preventDefault();
+        if (data.options.token?.actorLink === false) {
+            ui.notifications.warn("Darksheet | This token is not linked to the actor. Notch wasn't removed.");
+            return;
+        }
+        let item = data.actor.items.find(i => i.id == event.target.closest(".item").dataset.itemId);
+        await removeNotchFromItem(data.actor.items.find(i => i.id == event.target.closest(".item").dataset.itemId));
+        ui.notifications.notify("Removed a notch from " + item.name);
+    });
+    html.find('.randomnotch').click(async event => {
+        event.preventDefault();
+        let array = data.actor.items.filter(i => i.type !== "feat" && i.type !== "class" && i.type !== "spell");
+        let numberino = 0;
+        let randomItem = array[Math.floor(Math.random(numberino) * array.length)];
+        let randomID = randomItem.id;
+        let querysel = '[data-item-id="' + randomID + '"]';
+        document.querySelectorAll(querysel)[0].getElementsByClassName("darksheetbuttonPlus")[0].click();
+    });
 
 }
 
-async function rollAmmodie(event, actor){
-    let item = actor.items.find(i=>i.id == event.target.closest(".item").dataset.itemId);
+async function rollAmmodie(event, actor) {
+    let item = actor.items.find(i => i.id == event.target.closest(".item").dataset.itemId);
     let currentAmmodie = item.flags.darksheet.item.ammodie;
     let newAmmodie = currentAmmodie;
-    let roll = await new Roll("1"+currentAmmodie).roll({async: true});
-    let rollResult = roll._total;    
-    let ammodieArray = ["d20","d12","d10","d8","d6","d4"];
+    let roll = await new Roll("1" + currentAmmodie).roll({
+        async: true
+    });
+    let rollResult = roll._total;
+    let ammodieArray = ["d20", "d12", "d10", "d8", "d6", "d4"];
     let change = "";
     let negative = "";
-    if(rollResult == 1 || rollResult == 2){//MAKE DICE SMALLER
-        if(currentAmmodie != "d4"){
-            newAmmodie = ammodieArray[ammodieArray.indexOf(currentAmmodie)+1];
+    if (rollResult == 1 || rollResult == 2) { //MAKE DICE SMALLER
+        if (currentAmmodie != "d4") {
+            newAmmodie = ammodieArray[ammodieArray.indexOf(currentAmmodie) + 1];
             change = " -> " + newAmmodie;
             negative = "darksheetNegativeMessage";
-        }
-        else{
+        } else {
             newAmmodie = "";
             change = " -> Depleted.";
             negative = "darksheetNegativeMessage";
         }
     }
 
-    await createRollMessage(actor, "Ammo Dice ("+currentAmmodie+")"+change, roll, null, rollResult, null, "1"+currentAmmodie, "fa-solid  fa-dice-"+currentAmmodie,"", negative);
+    await createRollMessage(actor, "Ammo Dice (" + currentAmmodie + ")" + change, roll, null, rollResult, null, "1" + currentAmmodie, "fa-solid  fa-dice-" + currentAmmodie, "", negative);
 
     await item.update({
         'flags.darksheet.item.ammodie': newAmmodie
@@ -896,20 +1016,30 @@ async function rollAmmodie(event, actor){
 
 }
 
-async function rollBurnout(actor){
+async function rollBurnout(actor) {
     let burnoutDie = actor.flags.darksheet.attributes.burnout.value;
     let newBurnoutDie = burnoutDie;
-    let burnoutArray = ["12","10","8","6","4","4"];
-    let regionDict ={ "3": "Serene", "2": "Calm", "1": "Stable", "0": "Normal", "-1": "Unstable", "-2": "Wild", "-3": "Chaotic" };
+    let burnoutArray = ["12", "10", "8", "6", "4", "4"];
+    let regionDict = {
+        "3": "Serene",
+        "2": "Calm",
+        "1": "Stable",
+        "0": "Normal",
+        "-1": "Unstable",
+        "-2": "Wild",
+        "-3": "Chaotic"
+    };
 
-    let roll1 = await new Roll("1d"+burnoutDie).roll({async: true});
-    let rollResult = roll1._total;    
+    let roll1 = await new Roll("1d" + burnoutDie).roll({
+        async: true
+    });
+    let rollResult = roll1._total;
     let change = "";
     let negative = "";
-    if(rollResult == 1 || rollResult == 2)//BURNOUT
+    if (rollResult == 1 || rollResult == 2) //BURNOUT
     {
-        if(burnoutDie != "4"){
-            newBurnoutDie = burnoutArray[burnoutArray.indexOf(burnoutDie)+1];
+        if (burnoutDie != "4") {
+            newBurnoutDie = burnoutArray[burnoutArray.indexOf(burnoutDie) + 1];
             change = '<i class="fa-solid fa-arrow-right"></i> d' + newBurnoutDie;
         }
         negative = "darksheetNegativeMessage";
@@ -922,7 +1052,7 @@ async function rollBurnout(actor){
         if (regionMod >= 5) {
             regionMod = 4;
         }
-    } else {//IF POSITIVELY AFFECTED BY REGION
+    } else { //IF POSITIVELY AFFECTED BY REGION
         regionMod = burnoutArray.indexOf(burnoutDie) - parseInt(actor.flags.darksheet.attributes.regionmod.value);
         //console.log("Regionmodz step3 gr��er: "+regionmodz);
         if (regionMod <= 0) {
@@ -930,25 +1060,23 @@ async function rollBurnout(actor){
         }
     }
     var regionDice = burnoutArray[regionMod];
-    let regiontext = regionDict[""+actor.flags.darksheet.attributes.regionmod.value] + " [d"+regionDice+"] ";
-    if(regionMod == burnoutArray.indexOf(burnoutDie)){//IF NO CHANGE TROUGH REGION MOD
+    let regiontext = regionDict["" + actor.flags.darksheet.attributes.regionmod.value] + " [d" + regionDice + "] ";
+    if (regionMod == burnoutArray.indexOf(burnoutDie)) { //IF NO CHANGE TROUGH REGION MOD
         regiontext = '';
     }
-    
-   //console.log(regionDice);
 
-    await createRollMessage(actor, ""+regiontext+" Spell Burnout (d"+burnoutDie+")"+change, roll1, null, rollResult, null, "1"+burnoutDie, "fa-solid  fa-dice-d"+regionDice, "", negative);
+    await createRollMessage(actor, "" + regiontext + " Spell Burnout (d" + burnoutDie + ")" + change, roll1, null, rollResult, null, "1" + burnoutDie, "fa-solid  fa-dice-d" + regionDice, "", negative);
     await actor.update({
         'flags.darksheet.attributes.burnout.value': newBurnoutDie
     });
 }
 
-async function createRollMessage(actor, rollname, roll1, roll2, rollResult1, rollResult2, rollFormula, icon, flavorText = null, customClass=""){
+async function createRollMessage(actor, rollname, roll1, roll2, rollResult1, rollResult2, rollFormula, icon, flavorText = null, customClass = "") {
     let content = ``;
     let roll1Color = "";
     let roll2Color = "";
-    if(flavorText == null) flavorText = "";
-    if(roll1 && roll2){ //CREATE DUO ROLL
+    if (flavorText == null) flavorText = "";
+    if (roll1 && roll2) { //CREATE DUO ROLL
         roll1Color = roll1.result == 1 ? "darkRollRed" : roll1.result == 20 ? "darkRollGreen" : "darkRoll";
         roll2Color = roll2.result == 1 ? "darkRollRed" : roll2.result == 20 ? "darkRollGreen" : "darkRoll";
         content = `
@@ -959,18 +1087,18 @@ async function createRollMessage(actor, rollname, roll1, roll2, rollResult1, rol
                                 <h3 style="text-align-last: center;">${rollname}</h3>
                                 <span class="flavor-text" style="text-align: center;">${flavorText}</span>
                                 <div class="dice-result">
-                                    <div class="dice-formula dice-tooltip" style="display: none;">${rollFormula}</div>
+                                    <div class="dice-formula dice-tooltips" style="display: none;">${rollFormula}</div>
                                     <div class="dice-row darkRoll">
                                         <div class="dice-row" style="display: flex;">
                                             <div class="tooltip dual-left" style="flex: 0.5;">
-                                                <div class="dice-tooltip" style="display: none;">                                <div class="dice">
+                                                <div class="dice-tooltips" style="display: none;">                                <div class="dice">
                                                         <ol class="dice-rolls">
                                                             <li class="roll d20 ${roll1Color}" style="position: relative;left: 50px;">${roll1._total}</li>
                                                         </ol>
                                                     </div>                            </div>
                                             </div>
                                             <div class="tooltip dual-right" style="flex: 0.5;">
-                                                <div class="dice-tooltip" style="display: none;">                                <div class="dice">
+                                                <div class="dice-tooltips" style="display: none;">                                <div class="dice">
                                                         <ol class="dice-rolls">
                                                             <li class="roll d20 ${roll2Color}" style="position: relative;left: 50px;">${roll2._total}</li>
                                                         </ol>
@@ -986,8 +1114,7 @@ async function createRollMessage(actor, rollname, roll1, roll2, rollResult1, rol
                             </div>
                         </header>
                     </div>`;
-    }
-    else{ //CREATE SINGLE ROLL
+    } else { //CREATE SINGLE ROLL
         roll1Color = roll1.result == 1 ? "darkRollRed" : roll1.result == 20 ? "darkRollGreen" : "darkRoll";
         content = `
         <div class="dnd5e chat-card item-card ${customClass}" data-acor-id="${actor.id}">
@@ -995,11 +1122,11 @@ async function createRollMessage(actor, rollname, roll1, roll2, rollResult1, rol
                 <i class="chatIcon ${icon}"></i>     
                 <div class="dice-roll red-dual darksheetRoll">
                     <div class="dice-result">
-                        <div class="dice-formula dice-tooltip" style="display: none;">${rollFormula}</div>
+                        <div class="dice-formula dice-tooltips" style="display: none;">${rollFormula}</div>
                         <div class="dice-row darkRoll">
                             <div class="dice-row" style="display: flex;">
                                 <div class="tooltip" style="flex: 0.5;">
-                                    <div class="dice-tooltip" style="display: none;">
+                                    <div class="dice-tooltips" style="display: none;">
                                         <div class="dice">
                                             <ol class="dice-rolls">
                                                 <li class="roll d20 ${roll1Color}">${roll1._total}</li>
@@ -1040,17 +1167,17 @@ async function createRollMessage(actor, rollname, roll1, roll2, rollResult1, rol
 async function rollFromTable(tableName) {
     // Get the table by name
     const table = game.tables.getName(tableName);
-  
+
     if (table) {
-      // Draw a result from the table
-      const result = await table.draw();
+        // Draw a result from the table
+        const result = await table.draw();
     } else {
-      ui.notifications.error(`Table ${tableName} not found.`);
+        ui.notifications.error(`Table ${tableName} not found.`);
     }
-  }
+}
 async function addNotchToItem(itemGet) {
     let darksheet = itemGet;
-    if(darksheet.flags.darksheet == null){
+    if (darksheet.flags.darksheet == null) {
         await darksheet.sheet.render(true);
         await darksheet.sheet.render(false);
     }
@@ -1090,10 +1217,19 @@ async function addNotchToItem(itemGet) {
                     'name': newname
                 });
             } else {
-                darksheet.delete();
+                if (darksheet.system.quantity > 1) {
+                    let newQuantity = darksheet.system.quantity - 1;
+                    await darksheet.update({
+                        'system.quantity': newQuantity
+                    });
+                    ui.notifications.notify("<b>One of your " + darksheet.name + " has shattered</b>");
+                } else {
+                    darksheet.delete();
+                    ui.notifications.notify("<b>Your " + darksheet.name + " has shattered</b>");
+                }
+
             }
-            ui.notifications.notify("<b>Your " + name + " has shattered</b>");
-           //console.log(name + " should be destroyed");
+
             let content = `
                 <div class="dnd5e chat-card item-card">
                     <header class="card-header flexrow">
@@ -1140,7 +1276,7 @@ async function addNotchToItem(itemGet) {
     if (darksheet.type === "equipment") { //ARMOR CALCULATION==========================================
         let AC = darksheet.system.armor.value;
         let newBaseAC = 0;
-        if (darksheet.flags.darksheet.item.basearmor!= null)
+        if (darksheet.flags.darksheet.item.basearmor != null)
             newBaseAC = darksheet.flags.darksheet.item.basearmor;
         if (newBaseAC == 0) {
             newBaseAC = AC;
@@ -1185,24 +1321,23 @@ async function addNotchToItem(itemGet) {
         });
     }
     if (darksheet.type === "weapon") { //WEAPON CALCULATION==========================================
-        let updatedamage;
+        let updatedamage = "";
         //DAMAGE CALCULATION PLUS++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         if (Number.isInteger(notches) && darksheet.system.damage.parts.length != 0) {
             let damage1 = darksheet.system.damage.parts[0][0];
-            //			console.log(damage1);
+
             let dicenumber = damage1.charAt(0); //2
             let d = damage1.charAt(1); //d 
             let damage = damage1.charAt(2) + damage1.charAt(3); //6
             let mod = " + @mod";
 
             let weapondamage;
-            if (darksheet.system.damage.currentweapondamage) {
-                weapondamage = darksheet.system.damage.currentweapondamage;
+            if (darksheet.flags.darksheet.currentweapondamage) {
+                weapondamage = darksheet.flags.darksheet.currentweapondamage;
             } else {
                 weapondamage = dicenumber + d + damage; //"2d6 "
             }
-            //			console.log("Darksheet-Dev:" + dicenumber, d, damage);
-            //			console.log("Darksheet-Dev:" +weapondamage);
+
             if (weapondamage[weapondamage.length - 1] == " ")
                 weapondamage = weapondamage.substring(0, weapondamage.length - 1);
             let baseweapondamage = darksheet.flags.darksheet.item.baseweapondamage;
@@ -1336,13 +1471,13 @@ async function addNotchToItem(itemGet) {
             parts[0][0] = updatedamage;
             await darksheet.update({
                 id: darksheet.id,
-                'data.damage.parts': parts
+                'system.damage.parts': parts
             });
 
             //UPDATE WEAPON DAMAGE ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             await darksheet.update({
                 id: darksheet.id,
-                'data.damage.currentweapondamage': weapondamage
+                'flags.darksheet.item.currentweapondamage': weapondamage
             });
             await darksheet.update({
                 id: darksheet.id,
@@ -1407,7 +1542,6 @@ async function removeNotchFromItem(item) {
         //DAMAGE CALCULATION MINUS-------------------------------------------------------------------
         if (darksheet.type === "weapon") {
             let damage1 = darksheet.system.damage.parts[0][0];
-            //			console.log(damage1);
             let dicenumber = damage1.charAt(0); //2
             let d = damage1.charAt(1); //d 
             let damage = (damage1.charAt(2) !== ' ' ? damage1.charAt(2) : '') + (damage1.charAt(3) !== ' ' ? damage1.charAt(3) : '');
@@ -1439,7 +1573,7 @@ async function removeNotchFromItem(item) {
                 "1d10": "1d12",
                 "1d12": "1d20",
             };
-            
+
             let baseweapondamage = darksheet.flags.darksheet.item.baseweapondamage; //GETS THE WEAPON DAMAGE
 
             if (baseweapondamage === undefined) {
@@ -1450,7 +1584,7 @@ async function removeNotchFromItem(item) {
                 });
             }
 
-            if(weapondamage != baseweapondamage){
+            if (weapondamage != baseweapondamage) {
                 weapondamage = damageDict[weapondamage];
             }
 
@@ -1475,32 +1609,35 @@ async function removeNotchFromItem(item) {
             });
             await darksheet.update({
                 id: darksheet.id,
-                'data.damage.currentweapondamage': weapondamage
+                'flags.darksheet.item.currentweapondamage': weapondamage
             }); //Weapon Damage On Name
         }
     }
 }
 
 //public functions
-window.Darksheet = class Darksheet{
-	static async RollBurnout(PlayerName){
-	}
-    static async RollBurnout(PlayerName){
-	}
-    static changeCharacterRole(characterName, role){
+window.Darksheet = class Darksheet {
+    static async RollBurnout(PlayerName) {}
+    static async RollBurnout(PlayerName) {}
+    static changeCharacterRole(characterName, role) {
         const character = game.actors.find((actor) => actor.name === characterName);
         if (character) {
-            character.update({ 'flags.darksheet.currentRole': role }, { diff: true });
+            character.update({
+                'flags.darksheet.currentRole': role
+            }, {
+                diff: true
+            });
         }
     }
-    static changeBarAttribute(characterName, attributeToChange, value){
-        console.log("Called changeBarAttribute: " + characterName + " " + attributeToChange + " " + value);
+    static changeBarAttribute(characterName, attributeToChange, value) {
         const character = game.actors.find((actor) => actor.name === characterName);
         if (character) {
-            character.setFlag('darksheet', attributeToChange.split('darksheet.')[1], value, { diff: true });
+            character.setFlag('darksheet', attributeToChange.split('darksheet.')[1], value, {
+                diff: true
+            });
         }
     }
-    static darkScreenReload(){
+    static darkScreenReload() {
         this._darkscreen.render(true);
         ui.notifications.notify("Reloaded Darkscreen");
     }
@@ -1532,15 +1669,15 @@ class Darkscreen {
     }
 }
 Hooks.on('renderApplication', (app, html, options) => {
-    if(app.title == "Darker Dungeons - Gamemaster Screen 2.0")
-    Darksheet._darkscreen = app;
+    if (app.title == "Darker Dungeons - Gamemaster Screen 2.0")
+        Darksheet._darkscreen = app;
 });
 Hooks.on('closeApplication', (app, html, options) => {
-    if(app.title == "Darker Dungeons - Gamemaster Screen 2.0")
-    Darksheet._darkscreen = null;
+    if (app.title == "Darker Dungeons - Gamemaster Screen 2.0")
+        Darksheet._darkscreen = null;
 });
 Hooks.on('updateActor', (actor, updateData) => {
-    if(Darksheet._darkscreen && Darksheet._darkscreen.rendered){
+    if (Darksheet._darkscreen && Darksheet._darkscreen.rendered) {
         Darksheet._darkscreen.render(true);
     }
 });
@@ -1562,7 +1699,7 @@ class DSC extends Application {
         templateData.data = super.getData();
         templateData.title = "Darker Dungeons - Gamemaster Screen";
 
-        if(game.world.flags.darksheet != undefined)
+        if (game.world.flags.darksheet != undefined)
             templateData.data.screenData = game.world.flags.darksheet.darkscreen;
         //LOAD DATA
 
@@ -1573,7 +1710,7 @@ class DSC extends Application {
     static renderMenu(path, data) {
         const dialogOptions = {
             width: 1200,
-			heigth: 1200,
+            heigth: 1200,
             classes: ['DSC-window resizable']
         };
         dialogOptions.resizable = true;
@@ -1589,17 +1726,15 @@ class DSC extends Application {
 Hooks.on('canvasReady', function() {
     if (game.user.isGM) {
         Darkscreen.addChatControl();
-        console.log("Darkscreen GM True");
 
         //ADD FLAGS IF NEEDED
-        if(game.world.flags.darksheet == undefined){
+        if (game.world.flags.darksheet == undefined) {
             game.world.flags.darksheet = {};
         }
-        if(game.world.flags.darksheet.darkscreen == undefined){
+        if (game.world.flags.darksheet.darkscreen == undefined) {
             game.world.flags.darksheet.darkscreen = {};
         }
-        if(game.world.flags.darksheet.darkscreen.lastpage == undefined)
-        {
+        if (game.world.flags.darksheet.darkscreen.lastpage == undefined) {
             game.world.flags.darksheet.darkscreen.lastpage = "party"
         }
     }
@@ -1791,7 +1926,35 @@ const itemBulk = {
     "Explorer's Pack": "20",
     "Priest's Pack": "11",
     "Scholar's Pack": "5",
-    "Potion": "0.2"
+    "Potion": "0.2",
+    "Oil": "0.2",
+    "Poison": "0.2",
+    "Philter": "0.2"
 }
-    
-    
+
+function isItemFragile(itemName) {
+    return fragileItems.some(fragileItem => itemName.includes(fragileItem));
+}
+const fragileItems = [
+    "Crystal",
+    "Orb",
+    "Potion",
+    "Spyglass",
+    "Vial",
+    "Glass",
+    "Ceramic",
+    "Vial",
+    "Flask",
+    "Scroll",
+    "Jug",
+    "Pitcher",
+    "Waterskin",
+    "Oil",
+    "Philter",
+    "Antitoxin",
+    "Alchemist's Fire",
+    "Poison",
+    "Pen",
+    "Parchment",
+    "Paper"
+];

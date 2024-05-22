@@ -26,6 +26,7 @@
     flex: 0 0 50px !important;
     background: #00000014;
     margin: 0 5px 0 5px;
+    margin-top: 8px;
 }
 .item-detail.item-weight.item-ammodieLabel:hover {
     background: #00000036;
@@ -50,28 +51,36 @@ span.encumbrance-bar {
     width: 0px;
     height: 14px;
     margin-top: -2px;
+    background: #acacac33 !important;
+    border: unset !important;
+    box-shadow: unset !important;
+    border-radius: 0px !important;
+    padding: 10px !important;
+}
+.item-detail.item-ammodieLabel {
+    background: #ffffff57 !important;
 }
 .notchButton label {
-    margin-top: -15px;
-    margin-left: -4px;
+    margin-top: -28px;
+    margin-left: 0px;
     height: 0px;
     display: block;
+    font-size: 18px;
 }
-li.item.flexrow.worn .item-name.flexrow.rollable {
-    color: #787800;
+
+li.item.scarred {
+    background: #ff000024;
 }
-li.item.flexrow.worn {
-    background: #c9b90024;
+li.item.well-worn {
+    background: #ffa6002c;
 }
-li.item.flexrow.well-worn .item-name.flexrow.rollable {
-    color: #8b4d00;
+li.item.worn {
+    background: #ffff000d;
 }
-li.item.flexrow.well-worn {
-    background: #ad60003d;
+span.formula {
+    height: 15px;
+    overflow: hidden;
 }
-li.item.flexrow.scarred .item-name.flexrow.rollable {
-    color: #760000;
-}
-li.item.flexrow.scarred {
-    background: #ad00003d;
+.item-name.item-action.item-tooltip.rollable {
+    background: unset;
 }
