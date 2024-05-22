@@ -1,75 +1,29 @@
-<b>SUPPORT: https://discord.gg/gs5hAgxBx3</b></br>
-<b>My Modules: http://handyfon.net/foundry-modules/</b>
+SUPPORT: https://discord.gg/gs5hAgxBx3
+Manifest: https://raw.githubusercontent.com/Handyfon/Darksheet/master/module.json
+Requires: [Dungeons and Dragons Fifth Edition](https://foundryvtt.com/packages/dnd5e)
 
-<b>INSTALL INSTRUCTIONS:
-Use the manifest to install the module:<br/>
-Manifest: https://raw.githubusercontent.com/Handyfon/Darksheet/master/module.json<br/>
-and drag the rollable tables out of the compendium.<br/><b>
+This module was made to track all the additional stuff Darker Dungeons brings to the table:
+https://giffyglyph.com/darkerdungeons/grimoire/4.0.0/en/
 
- https://github.com/Handyfon/Darksheet/blob/master/module.json<br/>
- 
- Upcoming:
- -CSS May be Optional in the furture<br/>
- -Character sheet even more customizable<br/>
- -Automatic Calculation of Exhaustion based on dropdowns.<br/>
- 
- Known Issues:
- -Items lose slots after any drag and drop
- 
- Custom Character Sheet:
- 
+Features:
 
-![Alt text](https://i.imgur.com/l09OQuN.png?raw=true "Custom Character Sheet")
+- Expands on the Base DnD 5e Sheet
+- Track Food, Water, Fatigue, Temperature, Wounds, Sanity and Spell-Burnout with ease
+- Easy inventory management with Slot-Based-Inventory, Ammodice as well as Tracking of an Item's notches, temper and fragility.
+  - When an item recieves a notch its damage is automatically reduced / increased on repair. Same for armor and ac.
+- Features lots of automations like automatically rolling for burnout after casting a spell as well as variants of these automations for the variant rules.
+- Very customizable, you can use most features independently.
 
-<b>2.1 Update Featuring changes to the Inventory</b></br>
-![Alt text](https://i.imgur.com/awl2yyU.png?raw=true "Custom Character Sheet")
+GM-Screen
+You can currently:
+  - View all players and their most important details / edit their darker dungeons details.
 
-Featuring:<br/>
-Custom CSS<br/>
--Let players select their colour scheme for their own characters<br/>
--Training<br/>
--Spent trainings points<br/>
--Death Saves Checkboxes<br/>
--Fate Points<br/>
--Inspiration<br/>
--Hero Points (not part of darker dungeons)<br/>
--Track your Wounds<br/>
+![image](https://github.com/Handyfon/Darksheet/assets/28778881/2005d44d-cd44-4475-88eb-cb41bf94baee)
 
+![image](https://github.com/Handyfon/Darksheet/assets/28778881/dab326c8-7494-4f35-9979-5c2ff29c016b)
 
-Custom Character Sheet:
+![image](https://github.com/Handyfon/Darksheet/assets/28778881/5c646e4c-52cf-4f03-806c-198cbc9882f2)
 
-![Alt text](https://i.imgur.com/I3AS1dg.png?raw=true "Custom Item Sheet and Inventory")
+![image](https://github.com/Handyfon/Darksheet/assets/28778881/4b41bbbf-a25e-4dcc-80c1-b85a22814ab6)
 
--Klick "Armor Class" to roll for wounds<br/>
-
-![Alt text](https://i.imgur.com/o3ZgapV.png?raw=true "Custom Item Sheet and Inventory")
-
-Easily roll for deathsaves or wounds.
-
-![Alt text](https://i.imgur.com/6nPyHsZ.png?raw=true "Custom Item Sheet and Inventory")
-
-![Alt text](https://i.imgur.com/tLtFjJP.png?raw=true "Custom Item Sheet and Inventory")
-
--Track Ammodice for every Item<br/>
--Track Notches and <b>automatic tracking of damage and quality of the weapons and armor</b>
--Track Item Slots.
-
-![Alt text](https://i.imgur.com/7n26SLq.png?raw=true "Item Slots")
-
-![Alt text](https://i.imgur.com/HB4CPIu.png?raw=true "Including Customizable Rollable Tables")
-
-![Alt text](https://i.imgur.com/lHNTIej.png?raw=true "Track Resources")
-
--Keep track of your food and water<br/>
--Clickable Spell Burnoutdice with automatic consequence<br/>
--Buttons for: Critical Success, Critical Failure, Success at a Cost, Treat Wound and Heal Wound.<br/>
--Settings for Hitdice and Inventory Slots<br/>(Automatic calcultion of Inventory Slots)<br/>
--Automatic Exhaustion Calculation (WOP)<br/>
--Track Stress & Afflictions <br/>
-
-
-This is only possible thanks to these really patient and helpful guys:
-- @Madeira - @Sky - @Atropos 
-- @Moo Man - @NickEast - @Red Reign
-Special thanks to
-- @DM Me Your Waifu and @Moerill for spending too much time pointing me in the right direction, I really cannot thank you enough!
+![image](https://github.com/Handyfon/Darksheet/assets/28778881/2cdf741d-d18f-4439-9c0c-8ce84cfa36bf)
