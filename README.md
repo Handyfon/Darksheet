@@ -7,12 +7,12 @@ https://giffyglyph.com/darkerdungeons/grimoire/4.0.0/en/
 
 Features:
 
-- Expands on the Base DnD 5e Sheet
-- Track Food, Water, Fatigue, Temperature, Wounds, Sanity and Spell-Burnout with ease
-- Easy inventory management with Slot-Based-Inventory, Ammodice as well as Tracking of an Item's notches, temper and fragility.
-  - When an item recieves a notch its damage is automatically reduced / increased on repair. Same for armor and ac.
-- Features lots of automations like automatically rolling for burnout after casting a spell as well as variants of these automations for the variant rules.
-- Very customizable, you can use most features independently.
+- Expands on the base D&D 5e sheet
+- Track food, water, fatigue, temperature, wounds, sanity, and spell burnout with ease
+- Easy inventory management with slot-based inventory, Ammodice, and tracking of an item's notches, temper, and fragility
+- When an item receives a notch, its damage is automatically reduced, or increased upon repair. The same applies to armor and AC.
+- Features numerous automations, such as automatically rolling for burnout after casting a spell, with variants for different rulesets
+- Highly customizable, allowing you to use most features independently
 
 GM-Screen
 You can currently:
