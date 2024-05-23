@@ -1,0 +1,272 @@
+.DSC-window {
+    min-width: 1050px;
+}
+.DarkScreenHeader {
+    background: black;
+    padding: 10px;
+    color: white;
+    font-size: 30px;
+    text-align: center;
+    vertical-align: unset;
+    margin: -8px;
+}
+.DarkScreenNavBar {
+    height: 39px;
+    margin: 8px -8px 0 -8px;
+    background: #444444;
+    padding-top: 7px;
+}
+.darkScreenNav {
+    background: #4D4D4D;
+    font-size: 20px;
+    padding: 7px;
+    height: 41px;
+    color: white;
+    text-align: center;
+    margin: 5px;
+    margin-left: 0;
+    min-width: 176px !important;
+    display: inline;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+.darkScreenNav:hover {
+    background: black;
+}
+.darkScreenNav.active {
+    background: #2B2B2B;
+}
+.DarkScreenContent {
+    height: 100%;
+    background: #5E5E5E;
+    padding: 0px 8px;
+    /* margin: -25px -8px; */
+    min-height: 600px;
+    max-height: 100vh;
+    height: var(--app-height, 60vh);
+}
+.DarkScreenToolBar {
+    background: #2b2b2b;
+    color: white;
+    margin: 0px -16px;
+    font-size: 20px;
+    /* padding: 0px 8px; */
+    /* height: 35px; */
+    margin-bottom: 25px;
+    padding: 5px;
+}
+.darkCharacterPartyCharacterBOTTOM {
+    height: 130px;
+    background: #00000069;
+    border-radius: 0px 0px 30px 30px;
+    display: flex;
+}
+.darkCharacterPartyCharacter {
+    background: #3A3A3A;
+    color: white;
+    max-width: 50%;
+}
+.darkCharacterPartyCharacter {
+    background: #3A3A3A;
+    color: white;
+    display: inline-block;
+    min-width: 48%;
+    max-width: 48%;
+    margin: 0px 10px;
+}
+.darkCharacterPartyCharacterHEALTHBACKGROUND {
+    height: 30px;
+    background: #370505;
+    margin-left: 120px;
+    border-radius: 0px 0px 0px 0px;
+}
+.darkCharacterPartyCharacterHEALTH {
+    height: 100%;
+    background: #A10600;
+    border-radius: 0px 0px 0px 0px;
+    max-width: 100%;
+}
+img.darkCharacterPartyCharacterIMAGE {
+    max-height: 120px;
+    max-width: 120px;
+    border: none;
+    background: black;
+    position: sticky;
+    margin-top: -86px;
+}
+.darkCharacterPartyCharacterHEALTHText {
+    text-align: end;
+    margin-top: -24px;
+    margin-right: 5px;
+    margin-bottom: 10px;
+}
+.darkCharacterPartyCharacterTopLeft {
+    height: 90px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    flex: 0.50;
+}
+.darkCharacterPartyCharacterTopMiddle {
+    flex: 0.22;
+    font-size: 20px;
+    display: inline-flex;
+    height: 44px;
+}
+.darkCharacterPartyCharacterTopRight {
+    flex: 0.3;
+    text-align: center;
+}
+.darkCharacterPartyCharacterName {
+    background: #222222;
+    font-size: 25px;
+    padding: 5px;
+    height: 45px;
+    width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+.darkCharacterPartyCharacterDeathsaves {
+    font-size: 20px;
+    margin-top: 5px;
+    margin-left: 5px;
+}
+.darkCharacterPartyCharacterDeathsaves:hover {
+    color: red;
+    text-shadow: 0px 0px 5px;
+}
+.darkscreenTopFlex {
+    display: flex;
+    margin-left: 120px;
+}
+.darkCharacterPartyCharacterTOP {
+    height: 86px;
+}
+.darkScreenValue {
+    font-size: 40px;
+    color: black;
+}
+.DarkScreenValDis {
+    display: flex;
+    flex: 1;
+    margin-left: 5px;
+    margin-top: 5px;
+}
+label.darkscreenAC {
+    align-self: center;
+    margin-left: -30px;
+}
+label.darkScreenSpellDC {
+    align-self: center;
+    margin-left: -28px;
+}
+select#darkCharacterPartyRole {
+    background: black;
+    color: white;
+}
+select#darkCharacterPartyRole option {
+    background: black;
+}
+.darkCharacterPartyCharacterBottomLeft {
+    flex: 0.7;
+    /* background: rgb(255, 0, 157); */
+    margin: 9px;
+}
+.darkCharacterPartyCharacterBottomRight {
+    flex: 0.3;
+    border-left: 1px solid black;
+}
+.darkscreenBarcontainer {
+    display: flex;
+    margin-bottom: 5px;
+}
+.darkscreenBarBack {
+    height: 20px;
+    background: white;
+    flex: 0.6;
+    margin-right: 5px;
+    width: 99%;
+}
+.darkscreenBarValue {
+    height: 100%;
+    background: orange;
+    width: 0%;
+    max-width: 100%;
+}
+.darkscreenBarcontainer a {
+    flex: 0.3;
+    text-align: center;
+    font-weight: bold;
+}
+.darkscreenBarBack.darktinybar {
+    height: 6px;
+    margin-left: 1px;
+    border-radius: 50px;
+}
+.darkscreenPlayerAttributes {
+    flex: 0.5;
+}
+.darkscreenPlayerAttributesR {
+    flex: 0.6;
+    margin-top: 3px;
+}
+.darkscreenBarcontainerR {
+    display: flex;
+}
+.darkscreenBarcontainerR a {
+    flex: 0.4;
+    text-align: center;
+    margin-top: 6px;
+    font-size: 16px;
+}
+.darkscreenTinySelect {
+    width: 100%;
+    background: black;
+    color: white;
+    height: 20px;
+    border: unset;
+    font-size: 10px;
+    border-radius: 30px;
+}
+.darkscreenTinySelect option {
+    background: black;
+    color: white;
+}
+.darkscreenBarValue.darkScreenTinyBar {
+    border-radius: 50px;
+}
+table.DarkScreenPartyTable {
+    border: unset;
+    padding-top: 5px;
+    margin-top: 25px;
+}
+p.darkSoon {
+    width: 100%;
+    height: 100%;
+    font-size: 50px;
+    text-align: center;
+}
+
+.DarkScreenPartyTable tbody tr td {
+    background: #444444;
+}
+label.refreshDarkscreen {
+    background: #00006e;
+    padding: 2px 5px 2px 5px;
+    border-radius: 5px;
+    /* border: 1px solid; */
+    font-size: 20px;
+}
+label.refreshDarkscreen:hover {
+    background: #9a9aff70;
+    border: 1px solid;
+    font-size: 22px;
+}
+img.darkCharacterPartyCharacterIMAGE:hover {
+    filter: drop-shadow(2px 4px 6px black);
+    transform: scale(1.1);
+    transition: 0.1s;
+    background: none;
+}
+
+

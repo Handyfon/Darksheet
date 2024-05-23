@@ -1,0 +1,24 @@
+<label style="height: 27px; margin-right: 10px; margin-left: 20px;flex: 0.5;" class="dicelabel2 burnoutclick burnoutdie rollable"><h3>Burnoutdie</h3></label>
+<select name="flags.darksheet.attributes.burnout.value" style="flex: 0.2;" data-type="String" value="actor.flags.darksheet.attributes.burnout.value">
+    {{#select actor.flags.darksheet.attributes.burnout.value}}
+    <option value="0"></option>
+    <option {{#if savecantrips}}disabled title="Disabled because of the variant rule called save cantrips"{{/if}} value="12">d12</option>
+    <option value="10">d10</option>
+    <option value="8">d8</option>
+    <option value="6">d6</options>
+    <option value="4">d4</option>
+    {{/select}}
+</select>
+<label class="spellburnoutcheck" style="vertical-align: middle;"><input title="Click to toggle the automatic burnout dice" style="flex: 0;background-image: url(icons/dice/d12black.svg);" class="ressourcecheckbox spellburn" type="checkbox" type="Boolean" name="flags.darksheet.attributes.autmomaticburnout" data-dtype="Boolean" {{checked actor.flags.darksheet.attributes.autmomaticburnout}}/><span></span></label>
+<label style="margin-left: 5px;margin-right: 5px;"><h3 style="text-align: center;font-size: 15px;margin-top: 5px;">Regional Magic</h3></label>
+<select name="flags.darksheet.attributes.regionmod.value" data-type="String" value="0" {{#if globalRegMagic}}disabled{{/if}}>
+{{#select actor.flags.darksheet.attributes.regionmod.value}}
+<option value="3">Serene +3</option>
+<option value="2">Calm +2</option>
+<option value="1">Stable +1</option>
+<option value="0">Normal</option>
+<option value="-1">Unstable -1</options>
+<option value="-2">Wild -2</option>
+<option value="-3">Chaotic -3</option>
+{{/select}}
+</select>

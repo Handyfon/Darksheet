@@ -1,0 +1,529 @@
+i.chatIcon {
+    flex: 0.12;
+    font-size: 25px;
+    margin-top: 5px;
+}
+span.rollable.darkDnD_AS {
+    border-radius: 4px;
+    padding: 3px;
+    border:1px;
+    border-style: groove;
+    background: #ff5e0026;
+}
+span.rollable.darkDnD_AS:hover {
+    text-shadow: 0 0 8px var(--color-shadow-primary);
+    color: red;
+    border-color: red;
+}
+h4.dice-total.darkChatResult {
+    flex: 0.5;
+}
+.tab.dd.flexcol.active {
+    display: block;
+}
+.allparts {
+    border: 1px groove white;
+    text-align: center !important;
+    display: inline-block;
+    flex: 1;
+    margin: 5px;
+}
+.darkPartContainer {
+    display: flex;
+}
+.darkneeds {
+    flex: 0;
+    border-bottom: 1px solid;
+    width: 181px;
+    text-align: center;
+}
+h4.darksheetheader {
+    font-family: 'Roboto';
+    font-weight: bold;
+    padding-left: 5px;
+}
+
+.ressourcecheckbox {
+    width: 17px;
+    height: 17px;
+    display: block;
+    content: "";
+    float: left;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+}
+.foodcheckbox {
+    display: inline-flex;
+    cursor: pointer;
+    position: relative;
+    margin-top:2px;
+    width: 20px;
+    height: 20px;
+}
+.foodcheckbox > input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+    outline: none;
+    transition-duration: 0.2s;
+    border-style: solid;
+    border-width: 1px;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    border-bottom-style: dotted;
+    border-top-style: dotted;
+    padding: 10px;
+}
+
+.foodcheckbox > input:checked {
+    padding: 10px;
+}
+
+.foodcheckbox > input:checked + span::before {
+    content: '\2714';
+    display: block;
+    position: absolute;
+    margin-top: -5px;
+    margin-left: -26px;
+    padding-bottom: 5px;
+    padding: 10px;
+}
+.watercheckbox {
+    display: inline-flex;
+    cursor: pointer;
+    position: relative;
+    margin-top:2px;
+    width: 20px;
+    height: 20px;
+}
+
+.watercheckbox > input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+    outline: none;
+    transition-duration: 0.2s;
+    border-style: solid;
+    border-width: 1px;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    border-bottom-style: dotted;
+    border-top-style: dotted;
+    padding: 10px;
+}
+.watercheckbox.green > input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+    outline: none;
+    transition-duration: 0.2s;
+    border-style: solid;
+    border-width: 1px;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    border-bottom-style: dotted;
+    border-top-style: dotted;
+    padding: 10px;
+}
+.watercheckbox.red > input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+    outline: none;
+    transition-duration: 0.2s;
+    border-style: solid;
+    border-width: 1px;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    border-bottom-style: dotted;
+    border-top-style: dotted;
+    padding: 10px;
+}
+.watercheckbox > input:checked {
+    border: 1px solid #4182b8;
+    padding: 10px;
+}
+.watercheckbox > input:checked + span::before {
+    content: '\2714';
+    display: block;
+    position: absolute;
+    margin-top: -5px;
+    margin-left: -26px;
+    padding-bottom: 5px;
+    padding: 10px;
+}
+.part4 {
+    flex: 0.3;
+    height: fit-content;
+}
+.part5 {
+    width: 522px;
+}
+.stress {
+    border-right: 1px solid;
+}
+.breaks {
+    text-align: -webkit-left;
+}
+.afflictionselection {
+    margin-top: 4px;
+    margin-left: 5px;
+}
+.counter-value {
+    flex: 0.212;
+}
+label.darkCheck {
+    padding: 5px;
+    background: #00000026;
+    border-radius: 3px;
+    margin: 5px;
+    line-height: 30px;
+}
+.checks {
+    height: 60px;
+}
+.stresscheckbox {
+    display: inline-flex;
+    cursor: pointer;
+    position: relative;
+    width: 20px;
+    height: 20px;
+}
+
+
+.stresscheckbox > input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+    outline: none;
+    transition-duration: 0.2s;
+    border-style: solid;
+    border-width: 1px;
+    cursor: pointer;
+    width: 10px;
+    height: 10px;
+    border-bottom-style: dotted;
+    border-top-style: dotted;
+    transform: scale(0.6);
+    padding: 10px;
+}
+
+.stresscheckbox > input:checked {
+    border: 1px solid #f3afaf;
+    padding: 10px;
+}
+
+.stresscheckbox > input:checked + span::before {
+    content: '\1f525';
+    display: block;
+    position: absolute;
+    margin-top: -5px;
+    margin-left: -28px;
+    padding-bottom: 5px;
+    padding: 10px;
+    transform: scale(1.3);
+}
+label.afflictiontext {
+    margin-top: 7px;
+    margin-left: 3px;
+}
+.deathcheckbox {
+    display: inline-flex;
+    cursor: pointer;
+    position: relative;
+    margin-top:2px;
+    width: 20px;
+    height: 20px;
+}
+.deathcheckbox{
+    margin-bottom: 3px !important;
+}
+
+.deathcheckbox > input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+    outline: none;
+    transition-duration: 0.2s;
+    border-style: solid;
+    border-width: 1px;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    border-bottom-style: dotted;
+    border-top-style: dotted;
+    padding: 10px;
+}
+
+.dnd5e.sheet.actor .inventory-filters {
+    display: block;
+}
+
+label.treatwound.rollable.check:hover {
+    cursor: pointer;
+}
+label.healwound.rollable.check:hover{
+    cursor: pointer;
+}
+.form-group.inactive.woundsection {
+    border: 1px groove;
+    display: none;
+}
+.addwoundbutton {
+    text-align: center;
+    font-size: 20px;
+    border: 1px solid #b5b3a4;
+    border-radius: 2px;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 0 3px;
+    margin: 0 3px;
+}
+.addwoundbutton:hover {
+    background: #b5b3a3;
+    color: white !important;
+}
+.removewoundbutton{
+	border: 1px solid #b5b3a4;
+    border-radius: 2px;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 0 3px;
+    margin: 0 3px;
+	width: 25px;
+    height: 25px;
+}
+.removewoundbutton:hover{
+    background: #b5b3a4;
+    color: white;
+}
+.woundrollmessage{
+	border: 1px solid #b5b3a4;
+    border-radius: 2px;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 0 3px;
+    margin: 0 3px;
+}
+table#woundlistid {
+    text-align: center;
+    height: fit-content;
+}
+.oldWoundsColspan {
+    padding: 0;
+    border-top: 1px solid black;
+    background: #b5b3a39c;
+    color: inherit;
+}
+td.oldWoundsColspan:hover {
+    background: #b5b3a3;
+    color: white !important;
+}
+tr#oldwoundtr {
+    background: #b5b3a31f;
+}
+.healWoundButton {
+    left: -24.5px;
+    top: -7px;
+    pointer-events: none;
+    font-size: 15px;
+    position: relative;
+    width: 0px;
+    height: 0px;
+}
+.deleteWoundButton {
+    left: -21px;
+    top: -7px;
+    pointer-events: none;
+    font-size: 15px;
+    position: relative;
+    width: 0px;
+    height: 0px;
+}
+h4.attribute-name.box-title.rollable.darksheet_AC {
+    border: 1px solid #b5b3a4;
+    border-radius: 2px;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 0 3px;
+    margin: 0 3px;
+}
+h4.attribute-name.box-title.rollable.darksheet_AC:hover {
+    background: #b5b3a4;
+    color: white;
+    text-shadow: none;
+}
+
+span.rollable.darksheet_AS {
+    border: 1px solid #b5b3a4;
+    border-radius: 2px;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 0 3px;
+    margin: 0 3px;
+}
+span.rollable.darksheet_AS:hover {
+    background: #b5b3a4;
+    color: white;
+    text-shadow: none;
+}
+.ddspellburnout {
+    display: flex;
+}
+.ability.rollable.darksheet_AS {
+    background: #00000059;
+}
+.ability.rollable.darksheet_AS:hover {
+    background: #00000094;
+    cursor: pointer;
+}
+option.ddValueGood {
+    background: #006c00;
+    color: white;
+}
+option.ddValueBad {
+    background: #6c0000;
+    color: white;
+}
+.randomnotch.rollable {
+    height: 27px;
+    margin-right: 11px;
+    text-align-last: center;
+    flex: 1;
+    border: 1px solid var(--dnd5e-color-gold);
+    background: var(--dnd5e-color-parchment);
+    box-shadow: 0 0 6px var(--dnd5e-shadow-15);
+    border-radius: 4px;
+    width: 30px;
+    color: var(--color-text-dark-5);
+}
+
+.staminaCheck {
+    padding: 5px;
+    border: 1px solid #b5b3a4;
+    border-radius: 2px;
+    background: rgba(0, 0, 0, 0.05);
+    margin: 0 3px;
+    margin-bottom: 3px;
+}
+.staminaCheck:hover {
+    background: #b5b3a4;
+    color: white;
+    text-shadow: none;
+}
+.woundroll:hover{
+    background: #b5b3a4;
+    color: white !important;
+    text-shadow: none;
+    text-align: center;
+}
+.woundroll:hover::before {
+    content: "Reopen ";
+  }
+.woundInformation {
+    font-size: 20px;
+    color: grey;
+}
+.darksheetNegativeMessage{
+    color:red;
+}
+.darksheetNegativeMessage header div h3 {
+    color: #830000 !important;
+}
+.darksheetPositiveMessage{
+    color:green;
+}
+.darksheetPositiveMessage header div h3 {
+    color: #008307 !important;
+}
+.darkRoll{
+    color:black;
+}
+.darkRollRed{
+    color:red;
+}
+.darkRollGreen{
+    color:green;
+}
+span.flavor-text {
+    padding: 5px;
+    padding-top: 0px;
+}
+.dnd5e.sheet.item .sheet-body .item-properties {
+    flex: 0 0 180px;
+}
+.dnd5e.sheet.item .sheet-body .item-properties .form-group input {
+    text-align: right;
+    text-align: center;
+    border-bottom: 1px solid grey;
+}
+select.hitdice.white {
+    border: unset;
+    border-bottom: 1px solid #00000045;
+    background: #ffffff40;
+}
+.item-properties .form-group {
+    border: unset !important;
+}
+.dnd5e.sheet.item .sheet-body .item-properties .form-group input {
+    text-align: right;
+    text-align: center;
+    border-bottom: 1px solid #00000045;
+    background: #fffdfd47;
+}
+.dice-roll.red-dual.darksheetRoll {
+    display: grid;
+    grid-template-columns: 240px;
+}
+.form-group.woundsection.woundS1 {
+    max-height: 20px;
+}
+.form-group.woundsection {
+    align-items: inherit;
+    height: fit-content !important;
+    flex: none;
+}
+.DSC-window section.window-content {
+    background: #595959 !important;
+}
+.dnd5e2.sheet.actor.character .sheet-body .sidebar .card .stats .top .ac{
+    cursor: pointer;
+}
+.dnd5e2.sheet.actor.character .sheet-body .sidebar .card .stats .top .ac:hover::after {
+    content: '\f522'; /* Unicode for dice-d6 icon from Font Awesome */
+    font-family: 'Font Awesome 6 Free'; /* Ensure this matches the Font Awesome version you're using */
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+i.chatIcon {
+    margin-bottom: -50px;
+}
+button.rollable.button {
+    color: var(--color-text-dark-primary);
+    flex: 1;
+    display: inline-flex;
+}
+button.addwoundbutton{
+    color: var(--color-text-dark-primary);
+    flex:1;
+    display: inline-flex;
+}
+.pills-group.woundsection.woundS1 {
+    display: flex;
+}
+
+#woundtr td input {
+    background: var(--dnd5e-background-card);
+}
+.section3 {
+    display: contents;
+}
+.darkselect {
+    border: unset;
+}

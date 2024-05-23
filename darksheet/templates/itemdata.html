@@ -1,0 +1,95 @@
+<div class="form-group" style="padding-top:5px; border-top: 1px groove black">
+	<label>Slots</label>
+		<input type="number" step="any" style="margin: 0;text-align: center;" name="flags.darksheet.item.slots" placeholder="0" value="{{item.flags.darksheet.item.slots}}" data-dType="Number">
+</div>
+<div class="form-group">
+    <label>Notches</label>
+    <input type="text" style="margin: 0;text-align: center;" class="fatepoints" name="flags.darksheet.item.notches" value="{{item.flags.darksheet.item.notches}}" placeholder="0" data-dtype="Number"/></input>
+</div>
+
+<div class="form-group">
+    <label>Quality</label>
+    <select class="hitdice white" name="flags.darksheet.item.quality" data-dtype="String">
+        {{#select item.flags.darksheet.item.quality}}
+        <option value="pristine">Pristine (75%)</option>
+        <option value="worn">Worn (50%)</option>
+        <option value="well-worn">Well-Worn (25%)</option>
+        <option value="scarred">Scarred (10%)</option>
+        {{/select}}
+    </select>
+</div>
+
+<div class="form-group">
+    <label class="tempercost">Temper</label>
+    <select class="hitdice white" name="flags.darksheet.item.temper" data-dtype="String">
+        {{#select item.flags.darksheet.item.temper}}
+        <option value=""></option>
+        <option value="Pure" title="(Uncommon) Gains ½ (0.5) notch">Pure</option>
+        <option value="Royal" title="(Rare) Gains ¼ (0.25) notch">Royal</option>
+        <option value="Astral" title="(Mythic) Gains ⅛ (0.125) notch">Astral</option>
+        {{/select}}
+    </select>
+</div>
+
+<div class="form-group">
+    <label class="tempercost">Fragility</label>
+    <select class="hitdice white" name="flags.darksheet.item.fragility" data-dtype="String" title="({{item.flags.darksheet.item.fragility}} Notches)">
+        {{#select item.flags.darksheet.item.fragility}}
+        <option value=""></option>
+        <option value="1" title="(1 Notch)">Delicate (1)</option>
+        <option value="2" title="(2 Notches)">Frail (2)</option>
+        <option value="3" title="(3 Notches)">Basic (3)</option>
+        <option value="5" title="(5 Notches)">Solid (5)</option>
+        <option value="10" title="(10 Notches)">Sturdy (10)</option>
+        <option value="15" title="(15 Notches)">Durable (15)</option>
+        <option value="20" title="(20 Notches)">Very Sturdy (20)</option>
+        <option value="50" title="(20 Notches)">Fabled (50)</option>
+        <option value="100" title="(100+ Notches)">Indestructible</option>
+        <!--<option value="custom" title="(Field Below)">Custom</option>-->
+        {{/select}}
+        <!--<<input type="text" style="margin: 0;text-align: center;" class="fatepoints" name="flags.darksheet.item.maxnotches" value="{{item.flags.darksheet.item.maxnotches}}" placeholder="0" data-dtype="Number"/> -->
+    </select>
+</div>	
+
+
+
+
+<div class="form-group">
+    <label class="ammodice">Ammodie</label>
+    <select class="hitdice white" name="flags.darksheet.item.ammodie" placeholder="d20" data-dtype="String">
+        {{#select item.flags.darksheet.item.ammodie}}
+        <option value=""></option>
+        <option value="d20">d20</option>
+        <option value="d12">d12</option>
+        <option value="d10">d10</option>
+        <option value="d8">d8</option>
+        <option value="d6">d6</option>
+        <option value="d4">d4</option>
+        <option value="1">1</option>
+        {{/select}}
+    </select>
+</div>
+{{#if item.flags.darksheet.item.ammodie}}
+<div class="form-group">
+    <label class="ammodice">AutoRoll</label>
+    <input name="flags.darksheet.item.autoRoll" type="checkbox" {{checked item.flags.darksheet.item.autoRoll}}/>
+</div>
+{{/if}}
+{{#if item.flags.darksheet.item.basenotchdamage}}
+<div class="form-group" style="padding-top:5px; border-top: 1px groove black">
+	<label>Notchdamage</label>
+		<input type="number" step="any" style="margin: 0;text-align: center;" name="flags.darksheet.item.basenotchdamage" placeholder="0" value="{{item.flags.darksheet.item.basenotchdamage}}" data-dType="Number">
+</div>
+{{/if}}
+{{#if item.flags.darksheet.item.baseweapondamage}}
+<div class="form-group">
+	<label>Basedamage</label>
+		<input type="number" step="any" style="margin: 0;text-align: center;" name="flags.darksheet.item.baseweapondamage" placeholder="0" value="{{item.flags.darksheet.item.baseweapondamage}}" data-dType="Number">
+</div>
+{{/if}}
+{{#if item.flags.darksheet.item.basearmor}}
+<div class="form-group">
+	<label>Basearmor</label>
+		<input type="number" step="any" style="margin: 0;text-align: center;" name="flags.darksheet.item.basearmor" placeholder="0" value="{{item.flags.darksheet.item.basearmor}}" data-dType="Number">
+</div>
+{{/if}}

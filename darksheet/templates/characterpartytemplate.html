@@ -1,0 +1,109 @@
+<div class="darkCharacterPartyCharacterTOP">
+    
+    <div class="darkCharacterPartyCharacterHEALTHBACKGROUND">
+        <div class="darkCharacterPartyCharacterHEALTH" style="width: calc(({{system.attributes.hp.value}}/{{system.attributes.hp.max}})*100%)"></div>
+        <div class="darkCharacterPartyCharacterHEALTHText">HP:{{system.attributes.hp.value}}/{{system.attributes.hp.max}}</div>
+    </div>
+    <div class="darkscreenTopFlex">
+    <div class="darkCharacterPartyCharacterTopLeft"><div class="darkCharacterPartyCharacterName"><a>{{name}}</a></div><div class="darkCharacterPartyCharacterDeathsaves">Death Fails: {{system.attributes.death.failure}}</div></div>
+    <div class="darkCharacterPartyCharacterTopMiddle"><div class="DarkScreenValDis" title="Armor Class"><i class="fa-solid fa-shield darkScreenValue"> </i><label class="darkscreenAC">{{system.attributes.ac.value}}</label></div><div class="DarkScreenValDis" title="Spell DC"><i class="fa-solid fa-book-sparkles darkScreenValue"></i><label class="darkScreenSpellDC">{{system.attributes.spelldc}}</label></div></div>
+    <div class="darkCharacterPartyCharacterTopRight">
+        Current Role:
+        <select id="darkCharacterPartyRole" name="flags.darksheet.currentRole" onchange="Darksheet.changeCharacterRole('{{name}}', this.value)">
+            {{#select flags.darksheet.currentRole}}
+                <option value=""></option>
+                <option value="guide">Guide</option>
+                <option value="forager">Forager</option>
+                <option value="lookout">Lookout</option>
+                <option value="scout">Scout</option>
+            {{/select}}
+        </select>
+    </div>
+    </div>
+</div>
+    <img class="darkCharacterPartyCharacterIMAGE" src="{{img}}" id="{{_id}}" onclick="game.actors.get(this.id).sheet.render(true)">
+        
+    </img>
+</div>
+<div class="darkCharacterPartyCharacterBOTTOM">
+    <div class="darkCharacterPartyCharacterBottomLeft">
+        <div class="darkscreenBarcontainer">
+            <a>Encumbrance</a>
+            <div class="darkscreenBarBack">
+                <div class="darkscreenBarValue" style="width: calc(({{currentSlots}}/{{flags.darksheet.attributes.inventoryslots}})*100%)"></div>
+            </div>
+            <a style="flex: 0.1;text-align: center;">{{currentSlots}}/{{flags.darksheet.attributes.inventoryslots}}</a>
+        </div>
+        <div class="darkscreenBarcontainer">
+            <a>Stress</a>
+            <div class="darkscreenBarBack">
+                <div class="darkscreenBarValue" style="background:#E6FF00; width: calc(({{flags.darksheet.attributes.stress}}/40)*100%)"></div>
+            </div>
+            <a style="flex: 0.1;text-align: center;">{{flags.darksheet.attributes.stress}}/40</a>
+        </div>
+        <div class="darkscreenBarcontainer">
+            <a>Wounds</a>
+            <div class="darkscreenBarBack" style="background:{{woundsbarColor}}">
+                <div class="darkscreenBarValue" style="background:#1FF53B;width: calc(({{woundsvalueMin}}/{{woundsvalueMax}})*100%)"></div>
+            </div>
+            <a style="flex: 0.1;text-align: center;">{{woundsvalueMin}}/{{woundsvalueMax}}</a>
+        </div>
+    </div>
+    <div class="darkCharacterPartyCharacterBottomRight">
+        <div class="darkscreenBarcontainerR">
+            <a>Food</a>
+            <div class="darkscreenPlayerAttributesR">
+                <div class="darkscreenBarBack darktinybar">
+                    <div class="darkscreenBarValue darkScreenTinyBar" style="background:#22780D;width: calc(({{foodvalue}}/5)*100%)"></div>
+                </div>
+                <select class="darkscreenTinySelect {{flags.darksheet.attributes.saturation}}" id="sel" name="flags.darksheet.attributes.saturation" data-type="String" onchange="Darksheet.changeBarAttribute('{{name}}', this.name, this.value)">
+                    {{#select flags.darksheet.attributes.saturation}}
+                    <option value="foodstuffed">Stuffed -1 exhaustion</option>
+                    <option value="foodwellfed">Well-fed</option>
+                    <option value="foodok">Ok</option>
+                    <option value="foodpekish">Pekish</option>
+                    <option value="foodhungry">Hungry</option>
+                    <option value="foodravenous">Ravenous +1 exhaustion</option>
+                    <option value="foodstarving">Starving +1 exhaustion</option>
+                    {{/select}}
+                </select>
+            </div>
+        </div>
+        <div class="darkscreenBarcontainerR">
+            <a>Water</a>
+            <div class="darkscreenPlayerAttributesR">
+                <div class="darkscreenBarBack darktinybar">
+                    <div class="darkscreenBarValue darkScreenTinyBar" style="background:#0D4678;width: calc(({{watervalue}}/5)*100%)"></div>
+                </div>
+                <select class="darkscreenTinySelect {{flags.darksheet.attributes.thirst}}" id="sel" name="flags.darksheet.attributes.thirst" data-type="String" onchange="Darksheet.changeBarAttribute('{{name}}', this.name, this.value)">
+                    {{#select flags.darksheet.attributes.thirst}}
+                    <option value="wquenched">Quenched -1 exhaustion</option>
+                    <option value="wrefreshed">Refreshed</option>
+                    <option value="wok">Ok</option>
+                    <option value="wparched">Parched</option>
+                    <option value="wthirsty">Thirsty</option>
+                    <option value="wdry">Dry +1 exhaustion</option>
+                    <option value="wdehydrated">Dehydrated +1 exhaustion</option>
+                    {{/select}}
+                </select>
+            </div>
+        </div>
+        <div class="darkscreenBarcontainerR">
+            <a>Fatigue</a>
+            <div class="darkscreenPlayerAttributesR">
+                <select class="darkscreenTinySelect {{flags.darksheet.attributes.fatigue}}" id="sel" name="flags.darksheet.attributes.fatigue" data-type="String"  style="margin-top: 5px;" onchange="Darksheet.changeBarAttribute('{{name}}', this.name, this.value)">
+                    {{#select flags.darksheet.attributes.fatigue}}
+                    <option value="exenegised">Energised -1 exhaustion</option>
+                    <option value="exwell">Well-rested</option>
+                    <option value="exok">Ok</option>
+                    <option value="extired">Tired</option>
+                    <option value="exsleepy">Sleepy</option>
+                    <option value="exvsleepy">Very sleepy +1 exhaustion</option>
+                    <option value="exbarely">Barely awake +1 exhaustion</option>
+                    {{/select}}
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+

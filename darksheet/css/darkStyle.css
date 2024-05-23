@@ -1,0 +1,86 @@
+.darkneeds {
+    background: #000000cf;
+    color: white;
+}
+.foodcheckbox > input:checked {
+    background: #7a7971;
+    filter: unset;
+    border: solid 1px;
+    border-color: black;
+}
+.foodcheckbox > input:checked + span::before {
+    color: white;
+}
+.watercheckbox > input:checked {
+    background: #7a7971;
+    filter: unset;
+    border: solid 1px;
+    border-color: black;
+}
+.watercheckbox > input:checked + span::before {
+    color: white;
+}
+
+.item-detail.item-ammodieLabel {
+    height: 22px;
+    flex: 0 0 50px !important;
+    background: #00000014;
+    margin: 0 5px 0 5px;
+    margin-top: 8px;
+}
+.item-detail.item-weight.item-ammodieLabel:hover {
+    background: #00000036;
+    color: white;
+}
+input.maxSlotsInput {
+    width: 22px;
+    height: 11px !important;
+    color: #EEE !important;
+    text-shadow: 0 0 5px #000;
+}
+.dnd5e.sheet.actor .encumbrance .arrow-up {
+    border-bottom: 4px solid #fff;
+}
+.dnd5e.sheet.actor .encumbrance .arrow-down {
+    border-top: 4px solid #fff;
+}
+span.encumbrance-bar {
+    max-width: 100%;
+}
+.notchButton {
+    width: 0px;
+    height: 14px;
+    margin-top: -2px;
+    background: #acacac33 !important;
+    border: unset !important;
+    box-shadow: unset !important;
+    border-radius: 0px !important;
+    padding: 10px !important;
+}
+.item-detail.item-ammodieLabel {
+    background: #ffffff57 !important;
+}
+.notchButton label {
+    margin-top: -28px;
+    margin-left: 0px;
+    height: 0px;
+    display: block;
+    font-size: 18px;
+}
+
+li.item.scarred {
+    background: #ff000024;
+}
+li.item.well-worn {
+    background: #ffa6002c;
+}
+li.item.worn {
+    background: #ffff000d;
+}
+span.formula {
+    height: 15px;
+    overflow: hidden;
+}
+.item-name.item-action.item-tooltip.rollable {
+    background: unset;
+}

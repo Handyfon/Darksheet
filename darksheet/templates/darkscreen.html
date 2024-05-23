@@ -1,0 +1,196 @@
+<div class="DarkScreenHeader">Darker Dungeons Game Master Screen <label class="refreshDarkscreen" onclick="Darksheet.darkScreenReload()"><i class="fa-duotone fa-rotate"></i></label></div>
+<div class="DarkScreenNavBar">
+  <a id="partyLink" class="darkScreenNav" onclick="navigateTo('party')">Party</a>
+  <a id="journeyLink" class="darkScreenNav" onclick="navigateTo('journey')">Journey</a>
+  <a id="itemTemperingLink" class="darkScreenNav" onclick="navigateTo('item-tempering')">Item Tempering</a>
+  <a id="restingLink" class="darkScreenNav" onclick="navigateTo('resting')">Resting</a>
+  <a id="dreadLink" class="darkScreenNav" onclick="navigateTo('dread')">Dread</a>
+  <a id="webReferenceLink" class="darkScreenNav" onclick="navigateTo('web-reference')">Grimoire</a>
+</div>
+<div class="DarkScreenContent">
+  <div id="partyContent" style="display: none;">
+    <div class="DarkScreenToolBar"><input type="checkbox" id="darkScreenOnlinePlayerCheckbox" name="darkScreenOnlinePlayerCheckbox" onchange="changeOnlineSetting(this.checked);"><label class="darkScreenOnlinePlayerCheckboxLabel">Only show online</label></div>
+    <table class="DarkScreenPartyTable">
+    </table>
+  </div>
+  <div id="journeyContent" style="display: none;">
+    <p class="darkSoon">Coming soon...</p>
+  </div>
+  <div id="itemTemperingContent" style="display: none;">
+    <p class="darkSoon">Coming soon...</p>
+  </div>
+  <div id="restingContent" style="display: none;">
+    <p class="darkSoon">Coming soon...</p>
+  </div>
+  <div id="dreadContent" style="display: none;">
+    <p class="darkSoon">Coming soon...</p>
+  </div>
+  <div id="webReferenceContent" style="display: none;height: 100%;">
+    <iframe src="https://giffyglyph.com/darkerdungeons/grimoire/4.0.0/en/" width="100%" height="100%"></iframe>
+    <style>
+        .webpage__sidebar {
+            position: fixed;
+        }
+        .webpage__body {
+            grid-column: 2 / span 2;
+            margin-left: -95px;
+        }
+        .webpage__header .header__body {
+            position: fixed;
+            background: black;
+            padding-bottom: 20px;
+        }
+    </style>
+</div>
+</div>
+<script>
+    function onLoad(){
+        navigateTo(game.world.flags.darksheet.darkscreen.lastpage);
+        loadDarkActors();
+        loadDarkScreenSettings();
+    }
+    function navigateTo(page) {
+    // Get the DarkScreenContent div elements
+    var partyContentDiv = document.getElementById('partyContent');
+    var journeyContentDiv = document.getElementById('journeyContent');
+    var itemTemperingContentDiv = document.getElementById('itemTemperingContent');
+    var restingContentDiv = document.getElementById('restingContent');
+    var dreadContentDiv = document.getElementById('dreadContent');
+    var webReferenceContentDiv = document.getElementById('webReferenceContent');
+
+    // Hide all content divs
+    partyContentDiv.style.display = 'none';
+    journeyContentDiv.style.display = 'none';
+    itemTemperingContentDiv.style.display = 'none';
+    restingContentDiv.style.display = 'none';
+    dreadContentDiv.style.display = 'none';
+    webReferenceContentDiv.style.display = 'none';
+
+    // Remove "active" class from all navigation links
+    var navigationLinks = document.getElementsByClassName('darkScreenNav');
+    for (var i = 0; i < navigationLinks.length; i++) {
+      navigationLinks[i].classList.remove('active');
+    }
+
+    // Show the selected content div based on the page
+    if (page === 'party') {
+        partyContentDiv.style.display = 'block';
+        document.getElementById('partyLink').classList.add('active');
+    } else if (page === 'journey') {
+        journeyContentDiv.style.display = 'block';
+        document.getElementById('journeyLink').classList.add('active');
+    } else if (page === 'item-tempering') {
+        itemTemperingContentDiv.style.display = 'block';
+        document.getElementById('itemTemperingLink').classList.add('active');
+    } else if (page === 'resting') {
+        restingContentDiv.style.display = 'block';
+        document.getElementById('restingLink').classList.add('active');
+    } else if (page === 'dread') {
+        dreadContentDiv.style.display = 'block';
+        document.getElementById('dreadLink').classList.add('active');
+    } else if (page === 'web-reference') {
+        webReferenceContentDiv.style.display = 'block';
+        document.getElementById('webReferenceLink').classList.add('active');
+    }
+    game.world.flags.darksheet.darkscreen.lastpage = page;
+    }
+    async function loadDarkActors() {
+        // Get all game actors
+        const actors = game.actors._source;
+        // Loop through the actors
+        const onlineActorSheetIds = [];
+        let partyOnline = await game.settings.get('darksheet', 'darkScreenPartyDisplay');
+        if(partyOnline){
+            for (const user of game.users) {
+                if (user.active && user.character) {
+                    onlineActorSheetIds.push(user.character.id);
+                }
+            }
+        }
+        actors.forEach(async a => {
+            if(partyOnline){
+                if(!onlineActorSheetIds.includes(a._id)) return;
+            }
+            console.log("TEST");
+            let currentSlots = 0;
+            const actor = game.actors.get(a._id);
+            actor.items.forEach(function(item) {
+                // code to execute for each item
+                currentSlots += item.flags.darksheet?.item?.slots ?? 0;
+            });
+            actor.currentSlots = currentSlots;
+            actor.foodvalue = ['food', 'food2', 'food3', 'food4', 'food5'].reduce((acc, attr) => actor?.flags?.darksheet?.attributes?.[attr]?.value === true ? acc + 1 : acc, 0);
+            actor.watervalue = ['waterskin', 'waterskin2', 'waterskin3', 'waterskin4', 'waterskin5'].reduce((acc, attr) => actor?.flags?.darksheet?.attributes?.[attr]?.value === true ? acc + 1 : acc, 0);
+            let wounds = actor.flags.darksheet?.woundlist?.length ?? 0;
+            let treated = 0;
+            if(wounds > 0){
+                actor.flags.darksheet.woundlist.forEach(element => {
+                    if(element.healed)
+                        wounds--;
+                    if(element.treated && !element.healed)
+                        treated++;
+                });
+                if(wounds > 0){
+                    actor.woundsbarColor = '#9b0000';
+                    actor.woundsvalueMin = treated;
+                    actor.woundsvalueMax = wounds;
+                }
+            }
+
+            // Check if the actor has the "flags.darksheet" property and is of type "character"
+            if (actor.flags && actor.flags.darksheet && actor.type == 'character') {
+                let itemDataTemplate = await renderTemplate("modules/darksheet/templates/characterpartytemplate.html", actor);
+
+                // Create a new element to hold the rendered template content
+                const templateElement = document.createElement("div");
+                templateElement.classList.add("darkCharacterPartyCharacter");
+                // Set the HTML content of the element to the rendered template
+                templateElement.innerHTML = itemDataTemplate;
+
+                // Find the table element with class "DarkScreenPartyTable"
+                const tableElement = document.querySelector(".DarkScreenPartyTable");
+
+                // Check if the table element exists
+                if (tableElement) {
+                    const rows = tableElement.rows;
+                    if (rows.length > 0) {
+                        const lastRow = rows[rows.length - 1];
+                        const cellsCount = lastRow.firstElementChild.childElementCount;
+
+                        if (cellsCount === 1) {
+                            // Append the template element to the last row
+                            const cell = lastRow.cells[0];
+                            cell.appendChild(templateElement);
+                        } else {
+                            // Create a new row in the table
+                            const newRow = tableElement.insertRow();
+
+                            // Create a new cell in the row
+                            const newCell = newRow.insertCell();
+
+                            // Append the template element to the cell
+                            newCell.appendChild(templateElement);
+                        }
+                    } else {
+                        // Create a new row in the table
+                        const newRow = tableElement.insertRow();
+
+                        // Create a new cell in the row
+                        const newCell = newRow.insertCell();
+
+                        // Append the template element to the cell
+                        newCell.appendChild(templateElement);
+                    }
+                }
+            }
+        });
+    }
+    onLoad();
+    async function loadDarkScreenSettings(){
+        $("#darkScreenOnlinePlayerCheckbox")[0].checked = await game.settings.get('darksheet', 'darkScreenPartyDisplay');
+    }
+    async function changeOnlineSetting(value){
+        await game.settings.set('darksheet', 'darkScreenPartyDisplay',value);
+        Darksheet.darkScreenReload();
+    }
+</script>
