@@ -423,7 +423,7 @@ option.ddValueBad {
     text-align: center;
 }
 .woundroll:hover::before {
-    content: "Reopen ";
+    /*content: "Reopen ";*/ /* This made the Reopen Wounds button read "ReopenReopen Wounds" when hovered. */
   }
 .woundInformation {
     font-size: 20px;
