@@ -283,7 +283,7 @@ async function addWoundsToSheet(sheet, html, data) {
     //RENDER WOUNDS
     var woundBarDiv = document.createElement("div");
     woundBarDiv.classList.add("pills-group", "woundsection", "woundS1");
-    woundBarDiv.innerHTML = '<button type="button" class="rollable button" title="Click to roll for reopened wounds" class="deathsavelabel woundroll rollReopenWounds rollable" actorid="' + actor.id + '">Reopen Wounds</button><button type="button" class="rollable button addwoundbutton" id="addwound" actorID="' + sheet.actor.id + '"><i class="fas fa-plus"></i> Add Wound</button>';
+    woundBarDiv.innerHTML = '<button type="button" class="rollable button deathsavelabel woundroll rollReopenWounds" title="Click to roll for reopened wounds" actorid="' + actor.id + '">Reopen Wounds</button><button type="button" class="rollable button addwoundbutton" id="addwound" actorID="' + sheet.actor.id + '"><i class="fas fa-plus"></i> Add Wound</button>';
 
     let woundTable = await renderTemplate("modules/darksheet/templates/wounds.html", data);
 
