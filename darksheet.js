@@ -199,6 +199,7 @@ Hooks.once('init', () => {
 });
 
 Hooks.on(`renderActorSheet`, (app, html, data) => {
+    console.log("Render actor sheet.");
     if (app.actor.type != 'character') return;
     const element = document.querySelector('a.item.active');
     if (element) {
@@ -663,179 +664,206 @@ async function darkSheetSetup(app, html, data) {
     percentage = (currentSlots / maxSlots) * 100;
 
     if (game.settings.get('darksheet', 'slotbasedinventory')) { // IF SLOTS ARE ENABLED
-        //SET ENCUMBRANCE BAR
-        let encumbrance = html.find(".encumbrance").find(".meter");
+        try
+        {
+            //SET ENCUMBRANCE BAR
+            let encumbrance = html.find(".encumbrance").find(".meter");
 
-        const currentValue = encumbrance.find("div").find(".value")[0];
-        currentValue.textContent = parseFloat(currentSlots).toFixed(1);;
-        const maxValue = encumbrance.find("div").find(".max")[0];
-        maxValue.textContent = maxSlots + " Slots";
-        const multiplier = html.find(".encumbrance").find(".info").find(".multiplier").find(".value")[0];
-        multiplier.textContent = "x" + Math.max(1, Math.min(actor.system.attributes.encumbrance.mod, 8));
+            const currentValue = encumbrance.find("div").find(".value")[0];
+            currentValue.textContent = parseFloat(currentSlots).toFixed(1);;
+            const maxValue = encumbrance.find("div").find(".max")[0];
+            maxValue.textContent = maxSlots + " Slots";
+            const multiplier = html.find(".encumbrance").find(".info").find(".multiplier").find(".value")[0];
+            multiplier.textContent = "x" + Math.max(1, Math.min(actor.system.attributes.encumbrance.mod, 8));
 
-        const size = html.find(".encumbrance").find(".info").find(".size");
-        size.find(".value")[0].textContent = "+" + (maxSlots - STRBONUS);
-        size.find(".label")[0].textContent = "Size-Slots";
-        size.appendTo(size.parent());
+            const size = html.find(".encumbrance").find(".info").find(".size");
+            size.find(".value")[0].textContent = "+" + (maxSlots - STRBONUS);
+            size.find(".label")[0].textContent = "Size-Slots";
+            size.appendTo(size.parent());
 
-        encumbrance[0].style = "--bar-percentage:" + Math.min(percentage, 101) + "%";
-        //SET BAR ARROWS
-        //REMOVE FIRST 2 Arrows
-        encumbrance[0].children[2].remove();
-        encumbrance[0].children[2].remove();
-        encumbrance[0].children[2].remove();
-        encumbrance[0].children[1].remove();
+            encumbrance[0].style = "--bar-percentage:" + Math.min(percentage, 101) + "%";
+            //SET BAR ARROWS
+            //REMOVE FIRST 2 Arrows
+            encumbrance[0].children[2].remove();
+            encumbrance[0].children[2].remove();
+            encumbrance[0].children[2].remove();
+            encumbrance[0].children[1].remove();
+        }
+        catch (error)
+        {
+            console.log("Error in encumberance bar: ");
+            console.error(error);
+        }
     }
 
     let inventoryList = html[0].getElementsByClassName("inventory-list")[0];
 
-    for (let i = 0; i < inventoryList.getElementsByClassName("items-header").length; i++) {
-
-        //SET WEIGHT TO SLOTS
-        if (game.settings.get('darksheet', 'slotbasedinventory'))
-            inventoryList.getElementsByClassName("items-header")[i].getElementsByClassName("item-weight")[0].innerHTML = "Slots";
-        let node = inventoryList.getElementsByClassName("items-header")[i].children[1];
-        if (!game.settings.get('darksheet', 'hidenotches')) {
-            //NOTCHES
-            let notchesHeader = document.createElement("div");
-            notchesHeader.classList.add("item-header", "item-weight", "item-notches");
-            notchesHeader.innerHTML = 'Notches';
-            inventoryList.getElementsByClassName("items-header")[i].insertBefore(notchesHeader, node);
+    try
+    {
+        for (let i = 0; i < inventoryList.getElementsByClassName("items-header").length; i++) {
+            //SET WEIGHT TO SLOTS
+            if (game.settings.get('darksheet', 'slotbasedinventory'))
+                inventoryList.getElementsByClassName("items-header")[i].getElementsByClassName("item-weight")[0].innerHTML = "Slots";
+            let node = inventoryList.getElementsByClassName("items-header")[i].children[1];
+            if (!game.settings.get('darksheet', 'hidenotches')) {
+                //NOTCHES
+                let notchesHeader = document.createElement("div");
+                notchesHeader.classList.add("item-header", "item-weight", "item-notches");
+                notchesHeader.innerHTML = 'Notches';
+                inventoryList.getElementsByClassName("items-header")[i].insertBefore(notchesHeader, node);
+            }
+            //AMMODIE
+            if (!game.settings.get('darksheet', 'hideammodie')) {
+                let ammodieHeader = document.createElement("div");
+                ammodieHeader.classList.add("item-header", "item-weight", "item-ammodie");
+                ammodieHeader.innerHTML = 'Ammodie';
+                inventoryList.getElementsByClassName("items-header")[i].insertBefore(ammodieHeader, node);
+            }
         }
-        //AMMODIE
-        if (!game.settings.get('darksheet', 'hideammodie')) {
-            let ammodieHeader = document.createElement("div");
-            ammodieHeader.classList.add("item-header", "item-weight", "item-ammodie");
-            ammodieHeader.innerHTML = 'Ammodie';
-            inventoryList.getElementsByClassName("items-header")[i].insertBefore(ammodieHeader, node);
-        }
-
     }
+    catch (error)
+    {
+        console.log("Error setting up slots inventory, nothces, and ammodie.");
+        console.error(error);
+    }
+
     //region INVENTORY
     //DISPLAY ATTRIBUTES IN LIST
     let automaticSlots = game.settings.get('darksheet', 'automaticSlots');
     let automaticFragility = game.settings.get('darksheet', 'automaticFragility');
     let updates = [];
-    for (let i = 0; i < inventoryList.getElementsByClassName("item").length; i++) {
-        //CREATE ELEMENTS
-        var _notches = document.createElement("div");
-        var _ammodie = document.createElement("div");
-        var _slots = document.createElement("div");
-        //ASSIGN CLASSES
-        if (!game.settings.get('darksheet', 'hidenotches')) _notches.classList.add("item-detail", "item-weight", "item-notches");
-        _ammodie.classList.add("item-detail", "item-weight", "item-ammodieLabel");
-        if (game.settings.get('darksheet', 'slotbasedinventory')) _slots.classList.add("item-detail", "item-weight", "item-slots");
-        //GET DATA
-        let item = inventoryList.getElementsByClassName("item")[i];
-        let _item = actor.items.find(i => i.id == item.dataset.itemId);
-        if (_item.flags.darksheet == undefined || automaticFragility && _item.flags.darksheet.item.fragility == "" || automaticSlots && _item.flags.darksheet.item.slots == null) {
-            //try find slot
-            let slot = 1;
-            let fragility = "";
-            for (const [itemName, bulkValue] of Object.entries(itemBulk)) {
-
-                if (_item.name.includes(itemName)) {
-                    // Handle slot assignment based on automaticSlots setting
-                    if (automaticSlots) {
-                        let slot = bulkValue;
-                        console.log(`Darksheet | ${_item.name} is assigned ${slot} slots.`);
-                    }
-
-                    // Check fragility based on automaticFragility setting
-                    if (automaticFragility) {
-                        if (isItemFragile(_item.name)) {
-                            console.log(`Darksheet | ${_item.name} is considered fragile.`);
-                            fragility = 1;
-                        } else {
-                            console.log(`Darksheet | ${_item.name} is not considered fragile.`);
-                            fragility = 10;
+    try
+    {
+        for (let i = 0; i < inventoryList.getElementsByClassName("item").length; i++) 
+        {
+            //CREATE ELEMENTS
+            var _notches = document.createElement("div");
+            var _ammodie = document.createElement("div");
+            var _slots = document.createElement("div");
+            //ASSIGN CLASSES
+            if (!game.settings.get('darksheet', 'hidenotches')) _notches.classList.add("item-detail", "item-weight", "item-notches");
+            _ammodie.classList.add("item-detail", "item-weight", "item-ammodieLabel");
+            if (game.settings.get('darksheet', 'slotbasedinventory')) _slots.classList.add("item-detail", "item-weight", "item-slots");
+            //GET DATA
+            let item = inventoryList.getElementsByClassName("item")[i];
+            let _item = actor.items.find(i => i.id == item.dataset.itemId);
+            if (_item.flags.darksheet == undefined || automaticFragility && _item.flags.darksheet.item.fragility == "" || automaticSlots && _item.flags.darksheet.item.slots == null) {
+                //try find slot
+                let slot = 1;
+                let fragility = "";
+                for (const [itemName, bulkValue] of Object.entries(itemBulk)) {
+    
+                    if (_item.name.includes(itemName)) {
+                        // Handle slot assignment based on automaticSlots setting
+                        if (automaticSlots) {
+                            let slot = bulkValue;
+                            console.log(`Darksheet | ${_item.name} is assigned ${slot} slots.`);
                         }
-                        console.log(`Darksheet | ${_item.name} has a fragility rating of ${fragility}.`);
+    
+                        // Check fragility based on automaticFragility setting
+                        if (automaticFragility) {
+                            if (isItemFragile(_item.name)) {
+                                console.log(`Darksheet | ${_item.name} is considered fragile.`);
+                                fragility = 1;
+                            } else {
+                                console.log(`Darksheet | ${_item.name} is not considered fragile.`);
+                                fragility = 10;
+                            }
+                            console.log(`Darksheet | ${_item.name} has a fragility rating of ${fragility}.`);
+                        }
+                        break;
                     }
-                    break;
                 }
+                updates.push({
+                    "_id": _item.id,
+                    "flags.darksheet.item.slots": slot,
+                    "flags.darksheet.item.notches": null,
+                    "flags.darksheet.item.quality": "",
+                    "flags.darksheet.item.fragility": fragility,
+                    "flags.darksheet.item.temper": "",
+                    "flags.darksheet.item.ammodie": "",
+                });
             }
-            updates.push({
-                "_id": _item.id,
-                "flags.darksheet.item.slots": slot,
-                "flags.darksheet.item.notches": null,
-                "flags.darksheet.item.quality": "",
-                "flags.darksheet.item.fragility": fragility,
-                "flags.darksheet.item.temper": "",
-                "flags.darksheet.item.ammodie": "",
-            });
+            let itemData = _item.flags.darksheet.item;
+            let product = itemData.slots * _item.system.quantity;
+            let usesSlots = (product % 1 === 0) ? product.toString() : product.toFixed(1);
+            //GET REFERENCE TO ITEM WEIGHT TO REMOVE IT LATER; BECAUSE IT SHARES THE CLASS WITH THE ADDED ELEMENTS
+            let itemWeight = item.getElementsByClassName("item-weight")[0];
+            let price = item.getElementsByClassName("item-price")[0];
+            //FILL WITH DATA
+            let minusNotchButton = document.createElement("button");
+            minusNotchButton.type = "button";
+            let plusNotchButton = document.createElement("button");
+            plusNotchButton.type = "button";
+            minusNotchButton.innerHTML = "<label>-</label>";
+            plusNotchButton.innerHTML = "<label>+</label>";
+    
+            minusNotchButton.classList.add("darksheetbuttonMinus", "notchButton");
+            plusNotchButton.classList.add("darksheetbuttonPlus", "notchButton");
+    
+            if (!game.settings.get('darksheet', 'hidenotches')) _notches.append(itemData?.notches > 0 ? minusNotchButton : "", itemData?.notches ?? " ", plusNotchButton);
+            _ammodie.innerHTML = itemData.ammodie !== undefined ? '<label class="ammodieLabel">' + itemData.ammodie + '</label>' : "";
+    
+            if (game.settings.get('darksheet', 'slotbasedinventory')) _slots.innerHTML = itemData.slots !== undefined ? usesSlots : "";
+            //INSERT NOTCHES
+            if (!game.settings.get('darksheet', 'hidenotches')) item.insertBefore(_notches, price);
+            if (itemData.ammodie == "")
+                _ammodie.classList.remove("item-ammodieLabel");
+    
+            if (!game.settings.get('darksheet', 'hideammodie')) item.insertBefore(_ammodie, price);
+    
+            if (game.settings.get('darksheet', 'slotbasedinventory')) 
+            {
+                item.insertBefore(_slots, itemWeight);
+                itemWeight.remove();
+            }
+    
+            if (!game.settings.get('darksheet', 'disableItemDamage')) {
+                //CHANGE DISPLAY NAME
+                let itemname = _item.name;
+                if (_item.flags.darksheet.item.temper) {
+                    itemname = "[" + _item.flags.darksheet.item.temper + "] " + itemname;
+                }
+                if (_item.type == "weapon" && _item.system.damage.parts.length > 0) {
+                    itemname += " (" + _item.system.damage.parts[0][0].split(" ")[0] + ")";
+                }
+                if (_item.type == "equipment" && _item.system.armor.value != 0) {
+                    itemname += " (" + _item.system.armor.value + " AC)";
+                }
+                /*if(_item.flags.darksheet.item.fragility){
+                const notchOptions = {
+                    1: 'Delicate',
+                    2: 'Frail',
+                    3: 'Basic',
+                    5: 'Solid',
+                    10: 'Sturdy',
+                    15: 'Durable',
+                    20: 'Very Sturdy',
+                    50: 'Fabled',
+                    100: 'Indestructible'
+                };
+                itemname =  "["+notchOptions[_item.flags.darksheet.item.fragility] + "] " + itemname;
+                }*/
+                if (_item.flags.darksheet.item.quality) {
+                    let quality = _item.flags.darksheet.item.quality;
+                    if (quality != "pristine")
+                        if (!itemname.includes("[Shattered]"))
+                            itemname = "[" + quality.charAt(0).toUpperCase() + quality.slice(1) + "] " + itemname;
+                    item.classList.add(quality);
+    
+                }
+                item.children[0].children[1].children[0].innerHTML = itemname;
+            }
+    
         }
-        let itemData = _item.flags.darksheet.item;
-        let product = itemData.slots * _item.system.quantity;
-        let usesSlots = (product % 1 === 0) ? product.toString() : product.toFixed(1);
-        //GET REFERENCE TO ITEM WEIGHT TO REMOVE IT LATER; BECAUSE IT SHARES THE CLASS WITH THE ADDED ELEMENTS
-        let itemWeight = item.getElementsByClassName("item-weight")[0];
-        let price = item.getElementsByClassName("item-price")[0];
-        //FILL WITH DATA
-        let minusNotchButton = document.createElement("button");
-        minusNotchButton.type = "button";
-        let plusNotchButton = document.createElement("button");
-        plusNotchButton.type = "button";
-        minusNotchButton.innerHTML = "<label>-</label>";
-        plusNotchButton.innerHTML = "<label>+</label>";
-
-        minusNotchButton.classList.add("darksheetbuttonMinus", "notchButton");
-        plusNotchButton.classList.add("darksheetbuttonPlus", "notchButton");
-
-        if (!game.settings.get('darksheet', 'hidenotches')) _notches.append(itemData?.notches > 0 ? minusNotchButton : "", itemData?.notches ?? " ", plusNotchButton);
-        _ammodie.innerHTML = itemData.ammodie !== undefined ? '<label class="ammodieLabel">' + itemData.ammodie + '</label>' : "";
-
-        if (game.settings.get('darksheet', 'slotbasedinventory')) _slots.innerHTML = itemData.slots !== undefined ? usesSlots : "";
-        //INSERT NOTCHES
-        if (!game.settings.get('darksheet', 'hidenotches')) item.insertBefore(_notches, price);
-        if (itemData.ammodie == "")
-            _ammodie.classList.remove("item-ammodieLabel");
-
-        if (!game.settings.get('darksheet', 'hideammodie')) item.insertBefore(_ammodie, price);
-
-        if (game.settings.get('darksheet', 'slotbasedinventory')) {
-            item.insertBefore(_slots, itemWeight);
-            itemWeight.remove();
-        }
-
-        if (!game.settings.get('darksheet', 'disableItemDamage')) {
-            //CHANGE DISPLAY NAME
-            let itemname = _item.name;
-            if (_item.flags.darksheet.item.temper) {
-                itemname = "[" + _item.flags.darksheet.item.temper + "] " + itemname;
-            }
-            if (_item.type == "weapon" && _item.system.damage.parts.length > 0) {
-                itemname += " (" + _item.system.damage.parts[0][0].split(" ")[0] + ")";
-            }
-            if (_item.type == "equipment" && _item.system.armor.value != 0) {
-                itemname += " (" + _item.system.armor.value + " AC)";
-            }
-            /*if(_item.flags.darksheet.item.fragility){
-            const notchOptions = {
-                1: 'Delicate',
-                2: 'Frail',
-                3: 'Basic',
-                5: 'Solid',
-                10: 'Sturdy',
-                15: 'Durable',
-                20: 'Very Sturdy',
-                50: 'Fabled',
-                100: 'Indestructible'
-            };
-            itemname =  "["+notchOptions[_item.flags.darksheet.item.fragility] + "] " + itemname;
-            }*/
-            if (_item.flags.darksheet.item.quality) {
-                let quality = _item.flags.darksheet.item.quality;
-                if (quality != "pristine")
-                    if (!itemname.includes("[Shattered]"))
-                        itemname = "[" + quality.charAt(0).toUpperCase() + quality.slice(1) + "] " + itemname;
-                item.classList.add(quality);
-
-            }
-            item.children[0].children[1].children[0].innerHTML = itemname;
-        }
-
     }
+    catch (error)
+    {
+        console.log("Error in darksheet item setup: ");
+        console.error(error);
+    }
+    
+
     actor.updateEmbeddedDocuments('Item', updates).then(() => {
         console.log('Darksheet | Inventory updated successfully.');
     }).catch(error => {
@@ -897,6 +925,8 @@ async function darkSheetSetup(app, html, data) {
         }
         await rollAmmodie(event, actor);
     });
+    console.log("Find stamina Check button");
+    console.log(html.find('.staminacheck'));
     html.find('.staminacheck').click(async event => {
         event.preventDefault();
         let roll = await new Roll("1d6").roll({
