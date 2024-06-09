@@ -524,7 +524,23 @@ async function addDarkSheetTab(app, html, data) {
     //ADD NEW DD TAB
 
     let test = html.find(".tabs").append('<a class="item control" data-group="primary" data-tab="dd" data-tooltip="Darker Dungeons" aria-label="Darker Dungeons"><i class="fas fa-skull"></i></a>');
-    let sheet = html.find(".tab-body");
+    let sheet;
+
+    // When attempting to create the Darksheet tab, fallback to legacy sheet locations if necessary.
+    if (html.find(".tab-body").length > 0)
+    {
+        sheet = html.find(".tab-body");
+    }
+    else if (html.find(".sheet-body").length > 0)
+    {
+        sheet = html.find(".sheet-body");
+    }
+    else
+    {
+        console.error("Darksheet: Unable to find where to place DarkSheet tab content.");
+        return;
+    }
+
     let hideChecks = game.settings.get("darksheet", "hidechecks");
     data.hidechecks = hideChecks;
     let darkSheetTabHTML = await renderTemplate("modules/darksheet/templates/Tab_DD.html", data);
