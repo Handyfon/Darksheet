@@ -199,7 +199,6 @@ Hooks.once('init', () => {
 });
 
 Hooks.on(`renderActorSheet`, (app, html, data) => {
-    console.log("Render actor sheet.");
     if (app.actor.type != 'character') return;
     const element = document.querySelector('a.item.active');
     if (element) {
@@ -287,8 +286,27 @@ async function addWoundsToSheet(sheet, html, data) {
     woundBarDiv.innerHTML = '<button type="button" class="rollable button deathsavelabel woundroll rollReopenWounds" title="Click to roll for reopened wounds" actorid="' + actor.id + '">Reopen Wounds</button><button type="button" class="rollable button addwoundbutton" id="addwound" actorID="' + sheet.actor.id + '"><i class="fas fa-plus"></i> Add Wound</button>';
 
     let woundTable = await renderTemplate("modules/darksheet/templates/wounds.html", data);
+    let countersSection;
 
-    let countersSection = html.find(".main-content").find(".tab-body").find(".details").find(".right").find(".flexrow");
+    // When attempting to add the Wounds section, fallback to legacy sheet location, and if that cannot be found, fallback to adding the wounds to the dd tab. (Tested with Compact D&D Beyond Sheet).
+    if (html.find(".main-content").find(".tab-body").find(".details").find(".right").find(".flexrow").length > 0)
+    {
+        countersSection = html.find(".main-content").find(".tab-body").find(".details").find(".right").find(".flexrow");
+    }
+    else if (html.find(".counters").length > 0)
+    {
+        countersSection = html.find(".counters");
+    }
+    else if (html.find(".sheet-body").find(".dd").find(".darkPartContainer").length > 0) // Not sure if .dd will always be unique to the main dd tab, so this might not be the best way to access it.
+    {
+        countersSection = html.find(".sheet-body").find(".dd").find(".darkPartContainer").eq(1);
+    }
+    else
+    {
+        console.error("Darksheet: Unable to find where to place the Wounds section.");
+        return;
+    }
+
     countersSection.after(woundTable);
     countersSection.after(woundBarDiv);
 
@@ -925,8 +943,6 @@ async function darkSheetSetup(app, html, data) {
         }
         await rollAmmodie(event, actor);
     });
-    console.log("Find stamina Check button");
-    console.log(html.find('.staminacheck'));
     html.find('.staminacheck').click(async event => {
         event.preventDefault();
         let roll = await new Roll("1d6").roll({
