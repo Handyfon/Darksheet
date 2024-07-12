@@ -615,7 +615,7 @@ async function darkSheetSetup(app, html, data) {
 
     let maxSlots = 18;
     let percentage = 0;
-    let STRBONUS = actor.system.abilities.str.value * Math.max(1, Math.min(actor.system.attributes.encumbrance.mod, 8));
+    let STRBONUS = actor.system.abilities.str.mod * Math.max(1, Math.min(actor.system.attributes.encumbrance.mod, 8));
 
     if (actor.flags.darksheet && actor.flags.darksheet.attributes) {
         switch (actor.system.traits.size) {
