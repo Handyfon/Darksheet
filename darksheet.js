@@ -641,14 +641,16 @@ async function darkSheetSetup(app, html, data) {
         // Ensure that item.flags.darksheet?.item?.slots and item.system.quantity are defined, otherwise use 0
         const slots = item.flags?.darksheet?.item?.slots ?? 0;
         const quantity = item.system?.quantity ?? 0;
-
-        if (!(game.settings.get('darksheet', 'equippedDontUseSlots') && item.system.equipped)) {
+        
+        // Added support for Griddy inventory module to slot calculation. Equipped items that are excluded from Griddy don't contribue to currentSlots.
+        if (!(game.settings.get('darksheet', 'equippedDontUseSlots') && item.system.equipped) && !(item.system.equipped && item.flags.griddy.position.e))
+        {
             currentSlots += slots * quantity;
         }
 
     });
 
-    let maxSlots = 18;
+    let maxSlots = 10;
     let percentage = 0;
     let STRBONUS = actor.system.abilities.str.value * Math.max(1, Math.min(actor.system.attributes.encumbrance.mod, 8));
 
@@ -661,7 +663,7 @@ async function darkSheetSetup(app, html, data) {
                 maxSlots = 14;
                 break;
             case "med":
-                maxSlots = 18;
+                maxSlots = 10;
                 break;
             case "lg":
                 maxSlots = 22;
@@ -673,7 +675,7 @@ async function darkSheetSetup(app, html, data) {
                 maxSlots = 46;
                 break;
             default:
-                maxSlots = 18;
+                maxSlots = 10;
                 break;
         }
 
