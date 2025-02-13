@@ -1,3 +1,78 @@
+
+input.ressourcecheckbox.darkFoodCheckbox {
+    background: #693f00;
+    width: 100%;
+    height: 100%;
+    min-width: 100%;
+}
+input.ressourcecheckbox.darkWaterCheckbox {
+    background: #0d4755;
+    width: 100%;
+    height: 100%;
+    min-width: 100%;
+}
+.stress-bar {
+    position: absolute;
+    height: 100%;
+    transition: width 0.3s ease-in-out;
+    border-radius: 4px;
+    z-index: 0;
+}
+
+.progress.hit-points.stress-points {
+    position: relative;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.meter.sectioned.stress-points {
+    height: 30px;
+    background: black;
+}
+span.DarkQualityLabel {
+    background: #00000059;
+    border-radius: 5px;
+    padding: 0px 5px;
+    margin-right: 5px;
+    font-size: 10px;
+    display: inline;
+}
+.darkQualitywell-worn {
+    background: #b35300 !important;
+}
+.darkQualityscarred {
+    background: #b90000 !important;
+    color: #ffefef;
+}
+.darkQualityworn {
+    background: #bfbf00 !important;
+    color: black;
+}
+span.DarktemperLabel {
+    margin-right: 5px;
+}
+span.DarktemperLabel.darktemperPure {
+    color: turquoise;
+}
+span.DarktemperLabel.darktemperRoyal {
+    color: rgb(255, 217, 0);
+}
+span.DarktemperLabel.darktemperAstral {
+    color: #ff4ff0;
+}
+.darksheetItemFormGroup {
+    display: inherit;
+}
+.darksheetItemFormGroup .form-group {
+    margin: 1px;
+}
+.darkItemLabel{
+    text-align: center;
+}
+.darkItemNewline{
+    flex: 0.5 !important;
+}
 i.chatIcon {
     flex: 0.12;
     font-size: 25px;
@@ -40,9 +115,8 @@ h4.dice-total.darkChatResult {
 h4.darksheetheader {
     font-family: 'Roboto';
     font-weight: bold;
-    padding-left: 5px;
+    padding-left: 10px !important;
 }
-
 .ressourcecheckbox {
     width: 17px;
     height: 17px;
@@ -57,9 +131,13 @@ h4.darksheetheader {
     cursor: pointer;
     position: relative;
     margin-top:2px;
-    width: 20px;
-    height: 20px;
+    width: 30px;
+    height: 30px;
 }
+.foodcheckbox > input:checked {
+    background: #9f5f00;
+}
+
 .foodcheckbox > input {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -70,14 +148,10 @@ h4.darksheetheader {
     border-style: solid;
     border-width: 1px;
     cursor: pointer;
-    width: 20px;
-    height: 20px;
+    width: 30px;
+    height: 30px;
     border-bottom-style: dotted;
     border-top-style: dotted;
-    padding: 10px;
-}
-
-.foodcheckbox > input:checked {
     padding: 10px;
 }
 
@@ -86,17 +160,20 @@ h4.darksheetheader {
     display: block;
     position: absolute;
     margin-top: -5px;
-    margin-left: -26px;
-    padding-bottom: 5px;
-    padding: 10px;
+    margin-left: -27px;
+    padding: 7px;
+    margin-top: 1px;
 }
 .watercheckbox {
     display: inline-flex;
     cursor: pointer;
     position: relative;
     margin-top:2px;
-    width: 20px;
-    height: 20px;
+    width: 30px;
+    height: 30px;
+}
+.watercheckbox > input:checked {
+    background: #007f9f;
 }
 
 .watercheckbox > input {
@@ -109,8 +186,8 @@ h4.darksheetheader {
     border-style: solid;
     border-width: 1px;
     cursor: pointer;
-    width: 20px;
-    height: 20px;
+    width: 30px;
+    height: 30px;
     border-bottom-style: dotted;
     border-top-style: dotted;
     padding: 10px;
@@ -125,8 +202,8 @@ h4.darksheetheader {
     border-style: solid;
     border-width: 1px;
     cursor: pointer;
-    width: 20px;
-    height: 20px;
+    width: 30px;
+    height: 30px;
     border-bottom-style: dotted;
     border-top-style: dotted;
     padding: 10px;
@@ -141,8 +218,8 @@ h4.darksheetheader {
     border-style: solid;
     border-width: 1px;
     cursor: pointer;
-    width: 20px;
-    height: 20px;
+    width: 30px;
+    height: 30px;
     border-bottom-style: dotted;
     border-top-style: dotted;
     padding: 10px;
@@ -156,9 +233,9 @@ h4.darksheetheader {
     display: block;
     position: absolute;
     margin-top: -5px;
-    margin-left: -26px;
-    padding-bottom: 5px;
-    padding: 10px;
+    margin-left: -27px;
+    padding: 7px;
+    margin-top: 1px;
 }
 .part4 {
     flex: 0.3;
@@ -221,7 +298,6 @@ label.darkCheck {
     border: 1px solid #f3afaf;
     padding: 10px;
 }
-
 .stresscheckbox > input:checked + span::before {
     content: '\1f525';
     display: block;
@@ -235,6 +311,8 @@ label.darkCheck {
 label.afflictiontext {
     margin-top: 7px;
     margin-left: 3px;
+    color: #ff0000;
+    text-shadow: 0px 0px 2px red;
 }
 .deathcheckbox {
     display: inline-flex;
@@ -407,14 +485,16 @@ option.ddValueBad {
     padding: 5px;
     border: 1px solid #b5b3a4;
     border-radius: 2px;
-    background: rgba(0, 0, 0, 0.05);
+    background: rgb(251 255 0 / 24%);
     margin: 0 3px;
     margin-bottom: 3px;
+    color: yellow;
+    margin: 5px;
 }
 .staminaCheck:hover {
-    background: #b5b3a4;
     color: white;
     text-shadow: none;
+    border: 1px solid yellow;
 }
 .woundroll:hover{
     background: #b5b3a4;
@@ -487,6 +567,7 @@ select.hitdice.white {
     align-items: inherit;
     height: fit-content !important;
     flex: none;
+    max-width: 550px;
 }
 .DSC-window section.window-content {
     background: #595959 !important;
@@ -505,6 +586,8 @@ i.chatIcon {
     margin-bottom: -50px;
 }
 button.rollable.button {
+    height: 30px;
+    font-size: small;
     color: var(--color-text-dark-primary);
     flex: 1;
     display: inline-flex;
@@ -516,8 +599,11 @@ button.addwoundbutton{
 }
 .pills-group.woundsection.woundS1 {
     display: flex;
+    max-width: 550px;
 }
-
+.rollable{
+    cursor:pointer;
+}
 #woundtr td input {
     background: var(--dnd5e-background-card);
 }
@@ -526,4 +612,7 @@ button.addwoundbutton{
 }
 .darkselect {
     border: unset;
+    vertical-align: top;
+    margin-top: 5px;
+    height: 30px !important;
 }

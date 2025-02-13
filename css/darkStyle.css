@@ -2,25 +2,16 @@
     background: #000000cf;
     color: white;
 }
-.foodcheckbox > input:checked {
-    background: #7a7971;
-    filter: unset;
-    border: solid 1px;
-    border-color: black;
-}
 .foodcheckbox > input:checked + span::before {
     color: white;
-}
-.watercheckbox > input:checked {
-    background: #7a7971;
-    filter: unset;
-    border: solid 1px;
-    border-color: black;
 }
 .watercheckbox > input:checked + span::before {
     color: white;
 }
-
+h4.darksheetheader.obCGvdWhM6KypXFm.items-header.header {
+    padding: 5px;
+    margin: 0;
+}
 .item-detail.item-ammodieLabel {
     height: 22px;
     flex: 0 0 50px !important;

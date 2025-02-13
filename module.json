@@ -1,7 +1,7 @@
 {
   "title": "darksheet",
   "description": "DarkDND",
-  "version": "12.1.1",
+  "version": "12.3",
   "esmodules": [
     "darksheet.js"
   ],
@@ -55,12 +55,15 @@
       {
         "id": "dnd5e",
         "type": "system",
-        "compatibility": {}
+        "compatibility": {
+          "minimum": "4.2.2",
+          "verified": "4.3"
+        }
       }
     ]
   },
   "compatibility": {
-    "minimum": "11",
-    "verified": "12"
+    "minimum": "12",
+    "verified": "13"
   }
 }

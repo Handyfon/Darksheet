@@ -210,6 +210,12 @@ Hooks.on(`renderActorSheet`, (app, html, data) => {
             app._tabs[0].activate("dd");
         }
     });
+
+    addStressBar(app, html, data);
+    applyInventoryAdditions(app, html, data);
+    applyFatigueAndTemperatureAdditions(app, html, data);
+    applySpellBurnoutToSheet(app, html, data);
+
     darkSheetSetup(app, html, data);
     if (!game.settings.get('darksheet', 'disableWoundSystem')) {
         addWoundsToSheet(app, html, data);
@@ -220,7 +226,131 @@ Hooks.on(`renderActorSheet`, (app, html, data) => {
     }, 0);
 });
 
-Hooks.on(`renderItemSheet`, (app, html, data) => {
+async function applySpellBurnoutToSheet(app, html, data) {
+    let container = html.find(".spells").find(".top");
+
+    let inventoryAdditionsTemplate = await renderTemplate("modules/darksheet/templates/spellburnout.html", data);
+
+    // Convert the HTML string into DOM elements
+    let tempDiv = document.createElement("div");
+    tempDiv.innerHTML = inventoryAdditionsTemplate;
+    container.append(tempDiv.children)
+}
+
+async function applyFatigueAndTemperatureAdditions(app, html, data) {
+    let container = html.find(".main-content").find(".tab-body").find(".details").find(".right").find(".flexrow");
+
+    let inventoryAdditionsTemplate = await renderTemplate("modules/darksheet/templates/fatigue.html", data);
+
+    // Convert the HTML string into DOM elements
+    let tempDiv = document.createElement("div");
+    tempDiv.innerHTML = inventoryAdditionsTemplate;
+    container.append(tempDiv.children)
+}
+
+async function applyInventoryAdditions(app, html, data) {
+    let inventoryContainer = html.find(".inventory-element");
+
+    if (inventoryContainer.length > 0) {
+        let inventoryAdditionsTemplate = await renderTemplate("modules/darksheet/templates/inventoryAdditions.html", data);
+
+        // Convert the HTML string into DOM elements
+        let tempDiv = document.createElement("div");
+        tempDiv.innerHTML = inventoryAdditionsTemplate;
+
+        // Get the 4th child position (index 3, since it's zero-based)
+        let children = inventoryContainer.children();
+        if (children.length >= 2) {
+            children.eq(2).after(tempDiv.children);
+        } else {
+            // If there are fewer than 4 children, append at the end
+            inventoryContainer.append(tempDiv.children);
+        }
+    }
+}
+
+async function addStressBar(app, html, data) {
+    let stressValue = data.actor.flags.darksheet?.attributes?.stress ?? 0;
+
+    // Determine the next stress max threshold
+    let stressMax = 20;
+    if (stressValue >= 35) stressMax = 40;
+    else if (stressValue >= 30) stressMax = 35;
+    else if (stressValue >= 20) stressMax = 30;
+
+    // Calculate the stress bar width as a percentage
+    let stressBarWidth = (stressValue / stressMax) * 100;
+    if (stressBarWidth > 100) stressBarWidth = 100; // Ensure it doesn't exceed 100%
+
+    // Determine the color based on severity
+    let stressColor = "#228B22"; // Deep Green (Safe)
+    if (stressValue >= 10) stressColor = "#B8860B"; // Dark Yellow (Mild Stress)
+    if (stressValue >= 20) stressColor = "#D2691E"; // Dark Orange (High Stress)
+    if (stressValue >= 30) stressColor = "#8B0000"; // Red (Critical Stress)
+
+
+    data.stressBarWidth = stressBarWidth;
+    data.stressColor = stressColor;
+
+    // Flags to determine which afflictions to show
+    data.showAffliction1 = stressValue >= 20 || data.actor.flags.darksheet.attributes.affliction1?.value !== "default";
+    data.showAffliction2 = stressValue >= 30 || data.actor.flags.darksheet.attributes.affliction2?.value !== "default";
+    data.showAffliction3 = stressValue >= 35 || data.actor.flags.darksheet.attributes.affliction3?.value !== "default";
+    data.showBreakingPoint = stressValue >= 40;
+    // Inject computed values
+    data.stressMax = stressMax;
+
+    let meterGroup = html.find(".meter-group").eq(1);
+    if (meterGroup.length > 0) {
+        let stressBarTemplate = await renderTemplate("modules/darksheet/templates/stressbar.html", data);
+        meterGroup.append(stressBarTemplate);
+    }
+
+    // **Get stress input & value span**
+    let stressInput = html.find("#darkStressbar");
+    let stressValueSpan = html.find(".darkStressValue");
+
+    // **Clicking on meter hides span and focuses input**
+    html.find(".stress-points").on("click", () => {
+        stressValueSpan.hide();
+        stressInput.show().focus();
+    });
+
+    // **Handle input blur (hide input, show span)**
+    stressInput.on("blur", async (ev) => {
+        let newValue = ev.target.value;
+        let stressValue = parseInt(newValue, 10);
+        if (!isNaN(stressValue)) {
+            await app.actor.update({
+                'flags.darksheet.attributes.stress': stressValue
+            });
+        }
+        stressInput.hide();
+        stressValueSpan.show();
+    });
+
+    // **Pressing Enter submits and hides input**
+    stressInput.on("keypress", async (ev) => {
+        if (ev.key === "Enter") {
+            let newValue = ev.target.value;
+            let stressValue = parseInt(newValue, 10);
+            if (!isNaN(stressValue)) {
+                await app.actor.update({
+                    'flags.darksheet.attributes.stress': stressValue
+                });
+            }
+            stressInput.hide();
+            stressValueSpan.text(stressValue).show();
+        }
+    });
+
+    // Hide input field initially
+    stressInput.hide();
+}
+
+
+
+Hooks.on(`renderItemSheet5e2`, (app, html, data) => {
     //Insert additional data
     loadItemData(app, html, data);
 });
@@ -228,7 +358,7 @@ Hooks.on(`renderItemSheet`, (app, html, data) => {
 Hooks.on('preCreateChatMessage', (app, html, data) => {
     //console.log("Chat Message Detected");
     let actor = game.actors.get(app.speaker.actor);
-    let item = actor.items.get($(app.content).attr("data-item-id"));
+    let item = actor.items.get(html.flags.dnd5e.item.id);
     let spellburnout = false;
     let iscantrip = false;
 
@@ -250,14 +380,17 @@ Hooks.on('preCreateChatMessage', (app, html, data) => {
 });
 
 async function loadItemData(app, html, data) {
-    if (data.itemType == "Spell" || data.itemType == "Feature") return; //DISABLE SPELL AND FEATURES
+    console.log("Loading Darksheet item data...");
+    if (data.item.type == "Spell" || data.item.type  == "Feature") return; //DISABLE SPELL AND FEATURES
+
+    data.NotEditable = !data.cssClass.includes("editable");
     let itemDataTemplate = await renderTemplate("modules/darksheet/templates/itemdata.html", data);
 
-    const firstElement = html.find('.properties-header').first();
+    const firstElement = html.find('.sheet-header').first();
     if (firstElement.length > 0) {
-        firstElement.prepend(itemDataTemplate);
+        firstElement.append(itemDataTemplate); // Append at the end instead of prepending
     } else {
-        html.find('.item-properties').append(itemDataTemplate);
+        html.find('.item-properties').append(itemDataTemplate); // Fallback
     }
 }
 
@@ -565,9 +698,8 @@ async function darkSheetSetup(app, html, data) {
     //ACTIVE INITIATIVE
     let armorclass = html[0].getElementsByClassName("attribute-name box-title")[2];
     if (armorclass == undefined) //NEW SHEET
-        armorclass = html[0].getElementsByClassName("ac")[0];
+        armorclass = html[0].getElementsByClassName("ac-badge")[0];
     armorclass.classList.add("rollable", "darksheet_AC");
-    armorclass.classList.add("darksheet_AC");
     let primaryCastingAbility = data.actor.system.attributes.spellcasting;
 
     // Find the specific spellcasting card div where the data-ability attribute matches the primaryCastingAbility.
@@ -662,7 +794,11 @@ async function darkSheetSetup(app, html, data) {
         size.find(".label")[0].textContent = "Size-Slots";
         size.appendTo(size.parent());
 
-        encumbrance[0].style = "--bar-percentage:" + Math.min(percentage, 101) + "%";
+        if(percentage <= 100)
+            encumbrance[0].style = "--bar-percentage:" + Math.min(percentage, 100) + "%;";
+        else
+            encumbrance[0].style = "background: red;border: 2px solid red;--bar-percentage:" + Math.min(percentage, 100) + "%;";
+        
         //SET BAR ARROWS
         //REMOVE FIRST 2 Arrows
         encumbrance[0].children[2].remove();
@@ -706,11 +842,17 @@ async function darkSheetSetup(app, html, data) {
         var _ammodie = document.createElement("div");
         var _slots = document.createElement("div");
         //ASSIGN CLASSES
-        if (!game.settings.get('darksheet', 'hidenotches')) _notches.classList.add("item-detail", "item-weight", "item-notches");
+        if (!game.settings.get('darksheet', 'hidenotches')) 
+            _notches.classList.add("item-detail", "item-weight", "item-notches");
+        
         _ammodie.classList.add("item-detail", "item-weight", "item-ammodieLabel");
-        if (game.settings.get('darksheet', 'slotbasedinventory')) _slots.classList.add("item-detail", "item-weight", "item-slots");
+        
+        if (game.settings.get('darksheet', 'slotbasedinventory')) 
+            _slots.classList.add("item-detail", "item-weight", "item-slots");
+
         //GET DATA
         let item = inventoryList.getElementsByClassName("item")[i];
+        let itemRow = item.getElementsByClassName("item-row")[0];
         let _item = actor.items.find(i => i.id == item.dataset.itemId);
         if (_item.flags.darksheet == undefined || automaticFragility && _item.flags.darksheet.item.fragility == "" || automaticSlots && _item.flags.darksheet.item.slots == null) {
             //try find slot
@@ -742,83 +884,123 @@ async function darkSheetSetup(app, html, data) {
             updates.push({
                 "_id": _item.id,
                 "flags.darksheet.item.slots": slot,
-                "flags.darksheet.item.notches": null,
-                "flags.darksheet.item.quality": "",
+                //"flags.darksheet.item.notches": null,
+                //"flags.darksheet.item.quality": "pristine",
                 "flags.darksheet.item.fragility": fragility,
-                "flags.darksheet.item.temper": "",
+                //"flags.darksheet.item.temper": "",
                 "flags.darksheet.item.ammodie": "",
             });
         }
-        let itemData = _item.flags.darksheet.item;
-        let product = itemData.slots * _item.system.quantity;
-        let usesSlots = (product % 1 === 0) ? product.toString() : product.toFixed(1);
-        //GET REFERENCE TO ITEM WEIGHT TO REMOVE IT LATER; BECAUSE IT SHARES THE CLASS WITH THE ADDED ELEMENTS
-        let itemWeight = item.getElementsByClassName("item-weight")[0];
-        let price = item.getElementsByClassName("item-price")[0];
-        //FILL WITH DATA
-        let minusNotchButton = document.createElement("button");
-        minusNotchButton.type = "button";
-        let plusNotchButton = document.createElement("button");
-        plusNotchButton.type = "button";
-        minusNotchButton.innerHTML = "<label>-</label>";
-        plusNotchButton.innerHTML = "<label>+</label>";
+        if (_item?.flags?.darksheet?.item) {
+            let itemData = _item.flags.darksheet.item;
+            let product = itemData.slots * _item.system.quantity;
+            let usesSlots = (product % 1 === 0) ? product.toString() : product.toFixed(1);
+            //GET REFERENCE TO ITEM WEIGHT TO REMOVE IT LATER; BECAUSE IT SHARES THE CLASS WITH THE ADDED ELEMENTS
+            let itemWeight = item.getElementsByClassName("item-weight")[0];
+            let price = item.getElementsByClassName("item-price")[0];
+            //FILL WITH DATA
+            let minusNotchButton = document.createElement("button");
+            minusNotchButton.type = "button";
+            let plusNotchButton = document.createElement("button");
+            plusNotchButton.type = "button";
+            minusNotchButton.innerHTML = "<label>-</label>";
+            plusNotchButton.innerHTML = "<label>+</label>";
 
-        minusNotchButton.classList.add("darksheetbuttonMinus", "notchButton");
-        plusNotchButton.classList.add("darksheetbuttonPlus", "notchButton");
+            minusNotchButton.classList.add("darksheetbuttonMinus", "notchButton");
+            plusNotchButton.classList.add("darksheetbuttonPlus", "notchButton");
 
-        if (!game.settings.get('darksheet', 'hidenotches')) _notches.append(itemData?.notches > 0 ? minusNotchButton : "", itemData?.notches ?? " ", plusNotchButton);
-        _ammodie.innerHTML = itemData.ammodie !== undefined ? '<label class="ammodieLabel">' + itemData.ammodie + '</label>' : "";
+            if (!game.settings.get('darksheet', 'hidenotches')) 
+                _notches.append(
+                    itemData?.notches > 0 ? minusNotchButton : "", 
+                    itemData?.notches > 0 ? itemData?.notches : "", 
+                    plusNotchButton
+                );                
+            
+            _ammodie.innerHTML = itemData.ammodie !== undefined ? '<label class="ammodieLabel">' + itemData.ammodie + '</label>' : "";
 
-        if (game.settings.get('darksheet', 'slotbasedinventory')) _slots.innerHTML = itemData.slots !== undefined ? usesSlots : "";
-        //INSERT NOTCHES
-        if (!game.settings.get('darksheet', 'hidenotches')) item.insertBefore(_notches, price);
-        if (itemData.ammodie == "")
-            _ammodie.classList.remove("item-ammodieLabel");
+            if (game.settings.get('darksheet', 'slotbasedinventory')) _slots.innerHTML = itemData.slots !== undefined ? usesSlots : "";
+            //INSERT NOTCHES
+            if (!game.settings.get('darksheet', 'hidenotches')) 
+                if(itemRow)
+                    itemRow.insertBefore(_notches, price);
 
-        if (!game.settings.get('darksheet', 'hideammodie')) item.insertBefore(_ammodie, price);
+            if (itemData.ammodie == "")
+                _ammodie.classList.remove("item-ammodieLabel");
 
-        if (game.settings.get('darksheet', 'slotbasedinventory')) {
-            item.insertBefore(_slots, itemWeight);
-            itemWeight.remove();
+            if (!game.settings.get('darksheet', 'hideammodie')) 
+                itemRow.insertBefore(_ammodie, price);
+
+            if (game.settings.get('darksheet', 'slotbasedinventory')) {
+                itemRow.insertBefore(_slots, itemWeight);
+                itemWeight.remove();
+            }
+
+            if (!game.settings.get('darksheet', 'disableItemDamage')) {
+                //CHANGE DISPLAY NAME
+                let itemname = _item.name;
+                /*if (_item.flags.darksheet.item.temper) {
+                    itemname = "[" + _item.flags.darksheet.item.temper + "] " + itemname;
+                }*/ //OLD TEMPER DISPLAY METHOD
+                if (_item.type == "weapon" && _item.system.damage.base.denomination > 0) {
+                    itemname += " ("+_item.system.damage.base.number+"d" + _item.system.damage.base.denomination + ")";
+                }
+                if (_item.type == "equipment" && _item.system.armor.value != 0) {
+                    itemname += " (" + _item.system.armor.value + " AC)";
+                }
+                /*if(_item.flags.darksheet.item.fragility){
+                const notchOptions = {
+                    1: 'Delicate',
+                    2: 'Frail',
+                    3: 'Basic',
+                    5: 'Solid',
+                    10: 'Sturdy',
+                    15: 'Durable',
+                    20: 'Very Sturdy',
+                    50: 'Fabled',
+                    100: 'Indestructible'
+                };
+                itemname =  "["+notchOptions[_item.flags.darksheet.item.fragility] + "] " + itemname;
+                }*/
+                
+                item.children[0].children[0].children[1].children[0].innerHTML = itemname;
+
+                //TEMPER
+                if (_item.flags.darksheet.item.temper) {
+                    let temper = _item.flags.darksheet.item.temper;
+                    let temperLabel = document.createElement("span");
+                    temperLabel.classList.add("DarktemperLabel","darktemper"+temper);
+                    temperLabel.textContent = temper.charAt(0).toUpperCase() + temper.slice(1);
+                    item.classList.add(temper);
+                    let titleElement = item.getElementsByClassName("title")[0];
+                    if (titleElement) {
+                        titleElement.prepend(temperLabel); // Prepend the quality label
+                    }
+                }
+                
+                //QUALITY
+                if (_item.flags.darksheet.item.quality) {
+                    let quality = _item.flags.darksheet.item.quality;
+                    if(quality == "pristine") continue;
+                    let qualityLabel = document.createElement("span");
+                    qualityLabel.classList.add("DarkQualityLabel","darkQuality"+quality);
+                    qualityLabel.textContent = quality.charAt(0).toUpperCase() + quality.slice(1);
+                    item.classList.add(quality);
+                    let titleElement = item.getElementsByClassName("title")[0];
+                    if (titleElement) {
+                        titleElement.prepend(qualityLabel); // Prepend the quality label
+                    }
+                }
+                
+                //SHATTERED
+                // Add a separate label if shattered
+                if (itemname.includes("[Shattered]")) {
+                    let shatteredLabel = document.createElement("span");
+                    shatteredLabel.classList.add("shattered-label");
+                    shatteredLabel.textContent = "Shattered";
+                    //item.children[0].children[0].children[1].children[0].prepend(shatteredLabel); // Add shattered label at the beginning
+                }
+            }
         }
-
-        if (!game.settings.get('darksheet', 'disableItemDamage')) {
-            //CHANGE DISPLAY NAME
-            let itemname = _item.name;
-            if (_item.flags.darksheet.item.temper) {
-                itemname = "[" + _item.flags.darksheet.item.temper + "] " + itemname;
-            }
-            if (_item.type == "weapon" && _item.system.damage.parts.length > 0) {
-                itemname += " (" + _item.system.damage.parts[0][0].split(" ")[0] + ")";
-            }
-            if (_item.type == "equipment" && _item.system.armor.value != 0) {
-                itemname += " (" + _item.system.armor.value + " AC)";
-            }
-            /*if(_item.flags.darksheet.item.fragility){
-            const notchOptions = {
-                1: 'Delicate',
-                2: 'Frail',
-                3: 'Basic',
-                5: 'Solid',
-                10: 'Sturdy',
-                15: 'Durable',
-                20: 'Very Sturdy',
-                50: 'Fabled',
-                100: 'Indestructible'
-            };
-            itemname =  "["+notchOptions[_item.flags.darksheet.item.fragility] + "] " + itemname;
-            }*/
-            if (_item.flags.darksheet.item.quality) {
-                let quality = _item.flags.darksheet.item.quality;
-                if (quality != "pristine")
-                    if (!itemname.includes("[Shattered]"))
-                        itemname = "[" + quality.charAt(0).toUpperCase() + quality.slice(1) + "] " + itemname;
-                item.classList.add(quality);
-
-            }
-            item.children[0].children[1].children[0].innerHTML = itemname;
-        }
-
     }
     actor.updateEmbeddedDocuments('Item', updates).then(() => {
         console.log('Darksheet | Inventory updated successfully.');
@@ -1181,10 +1363,10 @@ async function addNotchToItem(itemGet) {
         await darksheet.sheet.render(true);
         await darksheet.sheet.render(false);
     }
-    let notches = darksheet.flags.darksheet.item.notches;
+    let notches = darksheet.flags.darksheet.item?.notches ?? 0;
+
     let fragility = darksheet.flags.darksheet.item.fragility;
     let maxnotches = darksheet.flags.darksheet.item.maxnotches;
-    let basenotchdamage;
     let temper = darksheet.flags.darksheet.item.temper;
     if (temper === "" || temper === undefined) {
         temper = 1;
@@ -1320,300 +1502,194 @@ async function addNotchToItem(itemGet) {
             'data.notchpen': notches
         });
     }
-    if (darksheet.type === "weapon") { //WEAPON CALCULATION==========================================
-        let updatedamage = "";
-        //DAMAGE CALCULATION PLUS++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        if (Number.isInteger(notches) && darksheet.system.damage.parts.length != 0) {
-            let damage1 = darksheet.system.damage.parts[0][0];
-
-            let dicenumber = damage1.charAt(0); //2
-            let d = damage1.charAt(1); //d 
-            let damage = damage1.charAt(2) + damage1.charAt(3); //6
-            let mod = " + @mod";
-
-            let weapondamage;
+    if (darksheet.type === "weapon") {
+        let updatedamage = {};
+    
+        if (Number.isInteger(notches) && darksheet.system.damage.base.number !== 0) {
+            let diceNumber = darksheet.system.damage.base.number; // Number of dice
+            let denomination = darksheet.system.damage.base.denomination; // Dice size (6, 8, etc.)
+        
+            let newDiceNumber = diceNumber;
+            let newDenomination = denomination;
+        
             if (darksheet.flags.darksheet.currentweapondamage) {
-                weapondamage = darksheet.flags.darksheet.currentweapondamage;
-            } else {
-                weapondamage = dicenumber + d + damage; //"2d6 "
+                newDiceNumber = darksheet.flags.darksheet.currentweapondamage.number;
+                newDenomination = darksheet.flags.darksheet.currentweapondamage.denomination;
             }
-
-            if (weapondamage[weapondamage.length - 1] == " ")
-                weapondamage = weapondamage.substring(0, weapondamage.length - 1);
+        
             let baseweapondamage = darksheet.flags.darksheet.item.baseweapondamage;
-            if (baseweapondamage == undefined) {
-                baseweapondamage = weapondamage;
-                await darksheet.update({
-                    id: darksheet.id,
-                    'flags.darksheet.item.baseweapondamage': baseweapondamage
-                });
+            if (!baseweapondamage) {
+                baseweapondamage = { number: newDiceNumber, denomination: newDenomination };
+                await darksheet.update({ 'flags.darksheet.item.baseweapondamage': baseweapondamage });
             }
-
-            //WEAPONDAMAGE  PLUS++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            switch (weapondamage) {
-                //CASES FOR 2 DAMAGE DICE
-                case "2d20":
-                    weapondamage = "1d20 + 1d12";
-                    break;
-                case "1d20 + 1d12":
-                    weapondamage = "2d12";
-                    break;
-                case "2d12":
-                    weapondamage = "1d12 + 1d10";
-                    break;
-                case "1d12 + 1d10":
-                    weapondamage = "2d10";
-                    break;
-                case "2d10":
-                    weapondamage = "1d10 + 1d6";
-                    break;
-                case "1d10 + 1d6":
-                    weapondamage = "2d6";
-                    break;
-                case "2d6":
-                    weapondamage = "1d6 + 1d4";
-                    break;
-                case "1d6 + 1d4":
-                    weapondamage = "2d4";
-                    await darksheet.update({
-                        id: darksheet.id,
-                        'flags.darksheet.item.basenotchdamage': notches
-                    });
-                    break;
-                case "2d4":
-                    weapondamage = "1d4 + 1";
-                    break;
-                case "1d4 + 1":
-                    weapondamage = "2";
-                    await darksheet.update({
-                        id: darksheet.id,
-                        'flags.darksheet.item.basenotchdamage': notches
-                    });
-                    break;
-                case "2":
-                    weapondamage = "(1)";
-                    await darksheet.update({
-                        id: darksheet.id,
-                        'flags.darksheet.item.basenotchdamage': notches
-                    });
-                    if (game.settings.get('darksheet', 'shatterwhen1') && quality === "scarred") {
-                        if (game.settings.get('darksheet', 'destroyshatter')) {
-                            let newname = "[Shattered] " + darksheet.name;
-                            await darksheet.update({
-                                'name': newname
-                            });
-                        } else {
-                            darksheet.delete();
+        
+            // **WEAPON DAMAGE DEGRADATION** 
+            if (newDiceNumber === 1) { 
+                // **Type A - Single Die Weapons**
+                switch (newDenomination) {
+                    case 12: newDenomination = 10; break;
+                    case 10: newDenomination = 8; break;
+                    case 8:  newDenomination = 6; break;
+                    case 6:  newDenomination = 4; break;
+                    case 4:  newDenomination = 1; break;
+                    case 1:
+                        await darksheet.update({ 'flags.darksheet.item.basenotchdamage': notches });
+        
+                        if (game.settings.get('darksheet', 'shatterwhen1') && quality === "scarred") {
+                            if (game.settings.get('darksheet', 'destroyshatter')) {
+                                await darksheet.update({ 'name': `[Shattered] ${darksheet.name}` });
+                            } else {
+                                await darksheet.delete();
+                            }
                         }
-                    }
-                    break;
-                    //CASES FOR single dice damage
-                case "1d20":
-                    weapondamage = "1d12";
-                    break;
-                case "1d12":
-                    weapondamage = "1d10";
-                    break;
-                case "1d10":
-                    weapondamage = "1d8";
-                    break;
-                case "1d8":
-                    weapondamage = "1d6";
-                    break;
-                case "1d6":
-                    weapondamage = "1d4";
-                    await darksheet.update({
-                        id: darksheet.id,
-                        'flags.darksheet.item.basenotchdamage': notches
-                    });
-                    break;
-                case "1d4":
-                    weapondamage = "1";
-                    await darksheet.update({
-                        id: darksheet.id,
-                        'flags.darksheet.item.basenotchdamage': notches
-                    });
-                    if (game.settings.get('darksheet', 'shatterwhen1') && quality === "scarred") {
-                        if (game.settings.get('darksheet', 'destroyshatter')) {
-                            let newname = "[Shattered] " + darksheet.name;
-                            await darksheet.update({
-                                id: darksheet.id,
-                                'name': newname
-                            });
-                        } else {
-                            darksheet.delete();
+                        break;
+                }
+            } else if (newDiceNumber === 2) { 
+                // **Type B - Multi-Die Weapons**
+                switch (`${newDiceNumber}d${newDenomination}`) {
+                    case "2d6":
+                        newDiceNumber = 1; newDenomination = 6; // Becomes 1d6 + 1d4
+                        break;
+                    case "1d6":
+                        newDiceNumber = 2; newDenomination = 4; // Becomes 2d4
+                        break;
+                    case "2d4":
+                        newDiceNumber = 1; newDenomination = 4; // Becomes 1d4 + 1
+                        break;
+                    case "1d4":
+                        newDiceNumber = 1; newDenomination = 1; // Becomes 1
+                        await darksheet.update({ 'flags.darksheet.item.basenotchdamage': notches });
+        
+                        if (game.settings.get('darksheet', 'shatterwhen1') && quality === "scarred") {
+                            if (game.settings.get('darksheet', 'destroyshatter')) {
+                                await darksheet.update({ 'name': `[Shattered] ${darksheet.name}` });
+                            } else {
+                                await darksheet.delete();
+                            }
                         }
-                    }
-                    break;
-                case "1 +":
-                    weapondamage = "1";
-                    await darksheet.update({
-                        id: darksheet.id,
-                        'flags.darksheet.item.basenotchdamage': notches
-                    });
-                    if (game.settings.get('darksheet', 'shatterwhen1') && quality === "scarred") {
-                        if (game.settings.get('darksheet', 'destroyshatter')) {
-                            let newname = "[Shattered] " + darksheet.name;
-                            await darksheet.update({
-                                id: darksheet.id,
-                                'name': newname
-                            });
-                        } else {
-                            darksheet.delete();
+                        break;
+                    case "1d4 + 1":
+                        newDiceNumber = 1; newDenomination = 1;
+                        await darksheet.update({ 'flags.darksheet.item.basenotchdamage': notches });
+                        break;
+                    case "1":
+                        newDiceNumber = 0; newDenomination = 0;
+                        await darksheet.update({ 'flags.darksheet.item.basenotchdamage': notches });
+        
+                        if (game.settings.get('darksheet', 'shatterwhen1') && quality === "scarred") {
+                            if (game.settings.get('darksheet', 'destroyshatter')) {
+                                await darksheet.update({ 'name': `[Shattered] ${darksheet.name}` });
+                            } else {
+                                await darksheet.delete();
+                            }
                         }
-                    }
-                    break;
-                default:
-                    // code block
+                        break;
+                }
             }
-            updatedamage = weapondamage + mod;
-            const parts = duplicate(darksheet.system.damage.parts);
-            parts[0][0] = updatedamage;
+        
+            // **Update weapon damage**
+            let updatedamage = {
+                number: newDiceNumber,
+                denomination: newDenomination
+            };
+        
             await darksheet.update({
-                id: darksheet.id,
-                'system.damage.parts': parts
+                'system.damage.base.number': updatedamage.number,
+                'system.damage.base.denomination': updatedamage.denomination,
+                'flags.darksheet.item.currentweapondamage': updatedamage,
             });
-
-            //UPDATE WEAPON DAMAGE ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            await darksheet.update({
-                id: darksheet.id,
-                'flags.darksheet.item.currentweapondamage': weapondamage
-            });
-            await darksheet.update({
-                id: darksheet.id,
-                'flags.darksheet.item.basenotchdamage': basenotchdamage
-            });
-
-        }
+        }        
     }
-    await darksheet.update({
-        id: darksheet.id,
-        'flags.darksheet.item.notches': notches
-    });
+    
+    await darksheet.update({'flags.darksheet.item.notches': notches});
+    
 }
 async function removeNotchFromItem(item) {
     let darksheet = item;
-    let basenotchdamage = darksheet.flags.darksheet.item.basenotchdamage;
-    let notches = darksheet.flags.darksheet.item.notches;
-    let newnotches = notches - 1;
-    let updatedamage;
-    if (notches === undefined) {
-        newnotches = "";
-    }
-    if (newnotches <= 0) {
-        newnotches = "";
-    }
+    let basenotchdamage = darksheet.flags.darksheet.item?.basenotchdamage ?? "";
+    let notches = darksheet.flags.darksheet.item?.notches ?? 0;
+    let newnotches = Math.max(0, notches - 1); // Ensure newnotches doesn't go below 0
+
     if (darksheet.name.includes("[Shattered]")) {
         ui.notifications.warn("This item is [Shattered], you need to rename it first...");
-    } else {
+        return;
+    }
+
+    // Update notches
+    await darksheet.update({ 'flags.darksheet.item.notches': newnotches });
+
+    if (darksheet.type === "equipment") {
+        let AC = darksheet.system.armor.value ?? 0;
+        let BaseAC = darksheet.flags.darksheet.item?.basearmor ?? AC;
+
+        if (AC < BaseAC) {
+            AC++;
+        } else {
+            AC = BaseAC;
+        }
+
         await darksheet.update({
-            id: darksheet.id,
-            'flags.darksheet.item.notches': newnotches
+            'system.armor.value': AC,
+            'flags.darksheet.item.basearmor': BaseAC,
+            'flags.darksheet.item.basenotchdamage': basenotchdamage
         });
-        if (darksheet.type === "equipment") { //ARMOR CALCULATION==========================================
-            let AC = darksheet.system.armor.value;
-            let BaseAC = 0;
-            if (darksheet.flags.darksheet.item.basearmor != null)
-                BaseAC = darksheet.flags.darksheet.item.basearmor;
-            if (BaseAC == 0) {
-                BaseAC = AC;
-            }
-            if (AC < BaseAC) { //IF AC SMALLER THEN BASE AC
-                AC++;
-            } else {
-                AC = BaseAC;
-            }
-            await darksheet.update({
-                id: darksheet.id,
-                'flags.darksheet.item.basenotchdamage': basenotchdamage,
-                'data.armor.value': AC,
-                'flags.darksheet.item.basearmor': BaseAC
-            });
+    }
+
+    if (darksheet.type === "tool") {
+        await darksheet.update({ 'system.notchpen': newnotches });
+    }
+
+    // **Weapon Damage Restoration**
+    if (darksheet.type === "weapon") {
+        let diceNumber = darksheet.system.damage.base.number ?? 1;
+        let denomination = darksheet.system.damage.base.denomination ?? 4;
+
+        let baseweapondamage = darksheet.flags.darksheet.item?.baseweapondamage ?? { number: diceNumber, denomination: denomination };
+        let weapondamage = { number: diceNumber, denomination: denomination };
+
+        // **Damage Restoration Progression**
+        const damageProgression = {
+            "1d1": { number: 1, denomination: 4 },
+            "1d4": { number: 1, denomination: 6 },
+            "1d6": { number: 1, denomination: 8 },
+            "1d8": { number: 1, denomination: 10 },
+            "1d10": { number: 1, denomination: 12 },
+            "1d12": { number: 1, denomination: 20 },
+            "2d4": { number: 1, denomination: 6 },
+            "1d6 + 1d4": { number: 2, denomination: 6 },
+            "2d6": { number: 1, denomination: 8 },
+            "1d8 + 1d6": { number: 2, denomination: 8 },
+            "2d8": { number: 1, denomination: 10 },
+            "1d10 + 1d8": { number: 2, denomination: 10 },
+            "2d10": { number: 1, denomination: 12 },
+            "1d12 + 1d10": { number: 2, denomination: 12 },
+            "2d12": { number: 1, denomination: 20 },
+            "1d20 + 1d12": { number: 2, denomination: 20 },
+            "2d20": { number: 2, denomination: 20 }
+        };
+
+        // Convert the current damage to a string key
+        let damageKey = `${weapondamage.number}d${weapondamage.denomination}`;
+
+        if (damageProgression[damageKey]) {
+            weapondamage = damageProgression[damageKey];
         }
-        if (darksheet.type === "tool") {
-            if (basenotchdamage === undefined || basenotchdamage === "") {
-                basenotchdamage = newnotches;
-            }
-            await darksheet.update({
-                id: darksheet.id,
-                'data.notchpen': newnotches
-            });
+
+        // Ensure it does not exceed the base damage
+        if (weapondamage.number > baseweapondamage.number || weapondamage.denomination > baseweapondamage.denomination) {
+            weapondamage = baseweapondamage;
         }
-        //DAMAGE CALCULATION MINUS-------------------------------------------------------------------
-        if (darksheet.type === "weapon") {
-            let damage1 = darksheet.system.damage.parts[0][0];
-            let dicenumber = damage1.charAt(0); //2
-            let d = damage1.charAt(1); //d 
-            let damage = (damage1.charAt(2) !== ' ' ? damage1.charAt(2) : '') + (damage1.charAt(3) !== ' ' ? damage1.charAt(3) : '');
-            let mod = " + @mod";
-            let weapondamage;
-            if (darksheet.system.damage.parts[0][0].split(" ")[0]) {
-                weapondamage = darksheet.system.damage.parts[0][0].split(" ")[0];
-            } else {
-                weapondamage = dicenumber + d + damage; //"2d6 "
-            }
-            const damageDict = {
-                "2": "1d4 + 1",
-                "1d4 + 1": "2d4",
-                "2d4": "1d6 + 1d4",
-                "1d6 + 1d4": "2d6",
-                "2d6": "1d8 + 1d6",
-                "1d8 + 1d6": "2d8",
-                "2d8": "1d10 + 1d8",
-                "1d10 + 1d8": "2d10",
-                "2d10": "1d12 + 1d10",
-                "1d12 + 1d10": "2d12",
-                "2d12": "1d20 + 1d12",
-                "1d20 + 1d12": "2d20",
-                "1": "1d4",
-                "(1)": "2",
-                "1d4": "1d6",
-                "1d6": "1d8",
-                "1d8": "1d10",
-                "1d10": "1d12",
-                "1d12": "1d20",
-            };
 
-            let baseweapondamage = darksheet.flags.darksheet.item.baseweapondamage; //GETS THE WEAPON DAMAGE
-
-            if (baseweapondamage === undefined) {
-                baseweapondamage = weapondamage;
-                await darksheet.update({
-                    id: darksheet.id,
-                    'flags.darksheet.item.baseweapondamage': baseweapondamage
-                });
-            }
-
-            if (weapondamage != baseweapondamage) {
-                weapondamage = damageDict[weapondamage];
-            }
-
-            updatedamage = weapondamage + mod;
-            const parts = duplicate(darksheet.system.damage.parts);
-            parts[0][0] = updatedamage;
-
-            if (newnotches <= 0) {
-                basenotchdamage = "";
-            }
-            if (darksheet.name.includes("[Shattered]")) {
-                newnotches = notches
-            }
-            //NOTCH CALCULATION MINUS-------------------------------------------------------------------
-            await darksheet.update({
-                id: darksheet.id,
-                'flags.darksheet.item.basenotchdamage': basenotchdamage
-            });
-            await darksheet.update({
-                id: darksheet.id,
-                'data.damage.parts': parts
-            });
-            await darksheet.update({
-                id: darksheet.id,
-                'flags.darksheet.item.currentweapondamage': weapondamage
-            }); //Weapon Damage On Name
-        }
+        // **Apply the Damage Update**
+        await darksheet.update({
+            'system.damage.base.number': weapondamage.number,
+            'system.damage.base.denomination': weapondamage.denomination,
+            'flags.darksheet.item.currentweapondamage': weapondamage,
+            'flags.darksheet.item.basenotchdamage': basenotchdamage
+        });
     }
 }
+
 
 //public functions
 window.Darksheet = class Darksheet {
@@ -1897,7 +1973,7 @@ const itemBulk = {
     'Greatsword': 3,
     'Halberd': 3,
     'Handaxe': 2,
-    'Javelin (5)': 3,
+    'Javelin': 3,
     'Lance': 3,
     'Light Hammer': 1,
     'Longbow': 3,
@@ -1956,5 +2032,6 @@ const fragileItems = [
     "Poison",
     "Pen",
     "Parchment",
-    "Paper"
+    "Paper",
+    "Torch"
 ];

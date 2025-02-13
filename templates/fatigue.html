@@ -1,0 +1,22 @@
+<div class="darkPartContainer" style="margin:-5px; margin-top: -10px;">
+    <div class="darkPartContainer">
+        <div class="part3 {{actor._id}} allparts items-section card">
+                <h4 class="darksheetheader {{actor._id}} items-header header">Fatigue</h4>
+                <div class="staminaCheck">
+                    <label class="dicelabel2 staminacheck rollable darkcheck check">Stamina Check</label>
+                </div>
+                <select class="darkselect" style="background:#607100;margin:5px" name="flags.darksheet.attributes.fatigue" data-type="String">
+                    {{#select actor.flags.darksheet.attributes.fatigue}}
+                    <option class="ddValueGood" value="exenegised">Energised -1 exhaustion</option>
+                    <option class="ddValueOk" value="exwell">Well-rested</option>
+                    <option class="ddValueOk" value="exok">Ok</option>
+                    <option class="ddValueOk" value="extired">Tired</option>
+                    <option class="ddValueOk" value="exsleepy">Sleepy</option>
+                    <option class="ddValueBad" value="exvsleepy">Very sleepy +1 exhaustion</option>
+                    <option class="ddValueBad" value="exbarely">Barely awake +1 exhaustion</option>
+                    {{/select}}
+                </select>
+        </div>
+</div>
+
+</div>

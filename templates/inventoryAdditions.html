@@ -1,0 +1,70 @@
+<div class="darkPartContainer" style="margin-top: -5px;">
+    <div class="{{actor._id}} allparts items-section card">
+        <h4 class="darksheetheader {{actor._id}} items-header header">Food</h4>
+            <div>
+                <label class="foodcheckbox">
+                    <input class="ressourcecheckbox darkFoodCheckbox check" type="checkbox" name="flags.darksheet.attributes.food.value" data-dtype="Boolean" {{checked actor.flags.darksheet.attributes.food.value}}/><span></span></label>
+                <label class="foodcheckbox">
+                    <input class="ressourcecheckbox darkFoodCheckbox check" type="checkbox" name="flags.darksheet.attributes.food2.value" data-dtype="Boolean" {{checked actor.flags.darksheet.attributes.food2.value}}/><span></span></label>
+                <label class="foodcheckbox">
+                    <input class="ressourcecheckbox darkFoodCheckbox check" type="checkbox" name="flags.darksheet.attributes.food3.value" data-dtype="Boolean" {{checked actor.flags.darksheet.attributes.food3.value}}/><span></span></label>
+                <label class="foodcheckbox">
+                    <input class="ressourcecheckbox darkFoodCheckbox check" type="checkbox" name="flags.darksheet.attributes.food4.value" data-dtype="Boolean" {{checked actor.flags.darksheet.attributes.food4.value}}/><span></span></label>
+                <label class="foodcheckbox">
+                    <input class="ressourcecheckbox darkFoodCheckbox check" type="checkbox" type="radio" name="flags.darksheet.attributes.food5.value" data-dtype="Boolean" {{checked actor.flags.darksheet.attributes.food5.value}}/><span></span></label>
+                <select class="darkselect" id="sel" style="background: #693f00;" name="flags.darksheet.attributes.saturation" data-type="String" >
+                    {{#select actor.flags.darksheet.attributes.saturation}}
+                    <option class="ddValueGood" value="foodstuffed">Stuffed -1 exhaustion</option>
+                    <option class="ddValueOk" value="foodwellfed">Well-fed</option>
+                    <option class="ddValueOk" value="foodok">Ok</option>
+                    <option class="ddValueOk" value="foodpekish">Pekish</option>
+                    <option class="ddValueOk" value="foodhungry">Hungry</option>
+                    <option class="ddValueBad" value="foodravenous">Ravenous +1 exhaustion</option>
+                    <option class="ddValueBad" value="foodstarving">Starving +1 exhaustion</option>
+                    {{/select}}
+                </select>
+            </div>
+    </div>
+    <div class="part2 {{actor._id}} allparts items-section card">
+            <h4 class="darksheetheader {{actor._id}} items-header header">Waterskin</h4>
+            <div>
+                <label class="watercheckbox {{actor._id}}">
+                    <input class="ressourcecheckbox darkWaterCheckbox check" type="checkbox" name="flags.darksheet.attributes.waterskin.value" title="@{waterskin1}" data-dtype="Boolean" {{checked actor.flags.darksheet.attributes.waterskin.value}}/><span></span></label>
+                <label class="watercheckbox {{actor._id}}">
+                    <input class="ressourcecheckbox darkWaterCheckbox check" type="checkbox" name="flags.darksheet.attributes.waterskin2.value" title="@{waterskin2}" data-dtype="Boolean" {{checked actor.flags.darksheet.attributes.waterskin2.value}}/><span></span></label>
+                <label class="watercheckbox {{actor._id}}">
+                    <input class="ressourcecheckbox darkWaterCheckbox check" type="checkbox" name="flags.darksheet.attributes.waterskin3.value" title="@{waterskin3}" data-dtype="Boolean" {{checked actor.flags.darksheet.attributes.waterskin3.value}}/><span></span></label>
+                <label class="watercheckbox {{actor._id}}">
+                    <input class="ressourcecheckbox darkWaterCheckbox check" type="checkbox" name="flags.darksheet.attributes.waterskin4.value" title="@{waterskin4}" data-dtype="Boolean" {{checked actor.flags.darksheet.attributes.waterskin4.value}}/><span></span></label>
+                <label class="watercheckbox {{actor._id}}">
+                    <input class="ressourcecheckbox darkWaterCheckbox check" type="checkbox" type="radio" name="flags.darksheet.attributes.waterskin5.value" title="@{waterskin5}" data-dtype="Boolean" {{checked actor.flags.darksheet.attributes.waterskin5.value}}/><span></span></label>
+                <select class="darkselect" style="background:#0d4755;" name="flags.darksheet.attributes.thirst" data-type="String">
+                    {{#select actor.flags.darksheet.attributes.thirst}}
+                    <option class="ddValueGood" value="wquenched">Quenched -1 exhaustion</option>
+                    <option class="ddValueOk" value="wrefreshed">Refreshed</option>
+                    <option class="ddValueOk" value="wok">Ok</option>
+                    <option class="ddValueOk" value="wparched">Parched</option>
+                    <option class="ddValueOk" value="wthirsty">Thirsty</option>
+                    <option class="ddValueBad" value="wdry">Dry +1 exhaustion</option>
+                    <option class="ddValueBad" value="wdehydrated">Dehydrated +1 exhaustion</option>
+                    {{/select}}
+                </select>
+            </div>
+    </div>
+    <div class="darkPartContainer">
+        <div class="part4 {{actor._id}} allparts items-section card">
+            <h4 class="darksheetheader  {{actor._id}} items-header header">Temperature</h4>
+            <select class="exhaustionbox darkselect" name="flags.darksheet.attributes.temp" data-type="String" style="width: 163px;" {{#if globalRegMagic}}disabled{{/if}}>
+            {{#select actor.flags.darksheet.attributes.temp}}
+            <option class="ddValueGood" value="exenegised">Perfect -1 Exhaustion</option>
+            <option class="ddValueOk" value="exwell">Comfortable</option>
+            <option class="ddValueOk" value="exok">Ok</option>
+            <option class="ddValueOk" value="extired">Noticeable</option>
+            <option class="ddValueOk" value="exsleepy">Uncomfortable</option>
+            <option class="ddValueBad" value="exvsleepy">Overwhelming +1 exhaustion</option>
+            <option class="ddValueBad" value="exbarely">Unbearable +1 exhaustion</option>
+            {{/select}}
+            </select>
+        </div>
+    </div>
+</div>

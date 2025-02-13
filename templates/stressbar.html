@@ -1,0 +1,132 @@
+<div class="label roboto-condensed-upper" style="margin-top: 5px;">
+    <span>Stress</span>
+</div>
+
+<div class="meter sectioned stress-points">
+    <div class="progress hit-points stress-points">
+        <!-- Background progress bar -->
+        <div class="stress-bar" style="width: {{stressBarWidth}}%; background:{{stressColor}};"></div>
+
+        <!-- Input field for stress (hidden by default) -->
+        <input type="text" id="darkStressbar" name="actor.flags.darksheet.attributes.stress" type="number"
+            value="{{actor.flags.darksheet.attributes.stress}}" placeholder="0" style="display: none;">
+        
+        <div class="label darksheetStressLabel">
+            <span class="value darkStressValue">{{actor.flags.darksheet.attributes.stress}}</span>
+            <span class="separator">/</span>
+            <span class="max">{{stressMax}}</span>
+
+            <!-- Red Skull Icon When Stress is 40+ -->
+            {{#if showSkullIcon}}
+            <i class="fas fa-skull stress-skull" style="color: red; margin-left: 5px;"></i>
+            {{else}}
+            <i class="fas fa-skull stress-skull" style="color: red; margin-left: 5px; display: none;"></i>
+            {{/if}}
+        </div>
+    </div>
+</div>
+
+
+{{#if showBreakingPoint}}
+<div class="label roboto-condensed-upper" style="margin-top: 5px; color: red !important;">
+    <span>Breakingpoint reached</span>
+</div>
+<i class="fa-solid fa-skull" style="color: red; height: 50px; width: 100%; font-size: 50px;margin-top: 5px;"></i>
+{{/if}}
+
+<!-- Display Afflictions Section Only If Needed -->
+{{#if showAffliction1}}
+<div class="label roboto-condensed-upper" style="margin-top: 5px;">
+    <span>Afflictions</span>
+</div>
+<div class="breaks">
+    <!-- Affliction 1 (Unlocks at 20 stress) -->
+    <div style="display: inline-flex;">
+        <label class="afflictiontext"><b>20</b></label>
+        <select class="hitdice afflictionselection" name="flags.darksheet.attributes.affliction1.value" data-type="String">
+            {{#select actor.flags.darksheet.attributes.affliction1.value}}
+            <option value="default">No Affliction</option>
+            <option value="Fearful">Fearful</option>
+            <option value="Lethargic">Lethargic</option>
+            <option value="Masochistic">Masochistic</option>
+            <option value="Irrational">Irrational</option>
+            <option value="Paranoid">Paranoid</option>
+            <option value="Selfish">Selfish</option>
+            <option value="Panic">Panic</option>
+            <option value="Hopelessness">Hopelessness</option>
+            <option value="Mania">Mania</option>
+            <option value="Anxiety">Anxiety</option>
+            <option value="Hypochondria">Hypochondria</option>
+            <option value="Narcissistic">Narcissistic</option>
+            <option value="Powerful">Powerful</option>
+            <option value="Focused">Focused</option>
+            <option value="Stalwart">Stalwart</option>
+            <option value="Acute">Acute</option>
+            <option value="Perceptive">Perceptive</option>
+            <option value="Courageous">Courageous</option>
+            {{/select}}
+        </select>
+    </div>
+{{/if}}
+
+{{#if showAffliction2}}
+    <!-- Affliction 2 (Unlocks at 30 stress) -->
+    <div style="display: inline-flex;">
+        <label class="afflictiontext"><b>30</b></label>
+        <select class="hitdice afflictionselection" name="flags.darksheet.attributes.affliction2.value" data-type="String">
+            {{#select actor.flags.darksheet.attributes.affliction2.value}}
+            <option value="default">No Affliction</option>
+            <option value="Fearful">Fearful</option>
+            <option value="Lethargic">Lethargic</option>
+            <option value="Masochistic">Masochistic</option>
+            <option value="Irrational">Irrational</option>
+            <option value="Paranoid">Paranoid</option>
+            <option value="Selfish">Selfish</option>
+            <option value="Panic">Panic</option>
+            <option value="Hopelessness">Hopelessness</option>
+            <option value="Mania">Mania</option>
+            <option value="Anxiety">Anxiety</option>
+            <option value="Hypochondria">Hypochondria</option>
+            <option value="Narcissistic">Narcissistic</option>
+            <option value="Powerful">Powerful</option>
+            <option value="Focused">Focused</option>
+            <option value="Stalwart">Stalwart</option>
+            <option value="Acute">Acute</option>
+            <option value="Perceptive">Perceptive</option>
+            <option value="Courageous">Courageous</option>
+            {{/select}}
+        </select>
+    </div>
+{{/if}}
+
+{{#if showAffliction3}}
+    <!-- Affliction 3 (Unlocks at 35 stress) -->
+    <div style="display: inline-flex;">
+        <label class="afflictiontext"><b>35</b></label>
+        <select class="hitdice afflictionselection" name="flags.darksheet.attributes.affliction3.value" data-type="String">
+            {{#select actor.flags.darksheet.attributes.affliction3.value}}
+            <option value="default">No Affliction</option>
+            <option value="Fearful">Fearful</option>
+            <option value="Lethargic">Lethargic</option>
+            <option value="Masochistic">Masochistic</option>
+            <option value="Irrational">Irrational</option>
+            <option value="Paranoid">Paranoid</option>
+            <option value="Selfish">Selfish</option>
+            <option value="Panic">Panic</option>
+            <option value="Hopelessness">Hopelessness</option>
+            <option value="Mania">Mania</option>
+            <option value="Anxiety">Anxiety</option>
+            <option value="Hypochondria">Hypochondria</option>
+            <option value="Narcissistic">Narcissistic</option>
+            <option value="Powerful">Powerful</option>
+            <option value="Focused">Focused</option>
+            <option value="Stalwart">Stalwart</option>
+            <option value="Acute">Acute</option>
+            <option value="Perceptive">Perceptive</option>
+            <option value="Courageous">Courageous</option>
+            {{/select}}
+        </select>
+    </div>
+{{/if}}
+
+</div>
