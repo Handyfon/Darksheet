@@ -1,23 +1,42 @@
-<div class="tab dd flexcol" data-group="primary" data-tab="dd">
-    <h1 style="width: 100%;font-size: larger;text-align: center;margin-top: 20px;">Darker Dungeons</span>
-    <!--<input type="text" name="flags.darksheet.test" value="{{actor.flags.darksheet.test}}">-->
-    {{#unless hidechecks}}
-    <div class="darkPartContainer">
-
-        <div class="part6 {{actor._id}} allparts items-section card">
-            <h4 class="darksheetheader {{actor._id}}  items-header header">Checks</h4>
-            <div class="checks  {{actor._id}} ddchecks">
-                <div class="section3" style="margin-left: 113px;margin-right: 113px;">
-                    <label class="darkCheck rollable tableCheck {{actor._id}}" draggable="true" tableCheck="Critical Success Boon">Critical Success</label>
-                    <label class="darkCheck rollable tableCheck {{actor._id}}" draggable="true" tableCheck="Critical Failure Consequence">Critical Failure</label>
-                    <label class="darkCheck rollable tableCheck {{actor._id}}" draggable="true" tableCheck="Success at a Cost - Offerings">Success at a Cost</label>
-                    </label></label></label></label>
-                </div></br>
-                <div class="section3" style="margin-left: 113px;margin-right: 113px; margin-top: 0;">
-                    <label class="darkCheck rollable rollHealWounds" actorid="{{actor._id}}" draggable="true" tableCheck="">Heal Wounds (LR)</label>
-                </div>
+<section class="tab dd flexcol {{ tab.cssClass }}" data-group="{{ tab.group }}" data-tab="{{ tab.id }}" data-application-part="dd">
+    <div class="dd-sheet">
+        <header class="dd-hero">
+            <div>
+                <h2>Darker Dungeons</h2>
             </div>
+            <i class="fas fa-skull" inert></i>
+        </header>
+
+        <div class="darksheet-dd-survival dd-grid">
+            {{> "modules/darksheet/templates/inventoryAdditions.html"}}
+            {{> "modules/darksheet/templates/fatigue.html"}}
         </div>
+
+        {{#unless hidechecks}}
+        <section class="dd-card dd-card--checks part6 {{actor._id}} allparts items-section card">
+            <header class="dd-card-header">
+                <i class="fas fa-dice-d20" inert></i>
+                <h4 class="darksheetheader {{actor._id}} items-header header">Checks</h4>
+            </header>
+            <div class="checks {{actor._id}} ddchecks dd-checks">
+                <label class="darkCheck rollable tableCheck {{actor._id}}" draggable="true" tableCheck="Critical Success Boon">
+                    <i class="fas fa-crown" inert></i>
+                    <span>Critical Success</span>
+                </label>
+                <label class="darkCheck rollable tableCheck {{actor._id}}" draggable="true" tableCheck="Critical Failure Consequence">
+                    <i class="fas fa-exclamation-triangle" inert></i>
+                    <span>Critical Failure</span>
+                </label>
+                <label class="darkCheck rollable tableCheck {{actor._id}}" draggable="true" tableCheck="Success at a Cost - Offerings">
+                    <i class="fas fa-balance-scale" inert></i>
+                    <span>Success at a Cost</span>
+                </label>
+                <label class="darkCheck rollable rollHealWounds" actorid="{{actor._id}}" draggable="true" tableCheck="">
+                    <i class="fas fa-briefcase-medical" inert></i>
+                    <span>Heal Wounds (LR)</span>
+                </label>
+            </div>
+        </section>
+        {{/unless}}
     </div>
-    {{/unless}}
-</div>
+</section>

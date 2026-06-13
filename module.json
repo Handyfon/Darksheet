@@ -1,7 +1,7 @@
 {
   "title": "darksheet",
   "description": "DarkDND",
-  "version": "12.3",
+  "version": "14.0.5",
   "esmodules": [
     "darksheet.js"
   ],
@@ -42,7 +42,7 @@
   "socket": true,
   "url": "https://github.com/Handyfon/FDarksheet/tree/master",
   "manifest": "https://raw.githubusercontent.com/Handyfon/Darksheet/master/module.json",
-  "download": "https://github.com/Handyfon/Darksheet/raw/master/darksheet.zip",
+  "download": "https://github.com/Handyfon/Darksheet/releases/download/v14/darksheet.zip",
   "id": "darksheet",
   "authors": [
     {
@@ -56,14 +56,14 @@
         "id": "dnd5e",
         "type": "system",
         "compatibility": {
-          "minimum": "4.2.2",
-          "verified": "4.3"
+          "minimum": "5.0.0",
+          "verified": "5.3.3"
         }
       }
     ]
   },
   "compatibility": {
-    "minimum": "12",
-    "verified": "13"
+    "minimum": "13",
+    "verified": "14"
   }
 }

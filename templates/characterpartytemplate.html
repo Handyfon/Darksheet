@@ -5,7 +5,26 @@
         <div class="darkCharacterPartyCharacterHEALTHText">HP:{{system.attributes.hp.value}}/{{system.attributes.hp.max}}</div>
     </div>
     <div class="darkscreenTopFlex">
-    <div class="darkCharacterPartyCharacterTopLeft"><div class="darkCharacterPartyCharacterName"><a>{{name}}</a></div><div class="darkCharacterPartyCharacterDeathsaves">Death Fails: {{system.attributes.death.failure}}</div></div>
+    <div class="darkCharacterPartyCharacterTopLeft">
+        <div class="darkCharacterPartyCharacterName"><a>{{name}}</a></div>
+        <div class="darkCharacterPartyMeta">
+            <div class="darkCharacterPartyCharacterDeathsaves" title="Death Save Failures">
+                {{#each deathFailsArr}}
+                    <i class="fa-solid fa-skull party-skull{{#unless filled}} party-skull--empty{{/unless}}"></i>
+                {{/each}}
+            </div>
+            <div class="darkCharacterPartyExhaustion" title="Exhaustion ({{exhaustion}}/6)">
+                {{#each exhaustionArr}}
+                    <span class="party-exh-dot{{#if filled}} party-exh-dot--filled{{/if}}"></span>
+                {{/each}}
+            </div>
+            <div class="darkCharacterPartyWealth" title="Total wealth ({{wealthUnit}})">
+                <i class="fa-solid fa-coins"></i>
+                <span>{{wealthDisplay}}</span>
+                <small>{{wealthUnit}}</small>
+            </div>
+        </div>
+    </div>
     <div class="darkCharacterPartyCharacterTopMiddle"><div class="DarkScreenValDis" title="Armor Class"><i class="fa-solid fa-shield darkScreenValue"> </i><label class="darkscreenAC">{{system.attributes.ac.value}}</label></div><div class="DarkScreenValDis" title="Spell DC"><i class="fa-solid fa-book-sparkles darkScreenValue"></i><label class="darkScreenSpellDC">{{system.attributes.spelldc}}</label></div></div>
     <div class="darkCharacterPartyCharacterTopRight">
         Current Role:
@@ -22,17 +41,14 @@
     </div>
 </div>
     <img class="darkCharacterPartyCharacterIMAGE" src="{{img}}" id="{{_id}}" onclick="game.actors.get(this.id).sheet.render(true)">
-        
-    </img>
-</div>
 <div class="darkCharacterPartyCharacterBOTTOM">
     <div class="darkCharacterPartyCharacterBottomLeft">
         <div class="darkscreenBarcontainer">
             <a>Encumbrance</a>
             <div class="darkscreenBarBack">
-                <div class="darkscreenBarValue" style="width: calc(({{currentSlots}}/{{flags.darksheet.attributes.inventoryslots}})*100%)"></div>
+                <div class="darkscreenBarValue" style="width: calc(({{currentSlots}}/{{maxSlots}})*100%)"></div>
             </div>
-            <a style="flex: 0.1;text-align: center;">{{currentSlots}}/{{flags.darksheet.attributes.inventoryslots}}</a>
+            <a style="flex: 0.1;text-align: center;">{{currentSlots}}/{{maxSlots}}</a>
         </div>
         <div class="darkscreenBarcontainer">
             <a>Stress</a>
@@ -48,6 +64,20 @@
             </div>
             <a style="flex: 0.1;text-align: center;">{{woundsvalueMin}}/{{woundsvalueMax}}</a>
         </div>
+        {{#if diseases.length}}
+        <div class="darkscreenDiseases">
+            <span class="darkscreenDiseasesLabel">Diseases</span>
+            <div class="darkscreenDiseasesList">
+                {{#each diseases}}
+                <span class="darkscreenDiseaseChip darkscreenDiseaseChip--{{severity}}" title="{{statusLabel}}{{#if stage}} — Stage {{stage}}{{/if}}">
+                    <i class="fa-solid fa-virus" inert></i>
+                    <span class="darkscreenDiseaseChip-name">{{name}}</span>
+                    {{#if shortLabel}}<span class="darkscreenDiseaseChip-stage">{{shortLabel}}</span>{{/if}}
+                </span>
+                {{/each}}
+            </div>
+        </div>
+        {{/if}}
     </div>
     <div class="darkCharacterPartyCharacterBottomRight">
         <div class="darkscreenBarcontainerR">

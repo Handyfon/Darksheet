@@ -569,9 +569,6 @@ select.hitdice.white {
     flex: none;
     max-width: 550px;
 }
-.DSC-window section.window-content {
-    background: #595959 !important;
-}
 .dnd5e2.sheet.actor.character .sheet-body .sidebar .card .stats .top .ac{
     cursor: pointer;
 }
@@ -585,6 +582,36 @@ select.hitdice.white {
 i.chatIcon {
     margin-bottom: -50px;
 }
+
+.darksheet-chat-card header.card-header {
+    align-items: center;
+    gap: 6px;
+}
+
+.darksheet-chat-card i.chatIcon {
+    flex: 0 0 22px;
+    width: 22px;
+    margin: 0;
+    font-size: 17px;
+    line-height: 1;
+    text-align: center;
+}
+
+.darksheet-chat-card .darksheet-chat-title,
+.darksheet-chat-card header.card-header h3 {
+    flex: 1;
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.2;
+    font-weight: 700;
+    text-align: center;
+}
+
+.darksheet-chat-card .flavor-text {
+    font-size: 12px;
+    line-height: 1.25;
+}
+
 button.rollable.button {
     height: 30px;
     font-size: small;
@@ -607,6 +634,117 @@ button.addwoundbutton{
 #woundtr td input {
     background: var(--dnd5e-background-card);
 }
+
+.dnd5e2.sheet.actor.character .darksheet-wounds,
+.darksheet-wounds {
+    display: block;
+    margin-top: 12px;
+    padding: 10px;
+    border: 1px solid rgba(122, 38, 38, 0.32);
+    border-radius: 6px;
+    background: linear-gradient(180deg, rgba(70, 26, 26, 0.12), rgba(18, 18, 18, 0.08));
+}
+
+.darksheet-wounds h3.icon {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(122, 38, 38, 0.24);
+}
+
+.darksheet-wounds h3.icon i {
+    color: #9b3a3a;
+}
+
+.darksheet-wounds h3.icon small {
+    margin-left: auto;
+    color: var(--color-text-dark-5, #6f6558);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: none;
+}
+
+.darksheet-wound-actions {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.darksheet-wound-actions button {
+    flex: 1 1 0;
+    justify-content: center;
+    min-height: 28px;
+}
+
+.darksheet-wounds table.woundlist {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.darksheet-wounds table.woundlist th,
+.darksheet-wounds table.woundlist td {
+    padding: 5px 4px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    text-align: center;
+    vertical-align: middle;
+}
+
+.darksheet-wounds table.woundlist th:first-child,
+.darksheet-wounds table.woundlist td:first-child {
+    text-align: left;
+}
+
+.darksheet-wounds .darksheet-wound-row input[type="text"] {
+    width: 100%;
+    min-width: 0;
+    background: var(--dnd5e-background-card, rgba(255, 255, 255, 0.35));
+}
+
+.darksheet-wounds .darksheet-wound-ok {
+    color: #2f7130;
+    font-weight: 600;
+}
+
+.darksheet-wounds .exhaustiontip {
+    color: #9b2d2d;
+    font-weight: 700;
+}
+
+.darksheet-wounds .removewoundbutton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+}
+
+.darksheet-wounds .darksheet-old-wounds-toggle {
+    cursor: pointer;
+    background: rgba(122, 38, 38, 0.08);
+}
+
+.darksheet-wounds .darksheet-old-wounds-toggle td {
+    text-align: center !important;
+    color: var(--color-text-dark-5, #6f6558);
+    font-weight: 700;
+}
+
+.darksheet-wounds .darksheet-old-wounds-toggle i {
+    margin-left: 6px;
+}
+
+.darksheet-wounds .darksheet-wound-row--healed {
+    opacity: 0.72;
+}
+
+.darksheet-wounds .darksheet-wound-empty td {
+    color: var(--color-text-dark-5, #6f6558);
+    font-style: italic;
+    text-align: center !important;
+}
 .section3 {
     display: contents;
 }
@@ -615,4 +753,1544 @@ button.addwoundbutton{
     vertical-align: top;
     margin-top: 5px;
     height: 30px !important;
+}
+
+/* ============================================================
+   DARKSHEET — MODERN UI OVERRIDES (v14 / dnd5e 5.x)
+   Sits at the end of the file so these rules win over the legacy ones above.
+   ============================================================ */
+
+/* ----- Random Notch button (blood red) ------------------------ */
+.dnd5e2 .randomnotch.rollable,
+.randomnotch.rollable {
+    height: 28px;
+    flex: 0 0 auto;
+    padding: 0 12px;
+    margin: 0 6px 0 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: auto;
+    border: 1px solid #8b1818;
+    border-radius: 6px;
+    background: linear-gradient(180deg, #5a0e0e 0%, #2a0606 100%);
+    color: #f7c7c7;
+    font-family: var(--dnd5e-font-roboto, "Signika", sans-serif);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.8);
+    box-shadow:
+        0 2px 5px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 100, 100, 0.22);
+    cursor: pointer;
+    transition: background 0.12s ease, border-color 0.12s ease, transform 0.08s ease, color 0.12s ease;
+}
+.dnd5e2 .randomnotch.rollable::before,
+.randomnotch.rollable::before {
+    content: "\f6e3";   /* fa-hammer */
+    font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", "FontAwesome";
+    font-weight: 900;
+    font-size: 11px;
+    color: #ff6b6b;
+}
+.dnd5e2 .randomnotch.rollable:hover,
+.randomnotch.rollable:hover {
+    background: linear-gradient(180deg, #7a1c1c 0%, #3a0808 100%);
+    border-color: #d24545;
+    color: #ffdada;
+    box-shadow:
+        0 2px 8px rgba(180, 30, 30, 0.45),
+        inset 0 1px 0 rgba(255, 150, 150, 0.3);
+}
+.dnd5e2 .randomnotch.rollable:active,
+.randomnotch.rollable:active {
+    transform: translateY(1px);
+}
+
+/* ----- Section cards (Food / Waterskin / Temperature / Fatigue) ----- */
+.darkPartContainer { gap: 6px; }
+.darkPartContainer .allparts.items-section.card {
+    background: linear-gradient(180deg, rgba(28, 22, 16, 0.92) 0%, rgba(18, 14, 10, 0.95) 100%);
+    border: 1px solid #6b4a1f;
+    border-radius: 6px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 200, 100, 0.07);
+    padding: 6px 8px 8px;
+    overflow: hidden;
+}
+.darkPartContainer .darksheetheader.items-header.header {
+    color: #f7d28a;
+    font-family: var(--dnd5e-font-roboto-slab, "Modesto Condensed", serif);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    text-align: center;
+    margin: 0 0 6px 0 !important;
+    padding-bottom: 4px;
+    border-bottom: 1px solid rgba(184, 137, 61, 0.35);
+    text-shadow: 0 1px 2px #000;
+    background: none !important;
+}
+.darksheet-dd-survival {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 8px 12px 12px;
+}
+.darksheet-dd-survival > .darkPartContainer {
+    margin: 0 !important;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+.darksheet-dd-survival .darkPartContainer .darkPartContainer {
+    margin: 0 !important;
+}
+.darksheet-dd-survival .allparts {
+    min-width: 180px;
+}
+
+/* ----- Food / Water resource checkboxes ------------------------- */
+.foodcheckbox,
+.watercheckbox {
+    width: 24px !important;
+    height: 24px !important;
+    margin: 2px 3px 2px 0 !important;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    transition: transform 0.12s ease;
+}
+.foodcheckbox:hover,
+.watercheckbox:hover { transform: scale(1.08); }
+
+.foodcheckbox > input,
+.watercheckbox > input,
+input.ressourcecheckbox.darkFoodCheckbox,
+input.ressourcecheckbox.darkWaterCheckbox {
+    width: 22px !important;
+    height: 22px !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    border: 1.5px solid #6b4a1f !important;
+    background: linear-gradient(180deg, #1c1610 0%, #100a06 100%) !important;
+    box-shadow:
+        inset 0 1px 2px rgba(0, 0, 0, 0.7),
+        0 0 0 1px rgba(255, 200, 100, 0.05);
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.foodcheckbox > input:checked,
+input.ressourcecheckbox.darkFoodCheckbox:checked {
+    background: radial-gradient(circle at 35% 30%, #d9892a 0%, #7a4209 70%) !important;
+    border-color: #f7d28a !important;
+    box-shadow:
+        inset 0 0 4px rgba(255, 220, 160, 0.4),
+        0 0 6px rgba(217, 137, 42, 0.45);
+}
+.watercheckbox > input:checked,
+input.ressourcecheckbox.darkWaterCheckbox:checked {
+    background: radial-gradient(circle at 35% 30%, #4cb6d8 0%, #0d4755 70%) !important;
+    border-color: #b4e3f0 !important;
+    box-shadow:
+        inset 0 0 4px rgba(180, 227, 240, 0.4),
+        0 0 6px rgba(76, 182, 216, 0.45);
+}
+/* Override the legacy check mark — use FA icons instead */
+.foodcheckbox > input:checked + span::before,
+.watercheckbox > input:checked + span::before {
+    content: "" !important;
+}
+.foodcheckbox > span,
+.watercheckbox > span {
+    position: absolute;
+    pointer-events: none;
+    font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", "FontAwesome";
+    font-weight: 900;
+    font-size: 11px;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0);
+    transition: color 0.15s ease;
+}
+.foodcheckbox > input:checked ~ span { color: #fff7e0; }
+.watercheckbox > input:checked ~ span { color: #e6f8ff; }
+.foodcheckbox > span::after { content: "\f6d7"; }   /* fa-drumstick-bite */
+.watercheckbox > span::after { content: "\f773"; }  /* fa-droplet */
+
+/* ----- Dark dropdowns (fatigue / saturation / thirst / temp) ----- */
+.darkPartContainer .darkselect {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 100% !important;
+    height: 30px !important;
+    margin: 6px 0 0 0 !important;
+    padding: 0 28px 0 10px !important;
+    background-color: rgba(20, 16, 12, 0.88) !important;
+    background-image: linear-gradient(45deg, transparent 50%, #f7d28a 50%),
+                      linear-gradient(135deg, #f7d28a 50%, transparent 50%) !important;
+    background-position: calc(100% - 14px) 50%, calc(100% - 9px) 50% !important;
+    background-size: 5px 5px, 5px 5px !important;
+    background-repeat: no-repeat !important;
+    color: #f7d28a !important;
+    border: 1px solid #6b4a1f !important;
+    border-radius: 4px !important;
+    font-family: var(--dnd5e-font-roboto, "Signika", sans-serif) !important;
+    font-size: 12px !important;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    box-shadow: inset 0 1px 0 rgba(255, 200, 100, 0.08), 0 1px 3px rgba(0, 0, 0, 0.45);
+    transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+.darkPartContainer .darkselect:hover,
+.darkPartContainer .darkselect:focus {
+    border-color: #b97a32 !important;
+    outline: none;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 200, 100, 0.15),
+        0 0 0 2px rgba(184, 137, 61, 0.25);
+}
+.darkPartContainer .darkselect option {
+    background: #1a130b !important;
+    color: #f7d28a !important;
+}
+.darkPartContainer .darkselect option.ddValueGood { background: #1f4a1a !important; color: #c5f0b8 !important; }
+.darkPartContainer .darkselect option.ddValueOk   { background: #2a2317 !important; color: #f7d28a !important; }
+.darkPartContainer .darkselect option.ddValueBad  { background: #4d1414 !important; color: #f7c7c7 !important; }
+
+/* ----- Stamina Check pill -------------------------------------- */
+.staminaCheck {
+    padding: 0;
+    border: none;
+    background: none;
+    margin: 6px 0 0 0;
+}
+.staminaCheck .staminacheck.darkcheck {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 30px;
+    padding: 0 12px;
+    border: 1px solid #6b4a1f;
+    border-radius: 4px;
+    background: linear-gradient(180deg, #3a2a16 0%, #1c1610 100%);
+    color: #f7d28a;
+    font-family: var(--dnd5e-font-roboto, "Signika", sans-serif);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+.staminaCheck .staminacheck.darkcheck::before {
+    content: "\f6e8";   /* fa-heart-pulse */
+    font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", "FontAwesome";
+    font-weight: 900;
+    color: #ffb45e;
+}
+.staminaCheck .staminacheck.darkcheck:hover {
+    background: linear-gradient(180deg, #5a3f1c 0%, #2a1f12 100%);
+    border-color: #b97a32;
+    color: #ffe2b0;
+}
+
+/* ============================================================
+   DARKER DUNGEONS TAB - v14 sheet part
+   Scoped to the DD tab so older inventory/sidebar additions keep their shape.
+   ============================================================ */
+.dnd5e2 section.dd,
+section.dd[data-application-part="dd"] {
+    --dd-bg: #151414;
+    --dd-panel: #23211e;
+    --dd-panel-2: #1b1a18;
+    --dd-border: rgba(190, 150, 88, 0.5);
+    --dd-border-soft: rgba(190, 150, 88, 0.22);
+    --dd-text: #efe6d4;
+    --dd-muted: #b7a997;
+    --dd-gold: #d2a95f;
+    --dd-red: #b94d45;
+    --dd-green: #6fa66a;
+    --dd-blue: #5f9fb4;
+    --dd-shadow: rgba(0, 0, 0, 0.34);
+    padding: 0;
+    color: var(--dd-text);
+    background:
+        linear-gradient(180deg, rgba(30, 29, 27, 0.92), rgba(18, 18, 17, 0.96)),
+        var(--dd-bg);
+}
+
+section.dd .dd-sheet {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-height: 100%;
+    padding: 14px;
+}
+
+section.dd .dd-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 72px;
+    padding: 12px 14px;
+    border: 1px solid var(--dd-border);
+    border-radius: 6px;
+    background:
+        linear-gradient(135deg, rgba(71, 30, 32, 0.55), rgba(32, 35, 35, 0.7) 48%, rgba(73, 57, 29, 0.5)),
+        var(--dd-panel);
+    box-shadow: 0 8px 18px var(--dd-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+section.dd .dd-eyebrow {
+    margin: 0 0 2px;
+    color: var(--dd-gold);
+    font: 700 11px var(--dnd5e-font-roboto, "Signika", sans-serif);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+section.dd .dd-hero h2 {
+    margin: 0;
+    color: #fff5df;
+    font-family: var(--dnd5e-font-roboto-slab, "Modesto Condensed", serif);
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 1;
+    text-shadow: 0 2px 2px rgba(0, 0, 0, 0.55);
+}
+
+section.dd .dd-hero > i {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    border: 1px solid rgba(255, 232, 184, 0.28);
+    border-radius: 50%;
+    background: rgba(15, 14, 13, 0.42);
+    color: #ead3a6;
+    font-size: 20px;
+}
+
+section.dd .dd-grid,
+section.dd .darksheet-dd-survival {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+    gap: 12px;
+    margin: 0;
+}
+
+section.dd .dd-card,
+section.dd .allparts.items-section.card {
+    min-width: 0;
+    margin: 0 !important;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--dd-border-soft);
+    border-radius: 6px;
+    background:
+        linear-gradient(180deg, rgba(42, 39, 35, 0.97), rgba(25, 24, 22, 0.98)),
+        var(--dd-panel);
+    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+section.dd .dd-card:hover {
+    border-color: rgba(210, 169, 95, 0.5);
+}
+
+section.dd .dd-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 34px;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--dd-border-soft);
+    background: rgba(12, 12, 12, 0.22);
+}
+
+section.dd .dd-card-header > i {
+    display: grid;
+    place-items: center;
+    width: 22px;
+    color: var(--dd-gold);
+    font-size: 13px;
+}
+
+section.dd .dd-card-header .darksheetheader,
+section.dd .dd-card-header .items-header.header {
+    flex: 1;
+    margin: 0 !important;
+    padding: 0;
+    border: 0;
+    background: none !important;
+    color: var(--dd-text);
+    font: 700 12px var(--dnd5e-font-roboto, "Signika", sans-serif);
+    letter-spacing: 0.06em;
+    line-height: 1;
+    text-align: left;
+    text-transform: uppercase;
+    text-shadow: none;
+}
+
+section.dd .dd-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px;
+}
+
+section.dd .dd-pips {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 7px;
+}
+
+section.dd .foodcheckbox,
+section.dd .watercheckbox,
+section.dd .dd-pip {
+    position: relative;
+    width: auto !important;
+    height: 30px !important;
+    margin: 0 !important;
+    display: block;
+    transform: none;
+}
+
+section.dd .foodcheckbox:hover,
+section.dd .watercheckbox:hover {
+    transform: none;
+}
+
+section.dd .foodcheckbox > input,
+section.dd .watercheckbox > input,
+section.dd input.ressourcecheckbox.darkFoodCheckbox,
+section.dd input.ressourcecheckbox.darkWaterCheckbox {
+    width: 100% !important;
+    height: 30px !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 5px !important;
+    border: 1px solid rgba(210, 169, 95, 0.32) !important;
+    background:
+        linear-gradient(180deg, rgba(16, 15, 14, 0.98), rgba(9, 9, 8, 0.98)) !important;
+    cursor: pointer;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.72);
+}
+
+section.dd .foodcheckbox > input:checked,
+section.dd input.ressourcecheckbox.darkFoodCheckbox:checked {
+    border-color: rgba(230, 176, 78, 0.9) !important;
+    background:
+        linear-gradient(180deg, rgba(143, 93, 36, 0.96), rgba(91, 52, 20, 0.98)) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 221, 154, 0.22), 0 0 0 1px rgba(230, 176, 78, 0.16);
+}
+
+section.dd .watercheckbox > input:checked,
+section.dd input.ressourcecheckbox.darkWaterCheckbox:checked {
+    border-color: rgba(128, 199, 222, 0.9) !important;
+    background:
+        linear-gradient(180deg, rgba(42, 112, 134, 0.96), rgba(21, 70, 86, 0.98)) !important;
+    box-shadow: inset 0 1px 0 rgba(195, 236, 249, 0.2), 0 0 0 1px rgba(95, 159, 180, 0.16);
+}
+
+section.dd .foodcheckbox > input:checked + span::before,
+section.dd .watercheckbox > input:checked + span::before {
+    content: "" !important;
+}
+
+section.dd .foodcheckbox > span,
+section.dd .watercheckbox > span {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+    color: rgba(239, 230, 212, 0.28);
+    font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", "FontAwesome";
+    font-size: 12px;
+    font-weight: 900;
+}
+
+section.dd .foodcheckbox > input:checked ~ span,
+section.dd .watercheckbox > input:checked ~ span {
+    color: #fff6dd;
+}
+
+section.dd .foodcheckbox > span::after {
+    content: "\f2e7";
+}
+
+section.dd .watercheckbox > span::after {
+    content: "\f043";
+}
+
+section.dd .darkselect {
+    appearance: none;
+    width: 100% !important;
+    height: 34px !important;
+    margin: 0 !important;
+    padding: 0 32px 0 10px !important;
+    border: 1px solid rgba(210, 169, 95, 0.36) !important;
+    border-radius: 5px !important;
+    background-color: rgba(12, 12, 11, 0.82) !important;
+    background-image:
+        linear-gradient(45deg, transparent 50%, var(--dd-gold) 50%),
+        linear-gradient(135deg, var(--dd-gold) 50%, transparent 50%) !important;
+    background-position: calc(100% - 15px) 50%, calc(100% - 10px) 50% !important;
+    background-repeat: no-repeat !important;
+    background-size: 5px 5px, 5px 5px !important;
+    color: var(--dd-text) !important;
+    font: 600 12px var(--dnd5e-font-roboto, "Signika", sans-serif) !important;
+    letter-spacing: 0;
+    cursor: pointer;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.54);
+}
+
+section.dd .darkselect:hover,
+section.dd .darkselect:focus {
+    border-color: rgba(230, 184, 102, 0.76) !important;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(210, 169, 95, 0.16), inset 0 1px 2px rgba(0, 0, 0, 0.54);
+}
+
+section.dd .darkselect:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+section.dd .darkselect option {
+    background: #1e1c19 !important;
+    color: var(--dd-text) !important;
+}
+
+section.dd .darkselect option.ddValueGood {
+    background: #243a26 !important;
+    color: #d3f0cf !important;
+}
+
+section.dd .darkselect option.ddValueOk {
+    background: #2a261e !important;
+    color: #ead7b7 !important;
+}
+
+section.dd .darkselect option.ddValueBad {
+    background: #4a2524 !important;
+    color: #ffd5d1 !important;
+}
+
+section.dd .staminaCheck {
+    margin: 0;
+}
+
+section.dd .staminaCheck .staminacheck.darkcheck {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 34px;
+    margin: 0;
+    padding: 0 12px;
+    border: 1px solid rgba(123, 174, 111, 0.55);
+    border-radius: 5px;
+    background: linear-gradient(180deg, rgba(57, 82, 45, 0.86), rgba(31, 47, 31, 0.92));
+    color: #e0f1d1;
+    font: 700 12px var(--dnd5e-font-roboto, "Signika", sans-serif);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+section.dd .dd-card-header .staminacheck.darkcheck {
+    flex: 0 0 auto;
+    min-height: 24px;
+    margin: 0;
+    padding: 0 9px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(131, 173, 114, 0.46);
+    border-radius: 5px;
+    background: linear-gradient(180deg, rgba(48, 70, 55, 0.88), rgba(27, 43, 34, 0.95));
+    color: #e0f1d1;
+    font: 700 11px var(--dnd5e-font-roboto, "Signika", sans-serif);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+section.dd .dd-card-header .staminacheck.darkcheck::before {
+    content: "\f21e";
+    margin-right: 5px;
+    color: #bfe2ad;
+    font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", "FontAwesome";
+    font-weight: 900;
+}
+
+section.dd .dd-card-header .staminacheck.darkcheck:hover {
+    border-color: rgba(159, 211, 145, 0.86);
+    background: linear-gradient(180deg, rgba(70, 101, 55, 0.96), rgba(36, 57, 36, 0.98));
+    color: #f0ffe7;
+}
+
+section.dd .staminaCheck .staminacheck.darkcheck::before {
+    content: "\f21e";
+    margin-right: 7px;
+    color: #bfe2ad;
+    font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", "FontAwesome";
+    font-weight: 900;
+}
+
+section.dd .staminaCheck .staminacheck.darkcheck:hover {
+    border-color: rgba(159, 211, 145, 0.82);
+    background: linear-gradient(180deg, rgba(70, 101, 55, 0.96), rgba(36, 57, 36, 0.98));
+    color: #f0ffe7;
+}
+
+section.dd .dd-card--checks {
+    width: 100%;
+}
+
+section.dd .dd-checks {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(180px, 1fr));
+    gap: 10px;
+    padding: 12px;
+}
+
+section.dd label.darkCheck {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 38px;
+    margin: 0;
+    padding: 0 12px;
+    border: 1px solid rgba(210, 169, 95, 0.28);
+    border-radius: 5px;
+    background: linear-gradient(180deg, rgba(36, 34, 31, 0.96), rgba(22, 21, 20, 0.98));
+    color: var(--dd-text);
+    font: 700 12px var(--dnd5e-font-roboto, "Signika", sans-serif);
+    letter-spacing: 0;
+    text-align: left;
+    text-transform: none;
+    cursor: pointer;
+}
+
+section.dd label.darkCheck i {
+    width: 16px;
+    color: var(--dd-gold);
+    text-align: center;
+}
+
+section.dd label.darkCheck:hover {
+    border-color: rgba(230, 184, 102, 0.76);
+    background: linear-gradient(180deg, rgba(52, 48, 42, 0.98), rgba(28, 27, 25, 0.98));
+    color: #fff7e8;
+}
+
+section.dd label.darkCheck.tableCheck:nth-child(2) i {
+    color: var(--dd-red);
+}
+
+section.dd label.darkCheck.rollHealWounds i {
+    color: var(--dd-green);
+}
+
+@media (max-width: 720px) {
+    section.dd .dd-grid,
+    section.dd .darksheet-dd-survival,
+    section.dd .dd-checks {
+        grid-template-columns: 1fr;
+    }
+
+    section.dd .dd-sheet {
+        padding: 10px;
+    }
+}
+
+/* Final DD visual pass: cooler palette and custom hex resource pips. */
+.dnd5e2 section.dd,
+section.dd[data-application-part="dd"] {
+    --dd-bg: #101417;
+    --dd-panel: #1c2326;
+    --dd-panel-2: #171c1f;
+    --dd-border: rgba(190, 166, 112, 0.42);
+    --dd-border-soft: rgba(190, 166, 112, 0.2);
+    --dd-text: #edf0ec;
+    --dd-muted: #aeb8b4;
+    --dd-gold: #cdb070;
+    --dd-red: #c85f5a;
+    --dd-green: #83ad72;
+    --dd-blue: #60a8c2;
+    --dd-food: #7fbf74;
+    --dd-shadow: rgba(0, 0, 0, 0.38);
+    background:
+        radial-gradient(circle at 18% 0%, rgba(96, 168, 194, 0.13), transparent 34%),
+        linear-gradient(180deg, #172024 0%, #101417 100%);
+}
+
+section.dd .dd-sheet {
+    gap: 12px;
+    padding: 12px;
+}
+
+section.dd .dd-hero {
+    min-height: 54px;
+    padding: 10px 12px;
+    border-color: rgba(190, 166, 112, 0.34);
+    background:
+        linear-gradient(135deg, rgba(31, 43, 48, 0.98), rgba(25, 31, 34, 0.98)),
+        var(--dd-panel);
+    box-shadow: 0 5px 14px var(--dd-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+section.dd .dd-eyebrow {
+    display: none;
+}
+
+section.dd .dd-hero h2 {
+    color: #f7f2e7;
+    font-size: 22px;
+}
+
+section.dd .dd-hero > i {
+    width: 34px;
+    height: 34px;
+    flex-basis: 34px;
+    border-radius: 6px;
+    border-color: rgba(205, 176, 112, 0.36);
+    background: rgba(12, 15, 16, 0.55);
+    color: var(--dd-gold);
+    font-size: 15px;
+}
+
+section.dd .dd-card,
+section.dd .allparts.items-section.card {
+    border-color: rgba(164, 183, 177, 0.16);
+    background:
+        linear-gradient(180deg, rgba(31, 39, 42, 0.98), rgba(22, 27, 29, 0.98)),
+        var(--dd-panel);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+section.dd .dd-card:hover {
+    border-color: rgba(205, 176, 112, 0.38);
+}
+
+section.dd .dd-card-header {
+    border-bottom-color: rgba(164, 183, 177, 0.14);
+    background: rgba(10, 13, 14, 0.26);
+}
+
+section.dd .dd-card-header .darksheetheader,
+section.dd .dd-card-header .items-header.header {
+    color: #edf0ec;
+}
+
+section.dd .dd-card-header > i {
+    color: var(--dd-gold);
+}
+
+section.dd .dd-card--food .dd-card-header > i {
+    color: var(--dd-food);
+}
+
+section.dd .dd-card--water .dd-card-header > i {
+    color: var(--dd-blue);
+}
+
+section.dd .dd-pips {
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+}
+
+section.dd .foodcheckbox,
+section.dd .watercheckbox,
+section.dd .dd-pip {
+    width: 38px !important;
+    height: 33px !important;
+    flex: 0 0 38px;
+    display: grid;
+    place-items: center;
+}
+
+section.dd .foodcheckbox > input,
+section.dd .watercheckbox > input,
+section.dd input.ressourcecheckbox.darkFoodCheckbox,
+section.dd input.ressourcecheckbox.darkWaterCheckbox {
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 2;
+    width: 100% !important;
+    height: 100% !important;
+    opacity: 0 !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+section.dd .foodcheckbox > span,
+section.dd .watercheckbox > span {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+    background:
+        linear-gradient(180deg, rgba(34, 42, 45, 0.98), rgba(17, 22, 24, 0.98));
+    border: 1px solid rgba(164, 183, 177, 0.24);
+    color: rgba(237, 240, 236, 0.42);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 2px 5px rgba(0, 0, 0, 0.25);
+    transition: background 0.12s ease, color 0.12s ease, transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+section.dd .foodcheckbox:hover > span,
+section.dd .watercheckbox:hover > span {
+    transform: translateY(-1px);
+    border-color: rgba(205, 176, 112, 0.4);
+}
+
+section.dd .foodcheckbox > input:checked ~ span {
+    background:
+        linear-gradient(180deg, rgba(127, 191, 116, 0.98), rgba(57, 111, 55, 0.98));
+    color: #efffe9;
+    box-shadow: inset 0 1px 0 rgba(222, 255, 210, 0.28), 0 0 0 1px rgba(127, 191, 116, 0.24);
+}
+
+section.dd .watercheckbox > input:checked ~ span {
+    background:
+        linear-gradient(180deg, rgba(91, 170, 196, 0.98), rgba(38, 96, 117, 0.98));
+    color: #eafaff;
+    box-shadow: inset 0 1px 0 rgba(211, 245, 255, 0.28), 0 0 0 1px rgba(96, 168, 194, 0.24);
+}
+
+section.dd .foodcheckbox > input:focus-visible ~ span,
+section.dd .watercheckbox > input:focus-visible ~ span {
+    outline: 2px solid var(--dd-gold);
+    outline-offset: 2px;
+}
+
+section.dd .foodcheckbox > span::after {
+    content: "\f6d7";
+    font-size: 12px;
+}
+
+section.dd .watercheckbox > span::after {
+    content: "\f043";
+    font-size: 12px;
+}
+
+section.dd .darkselect {
+    border-color: rgba(164, 183, 177, 0.26) !important;
+    background-color: rgba(13, 17, 18, 0.92) !important;
+    color: #edf0ec !important;
+}
+
+section.dd .darkselect:hover,
+section.dd .darkselect:focus {
+    border-color: rgba(205, 176, 112, 0.62) !important;
+    box-shadow: 0 0 0 2px rgba(205, 176, 112, 0.14), inset 0 1px 2px rgba(0, 0, 0, 0.48);
+}
+
+section.dd .staminaCheck .staminacheck.darkcheck {
+    border-color: rgba(131, 173, 114, 0.42);
+    background: linear-gradient(180deg, rgba(48, 70, 55, 0.9), rgba(27, 43, 34, 0.96));
+}
+
+section.dd label.darkCheck {
+    border-color: rgba(164, 183, 177, 0.18);
+    background: linear-gradient(180deg, rgba(30, 38, 41, 0.98), rgba(18, 23, 25, 0.98));
+}
+
+.darksheet-hidden-weapon-quantity {
+    display: none !important;
+}
+
+/* Darksheet item sheet additions: keep custom fields out of the dnd5e header layout. */
+.darksheet-item-data {
+    margin: 8px 10px 0;
+    padding: 8px;
+    border: 1px solid rgba(120, 112, 96, 0.35);
+    border-radius: 6px;
+    background: linear-gradient(180deg, rgba(32, 34, 34, 0.95), rgba(22, 24, 24, 0.95));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.darksheet-item-data__header {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 8px;
+    color: #d1b77a;
+}
+
+.darksheet-item-data__header h3 {
+    margin: 0;
+    font: 700 12px var(--dnd5e-font-roboto, "Signika", sans-serif);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.darksheet-item-data__grid,
+.darksheetItemFormGroup.darksheet-item-data__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
+    gap: 6px;
+}
+
+.darksheet-item-data .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+    margin: 0;
+}
+
+.darksheet-item-data label,
+.darksheet-item-data .darkItemLabel,
+.darksheet-item-data .tempercost,
+.darksheet-item-data .ammodice {
+    margin: 0;
+    color: #c8c1b2;
+    font: 700 10px var(--dnd5e-font-roboto, "Signika", sans-serif);
+    letter-spacing: 0.04em;
+    text-align: left;
+    text-transform: uppercase;
+}
+
+.darksheet-item-data input,
+.darksheet-item-data select {
+    width: 100%;
+    min-width: 0;
+    height: 26px;
+    margin: 0;
+    text-align: center;
+}
+
+.darksheet-item-data__checkbox {
+    align-items: center;
+}
+
+.darksheet-item-data__checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+}
+
+/* =========================================================================
+   Spell Burnout — modern card placed atop the spells tab
+   ========================================================================= */
+.darksheet-spell-burnout {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: none;
+    flex: 1 0 100%;
+    grid-column: 1 / -1;
+    margin: 4px 0 10px;
+    padding: 10px 12px;
+    background: linear-gradient(180deg, rgba(40, 26, 38, 0.72) 0%, rgba(22, 14, 22, 0.85) 100%);
+    border: 1px solid rgba(162, 133, 204, 0.35);
+    border-radius: 8px;
+    box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    color: #e4e8f0;
+    font-family: var(--dnd5e-font-roboto, "Signika", sans-serif);
+}
+
+.darksheet-spell-burnout-tab,
+[data-application-part="spellBurnout"],
+section[data-application-part="spells"] .top > .darksheet-spell-burnout,
+.tab[data-tab="spells"] .top > .darksheet-spell-burnout,
+.tab[data-tab="spellbook"] .top > .darksheet-spell-burnout {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: none;
+    flex: 1 0 100%;
+    grid-column: 1 / -1;
+}
+
+.darksheet-spell-burnout .ds-burnout-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid rgba(162, 133, 204, 0.25);
+}
+.darksheet-spell-burnout .ds-burnout-header i {
+    color: #c89cff;
+    font-size: 14px;
+    filter: drop-shadow(0 0 6px rgba(192, 132, 252, 0.45));
+}
+.darksheet-spell-burnout .ds-burnout-header h3 {
+    margin: 0;
+    font-family: var(--dnd5e-font-roboto-slab, "Modesto Condensed", "Cinzel", serif);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.9px;
+    text-transform: uppercase;
+    color: #e4e8f0;
+    border: 0;
+}
+
+.darksheet-spell-burnout .ds-burnout-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 14px;
+}
+
+/* ---- Auto-roll toggle (switch style) ---- */
+.darksheet-spell-burnout .ds-burnout-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+    color: #b9bccb;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+.darksheet-spell-burnout .ds-burnout-toggle input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+.darksheet-spell-burnout .ds-burnout-toggle-track {
+    position: relative;
+    display: inline-block;
+    width: 34px;
+    height: 18px;
+    background: #1a1d27;
+    border: 1px solid #3a3f4e;
+    border-radius: 999px;
+    transition: background 0.15s, border-color 0.15s;
+}
+.darksheet-spell-burnout .ds-burnout-toggle-thumb {
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    width: 14px;
+    height: 14px;
+    background: #6b6f7d;
+    border-radius: 50%;
+    transition: transform 0.15s ease, background 0.15s ease;
+}
+.darksheet-spell-burnout .ds-burnout-toggle input:checked + .ds-burnout-toggle-track {
+    background: rgba(162, 133, 204, 0.25);
+    border-color: #a285cc;
+}
+.darksheet-spell-burnout .ds-burnout-toggle input:checked + .ds-burnout-toggle-track .ds-burnout-toggle-thumb {
+    background: #c89cff;
+    transform: translateX(15px);
+}
+.darksheet-spell-burnout .ds-burnout-toggle:hover .ds-burnout-toggle-track {
+    border-color: #6a809e;
+}
+
+/* ---- Burnout die: label + Roll button + select ---- */
+.darksheet-spell-burnout .ds-burnout-die,
+.darksheet-spell-burnout .ds-burnout-region {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.darksheet-spell-burnout .ds-burnout-die-label,
+.darksheet-spell-burnout .ds-burnout-region-label {
+    color: #b9bccb;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.darksheet-spell-burnout button.ds-burnout-roll {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 28px;
+    padding: 0 10px;
+    background: linear-gradient(180deg, rgba(162, 133, 204, 0.20) 0%, rgba(70, 50, 96, 0.45) 100%);
+    border: 1px solid rgba(162, 133, 204, 0.55);
+    border-radius: 5px;
+    color: #e7d8ff;
+    font-family: var(--dnd5e-font-roboto, "Signika", sans-serif);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+.darksheet-spell-burnout button.ds-burnout-roll:hover {
+    background: linear-gradient(180deg, rgba(162, 133, 204, 0.35) 0%, rgba(100, 70, 136, 0.55) 100%);
+    border-color: #c89cff;
+    color: #fff;
+}
+.darksheet-spell-burnout button.ds-burnout-roll i {
+    color: #c89cff;
+    font-size: 13px;
+}
+
+.darksheet-spell-burnout select.ds-burnout-die-select,
+.darksheet-spell-burnout select.ds-burnout-region-select {
+    height: 28px;
+    min-width: 96px;
+    padding: 0 8px;
+    background: #0a0c11;
+    border: 1px solid #3a3f4e;
+    border-radius: 5px;
+    color: #e4e8f0;
+    font-family: var(--dnd5e-font-roboto, "Signika", sans-serif);
+    font-size: 12px;
+    cursor: pointer;
+    transition: border-color 0.12s, box-shadow 0.12s;
+}
+.darksheet-spell-burnout select.ds-burnout-die-select:hover,
+.darksheet-spell-burnout select.ds-burnout-region-select:hover {
+    border-color: #6a809e;
+}
+.darksheet-spell-burnout select.ds-burnout-die-select:focus,
+.darksheet-spell-burnout select.ds-burnout-region-select:focus {
+    outline: none;
+    border-color: #a285cc;
+    box-shadow: 0 0 0 2px rgba(162, 133, 204, 0.18);
+}
+.darksheet-spell-burnout select.ds-burnout-die-select:disabled,
+.darksheet-spell-burnout select.ds-burnout-region-select:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+.darksheet-spell-burnout select option { background: #0a0c11; color: #e4e8f0; }
+
+/* ---- Compact stacking when the sheet is narrow ---- */
+@media (max-width: 720px) {
+    .darksheet-spell-burnout .ds-burnout-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+}
+
+/* =========================================================================
+   Container ammodie badge (dnd5e 5.x inventory `<ul class="containers">`)
+   ========================================================================= */
+ul.containers > li.container,
+ul.containers > li.draggable[data-item-id] {
+    position: relative;
+    overflow: visible;
+}
+ul.containers > li.container > a.item-action,
+ul.containers > li.draggable[data-item-id] > a.item-action {
+    position: relative;
+    overflow: visible;
+}
+.ds-container-ammodie {
+    position: absolute;
+    top: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    min-width: 28px;
+    height: 20px;
+    padding: 0 6px 0 5px;
+    background: linear-gradient(180deg, #2a1a0d 0%, #14100a 100%);
+    border: 1px solid #b97a32;
+    border-radius: 999px;
+    color: #f3d99c;
+    font-family: var(--dnd5e-font-roboto-slab, "Modesto Condensed", "Cinzel", serif);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-transform: lowercase;
+    cursor: pointer;
+    box-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.6),
+        inset 0 1px 0 rgba(255, 220, 160, 0.18);
+    pointer-events: auto;
+    transition: transform 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+}
+.ds-container-ammodie i {
+    color: #f3a04a;
+    font-size: 11px;
+    filter: drop-shadow(0 0 3px rgba(243, 160, 74, 0.5));
+}
+.ds-container-ammodie:hover {
+    transform: translateX(-50%) scale(1.08);
+    border-color: #ffb45e;
+    box-shadow:
+        0 4px 8px rgba(0, 0, 0, 0.65),
+        0 0 0 2px rgba(243, 160, 74, 0.25),
+        inset 0 1px 0 rgba(255, 220, 160, 0.22);
+}
+.ds-container-ammodie:active {
+    transform: translateX(-50%) scale(0.96);
+}
+
+/* =========================================================================
+   Wounds / Scars panel (dnd5e 5.x character sheet)
+   Final override: keep it aligned with the current cool DD sheet styling.
+   ========================================================================= */
+.dnd5e2.sheet.actor.character .darksheet-wounds,
+.darksheet-wounds[data-darksheet-wounds="true"] {
+    --dsw-bg: #151a20;
+    --dsw-bg-2: #101419;
+    --dsw-row: rgba(255, 255, 255, 0.035);
+    --dsw-border: #2b303d;
+    --dsw-border-soft: rgba(138, 169, 210, 0.18);
+    --dsw-text: #e2e6ee;
+    --dsw-muted: #8b94a6;
+    --dsw-accent: #8aa9d2;
+    --dsw-danger: #c96e6e;
+    --dsw-success: #7eb87a;
+    display: block;
+    width: 100%;
+    max-width: none;
+    margin: 12px 0 0;
+    padding: 12px;
+    border: 1px solid var(--dsw-border);
+    border-top: 1px solid rgba(138, 169, 210, 0.42);
+    border-radius: 8px;
+    background: linear-gradient(180deg, var(--dsw-bg) 0%, var(--dsw-bg-2) 100%);
+    color: var(--dsw-text);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.025);
+}
+
+.dnd5e2.sheet.actor.character .darksheet-wounds h3.icon,
+.darksheet-wounds[data-darksheet-wounds="true"] h3.icon {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 28px;
+    margin: 0 0 10px;
+    padding: 0 0 9px;
+    border: 0;
+    border-bottom: 1px solid var(--dsw-border);
+    color: var(--dsw-text);
+    font-family: var(--dnd5e-font-roboto, "Signika", sans-serif);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+}
+
+.dnd5e2.sheet.actor.character .darksheet-wounds h3.icon i,
+.darksheet-wounds[data-darksheet-wounds="true"] h3.icon i {
+    color: var(--dsw-accent);
+    font-size: 14px;
+}
+
+.dnd5e2.sheet.actor.character .darksheet-wounds h3.icon small,
+.darksheet-wounds[data-darksheet-wounds="true"] h3.icon small {
+    margin-left: auto;
+    padding: 2px 8px;
+    border: 1px solid var(--dsw-border);
+    border-radius: 999px;
+    color: var(--dsw-muted);
+    background: rgba(0, 0, 0, 0.22);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    text-transform: none;
+    white-space: nowrap;
+}
+
+.dnd5e2.sheet.actor.character .darksheet-wound-actions,
+.darksheet-wounds[data-darksheet-wounds="true"] .darksheet-wound-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 0 0 10px;
+}
+
+.dnd5e2.sheet.actor.character .darksheet-wound-actions button,
+.darksheet-wounds[data-darksheet-wounds="true"] .darksheet-wound-actions button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 30px;
+    height: 30px;
+    margin: 0;
+    padding: 0 10px;
+    border: 1px solid var(--dsw-border);
+    border-radius: 5px;
+    background: linear-gradient(180deg, #1d212c 0%, #161922 100%);
+    color: var(--dsw-text);
+    font-family: var(--dnd5e-font-roboto, "Signika", sans-serif);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    text-transform: none;
+    box-shadow: none;
+}
+
+.dnd5e2.sheet.actor.character .darksheet-wound-actions button:hover,
+.darksheet-wounds[data-darksheet-wounds="true"] .darksheet-wound-actions button:hover {
+    border-color: #404a5d;
+    background: linear-gradient(180deg, #252a37 0%, #1d212c 100%);
+    color: #fff;
+}
+
+.dnd5e2.sheet.actor.character .darksheet-wound-actions .rollReopenWounds i,
+.darksheet-wounds[data-darksheet-wounds="true"] .darksheet-wound-actions .rollReopenWounds i {
+    color: var(--dsw-danger);
+}
+
+.dnd5e2.sheet.actor.character .darksheet-wound-actions .addwoundbutton i,
+.darksheet-wounds[data-darksheet-wounds="true"] .darksheet-wound-actions .addwoundbutton i {
+    color: var(--dsw-success);
+}
+
+.dnd5e2.sheet.actor.character .darksheet-wounds table.woundlist,
+.darksheet-wounds[data-darksheet-wounds="true"] table.woundlist {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 5px;
+    color: var(--dsw-text);
+}
+
+.dnd5e2.sheet.actor.character .darksheet-wounds table.woundlist thead th,
+.darksheet-wounds[data-darksheet-wounds="true"] table.woundlist thead th {
+    padding: 0 8px 3px;
+    border: 0;
+    color: var(--dsw-muted);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.dnd5e2.sheet.actor.character .darksheet-wounds table.woundlist thead th:first-child,
+.darksheet-wounds[data-darksheet-wounds="true"] table.woundlist thead th:first-child {
+    text-align: left;
+}
+
+.dnd5e2.sheet.actor.character .darksheet-wounds table.woundlist tbody tr,
+.darksheet-wounds[data-darksheet-wounds="true"] table.woundlist tbody tr {
+    background: var(--dsw-row);
+}
+
+.dnd5e2.sheet.actor.character .darksheet-wounds table.woundlist tbody td,
+.darksheet-wounds[data-darksheet-wounds="true"] table.woundlist tbody td {
+    padding: 6px 8px;
+    border: 1px solid var(--dsw-border-soft);
+    border-left: 0;
+    border-right: 0;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.dnd5e2.sheet.actor.character .darksheet-wounds table.woundlist tbody td:first-child,
+.darksheet-wounds[data-darksheet-wounds="true"] table.woundlist tbody td:first-child {
+    border-left: 1px solid var(--dsw-border-soft);
+    border-radius: 5px 0 0 5px;
+    text-align: left;
+}
+
+.dnd5e2.sheet.actor.character .darksheet-wounds table.woundlist tbody td:last-child,
+.darksheet-wounds[data-darksheet-wounds="true"] table.woundlist tbody td:last-child {
+    border-right: 1px solid var(--dsw-border-soft);
+    border-radius: 0 5px 5px 0;
+}
+
+.dnd5e2.sheet.actor.character .darksheet-wounds input[type="text"],
+.darksheet-wounds[data-darksheet-wounds="true"] input[type="text"] {
+    width: 100%;
+    min-width: 0;
+    height: 28px;
+    padding: 4px 8px;
+    border: 1px solid var(--dsw-border);
+    border-radius: 4px;
+    background: #0a0c11;
+    color: var(--dsw-text);
+    font-size: 12px;
+}
+
+.dnd5e2.sheet.actor.character .darksheet-wounds input[type="text"]:focus,
+.darksheet-wounds[data-darksheet-wounds="true"] input[type="text"]:focus {
+    outline: none;
+    border-color: var(--dsw-accent);
+    box-shadow: 0 0 0 2px rgba(138, 169, 210, 0.18);
+}
+
+.dnd5e2.sheet.actor.character .darksheet-wounds input[type="checkbox"],
+.darksheet-wounds[data-darksheet-wounds="true"] input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    accent-color: var(--dsw-success);
+}
+
+.dnd5e2.sheet.actor.character .darksheet-wounds .darksheet-wound-ok,
+.darksheet-wounds[data-darksheet-wounds="true"] .darksheet-wound-ok {
+    color: #bfe3ba;
+    font-weight: 700;
+}
+
+.dnd5e2.sheet.actor.character .darksheet-wounds .exhaustiontip,
+.darksheet-wounds[data-darksheet-wounds="true"] .exhaustiontip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 7px;
+    border: 1px solid rgba(201, 110, 110, 0.5);
+    border-radius: 999px;
+    background: rgba(201, 110, 110, 0.12);
+    color: #efbabd;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.dnd5e2.sheet.actor.character .darksheet-wounds .removewoundbutton,
+.darksheet-wounds[data-darksheet-wounds="true"] .removewoundbutton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--dsw-border);
+    border-radius: 5px;
+    background: #161922;
+    color: var(--dsw-muted);
+}
+
+.dnd5e2.sheet.actor.character .darksheet-wounds .removewoundbutton:hover,
+.darksheet-wounds[data-darksheet-wounds="true"] .removewoundbutton:hover {
+    border-color: var(--dsw-accent);
+    background: #252a37;
+    color: var(--dsw-text);
+}
+
+.dnd5e2.sheet.actor.character .darksheet-wounds [data-wound-heal] i,
+.darksheet-wounds[data-darksheet-wounds="true"] [data-wound-heal] i {
+    color: var(--dsw-success);
+}
+
+.dnd5e2.sheet.actor.character .darksheet-wounds [data-wound-delete] i,
+.darksheet-wounds[data-darksheet-wounds="true"] [data-wound-delete] i {
+    color: var(--dsw-danger);
+}
+
+.dnd5e2.sheet.actor.character .darksheet-wounds .darksheet-old-wounds-toggle,
+.darksheet-wounds[data-darksheet-wounds="true"] .darksheet-old-wounds-toggle {
+    cursor: pointer;
+    background: rgba(138, 169, 210, 0.06);
+}
+
+.dnd5e2.sheet.actor.character .darksheet-wounds .darksheet-old-wounds-toggle td,
+.darksheet-wounds[data-darksheet-wounds="true"] .darksheet-old-wounds-toggle td {
+    border-color: rgba(138, 169, 210, 0.22) !important;
+    color: var(--dsw-accent);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-align: center !important;
+    text-transform: uppercase;
+}
+
+.dnd5e2.sheet.actor.character .darksheet-wounds .darksheet-wound-row--healed,
+.darksheet-wounds[data-darksheet-wounds="true"] .darksheet-wound-row--healed {
+    opacity: 0.7;
+}
+
+.dnd5e2.sheet.actor.character .darksheet-wounds .darksheet-wound-empty td,
+.darksheet-wounds[data-darksheet-wounds="true"] .darksheet-wound-empty td {
+    color: var(--dsw-muted);
+    font-style: italic;
+    text-align: center !important;
+}
+
+/* Module-provided exhaustion pips: locked red pips to the left of manual exhaustion. */
+.dnd5e2.sheet.actor.character .pips[data-prop="system.attributes.exhaustion"],
+.pips[data-prop="system.attributes.exhaustion"] {
+    position: relative;
+}
+
+.dnd5e2.sheet.actor.character .pips[data-prop="system.attributes.exhaustion"] .pip.darksheet-module-exhaustion,
+.pips[data-prop="system.attributes.exhaustion"] .pip.darksheet-module-exhaustion {
+    position: relative;
+    cursor: not-allowed;
+    opacity: 1 !important;
+    border-color: #8f2f2f !important;
+    background:
+        radial-gradient(circle at 50% 45%, #efbabd 0 24%, #c96e6e 25% 52%, #6d2222 53% 100%) !important;
+    box-shadow:
+        0 0 0 1px rgba(239, 186, 189, 0.22),
+        0 0 7px rgba(201, 110, 110, 0.45) !important;
+    filter: none !important;
+}
+
+.dnd5e2.sheet.actor.character .pips[data-prop="system.attributes.exhaustion"] .pip.darksheet-module-exhaustion::after,
+.pips[data-prop="system.attributes.exhaustion"] .pip.darksheet-module-exhaustion::after {
+    content: "";
+    position: absolute;
+    inset: 2px;
+    border-radius: inherit;
+    border: 1px solid rgba(255, 235, 235, 0.28);
+}
+
+.dnd5e2.sheet.actor.character .darksheet-exhaustion-badge,
+.darksheet-exhaustion-badge {
+    position: absolute;
+    top: -8px;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 18px;
+    padding: 0 6px;
+    margin: 0;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 1;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.55);
+    white-space: nowrap;
+    pointer-events: auto;
+}
+
+.dnd5e2.sheet.actor.character .darksheet-exhaustion-burden,
+.darksheet-exhaustion-burden {
+    top: -26px;
+    right: -12px;
+    border: 1px solid rgba(191, 98, 84, 0.78);
+    background:
+        linear-gradient(180deg, rgba(105, 43, 40, 0.95), rgba(68, 32, 35, 0.96));
+    box-shadow:
+        inset 0 1px 0 rgba(255, 224, 214, 0.2),
+        0 0 6px rgba(191, 98, 84, 0.3);
+    color: #ffd9cf;
+}
+
+.dnd5e2.sheet.actor.character .darksheet-exhaustion-relief,
+.darksheet-exhaustion-relief {
+    right: -12px;
+    border: 1px solid rgba(103, 166, 103, 0.72);
+    background:
+        linear-gradient(180deg, rgba(38, 87, 53, 0.94), rgba(25, 59, 41, 0.96));
+    box-shadow:
+        inset 0 1px 0 rgba(226, 255, 219, 0.22),
+        0 0 6px rgba(82, 162, 91, 0.28);
+    color: #d7f0ce;
 }
