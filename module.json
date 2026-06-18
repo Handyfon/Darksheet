@@ -1,7 +1,7 @@
 {
   "title": "darksheet",
   "description": "DarkDND",
-  "version": "14.0.5",
+  "version": "14.0.6",
   "esmodules": [
     "darksheet.js"
   ],
@@ -15,7 +15,7 @@
       "name": "darkrolltables",
       "label": "DarkRollTables",
       "system": "dnd5e",
-      "path": "packs/darkrolltables.db",
+      "path": "packs/darkrolltables",
       "type": "RollTable",
       "private": false,
       "flags": {}
@@ -37,12 +37,45 @@
       "type": "Macro",
       "private": false,
       "flags": {}
+    },
+	{
+      "name": "darkitems",
+      "label": "Darker Dungeons Items",
+      "system": "dnd5e",
+      "path": "packs/darkitems",
+      "type": "Item",
+      "private": false,
+      "flags": {}
+    },
+	{
+      "name": "rookie-heroes",
+      "label": "Darker Dungeons Rookie Heroes",
+      "system": "dnd5e",
+      "path": "packs/rookie-heroes.db",
+      "type": "Actor",
+      "private": false,
+      "flags": {}
+    }
+  ],
+  "packFolders": [
+    {
+      "name": "Darker Dungeons",
+      "sorting": "m",
+      "color": "#6f1f1f",
+      "packs": [
+        "darkrolltables",
+        "afflictions",
+        "darksheet-macros",
+        "darkitems",
+        "rookie-heroes"
+      ],
+      "folders": []
     }
   ],
   "socket": true,
   "url": "https://github.com/Handyfon/FDarksheet/tree/master",
   "manifest": "https://raw.githubusercontent.com/Handyfon/Darksheet/master/module.json",
-  "download": "https://github.com/Handyfon/Darksheet/releases/download/v14/darksheet.zip",
+  "download": "https://github.com/Handyfon/Darksheet/releases/download/v14.0.6/darksheet.zip",
   "id": "darksheet",
   "authors": [
     {

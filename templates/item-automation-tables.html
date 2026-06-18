@@ -1,0 +1,69 @@
+<form class="darksheet-item-automation-tables">
+  <p class="notes">
+    Matching is by item-name text, so shorter names can match many items.
+  </p>
+
+  <section class="ds-automation-section">
+    <header class="ds-automation-section__head">
+      <div>
+        <h3>Automatic Slot Table</h3>
+        <p class="hint">Each row maps an item-name match to a slot value.</p>
+      </div>
+      <button type="button" data-action="add-slot-row"><i class="fas fa-plus"></i> Add Row</button>
+    </header>
+
+    <div class="ds-slot-table-search">
+      <input type="search" data-slot-search placeholder="Search slot rules">
+    </div>
+
+    <div class="ds-slot-table-wrap">
+      <table class="ds-slot-table">
+        <thead>
+          <tr>
+            <th>Item Name Match</th>
+            <th>Slots</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody data-slot-table-body>
+          {{#each slotRows}}
+          <tr data-slot-row>
+            <td><input type="text" name="slotName" value="{{name}}" placeholder="Item name match"></td>
+            <td><input type="number" name="slotSlots" value="{{slots}}" step="any" placeholder="0"></td>
+            <td class="ds-slot-table__remove"><button type="button" data-action="remove-slot-row"><i class="fas fa-trash"></i> Remove</button></td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="ds-automation-section">
+    <header class="ds-automation-section__head">
+      <div>
+        <h3>Fragile Item Names</h3>
+        <p class="hint">Items matching these tags are assigned delicate fragility when automatic fragility is enabled.</p>
+      </div>
+    </header>
+
+    <div class="ds-fragile-tags" data-fragile-tags>
+      {{#each fragileTags}}
+      <span class="ds-fragile-tag" data-fragile-tag>
+        <input type="hidden" name="fragileTag" value="{{name}}">
+        <span>{{name}}</span>
+        <button type="button" data-action="remove-fragile-tag" title="Remove {{name}}"><i class="fas fa-xmark"></i></button>
+      </span>
+      {{/each}}
+    </div>
+
+    <div class="ds-tag-add">
+      <input type="text" data-fragile-new placeholder="Add fragile item name">
+      <button type="button" data-action="add-fragile-tag"><i class="fas fa-plus"></i> Add Tag</button>
+    </div>
+  </section>
+
+  <footer class="sheet-footer flexrow">
+    <button type="submit"><i class="fas fa-save"></i> Save Tables</button>
+    <button type="button" data-action="reset-defaults"><i class="fas fa-rotate-left"></i> Reset Defaults</button>
+  </footer>
+</form>

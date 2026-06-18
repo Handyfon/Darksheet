@@ -1,23 +1,149 @@
-<section class="darksheet-item-data">
-    <header class="darksheet-item-data__header">
-        <i class="fas fa-skull" inert></i>
-        <h3>Darker Dungeons</h3>
-    </header>
+<details class="darksheet-item-data" open>
+    <summary class="darksheet-item-data__header">
+        <i class="fas {{#if blueprint}}fa-scroll{{else}}{{#if material}}fa-cubes-stacked{{else}}fa-skull{{/if}}{{/if}}" inert></i>
+        <h3>{{#if blueprint}}Darksheet Recipe{{else}}{{#if material}}Crafting Material{{else}}Darker Dungeons{{/if}}{{/if}}</h3>
+        <i class="fas fa-chevron-down darksheet-item-data__toggle" inert></i>
+    </summary>
 
+    {{#if material}}
+    <div class="darksheet-material">
+        {{#if MaterialFieldsLocked}}
+        <div class="darksheet-mat-props">
+            <span class="darksheet-mat-chip darksheet-mat-rar-{{material.rarity}}">{{material.rarityLabel}}</span>
+            <span class="darksheet-mat-chip">{{material.substance}}</span>
+            <span class="darksheet-mat-chip darksheet-mat-el-{{material.element}}">{{material.element}}</span>
+            {{#if material.fragilityLabel}}<span class="darksheet-mat-chip" data-tooltip="Fragility — notches before it breaks"><i class="fas fa-shield-halved"></i> {{material.fragilityLabel}}</span>{{/if}}
+        </div>
+        {{else}}
+        <div class="darksheet-mat-edit">
+            <label>Rarity<select name="flags.darksheet.material.rarity">{{#select item.flags.darksheet.material.rarity}}{{#each matRarities}}<option value="{{this.key}}">{{this.label}}</option>{{/each}}{{/select}}</select></label>
+            <label>Substance<select name="flags.darksheet.material.substance">{{#select item.flags.darksheet.material.substance}}{{#each substances}}<option value="{{this}}">{{this}}</option>{{/each}}{{/select}}</select></label>
+            <label>Element<select name="flags.darksheet.material.element">{{#select item.flags.darksheet.material.element}}{{#each elements}}<option value="{{this}}">{{this}}</option>{{/each}}{{/select}}</select></label>
+            <label>Fragility<select name="flags.darksheet.item.fragility">{{#select item.flags.darksheet.item.fragility}}
+                <option value=""></option>
+                <option value="1">Delicate (1)</option>
+                <option value="2">Frail (2)</option>
+                <option value="3">Basic (3)</option>
+                <option value="5">Solid (5)</option>
+                <option value="10">Sturdy (10)</option>
+                <option value="15">Durable (15)</option>
+                <option value="20">Very Sturdy (20)</option>
+                <option value="50">Fabled (50)</option>
+                <option value="100">Indestructible</option>
+                {{/select}}</select></label>
+        </div>
+        {{/if}}
+    </div>
+    {{/if}}
+
+    {{#if blueprint}}
+    <div class="darksheet-blueprint">
+        {{#if NotEditable}}
+        <div class="darksheet-bp-meta">
+            <span><i class="fas fa-screwdriver-wrench"></i> {{blueprint.tools}}</span>
+            <span><i class="fas fa-hourglass-half"></i> {{blueprint.time}}</span>
+        </div>
+        {{#each blueprint.variants}}
+        <div class="darksheet-bp-variant">
+            <div class="darksheet-bp-variant__io">
+                <div class="darksheet-bp-variant__mats">
+                    {{#each this.materials}}<span class="darksheet-bp-matchip{{#if this.match}} darksheet-bp-matchip--type{{/if}}">{{#if this.uuid}}<a class="content-link" data-link data-uuid="{{this.uuid}}" data-type="Item" data-tooltip="Open {{this.name}}"><img src="{{this.img}}">{{this.name}}</a>{{else}}{{#if this.match}}<i class="fas fa-shapes"></i> {{this.name}}{{else}}{{this.name}}{{/if}}{{/if}}{{#if this.qty}} &times;{{this.qty}}{{/if}}</span>{{/each}}
+                </div>
+                <i class="fas fa-arrow-right darksheet-bp-arrow"></i>
+                {{#if this.resultUuid}}
+                <a class="darksheet-bp-out content-link" data-link data-uuid="{{this.resultUuid}}" data-type="Item" data-tooltip="Open {{this.result}}"><img src="{{this.resultImg}}"><span>{{this.result}}</span></a>
+                {{else}}
+                <span class="darksheet-bp-out"><img src="{{this.resultImg}}"><span>{{this.result}}</span></span>
+                {{/if}}
+            </div>
+            <div class="darksheet-bp-variant__check"><i class="fas fa-dice-d20"></i> {{this.check}}</div>
+        </div>
+        {{/each}}
+        {{else}}
+        <div class="darksheet-blueprint__edit">
+            {{#each item.flags.darksheet.recipe.variants}}
+            <div class="darksheet-bp-vedit" data-variant-index="{{@index}}">
+                <div class="darksheet-bp-vedit__head"><span>Output</span><button type="button" class="darksheet-bp-mat__rm" data-var-rm title="Remove output"><i class="fas fa-xmark"></i></button></div>
+                <label>Crafted item
+                    <div class="darksheet-bp-drop" data-var-drop>
+                        <img src="{{this.resultImg}}" alt="">
+                        <span class="darksheet-bp-drop__txt">{{#if this.resultUuid}}{{this.result}} (drop to replace){{else}}Drag the crafted item here{{/if}}</span>
+                    </div>
+                </label>
+                <label>Required materials
+                    <div class="darksheet-bp-mats">
+                        {{#each this.materials}}
+                        {{#if this.match}}
+                        <div class="darksheet-bp-mat darksheet-bp-mat--type" data-mat-index="{{@index}}">
+                            <i class="fas fa-shapes darksheet-bp-mat__typeicon" title="Any material of this type"></i>
+                            <select class="darksheet-bp-mat__sel" data-mat-rarity data-current="{{this.match.rarity}}"><option value="">Any rarity</option>{{#each ../../matRarities}}<option value="{{this.key}}">{{this.label}}</option>{{/each}}</select>
+                            <select class="darksheet-bp-mat__sel" data-mat-substance data-current="{{this.match.substance}}"><option value="">Any type</option>{{#each ../../substances}}<option value="{{this}}">{{this}}</option>{{/each}}</select>
+                            <select class="darksheet-bp-mat__sel" data-mat-element data-current="{{this.match.element}}"><option value="">Any element</option>{{#each ../../elements}}<option value="{{this}}">{{this}}</option>{{/each}}</select>
+                            <input type="number" min="1" step="1" class="darksheet-bp-mat__qty" value="{{this.qty}}" data-mat-qty title="Quantity">
+                            <button type="button" class="darksheet-bp-mat__rm" data-mat-rm title="Remove"><i class="fas fa-xmark"></i></button>
+                        </div>
+                        {{else}}
+                        <div class="darksheet-bp-mat" data-mat-index="{{@index}}">
+                            <img src="{{this.img}}" alt="">
+                            <span class="darksheet-bp-mat__name">{{this.name}}</span>
+                            <input type="number" min="1" step="1" class="darksheet-bp-mat__qty" value="{{this.qty}}" data-mat-qty title="Quantity">
+                            <button type="button" class="darksheet-bp-mat__rm" data-mat-rm title="Remove"><i class="fas fa-xmark"></i></button>
+                        </div>
+                        {{/if}}
+                        {{/each}}
+                        <div class="darksheet-bp-drop darksheet-bp-matdrop" data-var-matdrop>
+                            <i class="fas fa-plus"></i><span class="darksheet-bp-drop__txt">Drag materials here</span>
+                        </div>
+                        <button type="button" class="darksheet-gem-btn darksheet-bp-mataddtype" data-var-mataddtype><i class="fas fa-shapes"></i> Add material type</button>
+                    </div>
+                </label>
+                <div class="darksheet-bp-check">
+                    <label>Check<select data-var-skill data-current="{{this.checkSkill}}"><option value=""></option>{{#each ../checkOptions}}<option value="{{this.key}}">{{this.label}}</option>{{/each}}</select></label>
+                    <label>DC<select data-var-dc data-current="{{this.checkDc}}"><option value=""></option>{{#each ../dcOptions}}<option value="{{this}}">DC {{this}}</option>{{/each}}</select></label>
+                </div>
+            </div>
+            {{/each}}
+            <button type="button" class="darksheet-gem-btn" data-var-add><i class="fas fa-plus"></i> Add output</button>
+            <label>Tools<input type="text" name="flags.darksheet.recipe.tools" value="{{item.flags.darksheet.recipe.tools}}" list="ds-tools-list" placeholder="{{blueprint.tools}}"></label>
+            <div class="darksheet-bp-time">
+                <label>Time<input type="number" min="0" step="1" name="flags.darksheet.recipe.timeValue" value="{{item.flags.darksheet.recipe.timeValue}}"></label>
+                <label>Unit
+                    <select name="flags.darksheet.recipe.timeUnit">
+                        {{#select item.flags.darksheet.recipe.timeUnit}}
+                        {{#each timeUnits}}<option value="{{this}}">{{this}}</option>{{/each}}
+                        {{/select}}
+                    </select>
+                </label>
+            </div>
+            <datalist id="ds-tools-list"><option value="Jeweler's tools"></option><option value="Alchemist's kit"></option><option value="Smith's tools"></option><option value="Tinker's tools"></option><option value="Herbalism kit"></option><option value="Leatherworker's tools"></option><option value="Weaver's tools"></option><option value="Woodcarver's tools"></option></datalist>
+        </div>
+        {{/if}}
+        {{#if canListMaterials}}
+        <button type="button" class="darksheet-gem-btn darksheet-bp-matcheck" data-action="recipe-materials"><i class="fas fa-vials"></i> Show usable materials</button>
+        {{/if}}
+    </div>
+    {{else}}
     <div class="darksheetItemFormGroup darksheet-item-data__grid">
         <div class="form-group">
             <label class="darkItemLabel">Slots</label>
-            <input type="number" step="any" name="flags.darksheet.item.slots" placeholder="0" value="{{item.flags.darksheet.item.slots}}" data-dType="Number" {{#if NotEditable}}disabled{{/if}}>
+            <input type="number" step="any" name="flags.darksheet.item.slots" placeholder="0" value="{{item.flags.darksheet.item.slots}}" data-dType="Number" {{#if DarksheetItemFieldsLocked}}disabled{{/if}}>
         </div>
 
         <div class="form-group">
             <label class="darkItemLabel">Notches</label>
-            <input type="text" class="fatepoints" name="flags.darksheet.item.notches" value="{{item.flags.darksheet.item.notches}}" placeholder="0" data-dtype="Number" {{#if NotEditable}}disabled{{/if}}>
+            <input type="text" class="fatepoints" name="flags.darksheet.item.notches" value="{{item.flags.darksheet.item.notches}}" placeholder="0" data-dtype="Number" {{#if DarksheetItemFieldsLocked}}disabled{{/if}}>
         </div>
+
+        {{#if showSocketField}}
+        <div class="form-group">
+            <label class="darkItemLabel" title="Arcane jewel sockets (0–5). Blank = default (3, or 0 if the item requires attunement).">Sockets</label>
+            <input type="number" step="1" min="0" max="5" name="flags.darksheet.item.sockets" placeholder="0" value="{{item.flags.darksheet.item.sockets}}" data-dtype="Number" {{#if DarksheetItemFieldsLocked}}disabled{{/if}}>
+        </div>
+        {{/if}}
 
         <div class="form-group">
             <label class="darkItemLabel">Quality</label>
-            <select class="hitdice white" name="flags.darksheet.item.quality" data-dtype="String" {{#if NotEditable}}disabled{{/if}}>
+            <select class="hitdice white" name="flags.darksheet.item.quality" data-dtype="String" {{#if DarksheetItemFieldsLocked}}disabled{{/if}}>
                 {{#select item.flags.darksheet.item.quality}}
                 <option value="pristine">Pristine (75%)</option>
                 <option value="worn">Worn (50%)</option>
@@ -27,9 +153,17 @@
             </select>
         </div>
 
+        {{#if qualityValue}}
+        <div class="form-group darksheet-quality-value">
+            <label class="darkItemLabel">Quality Value</label>
+            <div class="darksheet-quality-value__amount" data-tooltip="{{qualityValue.tooltip}}">{{qualityValue.adjustedLabel}}</div>
+            <span class="darksheet-quality-value__meta">{{qualityValue.percent}}% of {{qualityValue.baseLabel}}</span>
+        </div>
+        {{/if}}
+
         <div class="form-group">
-            <label class="tempercost">Temper</label>
-            <select class="hitdice white" name="flags.darksheet.item.temper" data-dtype="String" {{#if NotEditable}}disabled{{/if}}>
+            <label class="tempercost" data-tooltip="Tempering raises value and softens critical failures — Pure: cost ×2, value ×3, ½ notch · Royal: ×4, ×6, ¼ notch · Astral: ×8, ×12, ⅛ notch.">Temper</label>
+            <select class="hitdice white" name="flags.darksheet.item.temper" data-dtype="String" {{#if DarksheetItemFieldsLocked}}disabled{{/if}}>
                 {{#select item.flags.darksheet.item.temper}}
                 <option value=""></option>
                 <option value="Pure" title="(Uncommon) Gains 1/2 (0.5) notch">Pure</option>
@@ -41,7 +175,7 @@
 
         <div class="form-group">
             <label class="tempercost">Fragility</label>
-            <select class="hitdice white" name="flags.darksheet.item.fragility" data-dtype="String" title="({{item.flags.darksheet.item.fragility}} Notches)" {{#if NotEditable}}disabled{{/if}}>
+            <select class="hitdice white" name="flags.darksheet.item.fragility" data-dtype="String" title="({{item.flags.darksheet.item.fragility}} Notches)" {{#if DarksheetItemFieldsLocked}}disabled{{/if}}>
                 {{#select item.flags.darksheet.item.fragility}}
                 <option value=""></option>
                 <option value="1" title="(1 Notch)">Delicate (1)</option>
@@ -59,7 +193,7 @@
 
         <div class="form-group">
             <label class="ammodice">Ammodie</label>
-            <select class="hitdice white" name="flags.darksheet.item.ammodie" placeholder="d20" data-dtype="String" {{#if NotEditable}}disabled{{/if}}>
+            <select class="hitdice white" name="flags.darksheet.item.ammodie" placeholder="d20" data-dtype="String" {{#if DarksheetItemFieldsLocked}}disabled{{/if}}>
                 {{#select item.flags.darksheet.item.ammodie}}
                 <option value=""></option>
                 <option value="d20">d20</option>
@@ -76,40 +210,52 @@
         {{#if item.flags.darksheet.item.ammodie}}
         <div class="form-group darksheet-item-data__checkbox">
             <label class="ammodice">AutoRoll</label>
-            <input name="flags.darksheet.item.autoRoll" type="checkbox" {{checked item.flags.darksheet.item.autoRoll}} {{#if NotEditable}}disabled{{/if}}>
-        </div>
-        {{/if}}
-
-        {{#if item.flags.darksheet.item.basenotchdamage}}
-        <div class="form-group">
-            <label class="darkItemLabel">Notchdamage</label>
-            <input type="number" step="any" name="flags.darksheet.item.basenotchdamage" placeholder="0" value="{{item.flags.darksheet.item.basenotchdamage}}" data-dType="Number" {{#if NotEditable}}disabled{{/if}}>
-        </div>
-        {{/if}}
-
-        {{#if item.flags.darksheet.item.baseweapondamage.denomination}}
-        <div class="form-group">
-            <label class="darkItemLabel">Basedamage</label>
-            <select class="hitdice white" name="flags.darksheet.item.baseweapondamage.denomination" placeholder="d20" data-dtype="Number" {{#if NotEditable}}disabled{{/if}}>
-                {{#select item.flags.darksheet.item.baseweapondamage.denomination}}
-                <option value=""></option>
-                <option value="20">d20</option>
-                <option value="12">d12</option>
-                <option value="10">d10</option>
-                <option value="8">d8</option>
-                <option value="6">d6</option>
-                <option value="5">d4</option>
-                <option value="1">1</option>
-                {{/select}}
-            </select>
-        </div>
-        {{/if}}
-
-        {{#if item.flags.darksheet.item.basearmor}}
-        <div class="form-group">
-            <label class="darkItemLabel">Basearmor</label>
-            <input type="number" step="any" name="flags.darksheet.item.basearmor" placeholder="0" value="{{item.flags.darksheet.item.basearmor}}" data-dType="Number" {{#if NotEditable}}disabled{{/if}}>
+            <input name="flags.darksheet.item.autoRoll" type="checkbox" {{checked item.flags.darksheet.item.autoRoll}} {{#if DarksheetItemFieldsLocked}}disabled{{/if}}>
         </div>
         {{/if}}
     </div>
-</section>
+    {{/if}}
+
+    {{#if gemActions}}
+    <div class="darksheet-gem-actions">
+        {{#each gemActions.buttons}}
+        <button type="button" class="darksheet-gem-btn" data-gem-action="{{this.action}}"><i class="fas {{this.icon}}"></i> {{this.label}}</button>
+        {{/each}}
+    </div>
+    {{/if}}
+
+    {{#if darkSockets}}
+    <div class="darksheet-sockets">
+        <label class="darkItemLabel">Arcane Sockets <span class="darksheet-sockets__count">{{darkSockets.used}}/{{darkSockets.max}}</span></label>
+        <div class="darksheet-sockets__row">
+            {{#each darkSockets.slots}}
+            {{#if this.filled}}
+            <span class="darksheet-socket is-filled ds-socket-click" data-socket-index="{{@index}}" data-tooltip="{{this.label}} — click to remove"><i class="fa-solid fa-gem" style="color: {{this.color}}"></i></span>
+            {{else}}
+            <span class="darksheet-socket is-empty ds-socket-click" data-socket-index="{{@index}}" data-tooltip="Empty socket — click to slot a jewel"></span>
+            {{/if}}
+            {{/each}}
+        </div>
+    </div>
+    {{/if}}
+
+    {{#if viewRecipes}}
+    <div class="darksheet-gem-actions darksheet-gem-actions--col">
+        {{#each viewRecipes}}
+        <button type="button" class="darksheet-gem-btn" data-action="view-recipe" data-recipe-uuid="{{this.uuid}}"><i class="fas fa-scroll"></i> View recipe: {{this.name}}</button>
+        {{/each}}
+    </div>
+    {{/if}}
+
+    {{#if canMakeRecipe}}
+    <div class="darksheet-gem-actions">
+        <button type="button" class="darksheet-gem-btn" data-action="make-recipe"><i class="fas fa-scroll"></i> Make a recipe for this item</button>
+    </div>
+    {{/if}}
+
+    {{#if canMakeMaterial}}
+    <div class="darksheet-gem-actions">
+        <button type="button" class="darksheet-gem-btn" data-action="make-material"><i class="fas fa-cubes-stacked"></i> Make this a Material</button>
+    </div>
+    {{/if}}
+</details>

@@ -1,0 +1,7 @@
+2026/06/18-23:16:00.903 11291c Recovering log #35
+2026/06/18-23:16:00.907 11291c Delete type=0 #35
+2026/06/18-23:16:00.907 11291c Delete type=3 #34
+2026/06/18-23:36:50.653 1bab70 Compacting 1@0 + 1@1 files
+2026/06/18-23:36:50.675 1bab70 Generated table #38@0: 1843 keys, 1053672 bytes
+2026/06/18-23:36:50.675 1bab70 Compacted 1@0 + 1@1 files => 1053672 bytes
+2026/06/18-23:36:50.677 1bab70 compacted to: files[ 0 1 0 0 0 0 0 ]

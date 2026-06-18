@@ -1,0 +1,41 @@
+<form class="darksheet-dread-mood-config">
+  <p class="notes">
+    Thresholds are flat current dread amounts. The highest matching row is shown in the player banner.
+  </p>
+
+  <section class="ds-automation-section">
+    <header class="ds-automation-section__head">
+      <div>
+        <h3>Dread Mood Thresholds</h3>
+        <p class="hint">Use short atmospheric lines. They animate beneath the Dread zone influence text.</p>
+      </div>
+      <button type="button" data-action="add-dread-mood-row"><i class="fas fa-plus"></i> Add Row</button>
+    </header>
+
+    <div class="ds-slot-table-wrap">
+      <table class="ds-slot-table ds-dread-mood-table">
+        <thead>
+          <tr>
+            <th>Min Dread</th>
+            <th>Mood Text</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody data-dread-mood-body>
+          {{#each rows}}
+          <tr data-dread-mood-row>
+            <td><input type="number" name="moodThreshold" value="{{threshold}}" min="0" step="1"></td>
+            <td><input type="text" name="moodText" value="{{text}}" placeholder="You feel watched."></td>
+            <td class="ds-slot-table__remove"><button type="button" data-action="remove-dread-mood-row"><i class="fas fa-trash"></i> Remove</button></td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer class="sheet-footer flexrow">
+    <button type="submit"><i class="fas fa-save"></i> Save Texts</button>
+    <button type="button" data-action="reset-defaults"><i class="fas fa-rotate-left"></i> Reset Defaults</button>
+  </footer>
+</form>

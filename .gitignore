@@ -1,0 +1,12 @@
+# Reference / source material — do not commit
+giffyglyphs-darker-dungeons_dd5e_pdf_latest_en_fc.pdf
+*.pdf
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.bak
+_build/

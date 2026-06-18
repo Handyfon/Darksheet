@@ -1006,25 +1006,32 @@ input.ressourcecheckbox.darkWaterCheckbox:checked {
    DARKER DUNGEONS TAB - v14 sheet part
    Scoped to the DD tab so older inventory/sidebar additions keep their shape.
    ============================================================ */
+/* Native 5e cards: the DD tab paints no background of its own (the sheet's
+   parchment/dark body shows through) and every surface follows the system theme
+   tokens — so the cards are indistinguishable from Features/Inventory. */
 .dnd5e2 section.dd,
 section.dd[data-application-part="dd"] {
-    --dd-bg: #151414;
-    --dd-panel: #23211e;
-    --dd-panel-2: #1b1a18;
-    --dd-border: rgba(190, 150, 88, 0.5);
-    --dd-border-soft: rgba(190, 150, 88, 0.22);
-    --dd-text: #efe6d4;
-    --dd-muted: #b7a997;
-    --dd-gold: #d2a95f;
+    --dd-text: var(--color-text-primary);
+    --dd-muted: var(--color-text-secondary);
+    --dd-gold: var(--dnd5e-color-gold);
+    --dd-border: var(--dnd5e-color-gold);
+    --dd-border-soft: rgba(159, 146, 117, 0.32);
     --dd-red: #b94d45;
     --dd-green: #6fa66a;
     --dd-blue: #5f9fb4;
-    --dd-shadow: rgba(0, 0, 0, 0.34);
+    /* native surfaces (flip light/dark with the system) */
+    --dd-panel: var(--dnd5e-background-card);
+    --dd-panel-2: var(--dnd5e-background-card);
+    --dd-card-bg: var(--dnd5e-background-card);
+    --dd-hero-bg: var(--dnd5e-background-card);
+    --dd-hero-title: var(--color-text-emphatic);
+    --dd-action-bg: var(--dnd5e-background-5);
+    --dd-action-border: var(--dnd5e-color-gold);
+    --dd-action-color: var(--dnd5e-color-gold);
+    --dd-inset-hi: var(--dnd5e-highlight-10, rgba(255, 255, 255, 0.1));
     padding: 0;
     color: var(--dd-text);
-    background:
-        linear-gradient(180deg, rgba(30, 29, 27, 0.92), rgba(18, 18, 17, 0.96)),
-        var(--dd-bg);
+    background: transparent;
 }
 
 section.dd .dd-sheet {
@@ -1042,11 +1049,9 @@ section.dd .dd-hero {
     min-height: 72px;
     padding: 12px 14px;
     border: 1px solid var(--dd-border);
-    border-radius: 6px;
-    background:
-        linear-gradient(135deg, rgba(71, 30, 32, 0.55), rgba(32, 35, 35, 0.7) 48%, rgba(73, 57, 29, 0.5)),
-        var(--dd-panel);
-    box-shadow: 0 8px 18px var(--dd-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    border-radius: 4px;
+    background: var(--dd-hero-bg);
+    box-shadow: 0 0 6px var(--dnd5e-shadow-45, rgba(0, 0, 0, 0.45)), inset 0 1px 0 var(--dd-inset-hi);
 }
 
 section.dd .dd-eyebrow {
@@ -1059,25 +1064,24 @@ section.dd .dd-eyebrow {
 
 section.dd .dd-hero h2 {
     margin: 0;
-    color: #fff5df;
+    color: var(--dd-hero-title);
     font-family: var(--dnd5e-font-roboto-slab, "Modesto Condensed", serif);
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 700;
     letter-spacing: 0;
     line-height: 1;
-    text-shadow: 0 2px 2px rgba(0, 0, 0, 0.55);
 }
 
-section.dd .dd-hero > i {
+section.dd .dd-hero-actions > i {
     display: grid;
     place-items: center;
     width: 44px;
     height: 44px;
     flex: 0 0 44px;
-    border: 1px solid rgba(255, 232, 184, 0.28);
+    border: 1px solid var(--dd-action-border);
     border-radius: 50%;
-    background: rgba(15, 14, 13, 0.42);
-    color: #ead3a6;
+    background: var(--dd-action-bg);
+    color: var(--dd-action-color);
     font-size: 20px;
 }
 
@@ -1095,27 +1099,95 @@ section.dd .allparts.items-section.card {
     margin: 0 !important;
     padding: 0;
     overflow: hidden;
-    border: 1px solid var(--dd-border-soft);
-    border-radius: 6px;
-    background:
-        linear-gradient(180deg, rgba(42, 39, 35, 0.97), rgba(25, 24, 22, 0.98)),
-        var(--dd-panel);
-    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--dd-border);
+    border-radius: 4px;
+    background: var(--dd-card-bg);
+    box-shadow: 0 0 6px var(--dnd5e-shadow-45, rgba(0, 0, 0, 0.45)), inset 0 1px 0 var(--dd-inset-hi);
 }
 
 section.dd .dd-card:hover {
-    border-color: rgba(210, 169, 95, 0.5);
+    box-shadow: 0 0 6px var(--dnd5e-color-gold, #9f9275), inset 0 1px 0 var(--dd-inset-hi);
 }
 
+section.dd .dd-card--temperature.part4,
+section.dd .dd-card--stamina.part3 {
+    align-self: stretch;
+    height: auto;
+}
+
+section.dd .dd-card--temperature,
+section.dd .dd-card--stamina {
+    display: flex;
+    flex-direction: column;
+}
+
+section.dd .dd-card--temperature .dd-card-body,
+section.dd .dd-card--stamina .dd-card-body {
+    flex: 1;
+}
+
+/* The iconic dnd5e card header: maroon left-to-right gradient, gold underline,
+   white Roboto-Slab title — the same banner the rest of the 5e sheet uses. */
 section.dd .dd-card-header {
     display: flex;
     align-items: center;
     gap: 8px;
-    min-height: 34px;
-    padding: 8px 10px;
-    border-bottom: 1px solid var(--dd-border-soft);
-    background: rgba(12, 12, 12, 0.22);
+    min-height: 32px;
+    padding: 7px 10px;
+    background: linear-gradient(to right, var(--dnd5e-card-header-1, #401f25), var(--dnd5e-card-header-2, #741b2b));
+    border-bottom: 1px solid var(--dd-border);
+    color: #fff;
 }
+section.dd .dd-card-header h4,
+section.dd .dd-card-header .darksheetheader {
+    margin: 0;
+    border: none;
+    font-family: var(--dnd5e-font-roboto-slab, "Roboto Slab", serif);
+    font-size: var(--font-size-13, 13px);
+    font-weight: bold;
+    line-height: 1;
+    color: #fff;
+}
+section.dd .dd-card-header > i { color: rgba(255, 255, 255, 0.9); }
+section.dd .dd-card-header .rollable,
+section.dd .dd-card-header label { color: rgba(255, 255, 255, 0.85); }
+
+/* Darker Dungeons inspiration (up to 3) — reuses the system's fancy diamond.
+   The container is absolutely placed where the single native diamond sat (right
+   of the level badge); the three cloned diamonds then stack downward from there. */
+.dnd5e2.sheet.actor.character .sheet-header > .right .darksheet-inspiration {
+    position: absolute;
+    right: calc(var(--level-size) + var(--padding-right) - 32px);
+    top: calc(var(--level-size) / 2 - 14px);
+    margin-right: -80px;
+    margin-top: -19px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    z-index: 2;
+}
+/* Un-absolute the clones (the system rule forces position:absolute) so they flow
+   down the column, and shrink them a touch so three fit neatly beside the level. */
+.dnd5e2.sheet.actor.character .sheet-header > .right .darksheet-inspiration .inspiration {
+    position: static;
+    --size: 28px;
+}
+
+/* Training track */
+section.dd .darksheet-training { padding: 8px 10px; }
+section.dd .darksheet-training__hint { margin: 0 0 8px; font-size: 11px; opacity: 0.7; }
+section.dd .darksheet-training__boxes { display: flex; flex-wrap: wrap; gap: 8px; }
+section.dd .darksheet-training__box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+    opacity: 0.85;
+    cursor: pointer;
+}
+section.dd .darksheet-training__box input { width: 18px; height: 18px; cursor: pointer; accent-color: var(--dd-gold, #c8a24a); }
 
 section.dd .dd-card-header > i {
     display: grid;
@@ -1180,11 +1252,10 @@ section.dd input.ressourcecheckbox.darkWaterCheckbox {
     margin: 0 !important;
     padding: 0 !important;
     border-radius: 5px !important;
-    border: 1px solid rgba(210, 169, 95, 0.32) !important;
-    background:
-        linear-gradient(180deg, rgba(16, 15, 14, 0.98), rgba(9, 9, 8, 0.98)) !important;
+    border: 1px solid var(--dd-border-soft) !important;
+    background: var(--dnd5e-background-25, rgba(0, 0, 0, 0.25)) !important;
     cursor: pointer;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.72);
+    box-shadow: inset 0 1px 3px var(--dnd5e-shadow-45, rgba(0, 0, 0, 0.45));
 }
 
 section.dd .foodcheckbox > input:checked,
@@ -1215,7 +1286,8 @@ section.dd .watercheckbox > span {
     display: grid;
     place-items: center;
     pointer-events: none;
-    color: rgba(239, 230, 212, 0.28);
+    color: var(--color-text-tertiary, rgba(239, 230, 212, 0.28));
+    opacity: 0.6;
     font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", "FontAwesome";
     font-size: 12px;
     font-weight: 900;
@@ -1240,9 +1312,9 @@ section.dd .darkselect {
     height: 34px !important;
     margin: 0 !important;
     padding: 0 32px 0 10px !important;
-    border: 1px solid rgba(210, 169, 95, 0.36) !important;
+    border: 1px solid var(--dd-border-soft) !important;
     border-radius: 5px !important;
-    background-color: rgba(12, 12, 11, 0.82) !important;
+    background-color: var(--dnd5e-background-card) !important;
     background-image:
         linear-gradient(45deg, transparent 50%, var(--dd-gold) 50%),
         linear-gradient(135deg, var(--dd-gold) 50%, transparent 50%) !important;
@@ -1253,7 +1325,7 @@ section.dd .darkselect {
     font: 600 12px var(--dnd5e-font-roboto, "Signika", sans-serif) !important;
     letter-spacing: 0;
     cursor: pointer;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.54);
+    box-shadow: inset 0 1px 2px var(--dnd5e-shadow-15, rgba(0, 0, 0, 0.15));
 }
 
 section.dd .darkselect:hover,
@@ -1269,7 +1341,7 @@ section.dd .darkselect:disabled {
 }
 
 section.dd .darkselect option {
-    background: #1e1c19 !important;
+    background: var(--dnd5e-background-card) !important;
     color: var(--dd-text) !important;
 }
 
@@ -1300,13 +1372,14 @@ section.dd .staminaCheck .staminacheck.darkcheck {
     min-height: 34px;
     margin: 0;
     padding: 0 12px;
-    border: 1px solid rgba(123, 174, 111, 0.55);
+    border: 1px solid var(--dd-border-soft);
     border-radius: 5px;
-    background: linear-gradient(180deg, rgba(57, 82, 45, 0.86), rgba(31, 47, 31, 0.92));
-    color: #e0f1d1;
+    background: var(--dnd5e-background-card);
+    color: var(--dd-text);
     font: 700 12px var(--dnd5e-font-roboto, "Signika", sans-serif);
     letter-spacing: 0.04em;
     text-transform: uppercase;
+    box-shadow: 0 0 6px var(--dnd5e-shadow-15, rgba(0, 0, 0, 0.15));
 }
 
 section.dd .dd-card-header .staminacheck.darkcheck {
@@ -1317,10 +1390,10 @@ section.dd .dd-card-header .staminacheck.darkcheck {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid rgba(131, 173, 114, 0.46);
+    border: 1px solid rgba(255, 255, 255, 0.35);
     border-radius: 5px;
-    background: linear-gradient(180deg, rgba(48, 70, 55, 0.88), rgba(27, 43, 34, 0.95));
-    color: #e0f1d1;
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
     font: 700 11px var(--dnd5e-font-roboto, "Signika", sans-serif);
     letter-spacing: 0.04em;
     text-transform: uppercase;
@@ -1330,29 +1403,29 @@ section.dd .dd-card-header .staminacheck.darkcheck {
 section.dd .dd-card-header .staminacheck.darkcheck::before {
     content: "\f21e";
     margin-right: 5px;
-    color: #bfe2ad;
+    color: rgba(255, 255, 255, 0.85);
     font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", "FontAwesome";
     font-weight: 900;
 }
 
 section.dd .dd-card-header .staminacheck.darkcheck:hover {
-    border-color: rgba(159, 211, 145, 0.86);
-    background: linear-gradient(180deg, rgba(70, 101, 55, 0.96), rgba(36, 57, 36, 0.98));
-    color: #f0ffe7;
+    border-color: rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.22);
+    color: #fff;
 }
 
 section.dd .staminaCheck .staminacheck.darkcheck::before {
     content: "\f21e";
     margin-right: 7px;
-    color: #bfe2ad;
+    color: var(--dd-gold);
     font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", "FontAwesome";
     font-weight: 900;
 }
 
 section.dd .staminaCheck .staminacheck.darkcheck:hover {
-    border-color: rgba(159, 211, 145, 0.82);
-    background: linear-gradient(180deg, rgba(70, 101, 55, 0.96), rgba(36, 57, 36, 0.98));
-    color: #f0ffe7;
+    border-color: var(--dd-gold);
+    box-shadow: 0 0 5px var(--dd-gold);
+    color: var(--color-text-emphatic, #f0ffe7);
 }
 
 section.dd .dd-card--checks {
@@ -1361,47 +1434,49 @@ section.dd .dd-card--checks {
 
 section.dd .dd-checks {
     display: grid;
-    grid-template-columns: repeat(2, minmax(180px, 1fr));
+    grid-template-columns: repeat(3, minmax(150px, 1fr));
     gap: 10px;
+    height: auto;
+    min-height: 0;
     padding: 12px;
 }
 
-section.dd label.darkCheck {
+section.dd .darkCheck {
+    appearance: none;
     display: flex;
     align-items: center;
     gap: 8px;
+    width: 100%;
     min-height: 38px;
     margin: 0;
     padding: 0 12px;
-    border: 1px solid rgba(210, 169, 95, 0.28);
+    border: 1px solid var(--dd-border-soft);
     border-radius: 5px;
-    background: linear-gradient(180deg, rgba(36, 34, 31, 0.96), rgba(22, 21, 20, 0.98));
+    background: var(--dnd5e-background-card);
     color: var(--dd-text);
     font: 700 12px var(--dnd5e-font-roboto, "Signika", sans-serif);
     letter-spacing: 0;
     text-align: left;
     text-transform: none;
     cursor: pointer;
+    box-shadow: 0 0 6px var(--dnd5e-shadow-15, rgba(0, 0, 0, 0.15));
+    transition: box-shadow 250ms ease, border-color 150ms ease, color 150ms ease;
 }
 
-section.dd label.darkCheck i {
+section.dd .darkCheck i {
     width: 16px;
     color: var(--dd-gold);
     text-align: center;
 }
 
-section.dd label.darkCheck:hover {
-    border-color: rgba(230, 184, 102, 0.76);
-    background: linear-gradient(180deg, rgba(52, 48, 42, 0.98), rgba(28, 27, 25, 0.98));
-    color: #fff7e8;
+section.dd .darkCheck:hover {
+    border-color: var(--dd-gold);
+    box-shadow: 0 0 5px var(--dd-gold);
+    color: var(--color-text-emphatic, #fff7e8);
 }
 
-section.dd label.darkCheck.tableCheck:nth-child(2) i {
+section.dd .darkCheck.tableCheck:nth-child(2) i {
     color: var(--dd-red);
-}
-
-section.dd label.darkCheck.rollHealWounds i {
-    color: var(--dd-green);
 }
 
 @media (max-width: 720px) {
@@ -1445,11 +1520,9 @@ section.dd .dd-sheet {
 section.dd .dd-hero {
     min-height: 54px;
     padding: 10px 12px;
-    border-color: rgba(190, 166, 112, 0.34);
-    background:
-        linear-gradient(135deg, rgba(31, 43, 48, 0.98), rgba(25, 31, 34, 0.98)),
-        var(--dd-panel);
-    box-shadow: 0 5px 14px var(--dd-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--dd-border);
+    background: var(--dd-hero-bg);
+    box-shadow: 0 0 6px var(--dnd5e-shadow-45, rgba(0, 0, 0, 0.45)), inset 0 1px 0 var(--dd-inset-hi);
 }
 
 section.dd .dd-eyebrow {
@@ -1457,42 +1530,86 @@ section.dd .dd-eyebrow {
 }
 
 section.dd .dd-hero h2 {
-    color: #f7f2e7;
+    color: var(--dd-hero-title);
     font-size: 22px;
 }
 
-section.dd .dd-hero > i {
+section.dd .dd-hero-actions > i {
     width: 34px;
     height: 34px;
     flex-basis: 34px;
     border-radius: 6px;
-    border-color: rgba(205, 176, 112, 0.36);
-    background: rgba(12, 15, 16, 0.55);
-    color: var(--dd-gold);
+    border-color: var(--dd-action-border);
+    background: var(--dd-action-bg);
+    color: var(--dd-action-color);
     font-size: 15px;
+}
+
+section.dd .dd-hero-title {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 0;
+}
+
+section.dd .dd-hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+}
+
+/* Match the dnd5e2 button: roboto bold uppercase, subtle shadow, gold hover glow,
+   with a gold border so it ties into the tab's gold-bordered cards. */
+section.dd .dd-crafting-launch {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    min-height: 0;
+    padding: 5px 12px;
+    border: var(--dnd5e-border-gold, 1px solid var(--dd-border));
+    border-radius: 4px;
+    background: var(--dd-panel-2);
+    color: var(--dd-text);
+    font: bold var(--font-size-13, 13px) var(--dnd5e-font-roboto, "Signika", sans-serif);
+    text-transform: uppercase;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 0 8px var(--dnd5e-shadow-15, rgba(0, 0, 0, 0.15));
+    transition: box-shadow 250ms ease, background 150ms ease, color 150ms ease;
+}
+
+section.dd .dd-crafting-launch:hover {
+    box-shadow: 0 0 6px var(--dnd5e-color-gold, #9f9275);
+    background: var(--dd-panel);
+    color: #fff;
+}
+
+section.dd .dd-crafting-launch i {
+    color: var(--dd-gold);
+    font-size: 12px;
 }
 
 section.dd .dd-card,
 section.dd .allparts.items-section.card {
-    border-color: rgba(164, 183, 177, 0.16);
-    background:
-        linear-gradient(180deg, rgba(31, 39, 42, 0.98), rgba(22, 27, 29, 0.98)),
-        var(--dd-panel);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.035);
+    border: 1px solid var(--dd-border);
+    background: var(--dd-card-bg);
+    box-shadow: 0 0 6px var(--dnd5e-shadow-45, rgba(0, 0, 0, 0.45)), inset 0 1px 0 var(--dd-inset-hi);
 }
 
 section.dd .dd-card:hover {
-    border-color: rgba(205, 176, 112, 0.38);
+    box-shadow: 0 0 6px var(--dnd5e-color-gold, #9f9275), inset 0 1px 0 var(--dd-inset-hi);
 }
 
 section.dd .dd-card-header {
-    border-bottom-color: rgba(164, 183, 177, 0.14);
-    background: rgba(10, 13, 14, 0.26);
+    border-bottom-color: var(--dd-border);
+    background: linear-gradient(to right, var(--dnd5e-card-header-1, #401f25), var(--dnd5e-card-header-2, #741b2b));
 }
 
 section.dd .dd-card-header .darksheetheader,
 section.dd .dd-card-header .items-header.header {
-    color: #edf0ec;
+    color: #fff;
 }
 
 section.dd .dd-card-header > i {
@@ -1547,11 +1664,10 @@ section.dd .watercheckbox > span {
     display: grid;
     place-items: center;
     clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
-    background:
-        linear-gradient(180deg, rgba(34, 42, 45, 0.98), rgba(17, 22, 24, 0.98));
-    border: 1px solid rgba(164, 183, 177, 0.24);
-    color: rgba(237, 240, 236, 0.42);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 2px 5px rgba(0, 0, 0, 0.25);
+    background: var(--dnd5e-background-25, rgba(0, 0, 0, 0.25));
+    border: 1px solid var(--dd-border-soft);
+    color: var(--color-text-tertiary, rgba(237, 240, 236, 0.42));
+    box-shadow: inset 0 1px 3px var(--dnd5e-shadow-45, rgba(0, 0, 0, 0.3));
     transition: background 0.12s ease, color 0.12s ease, transform 0.12s ease, box-shadow 0.12s ease;
 }
 
@@ -1592,9 +1708,9 @@ section.dd .watercheckbox > span::after {
 }
 
 section.dd .darkselect {
-    border-color: rgba(164, 183, 177, 0.26) !important;
-    background-color: rgba(13, 17, 18, 0.92) !important;
-    color: #edf0ec !important;
+    border-color: var(--dd-border-soft) !important;
+    background-color: var(--dnd5e-background-card) !important;
+    color: var(--dd-text) !important;
 }
 
 section.dd .darkselect:hover,
@@ -1604,17 +1720,170 @@ section.dd .darkselect:focus {
 }
 
 section.dd .staminaCheck .staminacheck.darkcheck {
-    border-color: rgba(131, 173, 114, 0.42);
-    background: linear-gradient(180deg, rgba(48, 70, 55, 0.9), rgba(27, 43, 34, 0.96));
+    border-color: var(--dd-border-soft);
+    background: var(--dnd5e-background-5, rgba(0, 0, 0, 0.05));
 }
 
-section.dd label.darkCheck {
-    border-color: rgba(164, 183, 177, 0.18);
-    background: linear-gradient(180deg, rgba(30, 38, 41, 0.98), rgba(18, 23, 25, 0.98));
+section.dd .darkCheck {
+    border-color: var(--dd-border-soft);
+    background: var(--dnd5e-background-card);
 }
 
 .darksheet-hidden-weapon-quantity {
     display: none !important;
+}
+
+.darksheet-item-automation-tables,
+.darksheet-dread-mood-config {
+    display: grid;
+    gap: 12px;
+}
+
+.ds-automation-section {
+    display: grid;
+    gap: 8px;
+    min-width: 0;
+    padding: 6px 0 0;
+}
+
+.ds-automation-section__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.ds-automation-section__head h3 {
+    margin: 0;
+    font-size: 14px;
+}
+
+.ds-automation-section__head .hint {
+    margin: 3px 0 0;
+}
+
+.ds-slot-table-wrap {
+    box-sizing: border-box;
+    width: 100%;
+    max-height: 360px;
+    overflow: auto;
+}
+
+.ds-slot-table-search input {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.ds-slot-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-size: 12px;
+}
+
+.ds-slot-table th,
+.ds-slot-table td {
+    padding: 1px 2px;
+    border-bottom: 1px solid var(--color-border-light-tertiary, rgba(0, 0, 0, 0.15));
+    vertical-align: middle;
+}
+
+.ds-slot-table th {
+    text-align: left;
+}
+
+.ds-slot-table th:nth-child(2),
+.ds-slot-table td:nth-child(2) {
+    width: 110px;
+}
+
+.ds-slot-table th:nth-child(3),
+.ds-slot-table td:nth-child(3) {
+    width: 76px;
+}
+
+.ds-dread-mood-table th:nth-child(1),
+.ds-dread-mood-table td:nth-child(1) {
+    width: 90px;
+}
+
+.ds-dread-mood-table th:nth-child(2),
+.ds-dread-mood-table td:nth-child(2) {
+    width: auto;
+}
+
+.ds-dread-mood-table th:nth-child(3),
+.ds-dread-mood-table td:nth-child(3) {
+    width: 76px;
+}
+
+.ds-slot-table input {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+}
+
+.ds-slot-table__remove button {
+    width: 100%;
+    min-height: 24px;
+    line-height: 1;
+    padding: 2px 4px;
+}
+
+.ds-fragile-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-height: 42px;
+    max-height: 180px;
+    overflow: auto;
+    padding: 8px;
+    border: 1px solid var(--color-border-light-tertiary, rgba(0, 0, 0, 0.15));
+    border-radius: 4px;
+}
+
+.ds-fragile-tag {
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    gap: 6px;
+    padding: 4px 6px 4px 9px;
+    border: 1px solid var(--color-border-light-tertiary, rgba(0, 0, 0, 0.15));
+    border-radius: 999px;
+    background: var(--color-bg-option, rgba(0, 0, 0, 0.05));
+    font-size: 12px;
+}
+
+.ds-fragile-tag span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ds-fragile-tag button {
+    display: inline-grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    min-height: 20px;
+    margin: 0;
+    padding: 0;
+    border-radius: 50%;
+}
+
+.ds-tag-add {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+}
+
+.ds-tag-add input {
+    min-width: 0;
+}
+
+.darksheet-item-automation-tables footer,
+.darksheet-dread-mood-config footer {
+    margin-top: 4px;
 }
 
 /* Darksheet item sheet additions: keep custom fields out of the dnd5e header layout. */
@@ -1633,7 +1902,13 @@ section.dd label.darkCheck {
     gap: 7px;
     margin-bottom: 8px;
     color: #d1b77a;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
 }
+/* hide native <summary> disclosure triangles (we use our own chevron) */
+.darksheet-item-data__header::-webkit-details-marker,
+.darksheet-item-data__header::marker { display: none; content: ""; }
 
 .darksheet-item-data__header h3 {
     margin: 0;
@@ -1642,11 +1917,333 @@ section.dd label.darkCheck {
     text-transform: uppercase;
 }
 
+.darksheet-item-data__toggle {
+    margin-left: auto;
+    font-size: 11px;
+    transition: transform 0.15s ease;
+}
+
+/* "Darksheet Recipe" create button in the Items sidebar */
+.darksheet-create-recipe { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+.darksheet-create-recipe i { color: #d1b77a; }
+
+/* ===== Crafting material panel ===== */
+.darksheet-material { margin-top: 4px; }
+.darksheet-mat-props { display: flex; flex-wrap: wrap; gap: 6px; }
+.darksheet-mat-chip {
+    padding: 3px 10px;
+    border-radius: 11px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(0, 0, 0, 0.25);
+    color: #e7e2d6;
+    font-size: 11px;
+    text-transform: capitalize;
+}
+.darksheet-mat-rar-uncommon { border-color: #3aa655; color: #8fdca6; }
+.darksheet-mat-rar-rare { border-color: #3a72a6; color: #8fc1e0; }
+.darksheet-mat-rar-veryRare { border-color: #8a3aa6; color: #cda6e0; }
+.darksheet-mat-rar-legendary { border-color: #a67a3a; color: #e6c884; }
+.darksheet-mat-rar-artifact { border-color: #a6453a; color: #e6a184; }
+.darksheet-mat-edit { display: flex; gap: 8px; }
+.darksheet-mat-edit label {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font: 700 9px var(--dnd5e-font-roboto, "Signika", sans-serif);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #8a96a6;
+}
+.darksheet-mat-edit select { width: 100%; box-sizing: border-box; height: 26px; text-transform: capitalize; letter-spacing: 0; }
+
+/* ===== Recipe crafting panel — per-output (variant) layout ===== */
+.darksheet-bp-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    margin-bottom: 8px;
+    font-size: 11px;
+    color: #c7d2de;
+}
+.darksheet-bp-meta i { color: #6fa8d6; margin-right: 3px; }
+.darksheet-bp-variant {
+    padding: 7px 8px;
+    margin-bottom: 6px;
+    border: 1px solid rgba(111, 168, 214, 0.22);
+    border-radius: 6px;
+    background: rgba(78, 123, 163, 0.07);
+}
+.darksheet-bp-variant__io { display: flex; align-items: center; gap: 8px; }
+.darksheet-bp-variant__mats { display: flex; flex-wrap: wrap; gap: 4px; flex: 1 1 auto; min-width: 0; }
+.darksheet-bp-matchip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.18);
+    font-size: 11px;
+    color: #e7e2d6;
+}
+.darksheet-bp-matchip img { width: 16px; height: 16px; border-radius: 3px; object-fit: cover; }
+.darksheet-bp-matchip a { display: inline-flex; align-items: center; gap: 4px; }
+.darksheet-bp-matchip--type { background: rgba(123, 78, 163, 0.22); border: 1px solid rgba(123, 78, 163, 0.45); font-style: italic; }
+.darksheet-bp-matchip--type i { font-size: 10px; opacity: 0.85; }
+.darksheet-bp-arrow { color: #8a96a6; flex: 0 0 auto; }
+.darksheet-bp-out {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 0 0 auto;
+    max-width: 50%;
+    padding: 3px 7px;
+    border: 1px solid rgba(111, 168, 214, 0.35);
+    border-radius: 5px;
+    background: rgba(111, 168, 214, 0.12);
+    color: #f1ece0;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+}
+.darksheet-bp-out img { width: 24px; height: 24px; border-radius: 4px; object-fit: cover; }
+a.darksheet-bp-out:hover { border-color: #6fa8d6; box-shadow: 0 0 7px rgba(111, 168, 214, 0.4); }
+a.darksheet-bp-out i.fas { display: none; }
+.darksheet-bp-variant__check { margin-top: 5px; font-size: 11px; color: #c7d2de; }
+.darksheet-bp-variant__check i { color: #6fa8d6; margin-right: 3px; }
+.darksheet-bp-variant__effect { margin-top: 4px; font-size: 12px; line-height: 1.3; color: #d7d1c4; }
+/* edit: per-output block */
+.darksheet-bp-vedit {
+    padding: 7px 8px;
+    margin-bottom: 8px;
+    border: 1px solid rgba(111, 168, 214, 0.25);
+    border-radius: 6px;
+    background: rgba(78, 123, 163, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.darksheet-bp-vedit__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font: 700 10px var(--dnd5e-font-roboto, "Signika", sans-serif);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #8a96a6;
+}
+
+/* ===== Blueprint crafting panel (recipe item sheets) ===== */
+.darksheet-blueprint { margin-top: 4px; }
+.darksheet-blueprint__main {
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+}
+.darksheet-blueprint__reqs {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+.darksheet-blueprint__req {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+}
+.darksheet-blueprint__req > i {
+    flex: 0 0 16px;
+    margin-top: 2px;
+    color: #6fa8d6;
+    text-align: center;
+}
+.darksheet-blueprint__rt { display: flex; flex-direction: column; min-width: 0; }
+.darksheet-blueprint__rt .lbl {
+    font: 700 9px var(--dnd5e-font-roboto, "Signika", sans-serif);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #8a96a6;
+}
+.darksheet-blueprint__rt .val { font-size: 12px; line-height: 1.25; color: #e7e2d6; }
+/* the crafted result, shown on the right */
+.darksheet-blueprint__result {
+    flex: 0 0 96px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 8px 6px;
+    border: 1px solid rgba(111, 168, 214, 0.3);
+    border-radius: 6px;
+    background: rgba(78, 123, 163, 0.1);
+    text-align: center;
+}
+.darksheet-blueprint__result img {
+    width: 46px;
+    height: 46px;
+    border: 1px solid rgba(111, 168, 214, 0.4);
+    border-radius: 5px;
+    object-fit: cover;
+}
+.darksheet-blueprint__result-name { font-size: 11px; font-weight: 700; line-height: 1.15; color: #f1ece0; }
+.darksheet-blueprint__result-kind { font-size: 9px; text-transform: uppercase; letter-spacing: 0.05em; color: #8a96a6; }
+.darksheet-blueprint__effect {
+    margin: 8px 0 0;
+    padding-top: 8px;
+    border-top: 1px solid rgba(111, 168, 214, 0.18);
+    font-size: 12px;
+    line-height: 1.3;
+    color: #d7d1c4;
+}
+/* result acts as a content link (hover preview + click to open) */
+a.darksheet-blueprint__result.content-link {
+    cursor: pointer;
+    text-decoration: none;
+    transition: border-color 0.12s, box-shadow 0.12s;
+}
+a.darksheet-blueprint__result.content-link:hover {
+    border-color: #6fa8d6;
+    box-shadow: 0 0 8px rgba(111, 168, 214, 0.4);
+}
+a.darksheet-blueprint__result.content-link i.fas { display: none; } /* hide the auto content-link icon */
+/* editable recipe form */
+.darksheet-blueprint__edit { display: flex; flex-direction: column; gap: 6px; }
+.darksheet-blueprint__edit label {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font: 700 9px var(--dnd5e-font-roboto, "Signika", sans-serif);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #8a96a6;
+}
+.darksheet-blueprint__edit input {
+    width: 100%;
+    box-sizing: border-box;
+    height: 26px;
+    padding: 2px 6px;
+    font: 400 12px var(--dnd5e-font-roboto, "Signika", sans-serif);
+    text-transform: none;
+    letter-spacing: 0;
+    color: #e7e2d6;
+}
+/* drag-drop result linker */
+.darksheet-bp-drop {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border: 1px dashed rgba(111, 168, 214, 0.45);
+    border-radius: 5px;
+    background: rgba(78, 123, 163, 0.08);
+    cursor: copy;
+    text-transform: none;
+    letter-spacing: 0;
+}
+.darksheet-bp-drop.is-dragover { border-color: #6fa8d6; background: rgba(111, 168, 214, 0.18); }
+.darksheet-bp-drop img { width: 28px; height: 28px; border-radius: 4px; object-fit: cover; flex: 0 0 28px; }
+.darksheet-bp-drop__txt { font-size: 11px; color: #c7d2de; line-height: 1.2; }
+/* image filepicker row */
+.darksheet-bp-img { display: flex; gap: 6px; align-items: center; }
+.darksheet-bp-img input { flex: 1 1 auto; }
+.darksheet-bp-pick {
+    flex: 0 0 30px;
+    height: 26px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.06);
+    color: #d1b77a;
+    cursor: pointer;
+}
+.darksheet-bp-pick:hover { border-color: #d1b77a; color: #fff; }
+/* required materials list (edit mode) */
+.darksheet-bp-mats { display: flex; flex-direction: column; gap: 5px; }
+.darksheet-bp-mat {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 4px 6px;
+    border: 1px solid rgba(111, 168, 214, 0.25);
+    border-radius: 5px;
+    background: rgba(78, 123, 163, 0.08);
+    text-transform: none;
+    letter-spacing: 0;
+}
+.darksheet-bp-mat img { width: 26px; height: 26px; border-radius: 4px; object-fit: cover; flex: 0 0 26px; }
+.darksheet-bp-mat__name { flex: 1 1 auto; font-size: 12px; color: #e7e2d6; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.darksheet-bp-mat__qty { flex: 0 0 48px; width: 48px; height: 24px; text-align: center; }
+.darksheet-bp-mat__rm { flex: 0 0 24px; height: 24px; border: none; background: none; color: #c77; cursor: pointer; }
+.darksheet-bp-mat__rm:hover { color: #f55; }
+/* Type-requirement row: three "any X" selects in place of a specific item. */
+.darksheet-bp-mat--type { flex-wrap: wrap; background: rgba(123, 78, 163, 0.12); border-color: rgba(123, 78, 163, 0.4); }
+.darksheet-bp-mat__typeicon { flex: 0 0 18px; text-align: center; color: #b89bd6; }
+.darksheet-bp-mat__sel { flex: 1 1 70px; min-width: 60px; height: 24px; font-size: 11px; }
+.darksheet-bp-mataddtype { margin-top: 4px; align-self: flex-start; }
+.darksheet-bp-matcheck { margin-top: 8px; width: 100%; }
+/* GM "usable materials" report dialog */
+.ds-matcheck { font-size: 13px; max-height: 60vh; overflow-y: auto; }
+.ds-matcheck-out { margin-bottom: 10px; }
+.ds-matcheck-out__h { font-weight: bold; border-bottom: 1px solid var(--color-border-light-2, #555); padding-bottom: 2px; margin-bottom: 4px; }
+.ds-matcheck-req { margin: 4px 0 6px; padding-left: 4px; }
+.ds-matcheck-req__h { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+.ds-matcheck-qty { opacity: 0.7; }
+.ds-matcheck-count { font-size: 11px; opacity: 0.7; white-space: nowrap; }
+.ds-matcheck-count.is-zero { color: #d66; opacity: 1; font-weight: bold; }
+.ds-matcheck-list { display: flex; flex-direction: column; gap: 1px; margin-top: 3px; }
+.ds-matcheck-item { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 2px 4px; border-radius: 3px; }
+.ds-matcheck-item:hover { background: rgba(255, 255, 255, 0.06); }
+.ds-matcheck-item__link { display: inline-flex; align-items: center; gap: 6px; min-width: 0; flex: 1 1 auto; font-size: 12px; }
+.ds-matcheck-item__link img { width: 18px; height: 18px; border-radius: 3px; object-fit: cover; flex: 0 0 18px; }
+.ds-matcheck-item__link span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ds-matcheck-tags { display: inline-flex; gap: 3px; flex: 0 0 auto; }
+.ds-matcheck .darksheet-mat-chip { padding: 1px 7px; font-size: 10px; }
+.ds-matcheck-none { font-size: 11px; font-style: italic; color: #d66; margin-top: 2px; }
+.ds-owned-craft-mat--type .ds-owned-craft-mat__link { display: inline-flex; align-items: center; gap: 4px; font-style: italic; }
+.ds-owned-craft-mat--type i { opacity: 0.85; }
+.darksheet-bp-matdrop { cursor: copy; }
+.darksheet-bp-matdrop i.fa-plus { color: #6fa8d6; }
+/* check skill + DC selects */
+.darksheet-bp-check { display: flex; gap: 8px; }
+.darksheet-bp-check label { flex: 1 1 auto; }
+.darksheet-bp-check label:last-child { flex: 0 0 90px; }
+.darksheet-bp-check select { width: 100%; box-sizing: border-box; height: 26px; text-transform: none; letter-spacing: 0; }
+/* time value + unit */
+.darksheet-bp-time { display: flex; gap: 8px; }
+.darksheet-bp-time label:first-child { flex: 0 0 80px; }
+.darksheet-bp-time label:last-child { flex: 1 1 auto; }
+.darksheet-bp-time select { width: 100%; box-sizing: border-box; height: 26px; text-transform: none; letter-spacing: 0; }
+/* materials shown as links in the read-only card */
+.darksheet-bp-matlist { display: flex; flex-wrap: wrap; gap: 4px 10px; }
+.darksheet-bp-matlink { display: inline-flex; align-items: center; gap: 4px; }
+.darksheet-bp-matlink img { width: 16px; height: 16px; border-radius: 3px; object-fit: cover; }
+
+/* Gem action buttons (item sheet) — inherit the native dnd5e v14 button look
+   (uppercase, bold, card background, gold focus glow); we only lay them out. */
+.darksheet-gem-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+.darksheet-gem-actions .darksheet-gem-btn { flex: 1 1 auto; white-space: nowrap; }
+.darksheet-gem-actions .darksheet-gem-btn > i { color: var(--dnd5e-color-gold, #9f7340); }
+.darksheet-gem-actions--col { flex-direction: column; }
+/* Gem action buttons (inventory row controls) */
+.darksheet-gem-row-btn { color: #c9a557; cursor: pointer; }
+.darksheet-gem-row-btn:hover { color: #ffd87a; text-shadow: 0 0 5px rgba(255, 216, 122, 0.5); }
+details.darksheet-item-data:not([open]) .darksheet-item-data__toggle { transform: rotate(-90deg); }
+details.darksheet-item-data:not([open]) .darksheet-item-data__header { margin-bottom: 0; }
+
 .darksheet-item-data__grid,
 .darksheetItemFormGroup.darksheet-item-data__grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
-    gap: 6px;
+    gap: 6px 6px;
+    /* top-align cells so a taller cell (e.g. Quality Value) doesn't stretch
+       the controls in its row */
+    align-items: start;
 }
 
 .darksheet-item-data .form-group {
@@ -1669,13 +2266,95 @@ section.dd label.darkCheck {
     text-transform: uppercase;
 }
 
+.darksheet-sockets {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(138, 169, 210, 0.18);
+}
+.darksheet-sockets__count {
+    color: #9a917f;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0;
+}
+.darksheet-sockets__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+}
+/* a round metallic socket ring; empty = recessed hole, filled = seated gem */
+.darksheet-socket {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 32%, #d2d2d2, #8a8a8a 48%, #4a4a4a 78%, #2c2c2c 100%);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.55), inset 0 1px 1px rgba(255, 255, 255, 0.35), inset 0 -1px 2px rgba(0, 0, 0, 0.5);
+    font-size: 12px;
+}
+.darksheet-socket.ds-socket-click { cursor: pointer; transition: transform 0.1s ease, filter 0.1s ease; }
+.darksheet-socket.ds-socket-click:hover { transform: scale(1.12); filter: brightness(1.12); }
+.darksheet-socket.is-empty::before {
+    content: "";
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 38%, #131313, #000 85%);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.95), inset 0 -1px 1px rgba(255, 255, 255, 0.06);
+}
+.darksheet-socket.is-filled i {
+    font-size: 13px;
+    filter: drop-shadow(0 0 3px currentColor) drop-shadow(0 1px 1px rgba(0, 0, 0, 0.7));
+}
+
 .darksheet-item-data input,
-.darksheet-item-data select {
+.darksheet-item-data select,
+.darksheet-item-data select.hitdice.white {
+    box-sizing: border-box;
     width: 100%;
     min-width: 0;
-    height: 26px;
+    height: 28px;
+    line-height: normal;
     margin: 0;
+    padding: 2px 6px;
     text-align: center;
+    text-align-last: center; /* center the selected option in selects */
+}
+/* give the selects the same boxed look as the number inputs (the old
+   .hitdice.white style was just an underline, so they looked mismatched) */
+.darksheet-item-data select.hitdice.white {
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.06);
+    color: inherit;
+}
+
+.darksheet-quality-value__amount {
+    display: grid;
+    place-items: center;
+    min-height: 28px;
+    padding: 3px 6px;
+    border: 1px solid rgba(209, 183, 122, 0.35);
+    border-radius: 4px;
+    background: rgba(209, 183, 122, 0.1);
+    color: #f1dfac;
+    font-weight: 700;
+    text-align: center;
+}
+
+.darksheet-quality-value__meta {
+    color: #9f9788;
+    font-size: 10px;
+    line-height: 1.15;
+    text-align: center;
+}
+
+.item-price.darksheet-quality-price {
+    color: #d1b77a;
+    font-weight: 700;
 }
 
 .darksheet-item-data__checkbox {
@@ -1899,16 +2578,20 @@ ul.containers > li.draggable[data-item-id] > a.item-action {
 }
 .ds-container-ammodie {
     position: absolute;
-    top: -16px;
+    top: auto;
+    bottom: 4px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 2;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 3px;
     min-width: 28px;
-    height: 20px;
+    max-width: calc(100% - 8px);
+    height: 18px;
     padding: 0 6px 0 5px;
+    box-sizing: border-box;
     background: linear-gradient(180deg, #2a1a0d 0%, #14100a 100%);
     border: 1px solid #b97a32;
     border-radius: 999px;
@@ -2294,3 +2977,212 @@ ul.containers > li.draggable[data-item-id] > a.item-action {
         0 0 6px rgba(82, 162, 91, 0.28);
     color: #d7f0ce;
 }
+
+/* socket pips on inventory rows — smaller version of the metallic socket */
+.darksheet-row-sockets { display: inline-flex; gap: 3px; margin-left: 6px; vertical-align: middle; }
+.darksheet-socket.darksheet-row-socket { width: 14px; height: 14px; box-shadow: 0 1px 1px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.3); }
+.darksheet-socket.darksheet-row-socket.is-empty::before { width: 8px; height: 8px; }
+.darksheet-socket.darksheet-row-socket.is-filled i { font-size: 8px; }
+
+/* ===== Inventory price colouring by currency denomination ===== */
+.darksheet-price-pp { color: #d7dde8 !important; } /* platinum */
+.darksheet-price-gp { color: #f0c63a !important; } /* gold */
+.darksheet-price-ep { color: #cdd17a !important; } /* electrum */
+.darksheet-price-sp { color: #c2c7cf !important; } /* silver */
+.darksheet-price-cp { color: #cc8a52 !important; } /* copper */
+
+/* ===== Item wear visuals (inventory rows, item sheet, hover tooltip) ===== */
+.darkwear { position: relative; box-sizing: border-box; }
+.darkwear-q-worn { border: 3px solid #bfbf00 !important; border-radius: 4px; }
+.darkwear-q-well-worn { border: 3px solid #b35300 !important; border-radius: 4px; }
+.darkwear-q-scarred { border: 3px solid #b90000 !important; border-radius: 4px; }
+.darkwear-cracks::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    border-radius: 3px;
+    filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.4));
+}
+.darkwear-cracks.darkwear-q-worn::after {
+    background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Cg%20fill='none'%20stroke='%23000'%20stroke-width='2.5'%20opacity='0.5'%3E%3Cpath%20d='M58%200L50%2030L62%2052L52%20100'/%3E%3Cpath%20d='M50%2030L36%2042'/%3E%3C/g%3E%3C/svg%3E");
+}
+.darkwear-cracks.darkwear-q-well-worn::after {
+    background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Cg%20fill='none'%20stroke='%23000'%20stroke-width='2.5'%20opacity='0.55'%3E%3Cpath%20d='M58%200L50%2030L62%2052L52%20100'/%3E%3Cpath%20d='M50%2030L36%2042'/%3E%3Cpath%20d='M6%2044L34%2052L54%2042'/%3E%3Cpath%20d='M74%208L66%2046L90%2066'/%3E%3C/g%3E%3C/svg%3E");
+}
+.darkwear-cracks.darkwear-q-scarred::after {
+    background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Cg%20fill='none'%20stroke='%23000'%20stroke-width='3'%20opacity='0.62'%3E%3Cpath%20d='M58%200L50%2030L62%2052L52%20100'/%3E%3Cpath%20d='M50%2030L34%2042'/%3E%3Cpath%20d='M4%2042L34%2052L56%2040'/%3E%3Cpath%20d='M74%206L66%2046L92%2066'/%3E%3Cpath%20d='M18%2070L40%2080L30%2098'/%3E%3Cpath%20d='M84%2074L70%2088'/%3E%3Cpath%20d='M2%2016L26%2024'/%3E%3C/g%3E%3C/svg%3E");
+}
+/* tooltip + sheet + inventory wrap the icon so the border + ::after cracks can
+   render. position:relative makes it the offset parent for the ::after; it also
+   gives a real box to <dnd5e-icon> (display:contents) icons. */
+.darkwear-wrap { display: inline-block; position: relative; line-height: 0; vertical-align: middle; flex: 0 0 auto; }
+/* the wrapped <dnd5e-icon>'s shadow svg has no intrinsic frame size; match the
+   gold-icon 32px so the wrapper (and its cracks) cover the icon. */
+.darkwear-wrap > dnd5e-icon { --icon-size: 32px; width: 32px; height: 32px; display: inline-block; }
+.item-tooltip .header .top .darkwear-wrap img,
+.item-tooltip .header .top img.darkwear { display: block; }
+
+/* Darker Dungeons info block appended to the item hover tooltip.
+   Self-contained dark panel so it stays legible on any tooltip background. */
+.darksheet-tooltip-extra {
+    margin-top: 6px;
+    padding: 6px 9px;
+    border-radius: 5px;
+    background: #14110c;
+    border: 1px solid rgba(216, 174, 88, 0.45);
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.6);
+    font-size: 12px;
+    line-height: 1.35;
+    text-align: left;
+}
+.darksheet-tooltip-extra .dd-head {
+    margin: 0 0 4px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #e6c66a;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.85);
+}
+.darksheet-tooltip-extra .dd-head i { margin-right: 4px; }
+.darksheet-tooltip-extra p { margin: 3px 0; color: #ece6d8; text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75); }
+
+/* ===== On-canvas resource node buttons (HTML overlay) ===== */
+#darksheet-node-overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 70;
+}
+.darksheet-node-btn {
+    position: absolute;
+    width: 38px;
+    height: 38px;
+    pointer-events: auto;
+    cursor: pointer;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.45);
+    display: grid;
+    place-items: center;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.7));
+    transition: filter 0.12s, transform 0.08s, background 0.12s;
+}
+.darksheet-node-btn:hover { background: rgba(0, 0, 0, 0.6); filter: drop-shadow(0 0 5px rgba(230, 192, 97, 0.9)); }
+.darksheet-node-btn img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+.darksheet-node-btn__q {
+    position: absolute;
+    bottom: -4px;
+    right: -4px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 3px;
+    border-radius: 8px;
+    background: #2a2a2a;
+    border: 1px solid #d1b77a;
+    color: #f1dfac;
+    font-size: 10px;
+    line-height: 14px;
+    text-align: center;
+}
+.darksheet-node-btn.is-depleted { border-color: #6a6a6a; filter: grayscale(0.8) brightness(0.7); }
+.darksheet-node-btn.is-depleted .darksheet-node-btn__q { border-color: #6a6a6a; color: #aaa; }
+
+/* GM can drag node buttons to reposition them */
+.darksheet-node-btn.is-gm { cursor: grab; }
+.darksheet-node-btn.is-gm:active { cursor: grabbing; }
+.darksheet-node-btn { touch-action: none; }
+
+/* Harvest spots on dead creatures — same marker, reddish accent */
+.darksheet-harvest-btn {
+    position: absolute;
+    width: 34px;
+    height: 34px;
+    pointer-events: auto;
+    cursor: pointer;
+    border-radius: 50%;
+    background: rgba(40, 6, 6, 0.5);
+    display: grid;
+    place-items: center;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.7));
+    transition: filter 0.12s, transform 0.08s, background 0.12s;
+    touch-action: none;
+}
+.darksheet-harvest-btn:hover { background: rgba(70, 8, 8, 0.66); filter: drop-shadow(0 0 5px rgba(206, 84, 64, 0.95)); }
+.darksheet-harvest-btn img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+.darksheet-harvest-btn .darksheet-node-btn__q { border-color: #c8503c; color: #f3c9c0; }
+.darksheet-gather .dg-mat__sub { opacity: 0.6; font-size: 11px; }
+.darksheet-gather .dg-flex-select { width: 100%; height: 24px; font-size: 12px; margin-top: 2px; }
+.darksheet-gather .dg-stat--wide { grid-column: 1 / -1; }
+.darksheet-gather .dg-mat__limit { display: block; font-size: 10px; opacity: 0.7; font-style: italic; }
+.darksheet-gather .dg-mat.is-depleted { opacity: 0.45; filter: grayscale(0.7); }
+.darksheet-gather .dg-mat.is-depleted .dg-mat__pct { text-decoration: line-through; }
+/* ===== Gather dialog — standard Foundry dialog, minimal custom layout ===== */
+.darksheet-gather { font-size: 13px; line-height: 1.45; }
+/* header */
+.darksheet-gather .dg-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.darksheet-gather .dg-head__icon { flex: 0 0 40px; width: 40px; height: 40px; display: grid; place-items: center; }
+.darksheet-gather .dg-head__icon img { width: 40px; height: 40px; object-fit: contain; border: none; }
+.darksheet-gather .dg-head__txt { display: flex; flex-direction: column; min-width: 0; }
+.darksheet-gather .dg-title { font-size: 16px; font-weight: bold; }
+.darksheet-gather .dg-sub { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.65; }
+/* stats as a simple list */
+.darksheet-gather .dg-stats { display: flex; flex-direction: column; gap: 4px; margin-bottom: 4px; }
+.darksheet-gather .dg-stat { display: flex; align-items: baseline; gap: 8px; }
+.darksheet-gather .dg-stat > i.fas { flex: 0 0 16px; text-align: center; opacity: 0.75; }
+.darksheet-gather .dg-stat__t { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
+.darksheet-gather .dg-stat__l { font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.6; }
+.darksheet-gather .dg-stat__v { font-weight: 600; }
+/* remaining bar (kept colors) */
+.darksheet-gather .dg-remaining { margin: 8px 0; }
+.darksheet-gather .dg-remaining__top { display: flex; justify-content: space-between; font-size: 11px; opacity: 0.75; margin-bottom: 4px; }
+.darksheet-gather .dg-bar { height: 8px; border-radius: 5px; background: rgba(0, 0, 0, 0.4); overflow: hidden; box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6); }
+.darksheet-gather .dg-bar__fill { height: 100%; border-radius: 5px; background: linear-gradient(90deg, #6e9c4e, #c7b35a); transition: width 0.2s; }
+.darksheet-gather .dg-remaining.is-depleted .dg-bar__fill { background: #7a3a3a; }
+/* materials as a simple list */
+.darksheet-gather .dg-mats-title { margin: 8px 0 5px; font-size: 11px; font-weight: bold; letter-spacing: 0.05em; text-transform: uppercase; opacity: 0.7; }
+.darksheet-gather .dg-mats { display: flex; flex-direction: column; gap: 4px; margin-bottom: 4px; }
+.darksheet-gather .dg-mat { display: flex; align-items: center; gap: 8px; }
+.darksheet-gather .dg-mat img { flex: 0 0 22px; width: 22px; height: 22px; border-radius: 4px; object-fit: cover; }
+.darksheet-gather .dg-mat__name { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.darksheet-gather .dg-mat__qty { opacity: 0.7; font-size: 11px; }
+.darksheet-gather .dg-mat__pct { opacity: 0.75; font-size: 12px; }
+.darksheet-gather .dg-mat__tag { opacity: 0.7; font-size: 11px; }
+.darksheet-gather .dg-mat__name.is-hidden { font-style: italic; opacity: 0.7; }
+.darksheet-gather .dg-empty { opacity: 0.6; font-style: italic; }
+.darksheet-gather a.content-link { max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: bottom; }
+.darksheet-gather a.content-link i { display: none; }
+
+/* Monster loot generation */
+.darksheet-genloot-btn { cursor: pointer; }
+.darksheet-loot-card h3 { margin: 0 0 4px; font-size: 14px; display: flex; align-items: center; gap: 6px; }
+.darksheet-loot-card ul { margin: 4px 0 0; padding-left: 18px; }
+.darksheet-loot-card li { margin: 1px 0; }
+.darksheet-loot-card em { opacity: 0.75; }
+.darksheet-loot-dialog .dialog-content { padding: 0; }
+.dsloot-dialog { display: grid; gap: 10px; padding: 12px; color: inherit; }
+.dsloot-summary { display: grid; grid-template-columns: 48px 1fr; gap: 10px; align-items: center; padding: 8px; border: 1px solid rgba(255,255,255,0.12); border-radius: 6px; background: rgba(0,0,0,0.12); }
+.dsloot-summary img { width: 48px; height: 48px; border: 0; border-radius: 4px; object-fit: cover; }
+.dsloot-summary h3 { margin: 0 0 2px; font-size: 15px; }
+.dsloot-summary p { margin: 0; opacity: 0.78; font-size: 12px; line-height: 1.35; }
+.dsloot-warning { display: flex; gap: 7px; align-items: center; padding: 7px 8px; border: 1px solid rgba(255,255,255,0.16); border-radius: 5px; background: rgba(0,0,0,0.16); font-size: 12px; }
+.dsloot-section { display: grid; gap: 7px; }
+.dsloot-section h4 { display: flex; align-items: center; gap: 6px; margin: 0; font-size: 13px; color: inherit; opacity: 0.9; }
+.dsloot-list { display: grid; gap: 5px; max-height: 240px; overflow: auto; padding-right: 2px; }
+.dsloot-row { display: grid; grid-template-columns: 18px 34px minmax(0, 1fr) 58px; gap: 8px; align-items: center; padding: 6px; border: 1px solid rgba(255,255,255,0.12); border-radius: 5px; background: rgba(255,255,255,0.03); }
+.dsloot-row > input[type="checkbox"] { margin: 0; }
+.dsloot-row img { width: 34px; height: 34px; border: 0; border-radius: 4px; object-fit: cover; }
+.dsloot-row__main { min-width: 0; display: grid; gap: 1px; }
+.dsloot-row__main strong,
+.dsloot-row__main span,
+.dsloot-row__main small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dsloot-row__main strong { font-size: 12px; }
+.dsloot-row__main span { font-size: 11px; opacity: 0.78; }
+.dsloot-row__main small { font-size: 10px; opacity: 0.62; }
+.dsloot-qty { display: grid; gap: 2px; font-size: 10px; opacity: 0.8; }
+.dsloot-qty input { width: 100%; height: 24px; text-align: center; }
+.dsloot-check { display: flex; align-items: center; gap: 7px; margin: 0; font-size: 12px; }
+.dsloot-check input { margin: 0; }
+.dsloot-chat { padding-top: 2px; }
+.dsloot-empty { padding: 8px; border: 1px dashed rgba(255,255,255,0.14); border-radius: 5px; opacity: 0.68; font-size: 12px; }
