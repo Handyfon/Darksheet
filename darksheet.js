@@ -17,7 +17,7 @@ const DARKSCREEN_STORE_DEFAULTS = {
         url: "https://giffyglyph.com/darkerdungeons/grimoire/4.0.0/en/contents.html",
         bookmarks: []
     },
-    resting: { campingDc: "10", lookout: "", campFailures: "—", campActivityDc: "—", campLookoutResult: "—", lifestyle: "comfortable" },
+    resting: { campingDc: "10", lookout: "", campFailures: "\u2014", campActivityDc: "\u2014", campLookoutResult: "\u2014", lifestyle: "comfortable" },
     campfire: { active: false },
     cityRest: { active: false },
     campSetup: { active: false, players: {} }
@@ -43,6 +43,359 @@ const DARKSHEET_SLOT_CAPACITY_FORMULAS = {
     sizeStr: "sizeStr",
     sizeStr2: "sizeStr2"
 };
+
+const DARKSHEET_MODULE_ID = "darksheet";
+const DARKSHEET_ENCUMBERED_STATUS_ID = "encumbered";
+const DARKSHEET_ENCUMBRANCE_STATUS_IDS = [DARKSHEET_ENCUMBERED_STATUS_ID];
+const DARKSHEET_ENCUMBRANCE_ABILITIES = ["str", "dex", "con"];
+const DARKSHEET_ENCUMBRANCE_MOVEMENT_TYPES = ["burrow", "climb", "fly", "swim", "walk"];
+const DARKSHEET_ENCUMBERED_DESCRIPTION = "Speed is halved, and Strength, Dexterity, and Constitution ability checks, attack rolls, and saving throws have disadvantage.";
+const darksheetEncumbranceSyncTimers = new Map();
+const DARKSHEET_ENCUMBRANCE_STATUS_ICONS = {
+    [DARKSHEET_ENCUMBERED_STATUS_ID]: "modules/darksheet/icons/weight.svg"
+};
+
+function darksheetEncumbranceStatusConfig(id) {
+    const native = CONFIG?.DND5E?.encumbrance?.effects?.[id] ?? {};
+    const fallbackName = "Encumbered";
+    const icon = DARKSHEET_ENCUMBRANCE_STATUS_ICONS[id] ?? native.img ?? native.icon;
+    return {
+        id,
+        name: native.name ?? fallbackName,
+        label: native.name ?? fallbackName,
+        icon,
+        img: icon,
+        statuses: [id],
+        changes: darksheetEncumbranceStatusChanges(id),
+        description: DARKSHEET_ENCUMBERED_DESCRIPTION,
+        hud: true,
+        flags: { [DARKSHEET_MODULE_ID]: { encumbranceStatus: id } }
+    };
+}
+
+function darksheetEncumbranceStatusChanges(_id) {
+    return [];
+}
+
+function darksheetRegisterEncumbranceStatusEffects() {
+    try {
+        CONFIG.DND5E ??= {};
+        CONFIG.DND5E.statusEffects ??= {};
+        CONFIG.statusEffects ??= [];
+        darksheetRemoveOtherEncumbranceStatusConfigs();
+        const effects = CONFIG.statusEffects;
+        for (const id of DARKSHEET_ENCUMBRANCE_STATUS_IDS) {
+            const status = darksheetEncumbranceStatusConfig(id);
+            CONFIG.DND5E.statusEffects[id] = foundry.utils.mergeObject(
+                CONFIG.DND5E.statusEffects[id] ?? {},
+                status,
+                { inplace: false }
+            );
+            const existing = Array.isArray(effects)
+                ? effects.find(effect => effect?.id === id || effect?._id === id)
+                : effects[id] ?? Object.values(effects).find(effect => effect?.id === id || effect?._id === id);
+            const target = existing ?? status;
+            delete target._id;
+            target.id = id;
+            target.name = status.name;
+            target.label = status.label;
+            target.icon = status.icon;
+            target.img = status.img;
+            target.hud = true;
+            target.statuses = status.statuses;
+            target.changes = darksheetEncumbranceStatusChanges(id);
+            target.description = status.description;
+            target.flags ??= {};
+            target.flags[DARKSHEET_MODULE_ID] ??= {};
+            target.flags[DARKSHEET_MODULE_ID].encumbranceStatus = id;
+            if (Array.isArray(effects)) {
+                if (!existing) effects.push(target);
+                effects[id] = target;
+            } else effects[id] = target;
+        }
+    } catch (error) {
+        console.warn("Darksheet | Could not register encumbrance status effects.", error);
+    }
+}
+
+function darksheetRemoveOtherEncumbranceStatusConfigs() {
+    const isOtherDarksheetEncumbrance = effect => {
+        const status = effect?.flags?.[DARKSHEET_MODULE_ID]?.encumbranceStatus;
+        return status && status !== DARKSHEET_ENCUMBERED_STATUS_ID;
+    };
+    for (const [id, effect] of Object.entries(CONFIG?.DND5E?.statusEffects ?? {})) {
+        if (isOtherDarksheetEncumbrance(effect)) delete CONFIG.DND5E.statusEffects[id];
+    }
+    if (Array.isArray(CONFIG?.statusEffects)) {
+        CONFIG.statusEffects = CONFIG.statusEffects.filter(effect => !isOtherDarksheetEncumbrance(effect));
+    } else if (CONFIG?.statusEffects) {
+        for (const [id, effect] of Object.entries(CONFIG.statusEffects)) {
+            if (isOtherDarksheetEncumbrance(effect)) delete CONFIG.statusEffects[id];
+        }
+    }
+}
+
+function darksheetCanManageEncumbranceEffects() {
+    if (!game?.user?.isGM) return false;
+    return !game.users?.activeGM || game.users.activeGM === game.user;
+}
+
+function darksheetUsesWeightEncumbrance() {
+    try {
+        return !game.settings.get(DARKSHEET_MODULE_ID, "slotbasedinventory");
+    } catch (_error) {
+        return false;
+    }
+}
+
+function darksheetActorSupportsEncumbranceConditions(actor) {
+    return actor && ["character", "npc"].includes(actor.type);
+}
+
+function darksheetEncumbranceThresholds(actor) {
+    const existing = actor?.system?.attributes?.encumbrance?.thresholds ?? {};
+    if (Number.isFinite(Number(existing.encumbered))) return existing;
+    const config = CONFIG?.DND5E?.encumbrance;
+    const unitSystem = game.settings.get("dnd5e", "metricWeightUnits") ? "metric" : "imperial";
+    const str = Number(actor?.system?.abilities?.str?.value ?? 10) || 10;
+    const sizeKeys = Object.keys(CONFIG?.DND5E?.actorSizes ?? {});
+    const size = actor?.system?.traits?.size ?? "med";
+    const sizeIndex = Math.max(0, sizeKeys.indexOf(size));
+    const sizeConfig = CONFIG?.DND5E?.actorSizes?.[
+        sizeKeys[actor?.flags?.dnd5e?.powerfulBuild ? Math.min(sizeIndex + 1, sizeKeys.length - 1) : sizeIndex]
+    ];
+    const sizeMod = Number(sizeConfig?.capacityMultiplier ?? sizeConfig?.token ?? 1) || 1;
+    return {
+        encumbered: str * Number(config?.threshold?.encumbered?.[unitSystem] ?? 5) * sizeMod
+    };
+}
+
+function darksheetItemWeightForEncumbrance(item, units) {
+    try {
+        const value = item?.system?.totalWeightIn?.(units);
+        if (Number.isFinite(Number(value))) return Number(value);
+    } catch (_error) { /* fall back below */ }
+    const quantity = Number(item?.system?.quantity ?? 1) || 1;
+    const weight = item?.system?.weight;
+    const value = Number(weight?.value ?? weight ?? 0);
+    return Number.isFinite(value) ? value * quantity : 0;
+}
+
+function darksheetActorEncumbranceValue(actor) {
+    const unitSystem = game.settings.get("dnd5e", "metricWeightUnits") ? "metric" : "imperial";
+    const units = (CONFIG?.DND5E?.encumbrance?.baseUnits?.[actor?.type] ?? CONFIG?.DND5E?.encumbrance?.baseUnits?.default)?.[unitSystem] ?? (unitSystem === "metric" ? "kg" : "lb");
+    let total = 0;
+    for (const item of actor?.items ?? []) {
+        if (item?.container) continue;
+        total += darksheetItemWeightForEncumbrance(item, units);
+    }
+    const direct = Math.round(total * 10) / 10;
+    if (direct > 0) return direct;
+    const prepared = Number(actor?.system?.attributes?.encumbrance?.value);
+    return Number.isFinite(prepared) ? prepared : direct;
+}
+
+function darksheetActorSlotUsage(actor) {
+    let usedSlots = 0;
+    const ignoreEquipped = game.settings.get(DARKSHEET_MODULE_ID, "equippedDontUseSlots");
+    for (const item of actor?.items ?? []) {
+        const slots = Number(item?.flags?.[DARKSHEET_MODULE_ID]?.item?.slots ?? 0);
+        const quantity = Number(item?.system?.quantity ?? 1) || 1;
+        if (!Number.isFinite(slots)) continue;
+        if (ignoreEquipped && item?.system?.equipped) continue;
+        usedSlots += slots * quantity;
+    }
+    const capacity = darksheetActorSlotCapacity(actor);
+    return {
+        used: Math.round(usedSlots * 10) / 10,
+        max: Number(capacity.maxSlots) || 1
+    };
+}
+
+function darksheetActorSlotEncumbranceTier(actor) {
+    const slots = darksheetActorSlotUsage(actor);
+    return slots.used > slots.max ? DARKSHEET_ENCUMBERED_STATUS_ID : null;
+}
+
+function darksheetActorWeightEncumbranceTier(actor) {
+    const value = darksheetActorEncumbranceValue(actor);
+    const thresholds = darksheetEncumbranceThresholds(actor);
+    const encumbered = Number(thresholds.encumbered);
+    if (Number.isFinite(encumbered) && value > encumbered) return DARKSHEET_ENCUMBERED_STATUS_ID;
+    return null;
+}
+
+function darksheetActorEncumbranceTier(actor) {
+    if (!darksheetActorSupportsEncumbranceConditions(actor)) return null;
+    return darksheetUsesWeightEncumbrance()
+        ? darksheetActorWeightEncumbranceTier(actor)
+        : darksheetActorSlotEncumbranceTier(actor);
+}
+
+function darksheetEffectHasEncumbranceStatus(effect, id = null) {
+    const status = effect?.flags?.[DARKSHEET_MODULE_ID]?.encumbranceStatus;
+    if (id) return status === id;
+    if (DARKSHEET_ENCUMBRANCE_STATUS_IDS.includes(status)) return true;
+    return DARKSHEET_ENCUMBRANCE_STATUS_IDS.some(statusId => {
+        if (effect?.statuses?.has?.(statusId)) return true;
+        if (Array.isArray(effect?.statuses) && effect.statuses.includes(statusId)) return true;
+        const source = effect?._source ?? effect;
+        return Array.isArray(source?.statuses) && source.statuses.includes(statusId);
+    });
+}
+
+function darksheetEffectIsOtherDarksheetEncumbrance(effect) {
+    const status = effect?.flags?.[DARKSHEET_MODULE_ID]?.encumbranceStatus;
+    return status && status !== DARKSHEET_ENCUMBERED_STATUS_ID;
+}
+
+function darksheetActorHasStatus(actor, id) {
+    if (!actor || !id) return false;
+    if (actor.statuses?.has?.(id)) return true;
+    const effects = actor.effects?.contents ?? actor.effects ?? [];
+    return Array.from(effects).some(effect => {
+        if (effect?.statuses?.has?.(id)) return true;
+        if (Array.isArray(effect?.statuses) && effect.statuses.includes(id)) return true;
+        const source = effect?._source ?? effect;
+        return Array.isArray(source?.statuses) && source.statuses.includes(id);
+    });
+}
+
+function darksheetEncumbranceEffectData(id) {
+    const status = darksheetEncumbranceStatusConfig(id);
+    return {
+        name: game?.i18n?.localize?.(status.name) ?? status.name,
+        img: status.img,
+        icon: status.icon,
+        statuses: status.statuses,
+        changes: status.changes,
+        description: status.description,
+        disabled: false,
+        transfer: false,
+        flags: { dnd5e: { isTemporary: true }, [DARKSHEET_MODULE_ID]: { encumbranceStatus: id, automatic: true } }
+    };
+}
+
+async function darksheetToggleEncumbranceStatus(actor, id, active) {
+    if (!actor?.toggleStatusEffect) return false;
+    const already = darksheetActorHasStatus(actor, id);
+    if (already === active) return true;
+    await actor.toggleStatusEffect(id, { active, overlay: false });
+    return true;
+}
+
+async function darksheetSyncActorEncumbranceConditions(actor, { render = false } = {}) {
+    if (!darksheetCanManageEncumbranceEffects() || !darksheetActorSupportsEncumbranceConditions(actor)) return;
+    darksheetRegisterEncumbranceStatusEffects();
+    const tier = darksheetActorEncumbranceTier(actor);
+    for (const id of DARKSHEET_ENCUMBRANCE_STATUS_IDS) {
+        await darksheetToggleEncumbranceStatus(actor, id, id === tier);
+    }
+    const effects = Array.from(actor.effects?.contents ?? actor.effects ?? []);
+    const otherEncumbranceEffectIds = effects.filter(effect => darksheetEffectIsOtherDarksheetEncumbrance(effect)).map(effect => effect.id).filter(Boolean);
+    if (otherEncumbranceEffectIds.length) await actor.deleteEmbeddedDocuments("ActiveEffect", otherEncumbranceEffectIds, { render, darksheetEncumbranceSync: true });
+    const updates = [];
+    for (const effect of effects) {
+        if (otherEncumbranceEffectIds.includes(effect.id)) continue;
+        const status = DARKSHEET_ENCUMBRANCE_STATUS_IDS.find(id => {
+            if (effect?.statuses?.has?.(id)) return true;
+            if (Array.isArray(effect?.statuses) && effect.statuses.includes(id)) return true;
+            const source = effect?._source ?? effect;
+            return Array.isArray(source?.statuses) && source.statuses.includes(id);
+        });
+        if (!status) continue;
+        const data = darksheetEncumbranceEffectData(status);
+        const patch = { _id: effect.id };
+        const effectStatuses = effect?.statuses instanceof Set
+            ? Array.from(effect.statuses)
+            : Array.isArray(effect?.statuses)
+                ? effect.statuses
+                : Array.isArray(effect?._source?.statuses)
+                    ? effect._source.statuses
+                    : [];
+        if (effect.flags?.[DARKSHEET_MODULE_ID]?.encumbranceStatus !== status || effect.flags?.[DARKSHEET_MODULE_ID]?.automatic !== true) patch.flags = data.flags;
+        if (effect.img !== data.img) patch.img = data.img;
+        if (effect.name !== data.name) patch.name = data.name;
+        if (effect.description !== data.description) patch.description = data.description;
+        if (JSON.stringify(effectStatuses) !== JSON.stringify(data.statuses)) patch.statuses = data.statuses;
+        if (JSON.stringify(effect.changes ?? []) !== JSON.stringify(data.changes)) patch.changes = data.changes;
+        if (Object.keys(patch).length > 1) updates.push(patch);
+    }
+    if (updates.length) await actor.updateEmbeddedDocuments("ActiveEffect", updates, { render, darksheetEncumbranceSync: true });
+}
+
+function darksheetScheduleEncumbranceSync(actor, { delay = 100 } = {}) {
+    if (!darksheetCanManageEncumbranceEffects() || !darksheetActorSupportsEncumbranceConditions(actor)) return;
+    const key = actor.uuid ?? actor.id;
+    if (!key) return;
+    globalThis.clearTimeout(darksheetEncumbranceSyncTimers.get(key));
+    darksheetEncumbranceSyncTimers.set(key, globalThis.setTimeout(() => {
+        darksheetEncumbranceSyncTimers.delete(key);
+        void darksheetSyncActorEncumbranceConditions(actor).catch(error => {
+            console.warn("Darksheet | Failed to sync encumbrance conditions.", error);
+        });
+    }, delay));
+}
+
+function darksheetSyncAllEncumbranceConditions() {
+    if (!darksheetCanManageEncumbranceEffects()) return;
+    for (const actor of game.actors?.contents ?? []) darksheetScheduleEncumbranceSync(actor, { delay: 250 });
+}
+
+function darksheetApplyEncumbranceMovementPenalty(actor) {
+    if (!darksheetActorSupportsEncumbranceConditions(actor)) return;
+    if (!darksheetActorHasStatus(actor, DARKSHEET_ENCUMBERED_STATUS_ID)) return;
+    const movement = actor.system?.attributes?.movement;
+    if (!movement) return;
+    const types = Object.keys(CONFIG?.DND5E?.movementTypes ?? {}).length
+        ? Object.keys(CONFIG.DND5E.movementTypes)
+        : DARKSHEET_ENCUMBRANCE_MOVEMENT_TYPES;
+    for (const type of types) {
+        const value = Number(movement[type]);
+        if (Number.isFinite(value) && value > 0) movement[type] = value / 2;
+    }
+    if (Number.isFinite(Number(movement.walk))) movement.speed = movement.walk;
+    movement.max = Math.max(0, ...types.map(type => Number(movement[type]) || 0));
+    movement.slowed = true;
+}
+
+function darksheetPatchEncumbrancePreparation() {
+    const ActorClass = CONFIG?.Actor?.documentClass;
+    if (!ActorClass?.prototype || ActorClass.prototype._darksheetEncumbrancePreparationPatched) return;
+    const original = ActorClass.prototype.prepareDerivedData;
+    if (typeof original !== "function") return;
+    ActorClass.prototype.prepareDerivedData = function(...args) {
+        const result = original.apply(this, args);
+        darksheetApplyEncumbranceMovementPenalty(this);
+        return result;
+    };
+    ActorClass.prototype._darksheetEncumbrancePreparationPatched = true;
+}
+
+function darksheetRollActor(process) {
+    const subject = process?.subject;
+    return subject?.actor ?? subject?.item?.actor ?? subject;
+}
+
+function darksheetRollAbility(process, config) {
+    const subject = process?.subject;
+    return process?.ability ?? config?.ability ?? subject?.ability ?? subject?.item?.system?.ability;
+}
+
+function darksheetApplyEncumbranceRollDisadvantage(process, config) {
+    const actor = darksheetRollActor(process);
+    if (!darksheetActorSupportsEncumbranceConditions(actor)) return;
+    if (!darksheetActorHasStatus(actor, DARKSHEET_ENCUMBERED_STATUS_ID)) return;
+    const ability = darksheetRollAbility(process, config);
+    if (!DARKSHEET_ENCUMBRANCE_ABILITIES.includes(ability)) return;
+    config.disadvantage = true;
+    config.options ??= {};
+    config.options.disadvantage = true;
+    for (const roll of config.rolls ?? []) {
+        roll.options ??= {};
+        roll.options.disadvantage = true;
+    }
+}
 
 function darksheetSlotCapacityFormula() {
     try {
@@ -82,6 +435,12 @@ function darksheetActorSlotCapacity(actor) {
 function darksheetCloneData(data) {
     if (globalThis.foundry?.utils?.deepClone) return foundry.utils.deepClone(data);
     return JSON.parse(JSON.stringify(data));
+}
+
+async function darksheetRenderTemplate(path, data) {
+    const renderer = globalThis.foundry?.applications?.handlebars?.renderTemplate ?? globalThis.renderTemplate;
+    if (typeof renderer !== "function") throw new Error("Darksheet | Foundry template renderer is unavailable.");
+    return renderer(path, data);
 }
 
 function darksheetRefreshCharacterSheets() {
@@ -808,10 +1167,10 @@ class DarksheetDreadMoodTextConfig extends DarksheetFormApplication {
 
 //Register Sheet
 Hooks.once('init', function() {
-    //console.log("Darker DnD | Initializing Darker Dungeons for the D&D 5th Edition System\n", "_____________________________________________________________________________________________\n", "  ____                _                 ____                                                \n", " |  _ \\   __ _  _ __ | | __ ___  _ __  |  _ \\  _   _  _ __    __ _   ___   ___   _ __   ___ \n", " | | | | / _` || '__|| |/ // _ \| '__|  | | | || | | || '_ \\  / _` | / _ \\ / _ \\ | '_ \\ / __| \n", " | |_| || (_| || |   |   <|  __/| |    | |_| || |_| || | | || (_| ||  __/| (_) || | | |\\__ \\ \n", " |____/  \\__,_||_|   |_|\\_\\\\___||_|    |____/  \\__,_||_| |_| \\__, | \\___| \\___/ |_| |_||___/ \n", "                                                             |___/                          \n", "_____________________________________________________________________________________________");
+    //console.log("Darker DnD | Initializing Darker Dungeons for the D&D 5th Edition System\n", "_____________________________________________________________________________________________\n", " ____ _ ____ \n", " | _ \\ __ _ _ __ | | __ ___ _ __ | _ \\ _ _ _ __ __ _ ___ ___ _ __ ___ \n", " | | | | / _` || '__|| |/ // _ \| '__| | | | || | | || '_ \\ / _` | / _ \\ / _ \\ | '_ \\ / __| \n", " | |_| || (_| || | | <| __/| | | |_| || |_| || | | || (_| || __/| (_) || | | |\\__ \\ \n", " |____/ \\__,_||_| |_|\\_\\\\___||_| |____/ \\__,_||_| |_| \\__, | \\___| \\___/ |_| |_||___/ \n", " |___/ \n", "_____________________________________________________________________________________________");
     /*Actors.registerSheet('dnd5e', darksheet, {
-        types: ['character']
-    });*/
+ types: ['character']
+ });*/
     game.settings.register('darksheet', 'slotbasedinventory', {
         name: 'Inventory Slot System',
         hint: 'When enabled, the inventory will use a slot-based system instead of a weight-based system.',
@@ -885,29 +1244,29 @@ Hooks.once('init', function() {
         }
     });
     /*game.settings.register('darksheet', 'ActiveInitiativeHadTurn', { //ACTIVE INITIATIVE
-    	name: 'Saved Active Initiative Value',
-    	hint: 'Do not modify. This value saves the turn order for Active Initiative.',
-    	scope: 'world',
-    	config: false,
-    	default: "",
-    	type: String,
-    });
-    game.settings.register('darksheet', 'activeInitiative', {
-    	name: 'Active Initiative [TESTING]',
-    	hint: 'Enables Active Initiative, a system for dynamic turn order during combat.',
-    	scope: 'world',
-    	config: true,
-    	default: false,
-    	type: Boolean,
-    });
-    game.settings.register('darksheet', 'activeInitiativeDisplayTurns', {
-    	name: 'Additional Active Initiative Display',
-    	hint: 'When enabled, additional actor information is displayed during Active Initiative.',
-    	scope: 'world',
-    	config: true,
-    	default: true,
-    	type: Boolean,
-    });*/
+ name: 'Saved Active Initiative Value',
+ hint: 'Do not modify. This value saves the turn order for Active Initiative.',
+ scope: 'world',
+ config: false,
+ default: "",
+ type: String,
+ });
+ game.settings.register('darksheet', 'activeInitiative', {
+ name: 'Active Initiative [TESTING]',
+ hint: 'Enables Active Initiative, a system for dynamic turn order during combat.',
+ scope: 'world',
+ config: true,
+ default: false,
+ type: Boolean,
+ });
+ game.settings.register('darksheet', 'activeInitiativeDisplayTurns', {
+ name: 'Additional Active Initiative Display',
+ hint: 'When enabled, additional actor information is displayed during Active Initiative.',
+ scope: 'world',
+ config: true,
+ default: true,
+ type: Boolean,
+ });*/
     game.settings.register('darksheet', 'automaticSlots', {
         name: 'Automatic Slot Calculation',
         hint: 'When enabled, tries to automatically add slots to items in inventory by using a db.',
@@ -1052,13 +1411,13 @@ Hooks.once('init', function() {
         onChange: () => globalThis.Darksheet?.updateDreadZoneBanner?.()
     });
     /*game.settings.register('darksheet', 'nonpcattack', {//TODO NPCATTACK setting
-    	name: 'Disable NPC Attacks',
-    	hint: 'When enabled, only roll damage when using NPC attacks. This feature only supports the BetterNPCSheet5e module.',
-    	scope: 'world',
-    	config: true,
-    	default: false,
-    	type: Boolean,
-    });*/
+ name: 'Disable NPC Attacks',
+ hint: 'When enabled, only roll damage when using NPC attacks. This feature only supports the BetterNPCSheet5e module.',
+ scope: 'world',
+ config: true,
+ default: false,
+ type: Boolean,
+ });*/
     game.settings.register('darksheet', 'smalldefense', {
         name: 'Variant Rule: Small Defense',
         hint: 'When enabled, smaller modifiers are used while playing with Active Defense. Defense Rolls: When you make a defense roll, roll a d20 and add your AC minus 10. The opposing DC is 12 plus the attackers normal attack bonus.',
@@ -1109,21 +1468,21 @@ Hooks.once('init', function() {
     });
     //TODO IMPLEMENT DARKSCREEN
     /*game.settings.register('darksheet', 'globalTemp', { //TODO GM MANAGED TEMPERATURE
-    	name: 'GM-Managed Temperature',
-    	hint: 'When enabled, players can no longer select their temperature on their character sheets. You can still change the regional magic as the GM or with the Darkscreen.',
-    	scope: 'world',
-    	config: true,
-    	default: false,
-    	type: Boolean,
-    });
-    game.settings.register('darksheet', 'afflictionFromComp', { //TODO AFFLICTION AUTO APPLY
-    	name: 'Afflictions from Compendium',
-    	hint: 'When enabled, rolls from the Afflictions compendium instead of the rollable table and displays the compendium entry in chat.',
-    	scope: 'world',
-    	config: false,
-    	default: false,
-    	type: Boolean,
-    });*/
+ name: 'GM-Managed Temperature',
+ hint: 'When enabled, players can no longer select their temperature on their character sheets. You can still change the regional magic as the GM or with the Darkscreen.',
+ scope: 'world',
+ config: true,
+ default: false,
+ type: Boolean,
+ });
+ game.settings.register('darksheet', 'afflictionFromComp', { //TODO AFFLICTION AUTO APPLY
+ name: 'Afflictions from Compendium',
+ hint: 'When enabled, rolls from the Afflictions compendium instead of the rollable table and displays the compendium entry in chat.',
+ scope: 'world',
+ config: false,
+ default: false,
+ type: Boolean,
+ });*/
     game.settings.register('darksheet', 'darkScreenPartyDisplay', {
         name: 'Online Character Filter',
         hint: 'Displays only the online characters in the party view',
@@ -1195,7 +1554,7 @@ async function darksheetEnsureFlags(actor) {
     const current = actor.flags?.darksheet ?? {};
     await actor.update({
         'flags.darksheet': foundry.utils.mergeObject(defaults, current, { inplace: false, insertKeys: true, insertValues: true })
-    }, { render: false });   // don't cascade-rerender — caller is mid-render
+    }, { render: false });   // don't cascade-rerender - caller is mid-render
 }
 
 const DARKSHEET_EXHAUSTION_PENALTIES = {
@@ -1405,6 +1764,7 @@ function styleDarksheetExhaustionPips(sheet, html, actor) {
 // Shared render handler for both legacy ActorSheet (V1) and dnd5e 5.x V2 sheets.
 async function darksheetRenderActorSheet(app, html, data) {
     if (app.actor?.type != 'character') return;
+    darksheetScheduleEncumbranceSync(app.actor, { delay: 250 });
     // dnd5e 5.x / Foundry v14 ApplicationV2 sheets pass html as an HTMLElement.
     // Wrap it in jQuery so the rest of the module (which is jQuery-based) keeps working.
     if (!(html instanceof jQuery)) html = $(html);
@@ -1443,7 +1803,7 @@ Hooks.on('renderActorSheet', (app, html, data) => {
     if (app?.actor?.type === "character" && typeof HTMLElement !== "undefined" && html instanceof HTMLElement) return;
     return darksheetRenderActorSheet(app, html, data);
 });
-// dnd5e 5.x V2 sheets — listen to the *most specific* hook only.
+// dnd5e 5.x V2 sheets - listen to the *most specific* hook only.
 // renderBaseActorSheet would also fire for CharacterActorSheet, causing the
 // handler to run twice per render (stress bar duplicated, etc.).
 Hooks.on('renderCharacterActorSheet', darksheetRenderActorSheet);
@@ -1451,9 +1811,9 @@ Hooks.on('renderCharacterActorSheet', darksheetRenderActorSheet);
 // ===== Monster loot generation (DSLOOT) =====
 // Adds a GM-only "Generate Loot" button to NPC sheets. It reads the prepared
 // darksheet/data/srd-monster-materials.json and adds loot to the monster by:
-//   1. NAME match  -> that monster's signature harvest materials,
-//   2. TYPE match  -> a CR-appropriate generic material for the creature type,
-//   3. humanoids    -> roll a loot tier (currency + mundane gear).
+// 1. NAME match -> that monster's signature harvest materials,
+// 2. TYPE match -> a CR-appropriate generic material for the creature type,
+// 3. humanoids -> roll a loot tier (currency + mundane gear).
 const DSLOOT = {
     DATA_PATH: "modules/darksheet/data/srd-monster-materials.json",
     _data: null,
@@ -1543,11 +1903,13 @@ const DSLOOT = {
         let idx; if (c < 0.5) idx = 1; else if (c < 1) idx = 2; else if (c < 3) idx = 3; else if (c < 5) idx = 4; else if (c < 7) idx = 5; else if (c < 9) idx = 6; else if (c < 12) idx = 7; else if (c < 15) idx = 8; else if (c < 19) idx = 9; else idx = 10;
         return json.humanoidLootTiers?.tiers?.find(t => t.tier === idx) || null;
     },
-    matToItem(mm, srdFlag) {
+    matToItem(mm, srdFlag, hidden = false) {
         const rarity = this.RAR_MAP[mm.properties.rarity] || "common";
         const substance = String(mm.properties.substance || "").toLowerCase();
         const element = String(mm.properties.element || "none").toLowerCase();
-        return { name: mm.name, type: "loot", img: mm.icon, system: { quantity: 1, identified: true, price: { value: 0, denomination: "gp" }, description: { value: `<p><em>Harvested crafting material.</em></p><p>${mm.description || ""}</p>`, chat: "" } }, flags: { darksheet: { material: { rarity, substance, element }, srdMat: srdFlag } } };
+        const material = { rarity, substance, element, hidden: !!hidden };
+        const source = { ...(srdFlag || {}), hidden: !!hidden };
+        return { name: mm.name, type: "loot", img: mm.icon, system: { quantity: 1, identified: true, price: { value: 0, denomination: "gp" }, description: { value: `<p><em>Harvested crafting material.</em></p><p>${mm.description || ""}</p>`, chat: "" } }, flags: { darksheet: { material, srdMat: source } } };
     },
     rint(min, max) { min = Number(min) || 0; max = Number(max) || 0; if (max < min) max = min; return min + Math.floor(Math.random() * (max - min + 1)); },
     rollQty(q) {
@@ -1616,7 +1978,7 @@ const DSLOOT = {
         if (!items.length) return ui.notifications.warn(`Darksheet | No loot matched for ${actor.name} (type "${type || "?"}").`);
         await actor.createEmbeddedDocuments("Item", items);
         await actor.setFlag("darksheet", "lootGenerated", true);
-        const matchNote = mon ? `matched <strong>${mon.name}</strong>` : `no name match — generic ${type || "?"} only`;
+        const matchNote = mon ? `matched <strong>${mon.name}</strong>` : `no name match \u2014 generic ${type || "?"} only`;
         await ChatMessage.create({
             speaker: ChatMessage.getSpeaker({ actor }),
             whisper: ChatMessage.getWhisperRecipients("GM").map(u => u.id),
@@ -1675,7 +2037,7 @@ const DSLOOT = {
             const mm = choice.mm || {};
             const img = this.esc(mm.icon || "icons/commodities/materials/bowl-powder-blue.webp");
             return `<div class="dsloot-row">
-                <input type="checkbox" data-dsloot-material="${this.esc(choice.key)}" checked>
+                <input type="checkbox" data-dsloot-material="${this.esc(choice.key)}" checked title="Add this material">
                 <img src="${img}" alt="">
                 <div class="dsloot-row__main">
                     <strong>${this.esc(mm.name || "Material")}</strong>
@@ -1683,6 +2045,11 @@ const DSLOOT = {
                     ${mm.description ? `<small>${this.esc(mm.description)}</small>` : ""}
                 </div>
                 <label class="dsloot-qty">Qty <input type="number" min="1" max="99" value="1" data-dsloot-qty="${this.esc(choice.key)}"></label>
+                <label class="dsloot-vis" title="Visible to players in harvest/material hints">
+                    <input type="checkbox" data-dsloot-visible="${this.esc(choice.key)}" checked>
+                    <i class="fas fa-eye dsloot-vis__show"></i>
+                    <i class="fas fa-eye-slash dsloot-vis__hide"></i>
+                </label>
             </div>`;
         }).join("") || `<div class="dsloot-empty">No material match for this creature.</div>`;
         const humanoid = plan.tier ? `<section class="dsloot-section">
@@ -1708,10 +2075,12 @@ const DSLOOT = {
     readDialogOptions(html) {
         const root = html?.[0] ?? html;
         const materialKeys = new Set(Array.from(root?.querySelectorAll?.("[data-dsloot-material]:checked") || []).map(el => el.dataset.dslootMaterial));
+        const hiddenKeys = new Set(Array.from(root?.querySelectorAll?.("[data-dsloot-visible]:not(:checked)") || []).map(el => el.dataset.dslootVisible));
         const materialQty = {};
         for (const input of Array.from(root?.querySelectorAll?.("[data-dsloot-qty]") || [])) materialQty[input.dataset.dslootQty] = Math.max(1, Math.min(99, Number(input.value) || 1));
         return {
             materialKeys,
+            hiddenKeys,
             materialQty,
             includeCoin: !!root?.querySelector?.("[name='includeCoin']")?.checked,
             includeGear: !!root?.querySelector?.("[name='includeGear']")?.checked,
@@ -1748,9 +2117,10 @@ const DSLOOT = {
         let changed = false;
         for (const choice of this.selectedMaterialChoices(plan, options)) {
             const qty = options.materialQty[choice.key] || 1;
-            const data = this.matToItem(choice.mm, this.materialFlag(choice, plan));
+            const hidden = options.hiddenKeys?.has(choice.key);
+            const data = this.matToItem(choice.mm, this.materialFlag(choice, plan), hidden);
             await darksheetGrantStackableItem(actor, data, qty);
-            lines.push(`<li>${this.esc(choice.mm.name)} x${qty} <em>(${this.esc(this.materialTag(choice.mm))})</em></li>`);
+            lines.push(`<li>${hidden ? `<i class="fas fa-eye-slash"></i> ` : ""}${this.esc(choice.mm.name)} x${qty} <em>(${this.esc(this.materialTag(choice.mm))}${hidden ? ", hidden" : ""})</em></li>`);
             changed = true;
         }
         if (plan.tier && options.includeCoin) {
@@ -1799,7 +2169,7 @@ function darksheetRenderNpcSheet(app, html) {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "header-control icon darksheet-genloot-btn";
-    btn.dataset.tooltip = "Generate Loot (Darksheet)";
+                btn.dataset.tooltip = "Generate Loot";
     btn.setAttribute("aria-label", "Generate Loot");
     btn.innerHTML = `<i class="fas fa-sack-dollar"></i>`;
     btn.addEventListener("click", (ev) => { ev.preventDefault(); ev.stopPropagation(); DSLOOT.generate(actor); });
@@ -1815,6 +2185,7 @@ Hooks.on("renderActorSheet", (app, html) => { if (app?.actor?.type === "npc") da
 // the tooltip card's `properties`, which renders them in the same pill row dnd5e
 // uses for weapon properties etc.
 Hooks.once("setup", () => {
+    darksheetRegisterEncumbranceStatusEffects();
     const lootModel = CONFIG?.Item?.dataModels?.loot;
     if (!lootModel?.prototype?.getCardData) { console.warn("Darksheet | loot getCardData not found; material tooltips disabled."); return; }
     const RAR_LABEL = { common: "Common", uncommon: "Uncommon", rare: "Rare", veryRare: "Very Rare", legendary: "Legendary", artifact: "Unique" };
@@ -1906,7 +2277,18 @@ async function darksheetRememberManualExhaustion(actor, changed) {
     return { total, manual, module: calculated.module, applied, sources: calculated.sources };
 }
 
+Hooks.on("createActiveEffect", effect => {
+    const actor = effect?.parent;
+    if (darksheetEffectHasEncumbranceStatus(effect)) darksheetScheduleEncumbranceSync(actor, { delay: 50 });
+});
+Hooks.on("deleteActiveEffect", effect => {
+    const actor = effect?.parent;
+    if (darksheetEffectHasEncumbranceStatus(effect)) darksheetScheduleEncumbranceSync(actor, { delay: 50 });
+});
+Hooks.on("dnd5e.postPrepareActorData", actor => darksheetScheduleEncumbranceSync(actor, { delay: 50 }));
+
 Hooks.on("updateActor", (actor, changed, options) => {
+    if (!options?.darksheetEncumbranceSync) darksheetScheduleEncumbranceSync(actor);
     if (options?.darksheetExhaustionSync || options?.darksheetManualExhaustionBookkeeping) return;
     if (actor?.type !== "character") return;
     const keys = Object.keys(darksheetFlattenChange(changed));
@@ -2020,7 +2402,7 @@ async function applySpellBurnoutToSheet(app, html, data) {
                 savecantrips: game.settings.get('darksheet', 'savecantrips'),
                 globalRegMagic: game.settings.get('darksheet', 'globalRegMagic')
             };
-            const spellBurnoutTemplate = await renderTemplate("modules/darksheet/templates/spellburnout.html", templateData);
+            const spellBurnoutTemplate = await darksheetRenderTemplate("modules/darksheet/templates/spellburnout.html", templateData);
             const tempDiv = document.createElement("div");
             tempDiv.innerHTML = spellBurnoutTemplate;
             burnout = tempDiv.firstElementChild;
@@ -2067,7 +2449,7 @@ function findSpellBurnoutTarget(root) {
 async function applyFatigueAndTemperatureAdditions(app, html, data) {
     let container = html.find(".main-content").find(".tab-body").find(".details").find(".right").find(".flexrow");
 
-    let inventoryAdditionsTemplate = await renderTemplate("modules/darksheet/templates/fatigue.html", data);
+    let inventoryAdditionsTemplate = await darksheetRenderTemplate("modules/darksheet/templates/fatigue.html", data);
 
     // Convert the HTML string into DOM elements
     let tempDiv = document.createElement("div");
@@ -2079,7 +2461,7 @@ async function applyInventoryAdditions(app, html, data) {
     let inventoryContainer = html.find(".inventory-element");
 
     if (inventoryContainer.length > 0) {
-        let inventoryAdditionsTemplate = await renderTemplate("modules/darksheet/templates/inventoryAdditions.html", data);
+        let inventoryAdditionsTemplate = await darksheetRenderTemplate("modules/darksheet/templates/inventoryAdditions.html", data);
 
         // Convert the HTML string into DOM elements
         let tempDiv = document.createElement("div");
@@ -2097,7 +2479,7 @@ async function applyInventoryAdditions(app, html, data) {
 }
 
 async function addStressBar(app, html, data) {
-    // dnd5e 5.x V2 sheets pass a different prepared context — pull the actor
+    // dnd5e 5.x V2 sheets pass a different prepared context - pull the actor
     // from the app and read flags via getFlag for safety against missing data.
     const actor = app?.actor ?? data?.actor;
     if (!actor) return;
@@ -2138,7 +2520,7 @@ async function addStressBar(app, html, data) {
     if (html.find('.stress-bar, .stress-points').length === 0) {
         let meterGroup = html.find(".meter-group").eq(1);
         if (meterGroup.length > 0) {
-            let stressBarTemplate = await renderTemplate("modules/darksheet/templates/stressbar.html", data);
+            let stressBarTemplate = await darksheetRenderTemplate("modules/darksheet/templates/stressbar.html", data);
             meterGroup.append(stressBarTemplate);
         }
     }
@@ -2192,7 +2574,7 @@ Hooks.on(`renderItemSheet5e2`, (app, html, data) => {
     //Insert additional data
     loadItemData(app, html, data);
 });
-// dnd5e 5.x also fires renderItemSheet5e for the base item sheet — wire the same.
+// dnd5e 5.x also fires renderItemSheet5e for the base item sheet - wire the same.
 Hooks.on(`renderItemSheet5e`, (app, html, data) => {
     if (!(html instanceof jQuery)) html = $(html);
     loadItemData(app, html, data);
@@ -2213,7 +2595,7 @@ Hooks.on("preUpdateItem", (item, changes) => {
     if (effective > 5) effective = 5;
     if (effective < socketed) {
         foundry.utils.setProperty(changes, "flags.darksheet.item.sockets", socketed);
-        ui.notifications.warn(`Darksheet | ${item.name} has ${socketed} socketed jewel(s) — remove some before lowering its socket count.`);
+        ui.notifications.warn(`Darksheet | ${item.name} has ${socketed} socketed jewel(s) \u2014 remove some before lowering its socket count.`);
         return;
     }
     if (effective !== Number(raw)) foundry.utils.setProperty(changes, "flags.darksheet.item.sockets", effective);
@@ -2456,7 +2838,7 @@ Hooks.on('preCreateChatMessage', async (message, data, options, userId) => {
     await darksheetTriggerAutoBurnout(actor, item, seed);
 });
 
-// Element / gem → pip colour for the socket display.
+// Element / gem -> pip colour for the socket display.
 const DARKSHEET_ELEMENTAL_GEMS = {
     Alexandrite: "thunder", Amethyst: "psychic", Aquamarine: "force", Diamond: "radiant",
     Emerald: "poison", Onyx: "necrotic", Peridot: "acid", Ruby: "fire", Sapphire: "cold", Topaz: "lightning"
@@ -2477,7 +2859,7 @@ function darksheetSocketColor(socket) {
     return DARKSHEET_GEM_COLOR[socket?.gem] || "#d8ae58";
 }
 // Items that require attunement carry their power in the attunement itself, so
-// they get NO default jewel sockets — only what the GM explicitly grants.
+// they get NO default jewel sockets; only what the GM explicitly grants.
 function dsRequiresAttunement(item) { return item?.system?.attunement === "required"; }
 // The default socket count when the GM hasn't set one: 0 for attunement items, 3 otherwise.
 function dsDefaultSockets(item) { return dsRequiresAttunement(item) ? 0 : 3; }
@@ -2492,7 +2874,7 @@ function darksheetSocketDisplay(item) {
     const slots = [];
     for (let i = 0; i < total; i++) {
         const s = socketed[i];
-        if (s) slots.push({ filled: true, color: darksheetSocketColor(s), label: `${s.name}${s.effect ? " — " + s.effect : ""}` });
+        if (s) slots.push({ filled: true, color: darksheetSocketColor(s), label: `${s.name}${s.effect ? " \u2014 " + s.effect : ""}` });
         else slots.push({ filled: false, label: "Empty socket" });
     }
     return { slots, used: socketed.length, max: total };
@@ -2500,14 +2882,14 @@ function darksheetSocketDisplay(item) {
 
 // What each temper does (shown on hover over the temper tag / sheet field).
 const DARKSHEET_TEMPER_INFO = {
-    Pure: { short: "cost ×2, value ×3", full: "Pure temper — crafting cost ×2, value ×3 (3 days). Critical failures deal only ½ a notch of damage." },
-    Royal: { short: "cost ×4, value ×6", full: "Royal temper — crafting cost ×4, value ×6 (1 week). Critical failures deal only ¼ of a notch." },
-    Astral: { short: "cost ×8, value ×12", full: "Astral temper — crafting cost ×8, value ×12 (2 weeks). Critical failures deal only ⅛ of a notch." }
+    Pure: { short: "cost \u00D72, value \u00D73", full: "Pure temper \u2014 crafting cost \u00D72, value \u00D73 (3 days). Critical failures deal only \u00BD a notch of damage." },
+    Royal: { short: "cost \u00D74, value \u00D76", full: "Royal temper \u2014 crafting cost \u00D74, value \u00D76 (1 week). Critical failures deal only \u00BC of a notch." },
+    Astral: { short: "cost \u00D78, value \u00D712", full: "Astral temper \u2014 crafting cost \u00D78, value \u00D712 (2 weeks). Critical failures deal only \u215B of a notch." }
 };
 const DARKSHEET_QUALITY_INFO = {
-    worn: "Worn — lightly used; resale value reduced.",
-    "well-worn": "Well-Worn — visibly used; resale value notably reduced.",
-    scarred: "Scarred — heavily damaged; resale value greatly reduced."
+    worn: "Worn \u2014 lightly used; resale value reduced.",
+    "well-worn": "Well-Worn \u2014 visibly used; resale value notably reduced.",
+    scarred: "Scarred \u2014 heavily damaged; resale value greatly reduced."
 };
 function darksheetCap(s) { return String(s || "").split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join("-"); }
 // Build the Darker Dungeons info block appended to an item's hover tooltip.
@@ -2526,7 +2908,7 @@ function darksheetTooltipExtra(item) {
         const max = dsItemSocketMax(item);
         if (max > 0 || sockets.length) {
             const names = sockets.map(s => s.name).join(", ");
-            rows.push(`Arcane sockets: ${sockets.length}/${max}${names ? ` — ${names}` : ""}.`);
+            rows.push(`Arcane sockets: ${sockets.length}/${max}${names ? ` \u2014 ${names}` : ""}.`);
         }
     }
     if (!rows.length) return "";
@@ -2547,7 +2929,7 @@ function darksheetWearInfo(item) {
 }
 // Wrap an icon element in a span carrying the wear classes (so the border +
 // ::after cracks render). Works for <img> AND dnd5e's <dnd5e-icon> custom
-// element — the latter is `display:contents` (no box of its own), so adding
+// element; the latter is `display:contents` (no box of its own), so adding
 // classes directly to it would render nothing; a wrapper gives us a real box.
 function darksheetWearWrapImg(icon, info) {
     if (!icon || !info) return;
@@ -2648,7 +3030,7 @@ function dsStripSocketBlock(html) {
 }
 function dsSocketBlockHtml(item, sockets) {
     const rows = sockets.map(s => { const tag = s.element || (s.gem && s.gem !== "Elemental" ? s.gem : ""); return `<li><strong>${escapeSheetHtml(s.name)}</strong>${tag ? ` <em>(${escapeSheetHtml(tag)})</em>` : ""}: ${escapeSheetHtml(s.effect || "")}</li>`; }).join("");
-    return `<section class="ds-sockets-block"><hr><p><strong>Arcane Sockets (${sockets.length}/${dsItemSocketMax(item)})</strong> — effects apply only while attuned.</p><ul>${rows}</ul></section>`;
+    return `<section class="ds-sockets-block"><hr><p><strong>Arcane Sockets (${sockets.length}/${dsItemSocketMax(item)})</strong> \u2014 effects apply only while attuned.</p><ul>${rows}</ul></section>`;
 }
 async function dsWriteSockets(item, sockets) {
     const storedBase = item.flags?.darksheet?.socketBaseDesc;
@@ -2728,7 +3110,7 @@ function dsOpenRemoveDialog(item, index, s) {
     const dc = DS_UNSOCKET_DC[s.tier] || 10;
     new Dialog({
         title: `Socketed: ${s.name}`,
-        content: `<p>${escapeSheetHtml(s.effect || "")}</p><p><strong>Unsocket</strong> — 8 hours + an Intelligence (Arcana) check vs DC ${dc}: success returns the reusable jewel, failure shatters it.<br><strong>Shatter</strong> — 1 hour, the jewel is destroyed.</p>`,
+        content: `<p>${escapeSheetHtml(s.effect || "")}</p><p><strong>Unsocket</strong> \u2014 8 hours + an Intelligence (Arcana) check vs DC ${dc}: success returns the reusable jewel, failure shatters it.<br><strong>Shatter</strong> \u2014 1 hour, the jewel is destroyed.</p>`,
         buttons: {
             unsocket: { icon: '<i class="fas fa-screwdriver-wrench"></i>', label: "Unsocket (roll)", callback: () => dsDoUnsocket(item, index) },
             shatter: { icon: '<i class="fas fa-gem"></i>', label: "Shatter", callback: () => dsDoShatter(item, index) },
@@ -2743,7 +3125,7 @@ async function dsDoShatter(item, index) {
     if (!s) return;
     await dsWriteSockets(item, sockets.filter((_, i) => i !== index));
     ui.notifications.info(`Darksheet | Shattered ${s.name} out of ${item.name}.`);
-    dsSocketChat(item.parent, item, `<p><strong>${escapeSheetHtml(item.parent?.name ?? "")}</strong> shatters <strong>${escapeSheetHtml(s.name)}</strong> out of ${escapeSheetHtml(item.name)} — the jewel is destroyed.</p>`);
+    dsSocketChat(item.parent, item, `<p><strong>${escapeSheetHtml(item.parent?.name ?? "")}</strong> shatters <strong>${escapeSheetHtml(s.name)}</strong> out of ${escapeSheetHtml(item.name)} \u2014 the jewel is destroyed.</p>`);
 }
 async function dsDoUnsocket(item, index) {
     const sockets = dsSockets(item);
@@ -2764,10 +3146,10 @@ async function dsDoUnsocket(item, index) {
     if (success) {
         if (actor) await dsReturnJewel(actor, s);
         ui.notifications.info(`Darksheet | Unsocketed ${s.name} (returned).`);
-        dsSocketChat(actor, item, `<p><strong>${escapeSheetHtml(actor?.name ?? "")}</strong> removes <strong>${escapeSheetHtml(s.name)}</strong> from ${escapeSheetHtml(item.name)}${roll ? ` — ${roll.total} vs DC ${dc}` : ""}. The jewel can be reused.</p>`);
+        dsSocketChat(actor, item, `<p><strong>${escapeSheetHtml(actor?.name ?? "")}</strong> removes <strong>${escapeSheetHtml(s.name)}</strong> from ${escapeSheetHtml(item.name)}${roll ? ` \u2014 ${roll.total} vs DC ${dc}` : ""}. The jewel can be reused.</p>`);
     } else {
         ui.notifications.warn(`Darksheet | The jewel shattered while unsocketing (${roll?.total} vs DC ${dc}).`);
-        dsSocketChat(actor, item, `<p><strong>${escapeSheetHtml(actor?.name ?? "")}</strong> fails to pry <strong>${escapeSheetHtml(s.name)}</strong> from ${escapeSheetHtml(item.name)} — ${roll?.total} vs DC ${dc}. The jewel <strong>shatters</strong>.</p>`);
+        dsSocketChat(actor, item, `<p><strong>${escapeSheetHtml(actor?.name ?? "")}</strong> fails to pry <strong>${escapeSheetHtml(s.name)}</strong> from ${escapeSheetHtml(item.name)} \u2014 ${roll?.total} vs DC ${dc}. The jewel <strong>shatters</strong>.</p>`);
     }
 }
 function dsOpenSlotDialog(item, index) {
@@ -2779,7 +3161,7 @@ function dsOpenSlotDialog(item, index) {
     const gm = game.user.isGM;
     if (!gm) {
         if (!kind) return ui.notifications.warn("Darksheet | Only weapons or light/medium/heavy armor can be socketed.");
-        if (dsItemMagical(item)) return ui.notifications.warn("Darksheet | This item is enchanted/magical — enchantments OR sockets, not both.");
+        if (dsItemMagical(item)) return ui.notifications.warn("Darksheet | This item is enchanted/magical \u2014 enchantments OR sockets, not both.");
         if (sockets.length >= max) return ui.notifications.warn("Darksheet | No free sockets remain.");
         if (!dsToolProficient(actor, item)) return ui.notifications.warn("Darksheet | The owner needs proficiency with suitable tools to socket.");
     }
@@ -2838,11 +3220,11 @@ function wireItemSocketClicks(app, item) {
     });
 }
 
-/* ============================================================
-   Gemcutting / Jewelcrafting — shared actions usable from the item
-   sheet and inventory rows. Mirrors the Darkscreen workshop logic so
-   gems can be cut/ground/crafted without opening the screen.
-   ============================================================ */
+/* =====
+ Gemcutting / Jewelcrafting - shared actions usable from the item
+ sheet and inventory rows. Mirrors the Darkscreen workshop logic so
+ gems can be cut/ground/crafted without opening the screen.
+ ===== */
 const DSGEM = {
     CRAFT_TIERS: ["Royal", "Lucent", "Astral"],
     TIER_LETTER: { Royal: "R", Lucent: "L", Astral: "A" },
@@ -2898,7 +3280,7 @@ const DSGEM = {
         { base: "Jewel of Spellbreaking", slot: "Weapon", gem: "Aquamarine", tiers: "RLA", effect: "Spend a charge to deal +1d6/1d8/1d10 force damage and stop the target casting spells until its next turn. Charges: 3." },
         { base: "Jewel of Summoning", slot: "Weapon", gem: "Jasper", tiers: "A", effect: "Spend a charge to summon this weapon into your free hand (within 100 ft) as a bonus action. Charges: 3." },
         { base: "Jewel of Thunderstrike", slot: "Weapon", gem: "Alexandrite", tiers: "RLA", effect: "Spend a charge to deal +1d6/1d8/1d10 thunder damage; deafen and push the target back 10 ft. Charges: 3." },
-        { base: "Jewel of Transmutation", slot: "Weapon", gem: "Elemental", tiers: "A", effect: "Your weapon's normal damage becomes {el} — it deals {el} instead of its usual bludgeoning/piercing/slashing." },
+        { base: "Jewel of Transmutation", slot: "Weapon", gem: "Elemental", tiers: "A", effect: "Your weapon's normal damage becomes {el} \u2014 it deals {el} instead of its usual bludgeoning/piercing/slashing." },
         { base: "Jewel of Wrath", slot: "Weapon", gem: "Elemental", tiers: "RLA", effect: "On a critical hit, deal +4/+8/+12 {el} damage." }
     ],
 
@@ -3039,7 +3421,7 @@ const DSGEM = {
         }
     },
     async shatter(actor, item) { const g = item.flags.darksheet.gem; await this.consumeOne(actor, item); await this.addArcaneDust(actor, g.type, g.dustValue); },
-    // Description for a gem that cracked during crafting — makes clear it is ruined.
+    // Description for a gem that cracked during crafting - makes clear it is ruined.
     crackedDescription(g) {
         const el = this.ELEMENTAL_GEMS[g.type];
         const natureLine = el
@@ -3184,7 +3566,7 @@ const DSGEM = {
     },
     async pickRecipe(g, recipes) {
         const el = this.ELEMENTAL_GEMS[g.type];
-        const opts = recipes.map((r, i) => { const eff = this.resolveElementText(this.jewelEffectFor(r, g.quality), el); return `<option value="${i}">${this.esc(r.base)} — ${this.esc(eff)}</option>`; }).join("");
+        const opts = recipes.map((r, i) => { const eff = this.resolveElementText(this.jewelEffectFor(r, g.quality), el); return `<option value="${i}">${this.esc(r.base)} \u2014 ${this.esc(eff)}</option>`; }).join("");
         const idx = await new Promise(resolve => {
             new Dialog({
                 title: `Craft Jewel: ${g.quality} ${g.type}`,
@@ -3205,10 +3587,10 @@ const DSGEM = {
         if (!roll) return;
         if (roll.total >= g.cutDC) {
             await this.cutInPlace(actor, item);
-            await Darksheet.postDarkscreenChat({ actor, title: "Gemcutting", icon: "fa-gem", whisper: "gm", body: `<p><strong>${this.esc(actor.name)}</strong> cuts the ${this.esc(g.quality)} ${this.esc(g.type)} — <span class="darkRollGreen">${roll.total}</span> vs DC ${g.cutDC}. <strong>Success!</strong> Now worth ${g.cutValue} gp.</p>` });
+            await Darksheet.postDarkscreenChat({ actor, title: "Gemcutting", icon: "fa-gem", whisper: "gm", body: `<p><strong>${this.esc(actor.name)}</strong> cuts the ${this.esc(g.quality)} ${this.esc(g.type)} \u2014 <span class="darkRollGreen">${roll.total}</span> vs DC ${g.cutDC}. <strong>Success!</strong> Now worth ${g.cutValue} gp.</p>` });
         } else {
             await this.shatter(actor, item);
-            await Darksheet.postDarkscreenChat({ actor, title: "Gemcutting", icon: "fa-gem", whisper: "gm", body: `<p><strong>${this.esc(actor.name)}</strong> botches the cut on the ${this.esc(g.quality)} ${this.esc(g.type)} — <span class="darkRollRed">${roll.total}</span> vs DC ${g.cutDC}. <strong>Shattered</strong> into Arcane Dust worth ${g.dustValue} gp.</p>` });
+            await Darksheet.postDarkscreenChat({ actor, title: "Gemcutting", icon: "fa-gem", whisper: "gm", body: `<p><strong>${this.esc(actor.name)}</strong> botches the cut on the ${this.esc(g.quality)} ${this.esc(g.type)} \u2014 <span class="darkRollRed">${roll.total}</span> vs DC ${g.cutDC}. <strong>Shattered</strong> into Arcane Dust worth ${g.dustValue} gp.</p>` });
         }
     },
     async grindAction(actor, item) {
@@ -3246,15 +3628,15 @@ const DSGEM = {
             await this.createJewelOnActor(actor, jewelName, this.ELEMENTAL_GEMS[g.type], detail);
             if (crit) await this.addArcaneDust(actor, g.type, g.dustValue);
             const jewelLabel = detail?.value ? `${jewelName} (${detail.value})` : jewelName;
-            await Darksheet.postDarkscreenChat({ actor, title: "Jewelcrafting", icon: "fa-ring", whisper: "gm", body: `<p><strong>${this.esc(actor.name)}</strong> crafts a <strong>${this.esc(jewelLabel)}</strong> — <span class="darkRollGreen">${roll.total}</span> vs DC ${dc}.${crit ? " <em>Critical success — spare Arcane Dust recovered!</em>" : ""}</p>` });
+            await Darksheet.postDarkscreenChat({ actor, title: "Jewelcrafting", icon: "fa-ring", whisper: "gm", body: `<p><strong>${this.esc(actor.name)}</strong> crafts a <strong>${this.esc(jewelLabel)}</strong> \u2014 <span class="darkRollGreen">${roll.total}</span> vs DC ${dc}.${crit ? " <em>Critical success \u2014 spare Arcane Dust recovered!</em>" : ""}</p>` });
         } else {
             const critFail = roll.total <= dc - 10;
             if (critFail) {
                 const lower = await this.downgradeAndCrack(actor, item);
-                await Darksheet.postDarkscreenChat({ actor, title: "Jewelcrafting", icon: "fa-ring", whisper: "gm", body: `<p><strong>${this.esc(actor.name)}</strong> botches the ${this.esc(jewelName)} — <span class="darkRollRed">${roll.total}</span> vs DC ${dc}. <strong>Critical failure:</strong> the ${this.esc(g.type)} cracks and drops from ${this.esc(g.quality)} to ${this.esc(lower)}.</p>` });
+                await Darksheet.postDarkscreenChat({ actor, title: "Jewelcrafting", icon: "fa-ring", whisper: "gm", body: `<p><strong>${this.esc(actor.name)}</strong> botches the ${this.esc(jewelName)} \u2014 <span class="darkRollRed">${roll.total}</span> vs DC ${dc}. <strong>Critical failure:</strong> the ${this.esc(g.type)} cracks and drops from ${this.esc(g.quality)} to ${this.esc(lower)}.</p>` });
             } else {
                 await this.crack(actor, item);
-                await Darksheet.postDarkscreenChat({ actor, title: "Jewelcrafting", icon: "fa-ring", whisper: "gm", body: `<p><strong>${this.esc(actor.name)}</strong> fails to craft a ${this.esc(jewelName)} — <span class="darkRollRed">${roll.total}</span> vs DC ${dc}. The ${this.esc(g.quality)} ${this.esc(g.type)} <strong>cracks</strong> and can no longer be turned into a jewel.</p>` });
+                await Darksheet.postDarkscreenChat({ actor, title: "Jewelcrafting", icon: "fa-ring", whisper: "gm", body: `<p><strong>${this.esc(actor.name)}</strong> fails to craft a ${this.esc(jewelName)} \u2014 <span class="darkRollRed">${roll.total}</span> vs DC ${dc}. The ${this.esc(g.quality)} ${this.esc(g.type)} <strong>cracks</strong> and can no longer be turned into a jewel.</p>` });
             }
         }
     },
@@ -3295,12 +3677,12 @@ const DSGEM = {
             const crit = roll.total >= dc + 10;
             const vials = crit ? 3 : 2;
             await this.createOilOnActor(actor, oilName, vials);
-            await Darksheet.postDarkscreenChat({ actor, title: "Alchemy", icon: "fa-flask", whisper: "gm", body: `<p><strong>${this.esc(actor.name)}</strong> brews <strong>${vials}x ${this.esc(oilName)}</strong> from ${this.esc(d.gemType)} dust — <span class="darkRollGreen">${roll.total}</span> vs DC ${dc}.${crit ? " <em>Critical success!</em>" : ""}</p>` });
+            await Darksheet.postDarkscreenChat({ actor, title: "Alchemy", icon: "fa-flask", whisper: "gm", body: `<p><strong>${this.esc(actor.name)}</strong> brews <strong>${vials}x ${this.esc(oilName)}</strong> from ${this.esc(d.gemType)} dust \u2014 <span class="darkRollGreen">${roll.total}</span> vs DC ${dc}.${crit ? " <em>Critical success!</em>" : ""}</p>` });
         } else {
-            await Darksheet.postDarkscreenChat({ actor, title: "Alchemy", icon: "fa-flask", whisper: "gm", body: `<p><strong>${this.esc(actor.name)}</strong> fails to brew ${this.esc(oilName)} — <span class="darkRollRed">${roll.total}</span> vs DC ${dc}. The batch spoils and the ${this.esc(d.gemType)} dust is wasted.</p>` });
+            await Darksheet.postDarkscreenChat({ actor, title: "Alchemy", icon: "fa-flask", whisper: "gm", body: `<p><strong>${this.esc(actor.name)}</strong> fails to brew ${this.esc(oilName)} \u2014 <span class="darkRollRed">${roll.total}</span> vs DC ${dc}. The batch spoils and the ${this.esc(d.gemType)} dust is wasted.</p>` });
         }
     },
-    // Buttons to show for a gem (uncut → Cut + Grind Down; cut+craftable → Craft Jewel).
+    // Buttons to show for a gem (uncut -> Cut + Grind Down; cut+craftable -> Craft Jewel).
     buttonsFor(g) {
         const out = [];
         if (!g || g.cracked) return out;
@@ -3308,7 +3690,7 @@ const DSGEM = {
         else { out.push({ action: "cut", icon: "fa-gem", label: "Cut" }); out.push({ action: "grind", icon: "fa-mortar-pestle", label: "Grind Down" }); }
         return out;
     },
-    // Buttons to show for gemstone dust (oil-grade → Craft Oil).
+    // Buttons to show for gemstone dust (oil-grade -> Craft Oil).
     buttonsForDust(d) {
         return this.dustIsOilGrade(d) ? [{ action: "oil", icon: "fa-flask", label: "Craft Oil" }] : [];
     },
@@ -3322,7 +3704,7 @@ const DSGEM = {
         const c = this._computedBlueprint(flag) || {};
         const fallbackImg = c.resultImg || "icons/sundries/scrolls/scroll-runed-brown.webp";
         let raw = Array.isArray(flag.variants) && flag.variants.length ? flag.variants : null;
-        // Legacy single-output recipe flag → wrap as one variant.
+        // Legacy single-output recipe flag -> wrap as one variant.
         if (!raw && (flag.result || flag.resultUuid || flag.ingredients)) {
             raw = [{ result: flag.result, resultUuid: flag.resultUuid, resultImg: flag.resultImg, materials: flag.materials, checkSkill: flag.checkSkill, checkDc: flag.checkDc, check: flag.check }];
         }
@@ -3394,7 +3776,7 @@ const DSGEM = {
         }
         const opts = this.checkOptions().filter(o => o.key !== "flexible");
         const options = opts.map(o => `<option value="${this.esc(o.key)}"${o.key === this.FLEX_DEFAULT ? " selected" : ""}>${this.esc(o.label)}</option>`).join("");
-        return `<div class="dg-stat dg-stat--wide"><i class="fas fa-dice-d20"></i><div class="dg-stat__t"><span class="dg-stat__l">Check${dc ? ` — DC ${dc}` : ""}</span><select class="dg-flex-select">${options}</select></div></div>`;
+        return `<div class="dg-stat dg-stat--wide"><i class="fas fa-dice-d20"></i><div class="dg-stat__t"><span class="dg-stat__l">Check${dc ? ` - DC ${dc}` : ""}</span><select class="dg-flex-select">${options}</select></div></div>`;
     },
     // Read the chosen skill from a dialog that used flexibleCheckTile().
     readFlexibleChoice(html) {
@@ -3551,15 +3933,15 @@ const DSGEM = {
         const rarLabel = (r) => this.MAT_RARITIES.find(x => x.key === r)?.label || r || "any";
         const chip = (cls, txt) => `<span class="darksheet-mat-chip ${cls}">${this.esc(txt)}</span>`;
         // One list row per material: small icon + name (link), then rarity /
-        // substance / element tags — the same chips the material sheet renders.
+        // substance / element tags - the same chips the material sheet renders.
         const matRow = (mm) => `<div class="ds-matcheck-item">`
-            + `<a class="content-link ds-matcheck-item__link" draggable="true" data-link data-uuid="${mm.uuid}" data-type="Item" data-tooltip="Drag onto a sheet, or click to open · ${this.esc(mm.name)}"><img src="${mm.img}"><span>${this.esc(mm.name)}</span></a>`
+            + `<a class="content-link ds-matcheck-item__link" draggable="true" data-link data-uuid="${mm.uuid}" data-type="Item" data-tooltip="Drag onto a sheet, or click to open \u00B7 ${this.esc(mm.name)}"><img src="${mm.img}"><span>${this.esc(mm.name)}</span></a>`
             + `<span class="ds-matcheck-tags">`
             + chip(`darksheet-mat-rar-${mm.rarity}`, rarLabel(mm.rarity))
             + (mm.substance ? chip("", mm.substance) : "")
             + (mm.element && mm.element !== "none" ? chip(`darksheet-mat-el-${mm.element}`, mm.element) : "")
             + `</span></div>`;
-        const link = (uuid, name, img) => `<a class="content-link" draggable="true" data-link data-uuid="${uuid}" data-type="Item" data-tooltip="Drag onto a sheet, or click to open · ${this.esc(name)}"><img src="${img}">${this.esc(name)}</a>`;
+        const link = (uuid, name, img) => `<a class="content-link" draggable="true" data-link data-uuid="${uuid}" data-type="Item" data-tooltip="Drag onto a sheet, or click to open \u00B7 ${this.esc(name)}"><img src="${img}">${this.esc(name)}</a>`;
         let body = "";
         bp.variants.forEach((v, vi) => {
             body += `<div class="ds-matcheck-out"><div class="ds-matcheck-out__h">${this.esc(v.result || ("Output " + (vi + 1)))}</div>`;
@@ -3567,21 +3949,21 @@ const DSGEM = {
                 const qty = m.qty || 1;
                 if (m.match) {
                     const found = mats.filter(mm => sat(mm, m.match)).sort((a, b) => (rarOrder[a.rarity] ?? 9) - (rarOrder[b.rarity] ?? 9) || a.name.localeCompare(b.name));
-                    body += `<div class="ds-matcheck-req"><div class="ds-matcheck-req__h"><span><i class="fas fa-shapes"></i> ${this.esc(this.matchLabel(m.match))} <span class="ds-matcheck-qty">×${qty}</span></span><span class="ds-matcheck-count ${found.length ? "" : "is-zero"}">${found.length} match${found.length === 1 ? "" : "es"}</span></div>`;
+                    body += `<div class="ds-matcheck-req"><div class="ds-matcheck-req__h"><span><i class="fas fa-shapes"></i> ${this.esc(this.matchLabel(m.match))} <span class="ds-matcheck-qty">\u00D7${qty}</span></span><span class="ds-matcheck-count ${found.length ? "" : "is-zero"}">${found.length} match${found.length === 1 ? "" : "es"}</span></div>`;
                     body += found.length
                         ? `<div class="ds-matcheck-list">${found.map(matRow).join("")}</div>`
-                        : `<div class="ds-matcheck-none">No compendium material satisfies this — consider adding one.</div>`;
+                        : `<div class="ds-matcheck-none">No compendium material satisfies this \u2014 consider adding one.</div>`;
                     body += `</div>`;
                 } else {
                     const label = m.uuid ? link(m.uuid, m.name || "Item", m.img || "icons/commodities/materials/bowl-powder-blue.webp") : `<i class="fas fa-cube"></i> ${this.esc(m.name || "Material")}`;
-                    body += `<div class="ds-matcheck-req"><div class="ds-matcheck-req__h"><span>${label} <span class="ds-matcheck-qty">×${qty}</span></span><span class="ds-matcheck-count">${m.uuid ? "specific item" : "by name / runtime"}</span></div></div>`;
+                    body += `<div class="ds-matcheck-req"><div class="ds-matcheck-req__h"><span>${label} <span class="ds-matcheck-qty">\u00D7${qty}</span></span><span class="ds-matcheck-count">${m.uuid ? "specific item" : "by name / runtime"}</span></div></div>`;
                 }
             }
             body += `</div>`;
         });
         const content = `<div class="ds-matcheck">${body || "<p>This recipe has no material requirements.</p>"}</div>`;
         new Dialog({
-            title: `Usable materials — ${item.name}`,
+            title: `Usable materials \u2014 ${item.name}`,
             content,
             buttons: { close: { icon: '<i class="fas fa-check"></i>', label: "Close" } },
             default: "close",
@@ -3663,12 +4045,12 @@ try { window.DarksheetGem = DSGEM; } catch (e) {}
 
 // Invalidate the "recipe for item" index whenever a recipe item is created,
 // changed, or deleted (cheap to rebuild on next sheet open).
-Hooks.on("createItem", (it) => { if (it?.flags?.darksheet?.recipe) DSGEM._recipeIndexCache = null; });
-Hooks.on("deleteItem", (it) => { if (it?.flags?.darksheet?.recipe) DSGEM._recipeIndexCache = null; });
-Hooks.on("updateItem", (it, ch) => { if (it?.flags?.darksheet?.recipe || foundry.utils.getProperty(ch || {}, "flags.darksheet.recipe")) DSGEM._recipeIndexCache = null; });
+Hooks.on("createItem", (it) => { if (it?.flags?.darksheet?.recipe) DSGEM._recipeIndexCache = null; darksheetScheduleEncumbranceSync(it?.parent, { delay: 250 }); });
+Hooks.on("deleteItem", (it) => { if (it?.flags?.darksheet?.recipe) DSGEM._recipeIndexCache = null; darksheetScheduleEncumbranceSync(it?.parent, { delay: 250 }); });
+Hooks.on("updateItem", (it, ch) => { if (it?.flags?.darksheet?.recipe || foundry.utils.getProperty(ch || {}, "flags.darksheet.recipe")) DSGEM._recipeIndexCache = null; darksheetScheduleEncumbranceSync(it?.parent, { delay: 250 }); });
 
 // Create a Darksheet Recipe item (a loot item carrying a recipe flag).
-// resultItem → its single output is that item. Created on parent actor, in a
+// resultItem - its single output is that item. Created on parent actor, in a
 // pack, or in the world Items directory.
 async function darksheetCreateRecipeItem({ name = null, folder = null, parent = null, pack = null, resultItem = null } = {}) {
     const RECIPE_ICON = "icons/sundries/scrolls/scroll-runed-brown.webp";
@@ -3713,13 +4095,13 @@ Hooks.on("renderCreateDocumentDialog", (app, html) => {
     } catch (e) { console.warn("Darksheet | create-dialog recipe option failed", e); }
 });
 
-/* ============================================================
-   Active Crafting — Resource Nodes (Giffyglyph ch.13)
-   GM authors node definitions (stored as a world setting); nodes are placed on
-   scenes as map Notes that show to the GM always and to players when an owned
-   token is near. Clicking a node opens the gathering dialog (skill check vs DC,
-   harvest rules, depletes the node, grants materials). Optional required tool.
-   ============================================================ */
+/* =====
+ Active Crafting - Resource Nodes (Giffyglyph ch.13)
+ GM authors node definitions (stored as a world setting); nodes are placed on
+ scenes as map Notes that show to the GM always and to players when an owned
+ token is near. Clicking a node opens the gathering dialog (skill check vs DC,
+ harvest rules, depletes the node, grants materials). Optional required tool.
+ ===== */
 function darksheetMaterialStackKeyFromData(data = {}, { ignoreSource = false } = {}) {
     const material = data.flags?.darksheet?.material;
     const sourceUuid = String(
@@ -3771,7 +4153,13 @@ async function darksheetGrantStackableItem(actor, data, quantity = 1) {
     });
     if (existing) {
         const current = Math.max(0, darksheetItemQuantity(existing));
-        await existing.update({ "system.quantity": current + qty });
+        const updateData = { "system.quantity": current + qty };
+        const hidden = foundry.utils.getProperty(data, "flags.darksheet.material.hidden");
+        if (hidden !== undefined) {
+            updateData["flags.darksheet.material.hidden"] = !!hidden;
+            updateData["flags.darksheet.srdMat.hidden"] = !!hidden;
+        }
+        await existing.update(updateData);
         return existing;
     }
     const created = await actor.createEmbeddedDocuments("Item", [data]);
@@ -3797,7 +4185,7 @@ const DSNODE = {
 
     // Standard nodes shipped with the module. Seeded once (GM) into the world's
     // node list so a fresh world starts with usable examples; they're ordinary
-    // entries afterwards (editable, duplicable, deletable — deletion sticks).
+    // entries afterwards (editable, duplicable, deletable - deletion sticks).
     DEFAULT_DEFS: [
         {
             id: "ds-default-copper-node", name: "Copper Node",
@@ -3909,7 +4297,7 @@ const DSNODE = {
                 const depleted = (nd.quantity ?? 0) <= 0;
                 btn.classList.toggle("is-depleted", depleted);
                 btn.classList.toggle("is-gm", gm);
-                btn.dataset.tooltip = `${def?.name || "Node"}${depleted ? " (exhausted)" : ` — ${nd.quantity ?? 0} left`}${gm ? " · drag to move" : ""}`;
+                btn.dataset.tooltip = `${def?.name || "Node"}${depleted ? " (exhausted)" : ` - ${nd.quantity ?? 0} left`}${gm ? " - drag to move, right-click to delete" : ""}`;
                 if (!btn.firstChild) btn.innerHTML = `<img alt=""><span class="darksheet-node-btn__q"></span>`;
                 const imgEl = btn.querySelector("img");
                 const src = def?.img || def?.markerImg || "modules/darksheet/icons/ore.svg";
@@ -3941,6 +4329,11 @@ const DSNODE = {
         btn.className = "darksheet-node-btn";
         btn.dataset.noteId = id;
         let downX = 0, downY = 0, moved = false;
+        btn.addEventListener("contextmenu", async (ev) => {
+            ev.preventDefault(); ev.stopPropagation();
+            if (!game.user.isGM) return;
+            await this.deletePlacedNode(btn.dataset.noteId);
+        });
         btn.addEventListener("pointerdown", (ev) => {
             if (ev.button !== 0) return;
             ev.preventDefault(); ev.stopPropagation();
@@ -3968,6 +4361,33 @@ const DSNODE = {
             if (!moved) this.onClickNote(btn.dataset.noteId);
         });
         return btn;
+    },
+    async deletePlacedNode(noteId, { confirm = true } = {}) {
+        if (!game.user.isGM) return ui.notifications.warn("Darksheet | Only the GM can delete map gathering nodes.");
+        const noteDoc = canvas?.scene?.notes?.get(noteId);
+        const nd = this.nodeOf(noteDoc);
+        if (!noteDoc || !nd) return;
+        const def = this.getDef(nd.defId);
+        const name = def?.name || noteDoc.text || "gathering node";
+        if (confirm) {
+            const ok = await Dialog.confirm({
+                title: "Delete map gathering node",
+                content: `<p>Delete the placed <strong>${DSGEM.esc(name)}</strong> node from this scene?</p>`
+            });
+            if (!ok) return;
+        }
+        try {
+            await noteDoc.delete();
+        } catch (e) {
+            try { await canvas?.scene?.deleteEmbeddedDocuments?.("Note", [noteId]); }
+            catch (err) {
+                console.warn("Darksheet | failed to delete map gathering node", err);
+                return ui.notifications.error("Darksheet | Could not delete that map gathering node.");
+            }
+        }
+        try { if (this._gatherDlg?.rendered) this._gatherDlg.close(); } catch (e) {}
+        this.schedule();
+        ui.notifications.info(`Darksheet | Deleted map node "${name}".`);
     },
     onClickNote(noteId) {
         const noteDoc = canvas?.scene?.notes?.get(noteId); if (!noteDoc) return;
@@ -4007,7 +4427,7 @@ const DSNODE = {
                 ? `<a class="content-link dg-mat__name" data-link data-uuid="${l.uuid}">${name}</a>`
                 : `<span class="dg-mat__name${hide ? " is-hidden" : ""}">${name}</span>`;
             const tag = (gm && l.hidden) ? `<span class="dg-mat__tag" data-tooltip="Hidden from players until gathered"><i class="fas fa-eye-slash"></i></span>` : "";
-            const qty = (l.qty || 1) > 1 ? `<span class="dg-mat__qty">×${l.qty}</span>` : "";
+            const qty = (l.qty || 1) > 1 ? `<span class="dg-mat__qty">\u00D7${l.qty}</span>` : "";
             return `<div class="dg-mat"><img src="${img}">${nameHtml}${tag}${qty}<span class="dg-mat__pct">${l.chance ?? 100}%</span></div>`;
         }).join("") || `<div class="dg-empty">No materials defined.</div>`;
         const toolName = def.requiredItem?.name
@@ -4032,12 +4452,14 @@ const DSNODE = {
             <div class="dg-mats-title">Possible Materials</div>
             <div class="dg-mats">${mats}</div>
         </div>`;
+        const buttons = {
+            gather: { icon: '<i class="fas fa-hand-holding"></i>', label: depleted ? "Exhausted" : "Gather", callback: (html) => this.gather(def, note, actor, DSGEM.readFlexibleChoice(html)) }
+        };
+        if (gm) buttons.delete = { icon: '<i class="fas fa-trash"></i>', label: "Delete Map Node", callback: () => this.deletePlacedNode(note.id) };
         const dlg = new Dialog({
             title: `Gather: ${def.name}`,
             content,
-            buttons: {
-                gather: { icon: '<i class="fas fa-hand-holding"></i>', label: depleted ? "Exhausted" : "Gather", callback: (html) => this.gather(def, note, actor, DSGEM.readFlexibleChoice(html)) }
-            },
+            buttons,
             default: "gather",
             render: (html) => {
                 const root = html?.[0] ?? html;
@@ -4072,14 +4494,14 @@ const DSNODE = {
             if (e.uuid) { const doc = await fromUuid(e.uuid).catch(() => null); if (doc) { data = doc.toObject(); delete data._id; foundry.utils.setProperty(data, "flags.darksheet.sourceMaterialUuid", e.uuid); } }
             if (!data) data = { name: e.name || "Material", type: "loot", img: e.img || "icons/commodities/materials/bowl-powder-blue.webp", system: {} };
             await darksheetGrantStackableItem(actor, data, qty);
-            made.push(`${qty}× ${e.name || data.name}`);
+            made.push(`${qty}\u00D7 ${e.name || data.name}`);
         }
         return made;
     },
     async setNoteQuantity(noteDoc, q) {
         q = Math.max(0, q);
         if (game.user.isGM) { try { await noteDoc.update({ "flags.darksheet.node.quantity": q }); } catch (e) {} return; }
-        // Players lack permission to edit the scene Note — ask a GM to apply it.
+        // Players lack permission to edit the scene Note - ask a GM to apply it.
         game.socket.emit("module.darksheet", { type: "nodeDeplete", sceneId: noteDoc.parent?.id || canvas.scene?.id, noteId: noteDoc.id, quantity: q });
     },
     async _applyDeplete(sceneId, noteId, q) {
@@ -4125,7 +4547,7 @@ const DSNODE = {
         await this.setNoteQuantity(note, newQ);
         try {
             await Darksheet.postDarkscreenChat({ actor, title: "Gathering", icon: "fa-hand-holding", whisper: "",
-                body: `<p><strong>${DSGEM.esc(actor.name)}</strong> gathers from <strong>${DSGEM.esc(def.name)}</strong> — <span class="${success ? "darkRollGreen" : "darkRollRed"}">${total}</span> vs DC ${def.dc}. ${body}</p><p style="opacity:.7">${def.name}: ${newQ} measures left.</p>` });
+                body: `<p><strong>${DSGEM.esc(actor.name)}</strong> gathers from <strong>${DSGEM.esc(def.name)}</strong> \u2014 <span class="${success ? "darkRollGreen" : "darkRollRed"}">${total}</span> vs DC ${def.dc}. ${body}</p><p style="opacity:.7">${def.name}: ${newQ} measures left.</p>` });
         } catch (e) { }
         this.schedule();
     }
@@ -4145,8 +4567,8 @@ const DSHARVEST = {
     SIZE_MEASURES: { tiny: 1, sm: 2, med: 3, lg: 5, huge: 10, grg: 100 },
     measuresFor(actor) { return this.SIZE_MEASURES[actor?.system?.traits?.size || "med"] ?? 3; },
     harvestOf(tokenDoc) { return tokenDoc?.flags?.darksheet?.harvest || tokenDoc?.document?.flags?.darksheet?.harvest || null; },
-    // Singular body parts come in limited numbers (one heart, a pair of eyes…);
-    // bulk parts (scales, hide, blood, dust…) are effectively unlimited.
+    // Singular body parts come in limited numbers (one heart, a pair of eyes, etc.).
+    // Bulk parts (scales, hide, blood, dust, etc.) are effectively unlimited.
     LIMITED_RE: /\b(heart|brain|core|soul|liver|gland|stinger|skull|tongue|crown|essence|spark|sac|horn|eye|fang)\b/i,
     limitFor(name) { return this.LIMITED_RE.test(name || "") ? 1 : null; },
     toLoot(mm, weight) {
@@ -4159,7 +4581,7 @@ const DSHARVEST = {
     availableEntries(def, taken) {
         return (def.loot || []).filter(l => l.limit == null || (taken?.[l.name] || 0) < l.limit);
     },
-    // Pick one entry, weighted by its `weight` (so two equal weights → 50/50).
+    // Pick one entry, weighted by its `weight` (so two equal weights -> 50/50).
     weightedPick(entries) {
         const total = entries.reduce((s, e) => s + Math.max(0, Number(e.weight) || 0), 0);
         if (total <= 0) return entries[0] || null;
@@ -4217,9 +4639,9 @@ const DSHARVEST = {
                 const id = tok.id; seen.add(id);
                 let btn = el.querySelector(`.darksheet-harvest-btn[data-token-id="${id}"]`);
                 if (!btn) { btn = this._makeButton(id); el.appendChild(btn); }
-                btn.dataset.tooltip = `Harvest ${hv.name || tok.document.name} — ${hv.measures} measure(s) left`;
+                btn.dataset.tooltip = `${escapeSheetHtml(hv.name || "Corpse")} - ${hv.measures ?? 0} left`;
                 if (!btn.firstChild) btn.innerHTML = `<img alt=""><span class="darksheet-node-btn__q"></span>`;
-                const img = btn.querySelector("img"); if (img.getAttribute("src") !== this.MARKER) img.setAttribute("src", this.MARKER);
+                const img = btn.querySelector("img"); if (img && img.getAttribute("src") !== this.MARKER) img.setAttribute("src", this.MARKER);
                 const q = btn.querySelector(".darksheet-node-btn__q"); if (q) q.textContent = hv.measures ?? 0;
                 // Anchor to the token's lower-right so the corpse art stays visible.
                 const cx = tok.center.x + (tok.w / 2) * 0.55;
@@ -4264,7 +4686,7 @@ const DSHARVEST = {
             const exhausted = l.limit != null && used >= l.limit;
             const share = exhausted ? 0 : Math.round((Math.max(0, Number(l.weight) || 0) / totalW) * 100);
             const limitTxt = l.limit != null ? `<span class="dg-mat__limit">${exhausted ? "depleted" : `${l.limit - used} of ${l.limit} left`}</span>` : "";
-            return `<div class="dg-mat${exhausted ? " is-depleted" : ""}"><img src="${img}"><span class="dg-mat__name">${DSGEM.esc(l.name)}<span class="dg-mat__sub"> — ${tag}</span>${limitTxt}</span><span class="dg-mat__pct">${share}%</span></div>`;
+            return `<div class="dg-mat${exhausted ? " is-depleted" : ""}"><img src="${img}"><span class="dg-mat__name">${DSGEM.esc(l.name)}<span class="dg-mat__sub"> - ${tag}</span>${limitTxt}</span><span class="dg-mat__pct">${share}%</span></div>`;
         }).join("") || `<div class="dg-empty">Nothing harvestable.</div>`;
         const checkTile = DSGEM.flexibleCheckTile(def.skill, def.dc);
         const content = `<div class="darksheet-gather">
@@ -4274,7 +4696,7 @@ const DSHARVEST = {
             </div>
             <div class="dg-stats">
                 ${checkTile}
-                <div class="dg-stat"><i class="fas fa-paw"></i><div class="dg-stat__t"><span class="dg-stat__l">Creature</span><span class="dg-stat__v">${DSGEM.esc(def.type || "—")}</span></div></div>
+                <div class="dg-stat"><i class="fas fa-paw"></i><div class="dg-stat__t"><span class="dg-stat__l">Creature</span><span class="dg-stat__v">${DSGEM.esc(def.type || "-")}</span></div></div>
             </div>
             <div class="dg-remaining ${depleted ? "is-depleted" : ""}">
                 <div class="dg-remaining__top"><span>Remaining</span><span>${q} / ${max}</span></div>
@@ -4304,11 +4726,11 @@ const DSHARVEST = {
                 flags: { darksheet: { material: e.mat || { rarity: "common", substance: "flesh", element: "none" }, srdMat: { kind: "harvest" } } }
             };
             await darksheetGrantStackableItem(actor, data, qty);
-            made.push(`${qty}× ${e.name || data.name}`);
+            made.push(`${qty}\u00D7 ${e.name || data.name}`);
         }
         return made;
     },
-    // Players can't edit an enemy token's flags — relay measures + taken to the GM.
+    // Players can't edit an enemy token's flags - relay measures + taken to the GM.
     async setHarvest(tokenDoc, measures, taken) {
         const m = Math.max(0, measures);
         if (game.user.isGM) { try { await tokenDoc.update({ "flags.darksheet.harvest.measures": m, "flags.darksheet.harvest.taken": taken || {} }); } catch (e) {} return; }
@@ -4364,7 +4786,7 @@ const DSHARVEST = {
         await this.setHarvest(tokenDoc, newQ, taken);
         try {
             await Darksheet.postDarkscreenChat({ actor, title: "Harvesting", icon: "fa-hand-holding", whisper: "",
-                body: `<p><strong>${DSGEM.esc(actor.name)}</strong> harvests <strong>${DSGEM.esc(def.name)}</strong> — <span class="${success ? "darkRollGreen" : "darkRollRed"}">${total}</span> vs DC ${def.dc}. ${body}</p><p style="opacity:.7">${newQ} measure(s) left.</p>` });
+                body: `<p><strong>${DSGEM.esc(actor.name)}</strong> harvests <strong>${DSGEM.esc(def.name)}</strong> \u2014 <span class="${success ? "darkRollGreen" : "darkRollRed"}">${total}</span> vs DC ${def.dc}. ${body}</p><p style="opacity:.7">${newQ} measure(s) left.</p>` });
         } catch (e) {}
         DSNODE.schedule();
         if (newQ <= 0 && this._dlg?.rendered) { try { this._dlg.close(); } catch (e) {} }
@@ -4415,12 +4837,12 @@ for (const h of ["canvasReady", "canvasPan", "canvasTearDown", "controlToken", "
     "createToken", "updateToken", "deleteToken"]) {
     Hooks.on(h, () => DSNODE.schedule());
 }
-// Hide a placed node Note's native rendering — the HTML overlay marker is the
+// Hide a placed node Note's native rendering - the HTML overlay marker is the
 // only visual; the Note is just the data/position anchor.
 for (const h of ["drawNote", "refreshNote"]) {
     Hooks.on(h, (note) => { try { if (DSNODE.nodeOf(note?.document)) { note.renderable = false; note.visible = false; } } catch (e) {} });
 }
-// Node definitions live in a world setting — refresh markers when they change
+// Node definitions live in a world setting - refresh markers when they change
 // (e.g. a GM swaps the marker icon) for every connected client.
 Hooks.on("updateSetting", (setting) => { if (setting?.key === "darksheet.nodes") DSNODE.schedule(); });
 // Drag a node from the Darkscreen onto the canvas.
@@ -4473,7 +4895,7 @@ function darksheetInjectInspiration(app, html) {
         const count = Math.max(0, Math.min(max, Number(actor.getFlag("darksheet", "inspiration")) || 0));
         const wrap = document.createElement("div");
         wrap.className = "darksheet-inspiration";
-        wrap.dataset.tooltip = "Darker Dungeons Inspiration (0–3)";
+        wrap.dataset.tooltip = "Darker Dungeons Inspiration (0\u20133)";
         for (let i = 0; i < max; i++) {
             const pip = native.cloneNode(true); // reuse the system's fancy diamond
             pip.classList.add("darksheet-insp");
@@ -4492,7 +4914,7 @@ function darksheetInjectInspiration(app, html) {
             wrap.appendChild(pip);
         }
         native.replaceWith(wrap);
-    } catch (e) { /* header layout differs — leave the native control */ }
+    } catch (e) { /* header layout differs - leave the native control */ }
 }
 
 // Inject Cut/Grind/Craft buttons onto gem rows in the character inventory.
@@ -4535,7 +4957,7 @@ async function loadItemData(app, html, data) {
     data.item ??= item;
     const matFlag = item.flags?.darksheet?.material;
     data.darkSockets = darksheetSocketDisplay(item);
-    // Hide the socket field on sheets with no sockets — but keep it for the GM so
+    // Hide the socket field on sheets with no sockets - but keep it for the GM so
     // they can still grant sockets to an otherwise socketless item.
     data.showSocketField = game.user.isGM || !!data.darkSockets;
     data.qualityValue = darksheetQualityValue(item);
@@ -4543,7 +4965,7 @@ async function loadItemData(app, html, data) {
     const canEditOwnedMaterialFields = !!matFlag && (item.isOwner ?? game.user?.isGM);
     data.MaterialFieldsLocked = data.NotEditable && !canEditOwnedMaterialFields;
     data.DarksheetItemFieldsLocked = data.NotEditable && !canEditOwnedMaterialFields;
-    // Gem/dust actions (Cut / Grind / Craft Jewel / Craft Oil) — only on an actor.
+    // Gem/dust actions (Cut / Grind / Craft Jewel / Craft Oil) - only on an actor.
     const gemFlag = item.flags?.darksheet?.gem;
     const dustFlag = item.flags?.darksheet?.dust;
     if (item.actor) {
@@ -4577,11 +4999,11 @@ async function loadItemData(app, html, data) {
         if (existing.length) data.viewRecipes = existing;
         else if (game.user.isGM) data.canMakeRecipe = true;
     }
-    // Offer "Make this a Material" on loot/consumable items (GM) — only those make
+    // Offer "Make this a Material" on loot/consumable items (GM) - only those make
     // sense as crafting materials.
     if (game.user.isGM && !matFlag && !recipeFlag && !gemFlag && !dustFlag && !item.flags?.darksheet?.jewel
         && (item.type === "loot" || item.type === "consumable")) data.canMakeMaterial = true;
-    let itemDataTemplate = await renderTemplate("modules/darksheet/templates/itemdata.html", data);
+    let itemDataTemplate = await darksheetRenderTemplate("modules/darksheet/templates/itemdata.html", data);
 
     const roots = [];
     if (html instanceof jQuery) roots.push(...html.toArray());
@@ -4597,7 +5019,7 @@ async function loadItemData(app, html, data) {
     if (header) header.insertAdjacentHTML('afterend', itemDataTemplate);
     else html.find('.item-properties').first().before(itemDataTemplate);
     darksheetApplySilverStandardPriceControls(app, html);
-    // Collapsible "Darker Dungeons" section — remember open/closed across re-renders.
+    // Collapsible "Darker Dungeons" section - remember open/closed across re-renders.
     try {
         const rootEl = app?.element instanceof HTMLElement ? app.element
             : (app?.element?.[0] ?? (html instanceof jQuery ? html[0] : html));
@@ -4609,7 +5031,7 @@ async function loadItemData(app, html, data) {
             });
         }
     } catch (e) {}
-    // Socket clicks are actions (dialog + roll), not form edits — wire them for
+    // Socket clicks are actions (dialog + roll), not form edits - wire them for
     // any owner, even in dnd5e v14 "play mode" where NotEditable is true.
     if (data.darkSockets && (item.isOwner ?? !data.NotEditable)) wireItemSocketClicks(app, item);
     // Wire the gem action buttons (Cut / Grind / Craft) on the item sheet.
@@ -4619,7 +5041,7 @@ async function loadItemData(app, html, data) {
             btn.addEventListener('click', (ev) => { ev.preventDefault(); DSGEM.run(btn.dataset.gemAction, item.actor, item); });
         });
     }
-    // "Make a recipe for this item" — create a NEW recipe whose output is this item.
+    // "Make a recipe for this item" - create a NEW recipe whose output is this item.
     if (data.canMakeRecipe) {
         const rootEl = app?.element instanceof HTMLElement ? app.element : (app?.element?.[0] ?? (html instanceof jQuery ? html[0] : html));
         rootEl?.querySelector?.('[data-action="make-recipe"]')?.addEventListener('click', async (ev) => {
@@ -4627,7 +5049,7 @@ async function loadItemData(app, html, data) {
             await darksheetCreateRecipeItem({ resultItem: item, parent: item.actor ?? null });
         });
     }
-    // "View recipe" — open the existing recipe(s) that craft this item.
+    // "View recipe" - open the existing recipe(s) that craft this item.
     if (data.viewRecipes?.length) {
         const rootEl = app?.element instanceof HTMLElement ? app.element : (app?.element?.[0] ?? (html instanceof jQuery ? html[0] : html));
         rootEl?.querySelectorAll?.('[data-action="view-recipe"]')?.forEach(btn => btn.addEventListener('click', async (ev) => {
@@ -4637,7 +5059,7 @@ async function loadItemData(app, html, data) {
             else ui.notifications.warn("Darksheet | That recipe could not be opened.");
         }));
     }
-    // "Make this a Material" — tag the loot item with default material properties.
+    // "Make this a Material" - tag the loot item with default material properties.
     if (data.canMakeMaterial) {
         const rootEl = app?.element instanceof HTMLElement ? app.element : (app?.element?.[0] ?? (html instanceof jQuery ? html[0] : html));
         rootEl?.querySelector?.('[data-action="make-material"]')?.addEventListener('click', async (ev) => {
@@ -4902,7 +5324,7 @@ async function addWoundsToSheet(sheet, html, data) {
         <h3 class="icon">
             <i class="fas fa-bandage"></i>
             <span class="roboto-upper">Wounds / Scars</span>
-            <small>${treatedCount}/${activeCount} treated · ${healedCount} old</small>
+            <small>${treatedCount}/${activeCount} treated \u00B7 ${healedCount} old</small>
         </h3>
         <div class="darksheet-wound-actions">
             <button type="button" class="rollable button rollReopenWounds" title="Roll for reopened treated wounds"><i class="fas fa-dice-d20"></i> Reopen</button>
@@ -5122,7 +5544,7 @@ async function darkSheetSetup(app, html, data) {
     /*//Deactivate OLD
     html.find(".death-saves").remove();
     let sheet = html.find(".counters");
-    let DeathSaves = await renderTemplate("modules/darksheet/templates/deathsaves.html", data);
+    let DeathSaves = await darksheetRenderTemplate("modules/darksheet/templates/deathsaves.html", data);
     sheet.prepend(DeathSaves);*/
 
     //region INVENTORY
@@ -5155,7 +5577,7 @@ async function darkSheetSetup(app, html, data) {
     if (game.settings.get('darksheet', 'slotbasedinventory')) { // IF SLOTS ARE ENABLED
         //SET ENCUMBRANCE BAR
         let encumbrance = html.find(".encumbrance").find(".meter");
-        // dnd5e 5.x reworked the sheet — the legacy encumbrance markup may not
+        // dnd5e 5.x reworked the sheet - the legacy encumbrance markup may not
         // exist. Guard each lookup so the rest of darkSheetSetup still runs.
         if (encumbrance.length && encumbrance[0]) {
             const currentValue = encumbrance.find("div").find(".value")[0];
@@ -5179,7 +5601,7 @@ async function darkSheetSetup(app, html, data) {
             else
                 encumbrance[0].style = "background: red;border: 2px solid red;--bar-percentage:" + Math.min(percentage, 100) + "%;";
 
-            //SET BAR ARROWS — only if they still exist
+            //SET BAR ARROWS - only if they still exist
             for (let i = 0; i < 3; i++) {
                 if (encumbrance[0].children.length > 2) encumbrance[0].children[2].remove();
             }
@@ -5243,7 +5665,7 @@ async function darkSheetSetup(app, html, data) {
         let _item = actor.items.find(i => i.id == item.dataset.itemId);
         if (!_item) continue;
 
-        // Socket pips (early pass — covers items whose name isn't rebuilt below)
+        // Socket pips (early pass - covers items whose name isn't rebuilt below)
         darksheetInjectRowSockets(item, _item);
 
         const darksheetItem = _item.flags?.darksheet?.item;
@@ -5337,8 +5759,8 @@ async function darkSheetSetup(app, html, data) {
                 //CHANGE DISPLAY NAME
                 let itemname = _item.name;
                 /*if (_item.flags.darksheet.item.temper) {
-                    itemname = "[" + _item.flags.darksheet.item.temper + "] " + itemname;
-                }*/ //OLD TEMPER DISPLAY METHOD
+ itemname = "[" + _item.flags.darksheet.item.temper + "] " + itemname;
+ }*/ //OLD TEMPER DISPLAY METHOD
                 if (_item.type == "weapon" && _item.system.damage.base.denomination > 0) {
                     itemname += " ("+_item.system.damage.base.number+"d" + _item.system.damage.base.denomination + ")";
                 }
@@ -5346,19 +5768,19 @@ async function darkSheetSetup(app, html, data) {
                     itemname += " (" + _item.system.armor.value + " AC)";
                 }
                 /*if(_item.flags.darksheet.item.fragility){
-                const notchOptions = {
-                    1: 'Delicate',
-                    2: 'Frail',
-                    3: 'Basic',
-                    5: 'Solid',
-                    10: 'Sturdy',
-                    15: 'Durable',
-                    20: 'Very Sturdy',
-                    50: 'Fabled',
-                    100: 'Indestructible'
-                };
-                itemname =  "["+notchOptions[_item.flags.darksheet.item.fragility] + "] " + itemname;
-                }*/
+ const notchOptions = {
+ 1: 'Delicate',
+ 2: 'Frail',
+ 3: 'Basic',
+ 5: 'Solid',
+ 10: 'Sturdy',
+ 15: 'Durable',
+ 20: 'Very Sturdy',
+ 50: 'Fabled',
+ 100: 'Indestructible'
+ };
+ itemname = "["+notchOptions[_item.flags.darksheet.item.fragility] + "] " + itemname;
+ }*/
                 
                 item.children[0].children[0].children[1].children[0].innerHTML = itemname;
                 // re-add socket pips (the name rebuild above wipes the early pass)
@@ -5422,7 +5844,7 @@ async function darkSheetSetup(app, html, data) {
             const badge = document.createElement("span");
             badge.classList.add("ds-container-ammodie", "ammodieLabel", "item-ammodieLabel");
             badge.dataset.itemId = containerId;
-            badge.setAttribute("title", `Ammodie: ${ammodie} — click to roll`);
+            badge.setAttribute("title", `Ammodie: ${ammodie} \u2014 click to roll`);
             badge.innerHTML = `<i class="fas fa-dice-${ammodie}" inert></i> ${ammodie}`;
             badge.addEventListener("pointerdown", event => {
                 event.stopPropagation();
@@ -5461,9 +5883,9 @@ async function darkSheetSetup(app, html, data) {
             rollformula = "1d20 + " + ac + " - 10";
         }
         /*if (game.settings.get('darksheet', 'smalldefense')) {
-            rollResult -= 10;
-            rollResult2 -= 10;
-        }*/
+ rollResult -= 10;
+ rollResult2 -= 10;
+ }*/
         //let wounds = this.actor.system.attributes.wounds.value;
         let actorID = actor.id;
         let negative = "";
@@ -5555,9 +5977,9 @@ async function darkSheetSetup(app, html, data) {
         let roll2 = await new Roll("1d20").evaluate()
         let rollformula = "1d20 + " + ac;
         /*if (game.settings.get('darksheet', 'smalldefense')) {
-            rollResult -= 10;
-            rollResult2 -= 10;
-        }*/
+ rollResult -= 10;
+ rollResult2 -= 10;
+ }*/
         //let wounds = this.actor.system.attributes.wounds.value;
         let actorID = actor.id;
         let negative = "";
@@ -5571,7 +5993,7 @@ async function darkSheetSetup(app, html, data) {
         createRollMessage(actor, "Saving Attack", roll1, roll2, roll1.result, roll2.result, rollformula, "fa-solid fa-hand-holding-magic", "", negative)
     });
     // dnd5e 5.x V2 sheets no longer expose data.options.token / data.actor as
-    // live references — pull straight from `app` (the sheet instance).
+    // live references - pull straight from `app` (the sheet instance).
     const _actor = app?.actor ?? data?.actor;
     const _tokenUnlinked = () => app?.token?.actorLink === false;
 
@@ -5685,7 +6107,7 @@ async function rollBurnout(actor) {
         }
     } else { //IF POSITIVELY AFFECTED BY REGION
         regionMod = burnoutArray.indexOf(burnoutDie) - parseInt(regionModValue);
-        //console.log("Regionmodz step3 gr��er: "+regionmodz);
+        //console.log("Regionmodz step3 greater: "+regionmodz);
         if (regionMod <= 0) {
             regionMod = 0;
         }
@@ -5964,33 +6386,33 @@ async function addNotchToItem(itemGet) {
 
             }
 
+            const shatterActor = darksheet.actor;
+            const shatterImg = shatterActor?.prototypeToken?.texture?.src || darksheet.img || "";
             let content = `
                 <div class="dnd5e chat-card item-card darksheet-chat-card">
                     <header class="card-header flexrow">
-                        <img src="${actor.prototypeToken.texture.src}" title="" width="36" height="36" style="border: none;"/> <h3 class="darksheet-chat-title">${actor.name}'s </h3>
+                        <img src="${shatterImg}" title="" width="36" height="36" style="border: none;"/> <h3 class="darksheet-chat-title">${escapeSheetHtml(shatterActor?.name ?? "")}'s </h3>
                     </header>
-                    <label style="font-size: 14px;">${name} just shattered</label>
+                    <label style="font-size: 14px;">${escapeSheetHtml(darksheet.name)} just shattered</label>
                 </div>`;
             let rollWhisper = null;
             let rollBlind = false;
             let rollMode = game.settings.get("core", "rollMode");
-            if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperRecipients("GM")
+            if (["gmroll", "blindroll"].includes(rollMode)) rollWhisper = ChatMessage.getWhisperRecipients("GM");
             if (rollMode === "blindroll") rollBlind = true;
             ChatMessage.create({
                 user: game.user.id,
                 content: content,
-                speaker: {
-                    actor: actor.id,
-                    token: actor.token,
-                    alias: actor.name
-                },
+                speaker: shatterActor ? ChatMessage.getSpeaker({ actor: shatterActor }) : ChatMessage.getSpeaker(),
+                whisper: rollWhisper || undefined,
+                blind: rollBlind,
                 sound: CONFIG.sounds.dice,
             });
 
         }
 
     }
-    //VALUE CALCULATION==========================================
+    //VALUE CALCULATION=====
     let quality = darksheet.flags?.darksheet?.item?.quality;
     if (quality === undefined || quality === "") {
         quality = "pristine";
@@ -6007,7 +6429,7 @@ async function addNotchToItem(itemGet) {
         'flags.darksheet.item.quality': quality
     });
 
-    if (darksheet.type === "equipment") { //ARMOR CALCULATION==========================================
+    if (darksheet.type === "equipment") { //ARMOR CALCULATION=====
         let AC = darksheet.system.armor.value;
         let newBaseAC = 0;
         const baseArmor = darksheet.flags?.darksheet?.item?.basearmor;
@@ -6076,7 +6498,7 @@ async function addNotchToItem(itemGet) {
                 await darksheet.update({ 'flags.darksheet.item.baseweapondamage': baseweapondamage });
             }
         
-            // **WEAPON DAMAGE DEGRADATION** 
+            // **WEAPON DAMAGE DEGRADATION**
             if (newDiceNumber === 1) { 
                 // **Type A - Single Die Weapons**
                 switch (newDenomination) {
@@ -7163,9 +7585,9 @@ window.Darksheet = class Darksheet {
         Darksheet.darkScreenReload();
     }
 
-    /* =====================================================================
-       JOURNEY UPKEEP — party-wide stamina checks and food/water adjustments
-       ===================================================================== */
+    /* =====
+ JOURNEY UPKEEP - party-wide stamina checks and food/water adjustments
+ ===== */
     static journeyPartyActors() {
         // Linked player-character actors used for all journey upkeep actions.
         return game.actors.filter(actor => actor.type === "character" && actor.hasPlayerOwner);
@@ -7203,9 +7625,9 @@ window.Darksheet = class Darksheet {
         // Fixed progression per Darker Dungeons "Time of Day" table.
         const TABLE = {
             dawn:    { food: 1, water: 1, fatigue: 0, label: "Dawn",    icon: "fa-sun" },
-            morning: { food: 0, water: 0, fatigue: 0, label: "Morning", icon: "fa-cloud-sun" },
+            morning: { food: 0, water: 0, fatigue: 1, label: "Morning", icon: "fa-cloud-sun" },
             dusk:    { food: 1, water: 1, fatigue: 1, label: "Dusk",    icon: "fa-moon" },
-            night:   { food: 0, water: 0, fatigue: 1, label: "Night",   icon: "fa-moon" }
+            night:   { food: 0, water: 0, fatigue: 0, label: "Night",   icon: "fa-moon" }
         };
         const effect = TABLE[phase];
         if (!effect) return null;
@@ -7240,10 +7662,10 @@ window.Darksheet = class Darksheet {
         const effectsText = ["food", "water", "fatigue"]
             .filter(k => effect[k])
             .map(k => `${tracks[k].label} +${effect[k]}`)
-            .join(" · ");
+            .join(" \u00B7 ");
         const bodyHtml = effectsText
             ? `<p><strong>${effectsText}</strong></p><p>${affected.length ? affected.join(", ") : "No characters affected."}</p>`
-            : `<p><em>Phase marker — no automatic effects.</em></p>`;
+            : `<p><em>Phase marker \u2014 no automatic effects.</em></p>`;
         await Darksheet.postDarkscreenChat({
             title: `${dayTitle ? `${dayTitle} - ` : ""}${effect.label}`,
             icon: `fa-solid ${effect.icon}`,
@@ -7277,14 +7699,14 @@ window.Darksheet = class Darksheet {
             }
         }
         const labelMap = { food: "Hunger", water: "Thirst", fatigue: "Fatigue" };
-        ui.notifications.notify(`Darksheet | ${labelMap[kind]} ${step > 0 ? "+" : ""}${step * magnitude} — ${changed} character${changed === 1 ? "" : "s"} updated.`);
+        ui.notifications.notify(`Darksheet | ${labelMap[kind]} ${step > 0 ? "+" : ""}${step * magnitude} \u2014 ${changed} character${changed === 1 ? "" : "s"} updated.`);
         return changed;
     }
     static async changeDread(amount) {
         const screenData = await ensureDarkscreenFlags();
         const raw = screenData.dread ?? {};
 
-        // Resolve the active zone — handles both new and legacy shapes.
+        // Resolve the active zone - handles both new and legacy shapes.
         let store = raw;
         let usedLegacy = false;
         if (!store?.list || !store?.activeId) {
@@ -7354,9 +7776,9 @@ window.Darksheet = class Darksheet {
         });
     }
 
-    /* =====================================================================
-       OUTSIDE CAMP — Darker Dungeons short rest helpers
-       ===================================================================== */
+    /* =====
+ OUTSIDE CAMP - Darker Dungeons short rest helpers
+ ===== */
     static async rollPartyCamping(dc = 10) {
         const party = Darksheet.journeyPartyActors();
         if (!party.length) {
@@ -7371,7 +7793,7 @@ window.Darksheet = class Darksheet {
             const total = roll.total ?? roll._total;
             const success = total >= dc;
             if (!success) failures++;
-            lines.push(`<strong>${actor.name}</strong>: ${total} vs DC ${dc} — ${success ? "✓" : "✗"}`);
+            lines.push(`<strong>${actor.name}</strong>: ${total} vs DC ${dc} \u2014 ${success ? "\u2713" : "\u2717"}`);
         }
         const activityDc = failures === 0 ? 5 : failures === 1 ? 10 : 15;
         await Darksheet.postDarkscreenChat({
@@ -7392,7 +7814,7 @@ window.Darksheet = class Darksheet {
         const success = total >= dc;
         await roll.toMessage({
             speaker: ChatMessage.getSpeaker({ actor }),
-            flavor: `Lookout — DC ${dc} ${success ? "✓ Defenses secured" : "✗ Disadvantage on perception vs intruders"}`
+            flavor: `Lookout \u2014 DC ${dc} ${success ? "\u2713 Defenses secured" : "\u2717 Disadvantage on perception vs intruders"}`
         });
         return { actorId, total, success };
     }
@@ -7407,7 +7829,7 @@ window.Darksheet = class Darksheet {
             const roll = await new Roll(`1d20 + ${conMod}`, actor.getRollData()).evaluate();
             const total = roll.total ?? roll._total;
             const success = total >= dc;
-            lines.push(`<strong>${actor.name}</strong>: ${total} vs DC ${dc} — ${success ? "✓ slept well (+1 hit die)" : "✗ restless"}`);
+            lines.push(`<strong>${actor.name}</strong>: ${total} vs DC ${dc} \u2014 ${success ? "\u2713 slept well (+1 hit die)" : "\u2717 restless"}`);
         }
         await Darksheet.postDarkscreenChat({
             title: `Sleep - DC ${dc}`,
@@ -7424,7 +7846,7 @@ window.Darksheet = class Darksheet {
         const actor = actorId ? game.actors.get(actorId) : null;
         await roll.toMessage({
             speaker: actor ? ChatMessage.getSpeaker({ actor }) : undefined,
-            flavor: `Long Rest Complication — ${triggered ? "⚠ Something unfortunate happens this week" : "No complication this week"}`
+            flavor: `Long Rest Complication \u2014 ${triggered ? "\u26A0 Something unfortunate happens this week" : "No complication this week"}`
         });
     }
 
@@ -7438,7 +7860,10 @@ window.Darksheet = class Darksheet {
         for (let i = 0; i < count; i++) {
             const draw = await table.draw({ displayChat: false });
             const result = draw?.results?.[0];
-            if (result) lines.push(`${i + 1}. ${result.text ?? result.name ?? "Rumor"}`);
+            if (result) {
+                const source = darksheetTableResultSource(result);
+                lines.push(`${i + 1}. ${result.name ?? source.name ?? result.description ?? source.description ?? source.text ?? "Rumor"}`);
+            }
         }
         await Darksheet.postDarkscreenChat({
             title: "Rumors Heard This Week",
@@ -7447,9 +7872,9 @@ window.Darksheet = class Darksheet {
             body: `<p>${lines.join("<br>")}</p>`
         });
     }
-    /* =====================================================================
-       MAGICAL ENCHANTMENTS — applied to dnd5e 5.x items
-       ===================================================================== */
+    /* =====
+ MAGICAL ENCHANTMENTS - applied to dnd5e 5.x items
+ ===== */
     static async applyItemEnchantment(itemUuid, form, calc) {
         const item = await fromUuid(itemUuid);
         if (!item?.update) {
@@ -7507,11 +7932,11 @@ window.Darksheet = class Darksheet {
                         updateData['system.properties'] = props;
                     }
                 }
-                // Enhancement bonus → magicalBonus
+                // Enhancement bonus -> magicalBonus
                 if (enchantment.plus > 0) {
                     updateData['system.magicalBonus'] = enchantment.plus;
                 }
-                // Elemental damage → push an extra damage part
+                // Elemental damage -> push an extra damage part
                 if (enchantment.element && enchantment.elementDice) {
                     const damage = foundry.utils.deepClone(item.system?.damage ?? {});
                     damage.parts = Array.isArray(damage.parts) ? [...damage.parts] : [];
@@ -7582,9 +8007,9 @@ window.Darksheet = class Darksheet {
         Darksheet.darkScreenReload();
     }
 
-    /* =====================================================================
-       CAMPFIRE — shared resting dialog with player activity picks + self-rolls
-       ===================================================================== */
+    /* =====
+ CAMPFIRE - shared resting dialog with player activity picks + self-rolls
+ ===== */
     static async openCampfire() {
         await ensureCampfireState({ active: true, started: Date.now(), lit: false });
         DarksheetCampfire.openLocal();
@@ -7623,6 +8048,7 @@ window.Darksheet = class Darksheet {
     }
 
     static async updateCampSetupPlayer(actorId, patch = {}) {
+        if (!game.user.isGM) { game.socket.emit("module.darksheet", { type: "campStateWrite", op: "updateCampSetupPlayer", args: [actorId, patch] }); return; }
         const state = await getCampSetupState();
         state.players ??= {};
         state.players[actorId] = { ...(state.players[actorId] ?? {}), ...patch };
@@ -7635,6 +8061,7 @@ window.Darksheet = class Darksheet {
         if (resetSetup) await ensureCampfireState({ activityDc: null });
         game.socket.emit("module.darksheet", { type: "campSetupUpdate", state });
         DarksheetCampSetup.applyState(state);
+        await Darksheet._finalizeCampSetupIfReady();
     }
 
     static async rollCampSetupRole(actorId, { disadvantage = false } = {}) {
@@ -7674,11 +8101,11 @@ window.Darksheet = class Darksheet {
             flavor: `Camp Setup - ${role.label}${disadvantage ? " (disadvantage: no camping gear)" : ""}, DC ${dc} ${success ? "success" : "failure"}`
         });
 
-        await Darksheet._finalizeCampSetupIfReady();
         return { actorId, total, success };
     }
 
     static async _finalizeCampSetupIfReady() {
+        if (!game.user.isGM) return null;
         const party = Darksheet.journeyPartyActors();
         const state = await getCampSetupState();
         const players = state.players ?? {};
@@ -7696,7 +8123,7 @@ window.Darksheet = class Darksheet {
         const lines = party.map(actor => {
             const entry = players[actor.id] ?? {};
             const role = CAMP_SETUP_ROLES[entry.role]?.label ?? "Unassigned";
-            return `<strong>${actor.name}</strong>: ${role}${entry.disadvantage ? " (disadvantage)" : ""} ${entry.rollResult} vs DC ${state.dc} — ${entry.success ? "✓" : "✗"}`;
+            return `<strong>${actor.name}</strong>: ${role}${entry.disadvantage ? " (disadvantage)" : ""} ${entry.rollResult} vs DC ${state.dc} \u2014 ${entry.success ? "\u2713" : "\u2717"}`;
         });
         const survivalWarning = hasSurvival ? "" : "<p><em>No Survival check was made; Darker Dungeons requires at least one Survival-based Camping check.</em></p>";
 
@@ -7732,6 +8159,7 @@ window.Darksheet = class Darksheet {
     }
 
     static async updateCampfirePlayer(actorId, patch = {}) {
+        if (!game.user.isGM) { game.socket.emit("module.darksheet", { type: "campStateWrite", op: "updateCampfirePlayer", args: [actorId, patch] }); return; }
         const state = await getCampfireState();
         state.players ??= {};
         state.players[actorId] = { ...(state.players[actorId] ?? {}), ...patch };
@@ -7741,6 +8169,7 @@ window.Darksheet = class Darksheet {
     }
 
     static async lightCampfire() {
+        if (!game.user.isGM) { game.socket.emit("module.darksheet", { type: "campStateWrite", op: "lightCampfire", args: [] }); return; }
         const state = await getCampfireState();
         state.lit = !state.lit;
         await setCampfireState(state);
@@ -7756,7 +8185,7 @@ window.Darksheet = class Darksheet {
         const activity = CAMP_ACTIVITIES[playerState.activity];
         if (!activity) return;
 
-        // Camp activity DC — default 10 (a "decent campsite" per Darker Dungeons).
+        // Camp activity DC - default 10 (a "decent campsite" per Darker Dungeons).
         const dc = Number(state.activityDc ?? 10);
         let total = null;
         let success = true;
@@ -7800,7 +8229,7 @@ window.Darksheet = class Darksheet {
                     const used = Number(cls.hitDiceUsed ?? 0);
                     if (used > 0) {
                         await actor.update({ [`system.classes.${key}.hitDiceUsed`]: used - 1 });
-                        return { text: `Regained <strong>1 hit die</strong> (${key}, ${used} → ${used - 1}).` };
+                        return { text: `Regained <strong>1 hit die</strong> (${key}, ${used} \u2192 ${used - 1}).` };
                     }
                 }
                 return { text: "Already at full hit dice." };
@@ -7812,7 +8241,7 @@ window.Darksheet = class Darksheet {
                 const current = Number(actor.flags?.darksheet?.attributes?.stress ?? 0);
                 const next = Math.max(0, current - delta);
                 if (next !== current) await actor.update({ 'flags.darksheet.attributes.stress': next });
-                return { text: `🎲 <strong>1d4 = ${delta}</strong>. Stress ${current} → ${next}.` };
+                return { text: `\u{1F3B2} <strong>1d4 = ${delta}</strong>. Stress ${current} \u2192 ${next}.` };
             }
             case "stressParty": {
                 const party = Darksheet.journeyPartyActors();
@@ -7825,10 +8254,10 @@ window.Darksheet = class Darksheet {
                     const next = Math.max(0, current - delta);
                     if (next !== current) {
                         await a.update({ 'flags.darksheet.attributes.stress': next });
-                        lines.push(`${a.name}: ${current} → ${next}`);
+                        lines.push(`${a.name}: ${current} \u2192 ${next}`);
                     }
                 }
-                return { text: `🎲 <strong>1d4 = ${delta}</strong>. Party stress reduced:<br>${lines.length ? lines.join("<br>") : "<em>Nobody had stress to reduce.</em>"}` };
+                return { text: `\u{1F3B2} <strong>1d4 = ${delta}</strong>. Party stress reduced:<br>${lines.length ? lines.join("<br>") : "<em>Nobody had stress to reduce.</em>"}` };
             }
             case "mend": {
                 const item = await Darksheet._promptCampMend(actor);
@@ -7836,7 +8265,7 @@ window.Darksheet = class Darksheet {
                 const notches = Number(item.flags?.darksheet?.item?.notches ?? 0);
                 if (notches <= 0) return { text: `<strong>${item.name}</strong> has no notches.` };
                 await item.update({ 'flags.darksheet.item.notches': notches - 1 });
-                return { text: `Mended <strong>${item.name}</strong>: ${notches} → ${notches - 1} notch${notches - 1 === 1 ? "" : "es"}.` };
+                return { text: `Mended <strong>${item.name}</strong>: ${notches} \u2192 ${notches - 1} notch${notches - 1 === 1 ? "" : "es"}.` };
             }
             case "tendWound": {
                 const picked = await Darksheet._promptCampTendWound(actor);
@@ -7857,7 +8286,7 @@ window.Darksheet = class Darksheet {
                 return { text: `Foraged <strong>${total}</strong> ration${total === 1 ? "" : "s"} (food/water).` };
             }
             case "watch":
-                return { text: "On lookout duty — alert for intruders this turn." };
+                return { text: "On lookout duty \u2014 alert for intruders this turn." };
             default:
                 return { text: "Activity complete." };
         }
@@ -7872,7 +8301,7 @@ window.Darksheet = class Darksheet {
         return new Promise(resolve => {
             const options = items.map(i => {
                 const notches = Number(i.flags?.darksheet?.item?.notches ?? 0);
-                return `<option value="${i.id}">${i.name} — ${notches} notch${notches === 1 ? "" : "es"}</option>`;
+                return `<option value="${i.id}">${i.name} \u2014 ${notches} notch${notches === 1 ? "" : "es"}</option>`;
             }).join("");
             new Dialog({
                 title: `${actor.name}: Mend Item`,
@@ -7920,9 +8349,9 @@ window.Darksheet = class Darksheet {
         });
     }
 
-    /* =====================================================================
-       CITY LONG REST — Darker Dungeons "1 week in sanctuary" party dialog
-       ===================================================================== */
+    /* =====
+ CITY LONG REST - Darker Dungeons "1 week in sanctuary" party dialog
+ ===== */
     static async openCityRest() {
         await ensureCityRestState({ active: true, started: Date.now() });
         DarksheetCityRest.openLocal();
@@ -7937,6 +8366,7 @@ window.Darksheet = class Darksheet {
 
     static async setCityRestLifestyle(key) {
         if (!DARKSCREEN_LIFESTYLES[key]) return;
+        if (!game.user.isGM) { game.socket.emit("module.darksheet", { type: "campStateWrite", op: "setCityRestLifestyle", args: [key] }); return; }
         const state = await getCityRestState();
         state.lifestyle = key;
         await setCityRestState(state);
@@ -7945,6 +8375,7 @@ window.Darksheet = class Darksheet {
     }
 
     static async updateCityRestPlayer(actorId, patch = {}) {
+        if (!game.user.isGM) { game.socket.emit("module.darksheet", { type: "campStateWrite", op: "updateCityRestPlayer", args: [actorId, patch] }); return; }
         const state = await getCityRestState();
         state.players ??= {};
         state.players[actorId] = { ...(state.players[actorId] ?? {}), ...patch };
@@ -7967,7 +8398,7 @@ window.Darksheet = class Darksheet {
         let resultText = "";
 
         if (activity.autoHealStress) {
-            // Rest & Relaxation — automatic 2d6 stress reduction, no check.
+            // Rest & Relaxation - automatic 2d6 stress reduction, no check.
             const roll = await new Roll("2d6").evaluate();
             total = roll.total ?? roll._total;
             formula = "2d6";
@@ -7976,7 +8407,7 @@ window.Darksheet = class Darksheet {
             const cur = Number(actor.flags?.darksheet?.attributes?.stress ?? 0);
             const next = Math.max(0, cur - total);
             if (next !== cur) await actor.update({ 'flags.darksheet.attributes.stress': next });
-            resultText = `Stress healed: <strong>${cur} → ${next}</strong> (–${total}).`;
+            resultText = `Stress healed: <strong>${cur} \u2192 ${next}</strong> (\u2013${total}).`;
         } else {
             // Skill-based or ability-based check.
             let mod = 0;
@@ -8026,7 +8457,7 @@ window.Darksheet = class Darksheet {
             const lifestyle = DARKSCREEN_LIFESTYLES[lifestyleKey];
             await Darksheet.applyDarkscreenRest(actor.id, lifestyleKey, playerState.activity || "");
             const actLabel = playerState.activity ? LONG_REST_ACTIVITIES[playerState.activity]?.label : "no activity";
-            lines.push(`<strong>${actor.name}</strong>: ${lifestyle?.label || lifestyleKey} — ${actLabel}`);
+            lines.push(`<strong>${actor.name}</strong>: ${lifestyle?.label || lifestyleKey} \u2014 ${actLabel}`);
         }
         // Roll one party-wide complication d10.
         const roll = await new Roll("1d10").evaluate();
@@ -8146,6 +8577,7 @@ class Darkscreen {
 
         const existingButton = document.getElementById("DarkScreen-button");
         if (existingButton) {
+            Darkscreen.bindUiButtonDragging(existingButton);
             Darkscreen.scheduleUiButtonPosition();
             return;
         }
@@ -8154,13 +8586,18 @@ class Darkscreen {
         button.type = "button";
         button.id = "DarkScreen-button";
         button.className = "darkscreen-launcher";
-        button.dataset.tooltip = "Darker Dungeons GM Screen";
+        button.dataset.tooltip = "Darker Dungeons GM Screen (drag to move)";
         button.setAttribute("aria-label", "Open Darkscreen");
         button.innerHTML = `<i class="fas fa-book-dead" inert></i>`;
         button.addEventListener("click", event => {
             event.preventDefault();
+            if (button.dataset.dragMoved === "true") {
+                delete button.dataset.dragMoved;
+                return;
+            }
             Darkscreen.initializeDarkscreen();
         });
+        Darkscreen.bindUiButtonDragging(button);
 
         document.body.append(button);
         Darkscreen.scheduleUiButtonPosition();
@@ -8173,6 +8610,8 @@ class Darkscreen {
         window.addEventListener("resize", reposition);
         Hooks.on("renderHotbar", reposition);
         Hooks.on("collapseHotbar", reposition);
+        Hooks.on("renderSceneControls", reposition);
+        Hooks.on("controlToken", reposition);
         Hooks.on("canvasReady", reposition);
     }
 
@@ -8188,18 +8627,22 @@ class Darkscreen {
         const button = document.getElementById("DarkScreen-button");
         if (!button) return;
 
+        const buttonRect = button.getBoundingClientRect();
+        const saved = Darkscreen.readUiButtonPosition();
+        if (saved) {
+            const point = Darkscreen.clampUiButtonPosition(saved.left, saved.top, buttonRect);
+            Darkscreen.applyUiButtonPosition(button, point.left, point.top, "custom");
+            return;
+        }
+
         const hotbar = document.getElementById("hotbar");
         if (!hotbar) {
-            button.style.left = "";
-            button.style.top = "";
-            button.style.right = "";
-            button.style.bottom = "";
-            button.classList.remove("darkscreen-launcher--hotbar");
+            const point = Darkscreen.findClearUiButtonPosition(12, window.innerHeight - buttonRect.height - 118, buttonRect);
+            Darkscreen.applyUiButtonPosition(button, point.left, point.top, "auto");
             return;
         }
 
         const hotbarRect = hotbar.getBoundingClientRect();
-        const buttonRect = button.getBoundingClientRect();
         const gap = 8;
         let left = hotbarRect.left - buttonRect.width - gap;
         if (left < gap) {
@@ -8215,13 +8658,143 @@ class Darkscreen {
                 hotbarRect.top + ((hotbarRect.height - buttonRect.height) / 2)
             )
         );
+        const point = Darkscreen.findClearUiButtonPosition(left, top, buttonRect);
 
+        Darkscreen.applyUiButtonPosition(button, point.left, point.top, "hotbar");
+    }
+
+    static bindUiButtonDragging(button) {
+        if (!button || button.dataset.darkscreenDragBound === "true") return;
+        button.dataset.darkscreenDragBound = "true";
+        button.addEventListener("pointerdown", event => {
+            if (event.button !== 0) return;
+            const rect = button.getBoundingClientRect();
+            Darkscreen._uiButtonDrag = {
+                pointerId: event.pointerId,
+                startX: event.clientX,
+                startY: event.clientY,
+                left: rect.left,
+                top: rect.top,
+                moved: false
+            };
+            button.setPointerCapture?.(event.pointerId);
+            button.classList.add("is-dragging");
+        });
+        button.addEventListener("pointermove", event => Darkscreen.dragUiButton(event, button));
+        button.addEventListener("pointerup", event => Darkscreen.endUiButtonDrag(event, button));
+        button.addEventListener("pointercancel", event => Darkscreen.endUiButtonDrag(event, button));
+    }
+
+    static dragUiButton(event, button) {
+        const drag = Darkscreen._uiButtonDrag;
+        if (!drag || drag.pointerId !== event.pointerId) return;
+        const dx = event.clientX - drag.startX;
+        const dy = event.clientY - drag.startY;
+        if (Math.abs(dx) + Math.abs(dy) > 4) drag.moved = true;
+        if (!drag.moved) return;
+        event.preventDefault();
+        const rect = button.getBoundingClientRect();
+        const point = Darkscreen.clampUiButtonPosition(drag.left + dx, drag.top + dy, rect);
+        Darkscreen.applyUiButtonPosition(button, point.left, point.top, "custom");
+    }
+
+    static endUiButtonDrag(event, button) {
+        const drag = Darkscreen._uiButtonDrag;
+        if (!drag || drag.pointerId !== event.pointerId) return;
+        Darkscreen._uiButtonDrag = null;
+        button.releasePointerCapture?.(event.pointerId);
+        button.classList.remove("is-dragging");
+        if (!drag.moved) return;
+        button.dataset.dragMoved = "true";
+        const rect = button.getBoundingClientRect();
+        const point = Darkscreen.clampUiButtonPosition(rect.left, rect.top, rect);
+        Darkscreen.applyUiButtonPosition(button, point.left, point.top, "custom");
+        Darkscreen.writeUiButtonPosition(point.left, point.top);
+    }
+
+    static findClearUiButtonPosition(left, top, buttonRect) {
+        const gap = 8;
+        let point = Darkscreen.clampUiButtonPosition(left, top, buttonRect);
+        for (const obstacle of Darkscreen.getUiButtonObstacleRects()) {
+            if (!Darkscreen.rectsOverlap(point, buttonRect, obstacle, gap)) continue;
+            const right = obstacle.right + gap;
+            const below = obstacle.bottom + gap;
+            const above = obstacle.top - buttonRect.height - gap;
+            const candidates = [
+                { left: right, top: point.top },
+                { left: point.left, top: below },
+                { left: point.left, top: above }
+            ].map(candidate => Darkscreen.clampUiButtonPosition(candidate.left, candidate.top, buttonRect));
+            point = candidates.find(candidate => !Darkscreen.getUiButtonObstacleRects().some(rect => Darkscreen.rectsOverlap(candidate, buttonRect, rect, gap)))
+                ?? candidates[0]
+                ?? point;
+        }
+        return point;
+    }
+
+    static getUiButtonObstacleRects() {
+        const selectors = ["#controls", "#scene-controls", "#tools-panel", "#ui-left #controls"];
+        const seen = new Set();
+        return selectors
+            .flatMap(selector => Array.from(document.querySelectorAll(selector)))
+            .filter(element => {
+                if (seen.has(element)) return false;
+                seen.add(element);
+                const style = getComputedStyle(element);
+                return style.display !== "none" && style.visibility !== "hidden";
+            })
+            .map(element => element.getBoundingClientRect())
+            .filter(rect => rect.width > 0 && rect.height > 0);
+    }
+
+    static rectsOverlap(point, buttonRect, rect, gap = 0) {
+        const left = point.left - gap;
+        const right = point.left + buttonRect.width + gap;
+        const top = point.top - gap;
+        const bottom = point.top + buttonRect.height + gap;
+        return left < rect.right && right > rect.left && top < rect.bottom && bottom > rect.top;
+    }
+
+    static clampUiButtonPosition(left, top, buttonRect) {
+        const gap = 8;
+        return {
+            left: Math.max(gap, Math.min(window.innerWidth - buttonRect.width - gap, left)),
+            top: Math.max(gap, Math.min(window.innerHeight - buttonRect.height - gap, top))
+        };
+    }
+
+    static applyUiButtonPosition(button, left, top, mode = "auto") {
         button.style.left = `${Math.round(left)}px`;
         button.style.top = `${Math.round(top)}px`;
         button.style.right = "auto";
         button.style.bottom = "auto";
-        button.classList.add("darkscreen-launcher--hotbar");
+        button.classList.toggle("darkscreen-launcher--hotbar", mode === "hotbar");
+        button.classList.toggle("darkscreen-launcher--custom", mode === "custom");
     }
+
+    static readUiButtonPosition() {
+        try {
+            const raw = localStorage.getItem("darksheet.darkscreenLauncherPosition");
+            if (!raw) return null;
+            const data = JSON.parse(raw);
+            const left = Number(data?.left);
+            const top = Number(data?.top);
+            if (!Number.isFinite(left) || !Number.isFinite(top)) return null;
+            return { left, top };
+        } catch (error) {
+            return null;
+        }
+    }
+
+    static writeUiButtonPosition(left, top) {
+        try {
+            localStorage.setItem("darksheet.darkscreenLauncherPosition", JSON.stringify({
+                left: Math.round(left),
+                top: Math.round(top)
+            }));
+        } catch (error) {}
+    }
+
 
     static normalizeOptions(options = {}) {
         const mode = options?.mode === "crafting" ? "crafting" : "full";
@@ -8270,109 +8843,6 @@ const DARKSHEET_DISCOVERIES = [
     "A half-buried chest surrounded by skeletons"
 ];
 
-// Seed the Discoveries roll table into the module compendium (GM, once) so
-// discoveries become discoverable / editable like the encounter tables.
-const DARKSHEET_PACK_SOURCES = [
-    { pack: "darksheet.afflictions", file: "packs/afflictions.db", cls: "Item" },
-    { pack: "darksheet.darkrolltables", file: "packs/darkrolltables.db", cls: "RollTable" }
-];
-
-async function darksheetSyncPackFromSource({ pack: packId, file, cls }) {
-    const pack = game.packs?.get?.(packId);
-    if (!pack) return 0;
-    let raw = "";
-    try {
-        const route = foundry?.utils?.getRoute ? foundry.utils.getRoute(`modules/darksheet/${file}`) : `modules/darksheet/${file}`;
-        const resp = await fetch(route);
-        if (resp.ok) raw = await resp.text();
-    } catch (_) { return 0; }
-    if (!raw) return 0;
-    const records = raw.split(/\r?\n/).map(line => line.trim()).filter(Boolean).map(line => {
-        try { return JSON.parse(line); } catch (_) { return null; }
-    }).filter(rec => rec && rec.name && !rec.$deleted);
-    if (!records.length) return 0;
-    const index = await pack.getIndex();
-    const haveNames = new Set(Array.from(index).map(e => e.name));
-    const missing = records.filter(rec => !haveNames.has(rec.name));
-    if (!missing.length) return 0;
-    const DocCls = CONFIG?.[cls]?.documentClass || (typeof getDocumentClass === "function" ? getDocumentClass(cls) : null);
-    if (!DocCls) { console.warn(`Darksheet | No document class for ${cls}.`); return 0; }
-    const data = missing.map(rec => {
-        const copy = foundry.utils.duplicate(rec);
-        delete copy.folder; delete copy.permission; delete copy.ownership; delete copy._stats; delete copy.sort;
-        return copy;
-    });
-    let created = 0;
-    await darksheetWithUnlockedPack(pack, async () => {
-        try {
-            const docs = await DocCls.createDocuments(data, { pack: pack.collection, keepId: true });
-            created = docs?.length ?? data.length;
-        } catch (error) {
-            // fall back to one-at-a-time so a single bad record can't block the rest
-            for (const entry of data) {
-                try { await DocCls.createDocuments([entry], { pack: pack.collection, keepId: true }); created++; }
-                catch (e) { console.warn(`Darksheet | Could not seed ${cls} "${entry.name}".`, e); }
-            }
-        }
-    });
-    if (created) console.log(`Darksheet | Seeded ${created} ${cls} document(s) into ${packId}.`);
-    return created;
-}
-
-const DARKSHEET_MACRO_SEEDS = [
-    { _id: "wuzor4tB6O1g1kTJ", name: "Roll Burnout", img: "icons/svg/fire.svg", command: "await Darksheet.rollBurnoutMacro();" },
-    { _id: "DSCampChecks0001", name: "Request Camp Checks", img: "icons/svg/fire.svg", command: "await Darksheet.requestCampChecksMacro();" },
-    { _id: "DSLongRest000001", name: "Open Long Rest Checks", img: "icons/svg/sleep.svg", command: "await Darksheet.longRestChecksMacro();" },
-    { _id: "DSAmmoDie0000001", name: "Roll Ammo Die", img: "icons/svg/d20.svg", command: "await Darksheet.ammoDieMacro();" },
-    { _id: "DSJourneyChk0001", name: "Request Journey Checks", img: "icons/svg/d20.svg", command: "await Darksheet.requestJourneyChecksMacro();" },
-    { _id: "DSCampAct0000001", name: "Player Camp Activity", img: "icons/svg/fire.svg", command: "await Darksheet.playerCampActivityMacro();" },
-    { _id: "DSTreatWound0001", name: "Treat Wound", img: "icons/svg/heal.svg", command: "await Darksheet.treatWoundMacro();" },
-    { _id: "DSTableRoll00001", name: "Roll Darksheet Table", img: "icons/svg/book.svg", command: "await Darksheet.rollDarksheetTableMacro();" },
-    { _id: "DSUpkeep00000001", name: "Quick Survival Upkeep", img: "icons/svg/regen.svg", command: "await Darksheet.quickSurvivalUpkeepMacro();" }
-];
-
-async function darksheetEnsureMacros() {
-    if (!game.user?.isGM) return;
-    const pack = game.packs?.get?.("darksheet.darksheet-macros");
-    if (!pack) { console.warn("Darksheet | Macro compendium not found."); return; }
-    const index = await pack.getIndex();
-    const byName = new Map(Array.from(index).map(e => [e.name, e]));
-    const toCreate = [];
-    const existing = [];
-    for (const seed of DARKSHEET_MACRO_SEEDS) {
-        const entry = byName.get(seed.name);
-        const data = { _id: seed._id, name: seed.name, type: "script", scope: "global", img: seed.img || "icons/svg/dice-target.svg", command: seed.command };
-        if (!entry) toCreate.push(data);
-        else existing.push({ id: entry._id, command: seed.command });
-    }
-    const MacroCls = CONFIG?.Macro?.documentClass || Macro;
-    let updated = 0;
-    await darksheetWithUnlockedPack(pack, async () => {
-        if (toCreate.length) {
-            try {
-                await MacroCls.createDocuments(toCreate, { pack: pack.collection, keepId: true });
-            } catch (error) {
-                console.warn("Darksheet | keepId macro create failed; retrying with fresh ids.", error);
-                await MacroCls.createDocuments(toCreate.map(({ _id, ...rest }) => rest), { pack: pack.collection });
-            }
-        }
-        const updates = [];
-        for (const item of existing) {
-            const doc = await pack.getDocument(item.id);
-            if (doc && doc.command !== item.command) updates.push({ _id: item.id, command: item.command });
-        }
-        if (updates.length) { await MacroCls.updateDocuments(updates, { pack: pack.collection }); updated = updates.length; }
-    });
-    console.log(`Darksheet | Macros: created ${toCreate.length}, updated ${updated}.`);
-}
-
-async function darksheetSyncPacksFromSource() {
-    if (!game.user?.isGM) return;
-    for (const src of DARKSHEET_PACK_SOURCES) {
-        try { await darksheetSyncPackFromSource(src); }
-        catch (error) { console.warn(`Darksheet | Pack sync failed for ${src.pack}.`, error); }
-    }
-}
 
 async function darksheetEnsureDiscoveriesTable() {
     try {
@@ -8415,8 +8885,17 @@ async function darksheetWithUnlockedPack(pack, operation) {
     }
 }
 
+function darksheetTableResultSource(result) {
+    try {
+        return result?._source ?? (typeof result?.toObject === "function" ? result.toObject() : result) ?? {};
+    } catch (_error) {
+        return result?._source ?? {};
+    }
+}
+
 function darksheetAfflictionNameFromResult(result) {
-    const text = String(result?.text || "");
+    const source = darksheetTableResultSource(result);
+    const text = String(result?.name ?? source.name ?? result?.description ?? source.description ?? source.text ?? "");
     const bold = text.match(/<b>(.*?)<\/b>/)?.[1];
     if (bold) return bold.trim();
     return text.replace(/^Affliction:\s*/i, "").replace(/<[^>]+>/g, "").trim().split(/\s+/)[0] || "";
@@ -8475,11 +8954,14 @@ async function darksheetEnsureAfflictionCompendiumLinks() {
                     if (!DARKSHEET_AFFLICTION_TABLE_NAMES.includes(name)) continue;
                     const item = byName[name];
                     if (!item) continue;
-                    if (darksheetHasCurrentDocumentResultType(result) && result.documentUuid === item.uuid) continue;
+                    const source = darksheetTableResultSource(result);
+                    const currentUuid = source.documentUuid ?? result?.uuid ?? "";
+                    if (darksheetHasCurrentDocumentResultType(result) && currentUuid === item.uuid) continue;
                     updates.push({
                         _id: result.id,
                         type: DARKSHEET_TABLE_RESULT_DOCUMENT_TYPE,
-                        text: `Affliction: ${name}`,
+                        name: `Affliction: ${name}`,
+                        description: `Affliction: ${name}`,
                         img: item.img || "icons/skills/wounds/anatomy-organ-brain-pink-red.webp",
                         documentUuid: item.uuid
                     });
@@ -8488,7 +8970,8 @@ async function darksheetEnsureAfflictionCompendiumLinks() {
                 if (!resultNames.has("Powerful") && byName.Powerful) {
                     await table.createEmbeddedDocuments("TableResult", [{
                         type: DARKSHEET_TABLE_RESULT_DOCUMENT_TYPE,
-                        text: "Affliction: Powerful",
+                        name: "Affliction: Powerful",
+                        description: "Affliction: Powerful",
                         img: byName.Powerful.img || "icons/skills/wounds/anatomy-organ-brain-pink-red.webp",
                         weight: 1,
                         range: [73, 77],
@@ -8544,6 +9027,7 @@ function readDarkscreenSettingStore() {
 }
 Darkscreen._uiButtonPositioningBound = false;
 Darkscreen._uiButtonPositionFrame = null;
+Darkscreen._uiButtonDrag = null;
 
 function readLegacyDarkscreenFlags() {
     try {
@@ -8781,6 +9265,7 @@ function getDarkscreenStore() {
 }
 
 async function writeDarkscreenStore(screenData) {
+    if (!game.user?.isGM) return; // only the GM persists; players relay via campStateWrite
     const normalized = normalizeDarkscreenStore(screenData);
     try {
         await game.settings.set('darksheet', 'darkscreenStore', cloneDarkscreenData(normalized));
@@ -8926,9 +9411,15 @@ class DSC extends DarksheetHandlebarsApplicationMixin(DarksheetApplicationV2) {
     }
 }
 Hooks.once('ready', async function() {
+    darksheetPatchEncumbrancePreparation();
+    darksheetRegisterEncumbranceStatusEffects();
+    darksheetSyncAllEncumbranceConditions();
+    window.setTimeout(() => {
+        darksheetRegisterEncumbranceStatusEffects();
+        darksheetSyncAllEncumbranceConditions();
+    }, 1000);
+    window.setTimeout(() => darksheetSyncAllEncumbranceConditions(), 3000);
     if (game.user.isGM) {
-        await darksheetEnsureMacros();
-        await darksheetSyncPacksFromSource();
         await darksheetEnsureAfflictionCompendiumLinks();
         await darksheetEnsureDiscoveriesTable();
         await ensureDarkscreenFlags();
@@ -8937,6 +9428,13 @@ Hooks.once('ready', async function() {
     }
 });
 Hooks.on("updateWorldTime", () => Darksheet.checkDiseaseReminders());
+Hooks.on("dnd5e.postBuildAbilityCheckRollConfig", darksheetApplyEncumbranceRollDisadvantage);
+Hooks.on("dnd5e.postBuildSavingThrowRollConfig", darksheetApplyEncumbranceRollDisadvantage);
+Hooks.on("dnd5e.postBuildSkillRollConfig", darksheetApplyEncumbranceRollDisadvantage);
+Hooks.on("dnd5e.postBuildAttackRollConfig", darksheetApplyEncumbranceRollDisadvantage);
+Hooks.on("updateSetting", setting => {
+    if (["darksheet.slotbasedinventory", "darksheet.equippedDontUseSlots", "darksheet.slotCapacityFormula", "dnd5e.encumbrance"].includes(setting?.key)) darksheetSyncAllEncumbranceConditions();
+});
 Hooks.on('canvasReady', function() {
     if (game.user.isGM) Darkscreen.addUiButton();
 });
@@ -8944,7 +9442,7 @@ Hooks.on('canvasReady', function() {
 const itemBulk = {
     'Abacus': 1,
     'Acid (vial)': 0.2,
-    'Alchemist’s Fire (flask)': 1,
+    'Alchemist\u2019s Fire (flask)': 1,
     'Arrow': 0.1,
     'Crossbow Bolt': 0.1,
     'Bullet': 0.1,
@@ -8972,7 +9470,7 @@ const itemBulk = {
     'Common Clothes': 1,
     'Costume': 2,
     'Fine Clothes': 2,
-    'Traveler’s Clothes': 1,
+    'Traveler\u2019s Clothes': 1,
     'Component Pouch': 1,
     'Crowbar': 2,
     'Mistletoe': 1,
@@ -9009,10 +9507,10 @@ const itemBulk = {
     'Climbers': 1,
     'Disguise': 1,
     'Forgery': 1,
-    'Healer’s': 1,
+    'Healer\u2019s': 1,
     'Herbalism': 1,
     'Mess': 1,
-    'Poisoner’s': 1,
+    'Poisoner\u2019s': 1,
     'Ladder (10 ft)': 3,
     'Lamp': 1,
     'Bullseye': 1,
@@ -9025,7 +9523,7 @@ const itemBulk = {
     'Paper (1 sheet)': 0.2,
     'Parchment (1 sheet)': 0.2,
     'Perfume (vial)': 0.2,
-    'Miner’s': 3,
+    'Miner\u2019s': 3,
     'Piton': 0.2,
     'Vial': 0.2,
     'Pole (10 ft)': 3,
@@ -9036,7 +9534,7 @@ const itemBulk = {
     'Ration Box': 1,
     'Rope, Hempen (50 ft)': 2,
     'Rope, Silk (50 ft)': 1,
-    'Scale, Merchant’s': 1,
+    'Scale, Merchant\u2019s': 1,
     'Sealing Wax': 0.2,
     'Shovel': 3,
     'Signal Whistle': 0.2,
@@ -9161,9 +9659,9 @@ const fragileItems = [
     "Torch"
 ];
 
-/* =========================================================================
-   CAMPFIRE — shared resting dialog
-   ========================================================================= */
+/* =====
+ CAMPFIRE - shared resting dialog
+ ===== */
 const CAMP_SETUP_ROLES = {
     survival:       { label: "Survival",        icon: "fa-campground",       skill: "sur", note: "Find the site, pitch tents, start the fire, and secure the camp." },
     athletics:      { label: "Athletics",       icon: "fa-dumbbell",         skill: "ath", note: "Move heavy gear, clear ground, or haul shelter into place." },
@@ -9252,7 +9750,7 @@ function formatLifestyleEffects(lifestyleKey) {
     const food = LIFESTYLE_CONDITION_LABELS[l.food] || l.food;
     const water = LIFESTYLE_CONDITION_LABELS[l.water] || l.water;
     const fatigue = LIFESTYLE_CONDITION_LABELS[l.fatigue] || l.fatigue;
-    return `${l.hp} HP · ${l.hitDice} HD · ${food} · ${water} · ${fatigue}`;
+    return `${l.hp} HP \u00B7 ${l.hitDice} HD \u00B7 ${food} \u00B7 ${water} \u00B7 ${fatigue}`;
 }
 
 async function getCampSetupState() {
@@ -9298,7 +9796,7 @@ class DarksheetCampSetup {
                     <div class="ds-camp-setup-body">
                         <div class="ds-camp-setup-name">${actor.name}</div>
                         <select class="ds-camp-setup-role" data-actor-id="${actor.id}" ${isMine ? "" : "disabled"}>
-                            <option value="">— Pick setup role —</option>
+                            <option value="">\u2014 Pick setup role \u2014</option>
                             ${opts}
                         </select>
                         ${selectedRole ? `<div class="ds-camp-setup-note">${selectedRole.note}</div>` : ""}
@@ -9311,7 +9809,7 @@ class DarksheetCampSetup {
                             <i class="fa-solid fa-dice-d20"></i> Disadv.
                         </button>
                     </div>
-                    <span class="ds-camp-setup-result">${playerState.rollResult != null ? `${playerState.rollResult}${playerState.disadvantage ? " dis." : ""} ${playerState.success ? "✓" : "✗"}` : "—"}</span>
+                    <span class="ds-camp-setup-result">${playerState.rollResult != null ? `${playerState.rollResult}${playerState.disadvantage ? " dis." : ""} ${playerState.success ? "\u2713" : "\u2717"}` : "\u2014"}</span>
                 </div>
             `;
         }).join("");
@@ -9338,7 +9836,7 @@ class DarksheetCampSetup {
 
     static async openLocal() {
         const state = await getCampSetupState();
-        if (!state?.active) await ensureCampSetupState({ active: true, started: Date.now() });
+        if (game.user.isGM && !state?.active) await ensureCampSetupState({ active: true, started: Date.now() });
         if (this._dialog?.rendered) {
             this.applyState(await getCampSetupState());
             return;
@@ -9418,7 +9916,7 @@ class DarksheetCampfire {
                         <img class="ds-campfire-portrait" src="${actor.img}" alt="${actor.name}">
                         <div class="ds-campfire-name">${actor.name}</div>
                         <select class="ds-campfire-activity" data-actor-id="${actor.id}" ${isMine ? "" : "disabled"}>
-                            <option value="">— Pick activity —</option>
+                            <option value="">\u2014 Pick activity \u2014</option>
                             ${opts}
                         </select>
                         ${selectedActivity ? `<div class="ds-campfire-activity-note">${selectedActivity.note}</div>` : ""}
@@ -9426,7 +9924,7 @@ class DarksheetCampfire {
                             <button type="button" class="ds-campfire-roll" data-actor-id="${actor.id}" ${isMine ? "" : "disabled"}>
                                 <i class="fa-solid fa-dice-d20"></i> Roll
                             </button>
-                            <span class="ds-campfire-result">${playerState.rollResult != null ? playerState.rollResult : "—"}</span>
+                            <span class="ds-campfire-result">${playerState.rollResult != null ? playerState.rollResult : "\u2014"}</span>
                         </div>
                     </div>
                 </div>
@@ -9458,7 +9956,7 @@ class DarksheetCampfire {
 
     static async openLocal() {
         const state = await getCampfireState();
-        if (!state?.active) await ensureCampfireState({ active: true, started: Date.now() });
+        if (game.user.isGM && !state?.active) await ensureCampfireState({ active: true, started: Date.now() });
         if (this._dialog?.rendered) {
             this.applyState(await getCampfireState());
             return;
@@ -9511,9 +10009,9 @@ class DarksheetCampfire {
     }
 }
 
-/* =========================================================================
-   CITY LONG REST DIALOG — one-week-in-sanctuary party flow
-   ========================================================================= */
+/* =====
+ CITY LONG REST DIALOG - one-week-in-sanctuary party flow
+ ===== */
 class DarksheetCityRest {
     static _dialog = null;
 
@@ -9547,15 +10045,15 @@ class DarksheetCityRest {
                     <button type="button" class="ds-cityrest-roll ds-action" data-actor-id="${actor.id}" ${isMine ? "" : "disabled"} title="Roll for this activity">
                         <i class="fa-solid fa-dice-d20"></i>
                     </button>
-                    <span class="ds-cityrest-result${hasRolled ? " has-rolled" : ""}">${hasRolled ? ps.rollResult : "—"}</span>
+                    <span class="ds-cityrest-result${hasRolled ? " has-rolled" : ""}">${hasRolled ? ps.rollResult : "\u2014"}</span>
                 `;
             } else if (selectedActivity) {
                 resolveCell = `
-                    <span class="ds-cityrest-narrative" title="No roll — narrative outcome at end of week"><i class="fa-solid fa-feather"></i></span>
-                    <span class="ds-cityrest-result is-narrative">—</span>
+                    <span class="ds-cityrest-narrative" title="No roll \u2014 narrative outcome at end of week"><i class="fa-solid fa-feather"></i></span>
+                    <span class="ds-cityrest-result is-narrative">\u2014</span>
                 `;
             } else {
-                resolveCell = `<span class="ds-cityrest-narrative is-empty"></span><span class="ds-cityrest-result">—</span>`;
+                resolveCell = `<span class="ds-cityrest-narrative is-empty"></span><span class="ds-cityrest-result">\u2014</span>`;
             }
 
             return `
@@ -9572,7 +10070,7 @@ class DarksheetCityRest {
                         <div class="ds-cityrest-lifestyle-effects">${lifestyleEffects}</div>
                         <div class="ds-cityrest-controls">
                             <select class="ds-cityrest-activity" data-actor-id="${actor.id}" ${isMine ? "" : "disabled"}>
-                                <option value="">— Pick activity —</option>
+                                <option value="">\u2014 Pick activity \u2014</option>
                                 ${activityOpts}
                             </select>
                             ${resolveCell}
@@ -9586,7 +10084,7 @@ class DarksheetCityRest {
         return `
             <div class="ds-cityrest">
                 <header class="ds-cityrest-header">
-                    <span class="ds-cityrest-title"><i class="fa-solid fa-city"></i> One week in a sanctuary — each player picks their own lifestyle and activity.</span>
+                    <span class="ds-cityrest-title"><i class="fa-solid fa-city"></i> One week in a sanctuary \u2014 each player picks their own lifestyle and activity.</span>
                 </header>
                 <div class="ds-cityrest-list">
                     ${rows || `<p class="ds-cityrest-empty">No player-owned characters found.</p>`}
@@ -9600,7 +10098,7 @@ class DarksheetCityRest {
 
     static async openLocal() {
         const state = await getCityRestState();
-        if (!state?.active) await ensureCityRestState({ active: true, started: Date.now() });
+        if (game.user.isGM && !state?.active) await ensureCityRestState({ active: true, started: Date.now() });
         if (this._dialog?.rendered) {
             this.applyState(await getCityRestState());
             return;
@@ -9696,12 +10194,20 @@ Hooks.once("ready", () => {
         else if (payload.type === "cityRestOpen") DarksheetCityRest.openLocal();
         else if (payload.type === "cityRestUpdate") DarksheetCityRest.applyState(payload.state || {});
         else if (payload.type === "cityRestClose") DarksheetCityRest.closeLocal();
+        else if (payload.type === "campStateWrite") {
+            if (game.user.isGM && (game.users.activeGM?.isSelf ?? true)) {
+                const CAMP_WRITE_OPS = { updateCampSetupPlayer: 1, updateCampfirePlayer: 1, lightCampfire: 1, setCityRestLifestyle: 1, updateCityRestPlayer: 1 };
+                if (CAMP_WRITE_OPS[payload.op] && typeof Darksheet[payload.op] === "function") {
+                    Promise.resolve(Darksheet[payload.op](...(payload.args || []))).catch(e => console.warn("Darksheet | campStateWrite failed", e));
+                }
+            }
+        }
         else if (payload.type === "nodeDeplete") {
             // Only the primary GM applies the scene Note change (players can't).
             if (game.user.isGM && (game.users.activeGM?.isSelf ?? true)) DSNODE._applyDeplete(payload.sceneId, payload.noteId, payload.quantity);
         }
         else if (payload.type === "harvestDeplete") {
-            if (game.user.isGM && (game.users.activeGM?.isSelf ?? true)) DSHARVEST._applyDeplete(payload.sceneId, payload.tokenId, payload.measures);
+            if (game.user.isGM && (game.users.activeGM?.isSelf ?? true)) DSHARVEST._applyDeplete(payload.sceneId, payload.tokenId, payload.measures, payload.taken);
         }
         else if (payload.type === "recipeListUpdate") applyRecipeListUpdate(payload);
         else if (payload.type === "recipeListsChanged") notifyRecipeListChanged();
