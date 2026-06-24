@@ -1,0 +1,109 @@
+name: Publish Package Release to Foundry
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Package version"
+        required: true
+        type: string
+      manifest:
+        description: "Release-specific package manifest URL"
+        required: true
+        type: string
+      download:
+        description: "Release-specific package zip URL"
+        required: true
+        type: string
+      notes:
+        description: "Release notes URL"
+        required: true
+        type: string
+      minimum:
+        description: "Minimum Foundry core version"
+        required: true
+        type: string
+      verified:
+        description: "Verified Foundry core version"
+        required: true
+        type: string
+      maximum:
+        description: "Maximum Foundry core version"
+        required: false
+        type: string
+        default: ""
+      dry_run:
+        description: "Validate without saving"
+        required: true
+        type: choice
+        options:
+          - "true"
+          - "false"
+        default: "true"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish package release
+        env:
+          FOUNDRY_RELEASE_TOKEN: ${{ secrets.FOUNDRY_RELEASE_TOKEN }}
+          RELEASE_VERSION: ${{ inputs.version }}
+          RELEASE_MANIFEST: ${{ inputs.manifest }}
+          RELEASE_NOTES: ${{ inputs.notes }}
+          RELEASE_MINIMUM: ${{ inputs.minimum }}
+          RELEASE_VERIFIED: ${{ inputs.verified }}
+          RELEASE_MAXIMUM: ${{ inputs.maximum }}
+          RELEASE_DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import sys
+          import urllib.error
+          import urllib.request
+
+          token = os.environ.get("FOUNDRY_RELEASE_TOKEN", "").strip()
+          if not token:
+              raise SystemExit("FOUNDRY_RELEASE_TOKEN repository secret is missing.")
+
+          compatibility = {
+              "minimum": os.environ["RELEASE_MINIMUM"],
+              "verified": os.environ["RELEASE_VERIFIED"],
+          }
+          maximum = os.environ.get("RELEASE_MAXIMUM", "").strip()
+          if maximum:
+              compatibility["maximum"] = maximum
+
+          payload = {
+              "id": "Darksheet",
+              "release": {
+                  "version": os.environ["RELEASE_VERSION"],
+                  "manifest": os.environ["RELEASE_MANIFEST"],
+                  "notes": os.environ["RELEASE_NOTES"],
+                  "compatibility": compatibility,
+              },
+          }
+          if os.environ.get("RELEASE_DRY_RUN") == "true":
+              payload["dry-run"] = True
+
+          body = json.dumps(payload).encode("utf-8")
+          request = urllib.request.Request(
+              "https://foundryvtt.com/_api/packages/release_version/",
+              data=body,
+              method="POST",
+              headers={
+                  "Content-Type": "application/json",
+                  "Authorization": token,
+              },
+          )
+
+          print(json.dumps(payload, indent=2))
+          try:
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  print(response.read().decode("utf-8"))
+          except urllib.error.HTTPError as exc:
+              response_text = exc.read().decode("utf-8", "replace").strip()
+              print(f"Foundry API request failed with HTTP {exc.code}: {response_text}", file=sys.stderr)
+              sys.exit(1)
+          PY
